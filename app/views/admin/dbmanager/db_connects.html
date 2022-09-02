@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>{$title}</title>
+      <link href="../css/bootstrap.min.css" rel="stylesheet">
+      <link href="../font-awesome/css/font-awesome.css" rel="stylesheet">
+      <link href="../css/animate.css" rel="stylesheet">
+      <link href="../css/style.css" rel="stylesheet">
+      <base href="{$$base}" id='baseurl' data-info='../'>
+   </head>
+   <body>
+      <div id="wrapper">
+         <!--Главное меню слева-->
+         {section "../~section/mainmenu.html"}
+         <!--Конец меню-->
+         <div id="page-wrapper" class="gray-bg">
+			
+			<!-- Head menu -->
+			{section "../~section/head.html"}
+			<!-- End head menu -->   
+            
+			<!-- Title menu-->
+			{section "../~section/title.html"}
+			<!-- End title menu -->   
+            
+            
+            <div class="row">
+               <div class="col-lg-12">
+                  <div class="wrapper wrapper-content animated fadeInRight">
+                     <div class="ibox-content m-b-sm border-bottom">
+                        <div class="p-xs">
+                           <div class="pull-left m-r-md">
+                              <i class="fa fa fa-server text-navy mid-icon"></i>
+                           </div>
+                           <h2>Управление подключениями к базам данных</h2>
+                           <span>Feel free to choose topic you're interested in.</span>
+                        </div>
+                     </div>
+                     <div class="ibox-content m-b-sm border-bottom">
+                        <form role="form" class="form-inline" method='POST' action='admin/db/create'>
+                           <!--
+                              <div class="form-group">
+                              	<label for="exampleInputEmail2" class="sr-only">Драйвер</label>
+                              	<input type="dbtype" placeholder="Драйвер"  class="form-control">
+                              </div>
+                              -->
+                           <div class="input-group ">
+                              <input  placeholder="Драйвер DSN" id='type' name='type' class="form-control">
+                              <div class="input-group-btn">
+                                 <button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">
+                                 <span class="caret"></span>
+                                 </button>
+                                 <ul class="dropdown-menu pull-right">
+                                    <li><a onclick="$('#type').val('mysql');">MYSQL</a></li>
+                                    <li><a onclick="$('#type').val('pgsql');">PostgreSQL</a></li>
+                                    <li><a onclick="$('#type').val('oci');" >Oracle Call Interface</a></li>
+                                    <li class="divider"></li>
+                                    <li><a onclick="$('#type').val('firebird');" >FIREBIRD</a></li>
+                                    <li><a onclick="$('#type').val('sqlite');">Sqlite</a></li>
+                                 </ul>
+                              </div>
+                           </div>
+                           <div class="form-group">
+                              <label for="exampleInputPassword2" class="sr-only">Хост (или путь к файлу)</label>
+                              <input name="host" placeholder="Хост (или путь к файлу)" class="form-control">
+                           </div>
+                           <div class="form-group">
+                              <label for="exampleInputPassword2" class="sr-only">Имя базы</label>
+                              <input name="dbname" placeholder="Имя базы" class="form-control">
+                           </div>
+                           <div class="form-group">
+                              <label for="exampleInputPassword2" class="sr-only">Логин</label>
+                              <input name="login" placeholder="Логин" class="form-control">
+                           </div>
+                           <div class="form-group">
+                              <label for="exampleInputPassword2" class="sr-only">Пароль</label>
+                              <input name="password" placeholder="Пароль" class="form-control">
+                           </div>
+                           <!--
+                              <div class="form-group">
+                              	<label for="exampleInputPassword2" class="sr-only">Параметры</label>
+                              	<input name="options" placeholder="Параметры" class="form-control">
+                              </div>
+                              -->
+                           <!--
+                              <div class="input-group col-md-8">
+                              	<label for="exampleInputPassword2" class="sr-only">Описание базы данных (напрмер, предназначение или хранимые данные)</label>
+                              	<input name="options" placeholder="Описание базы данных (напрмер, предназначение или хранимые данные)" class="form-control ">
+                              </div>
+                              -->
+                           <button class="btn btn-primary btn-outline " type="submit">Установить новое подключение</button>
+                        </form>
+                     </div>
+                     <div class="ibox-content forum-container">
+                        <div class="forum-title">
+                           <div class="pull-right forum-desc">
+                              <samll>Всего: {echo count($table['db'])}</samll>
+                           </div>
+                           <h3>Созданные подключения</h3>
+                        </div>
+                        {foreach $table['db'] as $dbname => $db}
+                        <div class="forum-item {$db['active']}">
+                           <div class="row">
+                              <div class="col-md-7">
+                                 <a href="{$db['link']}" class="forum-item-title">
+                                    <div class="forum-icon ">
+                                       <i class="fa fa-database "></i>
+                                    </div>
+                                    {$dbname}
+                                    <div class="forum-sub-title">{$db['info']}</div>
+                                 </a>
+                              </div>
+                              <div class="col-md-1 forum-info">
+                                 <span class="views-number">
+                                 1216
+                                 </span>
+                                 <div>
+                                    <small>Views</small>
+                                 </div>
+                              </div>
+                              <div class="col-md-1 forum-info">
+                                 {if $db['active']}
+                                 <div class="btn btn-primary btn-circle btn-lg btn-outline" type="button" title="соединение установлено"><i class="fa fa-check"></i></div>
+                                 {else}
+                                 <div class="btn btn-default btn-circle btn-lg btn-outline" type="button" title="нет подключения"><i class="fa fa-times"></i></div>
+                                 {end}
+                              </div>
+                              <div class="col-md-2 ">
+                                 <a type="button" class="btn btn-xs btn-primary  btn-outline" href="admin/db/editor?dbname={$dbname}">
+                                    <!-- <i class="fa fa-edit"></i>--> Редактировать
+                                 </a>
+                                 <a type="button" class="btn btn-xs btn-danger   btn-outline" href="admin/db/delete?head={$dbname}">
+                                    <!-- <i class="fa fa-close "></i>--> Удалить подключение
+                                 </a>
+                              </div>
+                              <div class="col-md-1 forum-info">
+                                 <a href="admin/db/editor?dbname={$dbname}"> <button type="button" class="btn btn-primary btn-lg btn-outline"><i class="fa fa-cogs"></i></button> </a>
+                              </div>
+                           </div>
+                        </div>
+                        {end}
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <!-- Footer block -->
+            {section "../~section/footer.html"}
+            <!-- End Footer block -->
+         </div>
+      </div>
+      <!-- Mainly scripts -->
+      <script src="../js/jquery-2.1.1.js"></script>
+      <script src="../js/bootstrap.min.js"></script>
+      <script src="../js/plugins/metisMenu/jquery.metisMenu.js"></script>
+      <script src="../js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+      <!-- Custom and plugin javascript -->
+      <script src="../js/inspinia.js"></script>
+      <script src="../js/plugins/pace/pace.min.js"></script>
+   </body>
+</html>

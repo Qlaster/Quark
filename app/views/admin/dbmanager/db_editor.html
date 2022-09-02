@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>INSPINIA | Forum</title>
+
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../font-awesome/css/font-awesome.css" rel="stylesheet">
+
+    <link href="../css/animate.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+    
+    <base href="{$$base}" id='baseurl' data-info='../'>	
+</head>
+
+<body>
+
+    <div id="wrapper">
+
+		<!--Главное меню слева-->
+		{require "../~section/mainmenu.html"}
+		<!--Конец меню-->
+        
+
+        <div id="page-wrapper" class="gray-bg">
+			
+			<!-- Head menu -->
+			{section "../~section/head.html"}
+			<!-- End head menu --> 
+        
+			<!-- Title menu-->
+			{require "../~section/title.html"}
+			<!-- End title menu -->   
+            
+            
+            
+                       
+            <div class="row">
+                <div class="col-lg-12">
+					
+					    <div class="ibox-content m-b-sm border-bottom">
+                            <div class="p-xs">
+                                <div class="pull-left m-r-md">
+                                    <i class="fa fa-database text-navy mid-icon"></i>
+                                </div>
+                                <h2>{$dbinfo['dbname']}</h2>
+                                <span>Управление подключениem к базе данных <b>"{$dbinfo['dbname']}"</b> </span>
+                            </div>
+                        </div>
+                        
+                        
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                            <h5>Редактор подключения</h5>
+                            <div class="ibox-tools">
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                    <i class="fa fa-wrench"></i>
+                                </a>
+                                <ul class="dropdown-menu dropdown-user">
+                                    <li><a href="#">Config option 1</a>
+                                    </li>
+                                    <li><a href="#">Config option 2</a>
+                                    </li>
+                                </ul>
+                                <a class="close-link">
+                                    <i class="fa fa-times"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="ibox-content">
+                            <form method="POST" class="form-horizontal" action="admin/db/editor?dbname={echo $_GET['dbname']}">
+                                
+                                
+                                
+                                <div class="form-group"><label class="col-sm-2 control-label">Название</label>
+                                    <div class="col-sm-10">
+										<input type="text" name="head" class="form-control" value="{$dbinfo['head']}" pattern="[A-Za-zА-Яа-яЁё\_0-9]" title="Название подключения"> 
+										<span class="help-block m-b-none">Укажите название подключения (принимаются названия из английских и русских букв)</span>
+                                    </div>
+                                </div>
+                                
+                                
+                                <div class="hr-line-dashed"></div>
+                                <div class="form-group"><label class="col-sm-2 control-label">Описание</label>
+                                    <div class="col-sm-10">
+										<input type="text" name="info"  class="form-control" value="{$dbinfo['info']}" title="Описание">
+										<span class="help-block m-b-none">Комментарий, описывающий данное подключене</span>
+                                    </div>
+                                </div>
+                                
+                                
+                                <div class="hr-line-dashed"></div>
+                                <div class="form-group"><label class="col-sm-2 control-label">PDO</label>
+
+                                    <div class="col-sm-10">
+                                        <div class="row">
+                                            <div class="col-md-2"><input type="text" class="form-control" name="type"		value="{$dbinfo['type']}" 		placeholder="Драйвер"					title="Драйвер"></div>
+                                            <div class="col-md-3"><input type="text" class="form-control" name="host"		value="{$dbinfo['host']}" 		placeholder="Хост" 						title="Хост"></div>
+                                            <div class="col-md-3"><input type="text" class="form-control" name="dbname"		value="{$dbinfo['dbname']}" 	placeholder="Имя базы  (путь к файлу)"	title="Имя базы  (путь к файлу)" ></div>
+                                            <div class="col-md-2"><input type="text" class="form-control" name="user"		value="{$dbinfo['user']}" 		placeholder="Логин" 					title="Логин"></div>
+                                            <div class="col-md-2"><input type="text" class="form-control" name="password"	value="{$dbinfo['password']}"	placeholder="Пароль" 					title="Пароль"></div>
+                                           
+											<input type="hidden" name='name' value="{$dbinfo['name']}">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                
+                                <div class="hr-line-dashed"></div>
+                                <div class="form-group">
+                                    <div class="col-sm-4 col-sm-offset-2">
+                                        <a class="btn btn-white" href="admin/db/connects">Cancel</a>
+                                        <button class="btn btn-primary" type="submit">Save changes</button>
+                                    </div>
+                                </div>
+                                
+                                
+                                
+<!--
+                                <div class="hr-line-dashed"></div>
+                                <div class="form-group"><label class="col-sm-2 control-label">Input groups</label>
+                                    <div class="col-sm-10">
+                                        <div class="input-group m-b"><span class="input-group-addon">PDO:</span> <input type="text" placeholder="Username" class="form-control"></div>                                        
+                                    </div>
+                                </div>
+-->
+                                
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+            
+
+    
+            <!-- Footer block -->
+            {require "../~section/footer.html"}
+            <!-- End Footer block -->
+
+        </div>
+        </div>
+
+    <!-- Mainly scripts -->
+    <script src="../js/jquery-2.1.1.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="../js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+    <!-- Custom and plugin javascript -->
+    <script src="../js/inspinia.js"></script>
+    <script src="../js/plugins/pace/pace.min.js"></script>
+
+
+</body>
+
+</html>

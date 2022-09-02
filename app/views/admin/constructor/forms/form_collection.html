@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{$title}</title>
+
+    <link href="../../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="../../css/plugins/summernote/summernote.css" rel="stylesheet">
+    <link href="../../css/plugins/summernote/summernote-bs3.css" rel="stylesheet">
+    <link href="../../css/plugins/codemirror/codemirror.css" rel="stylesheet">
+    <link href="../../css/plugins/codemirror/ambiance.css" rel="stylesheet">
+    <!-- Toastr style -->
+    <link href="../../css/plugins/toastr/toastr.min.css" rel="stylesheet">
+    
+    <link href="../../css/animate.css" rel="stylesheet">
+    <link href="../../css/style.css" rel="stylesheet"> 
+
+</head>
+
+<body>
+
+    <div id="wrapper">
+
+		<!--Главное меню слева-->
+		{section "../../~section/mainmenu.html"}
+		<!--Конец меню-->
+			
+        <div id="page-wrapper" class="gray-bg">
+		
+		<!-- Head menu -->
+		{section "../../~section/head.html"}
+		<!-- End head menu -->
+		
+		<!-- Менюшка title-->
+		{section "../../~section/title.html"}
+		<!-- конец title-->    
+				
+        <div class="wrapper wrapper-content">
+        <div class="row">
+            
+
+            
+            
+						<div class="col-lg-4 animated fadeInDown">
+							<div class="ibox float-e-margins">
+								<div class="ibox-content">
+									<div class="file-manager">
+										<h5>{$catalog['collection']['head']}</h5>
+										<!--
+											<a href="#" class="file-control active">Ale</a>
+											<a href="#" class="file-control">Documents</a>
+											<a href="#" class="file-control">Audio</a>
+											<a href="#" class="file-control">Images</a>
+											-->
+										<div class="hr-line-dashed"></div>
+									
+										<form action="{$form['collection']['action']}" method='get'>
+											<input name='name' placeholder="Название новой формы" class="form-control">   
+											<p></p>
+											<button type="submit" class="btn btn-primary btn-block">{$form['collection']['button']['add']['head']}</button>
+										</form>
+										
+										<div class="hr-line-dashed"></div>
+										<h5>{$catalog['collection']['info']}</h5>
+										<ul class="folder-list" style="padding: 0">
+											{foreach (array) $catalog['collection']['list'] as $_value}
+											{if $_value['active']}
+											<li class='text-info'>
+												{else}
+											<li>
+												{end}
+												<a href="{$_value['link']}"><i class="{$_value['icon']}"></i>{$_value['head']}</a>
+												<!--
+													<a onclick="menu_repaint('{$_value['head']}')"><i class="{$_value['icon']}"></i>{$_value['head']}</a>
+													-->
+												<a href="{$_value['delete_link']}">
+												<button type="button" class="btn btn-warning btn-xs pull-right"><span class="fa {$_value['delete_icon']}"></span> {$_value['delete_head']}</button>
+												</a>
+											</li>
+											{end}
+										</ul>
+										<div class="clearfix"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+            
+            
+				<div class="col-lg-8 animated fadeInRight">
+					
+					
+					
+					
+					
+							<div class="row">
+								<div class="col-lg-12">
+									<div class="ibox ">
+										<div class="ibox-title">
+											<h5>Содержимое: <b class="text-success">{$objectName}</b></h5>											
+											<a id="btn-save" !href="{$catalog['objects']['button']['save']['link']}" class="btn btn-primary btn-xs pull-right m-l-sm"> <span class="{$catalog['objects']['button']['save']['icon']}"></span> {$catalog['objects']['button']['save']['head']}</a> 
+<!--
+											<a href="{$catalog['objects']['button']['edit']['link']}" class="btn btn-success btn-xs pull-right"> <span class="{$catalog['objects']['button']['edit']['icon']}"></span> {$catalog['objects']['button']['edit']['head']}</a>
+-->
+										</div>
+										<form id="form-code" method="POST">
+											<div class="ibox-content" id='menuname'>												
+												<div class="input-group m-b"><span class="input-group-addon">action: </span> <input class="form-control" type="text" name="action" value="{$$catalog['object']['action']}" placeholder="Action form" ></div>
+												<div class="input-group m-b"><span class="input-group-addon">method: </span> <input class="form-control" type="text" name="method" value="{$$catalog['object']['method']}" placeholder="Method" ></div>														
+											</div>	
+
+											<style>
+												.CodeMirror-scroll { min-height: 300px; }
+											</style>
+											<textarea name="html" id="html-code" class="!form-control" >{$catalog['object']['html']}</textarea>
+										</form>
+									</div>
+								</div>
+							</div>
+					
+					
+							<div class="row">
+								<div class="col-lg-12">
+									<div class="ibox-title">
+										<h5>Окно просмотра:</h5>
+									</div>
+									<div class="ibox">
+										<div class="ibox-content">
+											<section >
+												{$$catalog['object']['html']}
+											</section>
+										</div>
+									</div>
+								</div>
+							</div>
+					
+					
+<!--
+					<div class="ibox ">
+						<div class="ibox-title">
+								<h5>Содержимое: <b class="text-success">{$objectName}</b></h5>
+								<a id="btn-save" !href="{$catalog['objects']['button']['save']['link']}" class="btn btn-primary btn-xs pull-right m-l-sm"> <span class="{$catalog['objects']['button']['save']['icon']}"></span> {$catalog['objects']['button']['save']['head']}</a> 
+								<a href="{$catalog['objects']['button']['edit']['link']}" class="btn btn-success btn-xs pull-right"> <span class="{$catalog['objects']['button']['edit']['icon']}"></span> {$catalog['objects']['button']['edit']['head']}</a>
+						</div>
+						<div class="!mail-box-header">
+
+							<div class="mail-box">
+											
+											
+											<section>	
+												<form id="form-code" method="POST">													
+													<div class="input-group m-b"><span class="input-group-addon">action: </span> <input class="form-control" type="text" name="action" value="{$$catalog['object']['action']}" placeholder="Action form" ></div>
+													<div class="input-group m-b"><span class="input-group-addon">method: </span> <input class="form-control" type="text" name="method" value="{$$catalog['object']['method']}" placeholder="Method" ></div>
+													
+													<textarea name="html" id="html-code" class="!form-control" >{$$catalog['object']['html']}</textarea>
+												</form>
+											</section>
+											
+											
+								<div class="mail-text">
+									<style>
+										.CodeMirror-scroll { min-height: 300px; }
+									</style>
+									<textarea id="head-code" style="min-height:200px">{$$headcode}</textarea>
+									<div class="clearfix"></div>
+								</div>
+						</div>
+					</div>
+-->
+					
+					
+					
+					
+					
+					
+				</div>
+			</div>
+        
+			<!-- Footer block -->
+			{section "../../~section/footer.html"}
+			<!-- End Footer block -->
+
+        </div>
+        </div>
+
+    <!-- Mainly scripts -->
+    <script src="../../js/jquery-2.1.1.js"></script>
+    <script src="../../js/bootstrap.min.js"></script>
+    <script src="../../js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="../../js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+    <!-- Custom and plugin javascript -->
+    <script src="../../js/inspinia.js"></script>
+    <script src="../../js/plugins/pace/pace.min.js"></script>
+    
+    <!-- CodeMirror -->
+    <script src="../../js/plugins/codemirror/codemirror.js"></script>
+    <script src="../../js/plugins/codemirror/mode/javascript/javascript.js"></script>
+
+    <!-- iCheck -->
+    <script src="../../js/plugins/iCheck/icheck.min.js"></script>
+    
+    <!-- Toastr script -->
+    <script src="../../js/plugins/toastr/toastr.min.js"></script>
+    
+    <!-- SUMMERNOTE -->
+    <script src="../../js/plugins/summernote/summernote.min.js"></script>
+    <script>
+        $(document).ready(function()
+        {
+            $('.i-checks').iCheck({
+                checkboxClass: 'icheckbox_square-green',
+                radioClass: 'iradio_square-green',
+            });
+
+
+            //~ $('.summernote').summernote();
+            
+
+            //~ window.editor_head = CodeMirror.fromTextArea(document.getElementById("head-code"), {
+                 //~ lineNumbers: true,
+                 //~ matchBrackets: true,
+                 //~ styleActiveLine: true,
+                 //~ theme:"ambiance"
+             //~ });
+             
+
+			window.editor_html = CodeMirror.fromTextArea(document.getElementById("html-code"), {
+				 lineNumbers: true,
+				 matchBrackets: true,
+				 styleActiveLine: true,
+				 theme:"ambiance"
+			});
+				
+				
+			$('#btn-save').click(function() 
+			{
+				$("#form-code").submit();
+				return false;
+			});
+
+
+
+
+
+        });
+        
+        var edit = function() {
+            $('.click2edit').summernote({focus: true});
+        };
+        var save = function() {
+            var aHTML = $('.click2edit').code(); //save HTML If you need(aHTML: array).
+            $('.click2edit').destroy();
+        };
+
+    </script>
+</body>
+
+</html>

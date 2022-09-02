@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{$title}</title>
+
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="../css/plugins/summernote/summernote.css" rel="stylesheet">
+    <link href="../css/plugins/summernote/summernote-bs3.css" rel="stylesheet">
+    <link href="../css/plugins/codemirror/codemirror.css" rel="stylesheet">
+    <link href="../css/plugins/codemirror/ambiance.css" rel="stylesheet">
+    <!-- Toastr style -->
+    <link href="../css/plugins/toastr/toastr.min.css" rel="stylesheet">
+    
+    <link href="../css/animate.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet"> 
+
+</head>
+
+<body>
+
+    <div id="wrapper">
+
+		<!--Главное меню слева-->
+		{section "../~section/mainmenu.html"}
+		<!--Конец меню-->
+			
+        <div id="page-wrapper" class="gray-bg">
+		
+		<!-- Head menu -->
+		{section "../~section/head.html"}
+		<!-- End head menu -->
+		
+		<!-- Менюшка title-->
+		{section "../~section/title.html"}
+		<!-- конец title-->    
+				
+        <div class="wrapper wrapper-content">
+        <div class="row">
+            
+            <div hidden class="col-lg-3">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content mailbox-content">
+                        <div class="file-manager">
+							<img style="width:100%" src="~/../img/html_screen.png">
+							<br>
+							<img style="width:100%" src="~/../img/html_screen.jpeg">
+							
+<!--
+                            <a class="btn btn-block btn-primary compose-mail" href="mail_compose.html">Compose Mail</a>
+-->
+                            <div class="space-25"></div>
+                            <h5>Folders</h5>
+                            <ul class="folder-list m-b-md" style="padding: 0">
+                                <li><a href="mailbox.html"> <i class="fa fa-inbox "></i> Inbox <span class="label label-warning pull-right">16</span> </a></li>
+                                <li><a href="mailbox.html"> <i class="fa fa-envelope-o"></i> Send Mail</a></li>
+                                <li><a href="mailbox.html"> <i class="fa fa-certificate"></i> Important</a></li>
+                                <li><a href="mailbox.html"> <i class="fa fa-file-text-o"></i> Drafts <span class="label label-danger pull-right">2</span></a></li>
+                                <li><a href="mailbox.html"> <i class="fa fa-trash-o"></i> Trash</a></li>
+                            </ul>
+                            <h5>Categories</h5>
+                            <ul class="category-list" style="padding: 0">
+                                <li><a href="#"> <i class="fa fa-circle text-navy"></i> Work </a></li>
+                                <li><a href="#"> <i class="fa fa-circle text-danger"></i> Documents</a></li>
+                                <li><a href="#"> <i class="fa fa-circle text-primary"></i> Social</a></li>
+                                <li><a href="#"> <i class="fa fa-circle text-info"></i> Advertising</a></li>
+                                <li><a href="#"> <i class="fa fa-circle text-warning"></i> Clients</a></li>
+                            </ul>
+
+                            <h5 class="tag-title">Labels</h5>
+                            <ul class="tag-list" style="padding: 0">
+                                <li><a href=""><i class="fa fa-tag"></i> Family</a></li>
+                                <li><a href=""><i class="fa fa-tag"></i> Work</a></li>
+                                <li><a href=""><i class="fa fa-tag"></i> Home</a></li>
+                                <li><a href=""><i class="fa fa-tag"></i> Children</a></li>
+                                <li><a href=""><i class="fa fa-tag"></i> Holidays</a></li>
+                                <li><a href=""><i class="fa fa-tag"></i> Music</a></li>
+                                <li><a href=""><i class="fa fa-tag"></i> Photography</a></li>
+                                <li><a href=""><i class="fa fa-tag"></i> Film</a></li>
+                            </ul>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            
+				<div class="col-lg-12 animated fadeInRight">
+					<div class="mail-box-header">
+						<div class="pull-right tooltip-demo">
+		<!--
+							<a href="mailbox.html" class="btn btn-white btn-sm" data-toggle="tooltip" data-placement="top" title="Move to draft folder"><i class="fa fa-pencil"></i> Draft</a>
+		-->
+							<a id="btn-save" class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Сохранить изменения"><i class="fa fa-check-square-o"></i> Сохранить </a>
+						</div>
+						<h2>
+							Содержимое заголовка <b> &lt;head&gt; </b>
+						</h2>
+						<span>Тег &lt;head&gt; предназначен для хранения служебной информации о странице. Он располагается первым в теге &lt;html&gt;, сразу перед &lt;body&gt;.
+						Внутри &lt;head&gt; обычно содержится заголовок, ключевые слова, описание страницы и другие служебные данные. Также внутри него подключаются внешние ресурсы, например, стили. Содержимое этого тега не отображается на странице напрямую.</span>
+					</div>
+						<div class="mail-box">
+
+
+		<!--
+						<div class="mail-body">
+							<form class="form-horizontal" method="get">
+								<div class="form-group"><label class="col-sm-2 control-label">To:</label>
+
+									<div class="col-sm-10"><input type="text" class="form-control" value="alex.smith@corporat.com"></div>
+								</div>
+								<div class="form-group"><label class="col-sm-2 control-label">Subject:</label>
+
+									<div class="col-sm-10"><input type="text" class="form-control" value=""></div>
+								</div>
+							</form>
+						</div>
+		-->
+
+						<div class="mail-text h-200">
+							<style>
+								.CodeMirror-scroll { min-height: 300px; }
+							</style>
+							<textarea id="head-code" style="min-height:200px">{$$headcode}</textarea>
+							<div class="clearfix"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+        
+			<!-- Footer block -->
+			{section "../~section/footer.html"}
+			<!-- End Footer block -->
+
+        </div>
+        </div>
+
+    <!-- Mainly scripts -->
+    <script src="../js/jquery-2.1.1.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="../js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+    <!-- Custom and plugin javascript -->
+    <script src="../js/inspinia.js"></script>
+    <script src="../js/plugins/pace/pace.min.js"></script>
+    
+    <!-- CodeMirror -->
+    <script src="../js/plugins/codemirror/codemirror.js"></script>
+    <script src="../js/plugins/codemirror/mode/javascript/javascript.js"></script>
+
+    <!-- iCheck -->
+    <script src="../js/plugins/iCheck/icheck.min.js"></script>
+    
+    <!-- Toastr script -->
+    <script src="../js/plugins/toastr/toastr.min.js"></script>
+    
+    <!-- SUMMERNOTE -->
+    <script src="../js/plugins/summernote/summernote.min.js"></script>
+    <script>
+        $(document).ready(function()
+        {
+            $('.i-checks').iCheck({
+                checkboxClass: 'icheckbox_square-green',
+                radioClass: 'iradio_square-green',
+            });
+
+
+            //~ $('.summernote').summernote();
+            
+
+            window.editor_head = CodeMirror.fromTextArea(document.getElementById("head-code"), {
+                 lineNumbers: true,
+                 matchBrackets: true,
+                 styleActiveLine: true,
+                 theme:"ambiance"
+             });
+             
+            $("#btn-save").click(function() 
+            {		
+				$.post("admin/content/head/save", { headcode: window.editor_head.getValue() })
+					.done(function( data ) 
+					{
+						toastr.success(data);
+						toastr.warning(data);
+					});
+
+
+				//~ $.post( "admin/content/head/save", function( data ) 
+				//~ {
+					//~ // Display a success toast, with a title
+					//~ toastr.success(data);
+					//~ toastr.danger(data);
+					
+					//~ alert( "Data Loaded: " + data );
+				//~ });
+			});
+
+
+
+
+
+        });
+        
+        var edit = function() {
+            $('.click2edit').summernote({focus: true});
+        };
+        var save = function() {
+            var aHTML = $('.click2edit').code(); //save HTML If you need(aHTML: array).
+            $('.click2edit').destroy();
+        };
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,66 @@
+										<div class="wrapper wrapper-content project-manager ">
+											<h4>{$info['name']}</h4>
+<!--
+											<img src="img/zender_logo.png" class="img-responsive">
+-->
+										
+												<div class="col-md-3 col-lg-3 text-center">
+													{if $info['dir']}
+														<i class="fa fa-folder forum-icon mid-icon text-navy text-center" > </i>
+													{else}
+														<i class="fa fa-file forum-icon mid-icon text-navy text-center" > </i>
+													{end}											
+												</div>
+										
+<!--
+											<p class="small col-lg-6">
+
+												There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look
+												even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing
+											</p>
+-->
+<!--
+											<p class="small font-bold">
+												<span><i class="fa fa-circle text-warning"></i> High priority</span>
+											</p>
+											<h5>Project tag</h5>
+											<ul class="tag-list" style="padding: 0">
+												<li><a href=""><i class="fa fa-tag"></i> Zender</a></li>
+												<li><a href=""><i class="fa fa-tag"></i> Lorem ipsum</a></li>
+												<li><a href=""><i class="fa fa-tag"></i> Passages</a></li>
+												<li><a href=""><i class="fa fa-tag"></i> Variations</a></li>
+											</ul>	
+-->
+											
+<!--
+											<h5 class="col-lg-12">Информация об объекте</h5>
+-->
+											<div class="">
+												<ul class="list-unstyled project-files ">
+													<li>	<i class="fa fa-file"></i> Создан:	{$info['ctime']}			</li>
+													<li>	<i class="fa fa-download"></i> Изменен:	{$info['mtime']}			</li>
+													<li>	<i class="fa fa-file-picture-o"></i> Размер: {$info['size']}	</li>
+													{if $info['write']}
+														<li>	<i class="fa fa-unlock-alt"></i> доступ: <label class="label text-success">полный </label>	</li>
+													{else}
+														<li>	<i class="fa fa-lock"></i> доступ: <label class="label text-success">	ограниченный</label>	</li>
+													{end}
+	<!--
+													<li>	<i class="fa fa-file"></i> Владелец:			</li>
+	-->
+												</ul>
+												
+												{if !$info['dir']}
+												<div class="text-center m-t-md">
+													<a href="admin/app/codeeditor/?file={$info['path']}" class="btn btn-xs btn-primary">Редактировать</a>
+												</div>
+												{end}
+											</div>
+										
+										</div>
+
+<!--
+										<div id="infotext" class="col-md-12 col-lg-12">
+											jsTree is jquery plugin, that provides interactive trees. It is absolutely free, open source and distributed under the MIT license. jsTree is easily extendable, themable and configurable, it supports HTML & JSON data sources and AJAX loading. Get more info on: http://www.jstree.com/
+										</div>	
+-->

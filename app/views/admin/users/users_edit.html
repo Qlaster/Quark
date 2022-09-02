@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Profile</title>
+
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../css/animate.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+    
+    <link href="../css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="../css/plugins/input-file/component.css" rel="stylesheet">
+	
+<!--
+	<script>(function(e,t,n){var r=e.querySelectorAll("html")[0];r.className=r.className.replace(/(^|\s)no-js(\s|$)/,"$1js$2")})(document,window,0);</script>
+-->
+	<base href="{$$base}">	
+</head>
+
+<body>
+    <div id="wrapper">
+
+     	<!--Главное меню слева-->
+		{require "../~section/mainmenu.html"}
+		<!--Конец меню-->
+
+        <div id="page-wrapper" class="gray-bg">
+		
+		<!-- Head menu -->
+		{section "../~section/head.html"}
+		<!-- End head menu --> 
+			
+		<!-- Title menu-->
+		{require "../~section/title.html"}
+		<!-- End title menu -->   
+            
+            
+        <form enctype="multipart/form-data" method='post' action='admin/options/users/save'>    
+        <div class="wrapper wrapper-content">
+            <div class="row animated fadeInRight">
+                <div class="col-md-4">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                            <h5>Profile Detail</h5>
+                        </div>
+                        
+								<!--LOGO--->
+								<div class="ibox-content no-padding border-left-right">  
+<!--
+                                <img alt="image" class="img-responsive" src="../img/profile_big.jpg">
+-->
+										<div class="widget-head-color-box navy-bg p-lg text-center">
+											<div class="m-b-md">
+											<h2 class="font-bold no-margins">
+												{$user['name']}
+											</h2>
+<!--
+												<small>{$user['login']}</small>
+-->
+												<h3>{$user['login']}</h3>
+												<input type="hidden" name="login" value="{$user['login']}">
+											</div>
+												<!--Avatars-->
+												{if $user['logo']}
+													<img src="{$user['logo']}" style="max-height:160px; max-width:160px;" class="img-circle circle-border m-b-md" alt="profile">
+												{else}
+													<img src="../img/avatars/profile1.png" class="img-circle circle-border m-b-md" alt="profile">
+												{end}
+											<div>
+												<input type="file" name="avatar" id="file-1" class="inputfile">
+<!--
+												<input type="file" name="file-1[]" id="file-1" class="inputfile1" data-multiple-caption="{count} files selected" multiple />
+-->
+												<label for="file-1" class="btn btn-blockbtn btn-outline btn-default"> <span>Load new avatar&hellip;</span></label>
+												
+<!--
+												<input type="file" name="f" id='file' class="inputfile">
+												<svg xmlns="http://www.w3.org/2000/svg" width="20" height="17" viewBox="0 0 20 17"><path d="M10 0l-5.2 4.9h3.3v5.1h3.8v-5.1h3.3l-5.2-4.9zm9.3 11.5l-3.2-2.1h-2l3.4 2.6h-3.5c-.1 0-.2.1-.2.1l-.8 2.3h-6l-.8-2.2c-.1-.1-.1-.2-.2-.2h-3.6l3.4-2.6h-2l-3.2 2.1c-.4.3-.7 1-.6 1.5l.6 3.1c.1.5.7.9 1.2.9h16.3c.6 0 1.1-.4 1.3-.9l.6-3.1c.1-.5-.2-1.2-.7-1.5z"/></svg>
+-->
+											</div>
+										</div>
+										<!--END LOGO-->  
+										
+										
+										
+										
+										
+										
+										
+										<div class="ibox-content profile-content">
+											<h4 class="media-heading">Описание</h4>
+											<textarea style="width:100%;" class="form-control" name="info" placeholder="Введите описание для этого пользователя">{$user['info']}</textarea>
+										</div>
+               
+                            </div>
+                            
+                            
+                            <div class="widget-text-box">
+                                <h4><strong>Информация</strong></h4>
+                             
+								<div class="form-horizontal">
+<!--
+									<p>Sign in today for more expirience.</p>
+-->
+
+		
+									<div class="form-group">
+										<div class="col-lg-12">
+											{if $user['login'] == ''}					
+											<div class="has-success">
+												<span class="help-block m-b-none">Enter login new user</span>
+												<input type="text" placeholder="Login" class="form-control" name="login" required> 
+												<p></p>
+											</div>
+											{end}
+											{if $user['login'] == ''}
+												<div class="has-success">
+													<input type="password" placeholder="Password" class="form-control" name="password" required>
+												</div>
+											{else}
+												<input type="password" placeholder="New password" class="form-control" name="password">
+											{end}
+											<p></p>
+											<p>Advansed information</p>
+											<span class="help-block m-b-none"></span>
+											<input type="text" placeholder="name" class="form-control" name="name" value="{$user['name']}"> 
+											
+											<span class="help-block m-b-none"></span>
+											<input type="email" placeholder="Email" class="form-control" name="mail" value="{$user['email']}"> 
+											
+											<span class="help-block m-b-none"></span>
+
+<!--
+											<input type="hidden" placeholder="New password" class="form-control" value="{$user['hash']}">
+-->
+										</div>
+									</div>
+									
+									<div class="form-group">
+										<div class="col-lg-12">
+											<h4><strong>Group</strong></h4>
+											<p>
+												<a class="btn btn-default btn-rounded" href="#">Default</a>
+												<a class="btn btn-default btn-rounded" href="#">Admin group</a>
+<!--
+												<a class="btn btn-primary btn-rounded" href="#">Primary</a>
+												<a class="btn btn-success btn-rounded" href="#">Success</a>
+												<a class="btn btn-info btn-rounded" href="#">Info</a>
+												<a class="btn btn-warning btn-rounded" href="#">Warning</a>
+												<a class="btn btn-danger btn-rounded" href="#">Danger</a>
+												<a class="btn btn-danger btn-rounded btn-outline" href="#">Danger</a>
+-->
+											</p>
+										</div>
+									</div>
+									
+									
+									<div class="form-group">
+										<div class="col-lg-offset-2 col-lg-10">
+											<div class="checkbox i-checks">
+												{if $user['disable']}
+													<label> <input type="checkbox" name="disable" checked value="true"><i></i> Disable profile </label>
+												{else}
+													<label> <input type="checkbox" name="disable" ><i></i> Disable profile </label>													
+												{end}
+												<label></label>
+											</div>
+
+										</div>
+									</div>
+<!--
+									<div class="form-group">
+										<div class="col-lg-offset-2 col-lg-10">
+											<button class="btn btn-sm btn-white" type="submit">Sign in</button>
+										</div>
+									</div>
+-->
+								</div>
+								
+                                
+                                
+<!--
+                                <p><i class="fa fa-map-marker"></i> Riviera State 32/106</p>
+                                <h5>
+                                    About me
+                                </h5>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitat.
+                                </p>
+-->
+<!--
+                                
+                                <div class="row m-t-lg">
+                                    <div class="col-md-4">
+                                        <span class="bar">5,3,9,6,5,9,7,3,5,2</span>
+                                        <h5><strong>169</strong> Posts</h5>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <span class="line">5,3,9,6,5,9,7,3,5,2</span>
+                                        <h5><strong>28</strong> Following</h5>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <span class="bar">5,3,2,-1,-3,-2,2,3,5,2</span>
+                                        <h5><strong>240</strong> Followers</h5>
+                                    </div>
+                                </div>
+-->
+                                
+                                <div class="user-button">
+                                    <div class="row">
+										{if $user['login'] != ''}
+										<div class="col-md-3">
+											<button type="button" class="btn btn-danger btn-outline" data-toggle="modal" data-target="#DelModalWindow"> Delete</button>
+										</div>
+										<div class="col-md-9">
+											<button type="submit" class="btn btn-primary  btn-block"><i class="fa fa-file-text"></i> Save profile</button>
+										</div>	
+										{else}
+											<button type="submit" class="btn btn-primary  btn-block"><i class="fa fa-file-text"></i> Save profile</button>
+										{end}
+		
+										<!--Modal window-->
+										<div class="modal inmodal" id="DelModalWindow" tabindex="-1" role="dialog" aria-hidden="true">
+						                    <div class="modal-dialog">
+						                        <div class="modal-content animated flipInY">
+						                            <div class="modal-header">
+						                                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+						                                <h4 class="modal-title">Удаление профиля "<strong>{$user['login']}" </strong></h4>
+						                                <small class="font-bold">{$user['name']}</small>
+						                            </div>
+						                            <div class="modal-body">
+						                                <p>Удаление профиля пользователя отменит все привелегии доступа к администрированию. Пользователь удаляется безвозвратно. </p>
+														<p>Если учетная запись временно не нужна, её целесообразно отключить.</p>
+						                            </div>
+						                            <div class="modal-footer">
+						                                <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
+						                                <a href="admin/options/users/del?login={$user['login']}"> <button type="button" class="btn btn-danger">Удалить учетную запись</button> </a>
+						                            </div>
+						                        </div>
+						                    </div>
+						                </div>
+
+<!--
+                                        <div class="col-md-6">
+                                            <button type="button" class="btn btn-primary btn-sm btn-block"><i class="fa fa-envelope"></i> Send Message</button>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <button type="button" class="btn btn-default btn-sm btn-block"><i class="fa fa-coffee"></i> Buy a coffee</button>
+                                        </div>
+-->
+                                    </div>
+                                </div>
+                            </div>
+						
+					</div>
+               </div>
+                <div class="col-md-8">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                            <h5>Access list</h5>
+                            <div class="ibox-tools">
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                    <i class="fa fa-wrench"></i>
+                                </a>
+                                <ul class="dropdown-menu dropdown-user">
+                                    <li><a href="#">Config option 1</a>
+                                    </li>
+                                    <li><a href="#">Config option 2</a>
+                                    </li>
+                                </ul>
+                                <a class="close-link">
+                                    <i class="fa fa-times"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="ibox-content">
+						<!--ACCESS LIST-->
+						<div>
+<!--
+									<div class="feed-element">
+										<div class="form-group">
+											<label class="col-sm-4 control-label"> 
+												 admin / options / page
+											</label>
+											<div class="col-sm-7">												
+												<label class="checkbox-inline i-checks"><div class="icheckbox_square-green" style="position: relative;"><input type="checkbox" value="option1" style="position: absolute; opacity: 0;"></div> edit </label>
+												<label class="checkbox-inline i-checks"><div class="icheckbox_square-green" style="position: relative;"><input type="checkbox" value="option2" style="position: absolute; opacity: 0;"></div> page </label> 
+												<label class="checkbox-inline i-checks"><div class="icheckbox_square-green" style="position: relative;"><input type="checkbox" value="option3" style="position: absolute; opacity: 0;"></div> list </label>
+												<label class="checkbox-inline i-checks"><div class="icheckbox_square-green" style="position: relative;"><input type="checkbox" value="option3" style="position: absolute; opacity: 0;"></div> index </label>
+											</div>
+										</div>
+									</div>
+-->
+									
+									{foreach $user['access'] as $_gname => $_group}
+										<div class="feed-element">
+											<div class="form-group">
+												<label class="col-sm-5 control-label"> 
+													 <i class="fa fa-circle text-navy"></i> <label class="text-navy">{echo end(explode('/', $_gname))}</label>
+													 <div class="pull-right"> 
+														<a class="btn btn-white btn-xs" onclick='$(".{= md5($_gname)}").prop("checked", true)'> <i class="fa fa-check-square-o" ></i> </a>
+														<a class="btn btn-white btn-xs" onclick='$(".{= md5($_gname)}").prop("checked", false)'> <i class="fa fa-square-o"      ></i> </a>
+													 </div>
+													 <br>
+													 <i class="fa fa-folder"></i> {$_gname}
+<!--
+													 {$$_gname_decor = substr_replace($_gname, '/ <span class="label label-default">', strrpos($_gname, '/'), 1)."</span>" }
+-->
+				
+<!--
+													 {$$_gname_decor = substr_replace($_gname, '/<label class="btn btn-white btn-sm"> ', strrpos($_gname, '/'), 1)."</label>" }
+-->
+													 <br>		
+
+<!--
+													 <a class="btn btn-white btn-xs" data-toggle="tooltip" data-placement="top" title="" data-original-title="Reply"><i class="fa fa-check-square-o"></i> Все</a>
+													 <a class="btn btn-white btn-xs" data-toggle="tooltip" data-placement="top" title="" data-original-title="Reply"><i class="fa fa-square-o"></i> Очистить</a>
+-->
+												</label>
+												<div class="col-sm-7">		
+													{foreach $_group as $_cntr}
+<!--
+														<div class="col-md-4">
+-->
+															<div class="col-md-4">
+																<div class="checkbox" >
+																	<label class="checkbox" for="checkInfo-{= ++$_i}">
+																		<input id="checkInfo-{$_i}" type="checkbox" name="access[{$_cntr['fullname']}]" value="action" class="{= md5($_gname)} input-mini">{$_cntr['filename']}
+																	</label>
+																</div>
+															</div>
+															
+															
+<!--
+															<label class="!checkbox-inline !i-checks"><div class="!icheckbox_square-green" style="position: relative;"><input type="checkbox" class="{= md5($_gname)} checkbox_square-green" name="{$_cntr['fullname']}" value="action" style="position: absolute; !opacity: 0;"></div>  {$_cntr['filename']} </label>
+-->
+<!--
+														</div>
+-->
+													{end}
+<!--
+													<label class="checkbox-inline i-checks"><div class="icheckbox_square-green" style="position: relative;"><input type="checkbox" value="option2" style="position: absolute; opacity: 0;"></div> page </label> 
+													<label class="checkbox-inline i-checks"><div class="icheckbox_square-green" style="position: relative;"><input type="checkbox" value="option3" style="position: absolute; opacity: 0;"></div> list </label>
+													<label class="checkbox-inline i-checks"><div class="icheckbox_square-green" style="position: relative;"><input type="checkbox" value="option3" style="position: absolute; opacity: 0;"></div> index </label>
+-->
+												</div>
+											</div>
+										</div>
+																				
+										<div class="hr-line-dashed"></div>										
+									{end}
+									
+									
+						</div>
+<!--
+
+                            <div>
+                                <div class="feed-activity-list">
+
+                                    <div class="feed-element">
+                                        <a href="#" class="pull-left">
+                                            <img alt="image" class="img-circle" src="img/a1.jpg">
+                                        </a>
+                                        <div class="media-body ">
+                                            <small class="pull-right text-navy">1m ago</small>
+                                            <strong>Sandra Momot</strong> started following <strong>Monica Smith</strong>. <br>
+                                            <small class="text-muted">Today 4:21 pm - 12.06.2014</small>
+                                            <div class="actions">
+                                                <a class="btn btn-xs btn-white"><i class="fa fa-thumbs-up"></i> Like </a>
+                                                <a class="btn btn-xs btn-danger"><i class="fa fa-heart"></i> Love</a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="feed-element">
+                                        <a href="#" class="pull-left">
+                                            <img alt="image" class="img-circle" src="img/profile.jpg">
+                                        </a>
+                                        <div class="media-body ">
+                                            <small class="pull-right">5m ago</small>
+                                            <strong>Monica Smith</strong> posted a new blog. <br>
+                                            <small class="text-muted">Today 5:60 pm - 12.06.2014</small>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="feed-element">
+                                        <a href="#" class="pull-left">
+                                            <img alt="image" class="img-circle" src="img/a2.jpg">
+                                        </a>
+                                        <div class="media-body ">
+                                            <small class="pull-right">2h ago</small>
+                                            <strong>Mark Johnson</strong> posted message on <strong>Monica Smith</strong> site. <br>
+                                            <small class="text-muted">Today 2:10 pm - 12.06.2014</small>
+                                            <div class="well">
+                                                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.
+                                                Over the years, sometimes by accident, sometimes on purpose (injected humour and the like).
+                                            </div>
+                                            <div class="pull-right">
+                                                <a class="btn btn-xs btn-white"><i class="fa fa-thumbs-up"></i> Like </a>
+                                                <a class="btn btn-xs btn-white"><i class="fa fa-heart"></i> Love</a>
+                                                <a class="btn btn-xs btn-primary"><i class="fa fa-pencil"></i> Message</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="feed-element">
+                                        <a href="#" class="pull-left">
+                                            <img alt="image" class="img-circle" src="img/a3.jpg">
+                                        </a>
+                                        <div class="media-body ">
+                                            <small class="pull-right">2h ago</small>
+                                            <strong>Janet Rosowski</strong> add 1 photo on <strong>Monica Smith</strong>. <br>
+                                            <small class="text-muted">2 days ago at 8:30am</small>
+                                            <div class="photos">
+                                                <a target="_blank" href="http://24.media.tumblr.com/20a9c501846f50c1271210639987000f/tumblr_n4vje69pJm1st5lhmo1_1280.jpg"> <img alt="image" class="feed-photo" src="img/p1.jpg"></a>
+                                                <a target="_blank" href="http://37.media.tumblr.com/9afe602b3e624aff6681b0b51f5a062b/tumblr_n4ef69szs71st5lhmo1_1280.jpg"> <img alt="image" class="feed-photo" src="img/p3.jpg"></a>
+                                                </div>
+                                        </div>
+                                    </div>
+                                    <div class="feed-element">
+                                        <a href="#" class="pull-left">
+                                            <img alt="image" class="img-circle" src="img/a4.jpg">
+                                        </a>
+                                        <div class="media-body ">
+                                            <small class="pull-right text-navy">5h ago</small>
+                                            <strong>Chris Johnatan Overtunk</strong> started following <strong>Monica Smith</strong>. <br>
+                                            <small class="text-muted">Yesterday 1:21 pm - 11.06.2014</small>
+                                            <div class="actions">
+                                                <a class="btn btn-xs btn-white"><i class="fa fa-thumbs-up"></i> Like </a>
+                                                <a class="btn btn-xs btn-white"><i class="fa fa-heart"></i> Love</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="feed-element">
+                                        <a href="#" class="pull-left">
+                                            <img alt="image" class="img-circle" src="img/a5.jpg">
+                                        </a>
+                                        <div class="media-body ">
+                                            <small class="pull-right">2h ago</small>
+                                            <strong>Kim Smith</strong> posted message on <strong>Monica Smith</strong> site. <br>
+                                            <small class="text-muted">Yesterday 5:20 pm - 12.06.2014</small>
+                                            <div class="well">
+                                                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.
+                                                Over the years, sometimes by accident, sometimes on purpose (injected humour and the like).
+                                            </div>
+                                            <div class="pull-right">
+                                                <a class="btn btn-xs btn-white"><i class="fa fa-thumbs-up"></i> Like </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="feed-element">
+                                        <a href="#" class="pull-left">
+                                            <img alt="image" class="img-circle" src="img/profile.jpg">
+                                        </a>
+                                        <div class="media-body ">
+                                            <small class="pull-right">23h ago</small>
+                                            <strong>Monica Smith</strong> love <strong>Kim Smith</strong>. <br>
+                                            <small class="text-muted">2 days ago at 2:30 am - 11.06.2014</small>
+                                        </div>
+                                    </div>
+                                    <div class="feed-element">
+                                        <a href="#" class="pull-left">
+                                            <img alt="image" class="img-circle" src="img/a7.jpg">
+                                        </a>
+                                        <div class="media-body ">
+                                            <small class="pull-right">46h ago</small>
+                                            <strong>Mike Loreipsum</strong> started following <strong>Monica Smith</strong>. <br>
+                                            <small class="text-muted">3 days ago at 7:58 pm - 10.06.2014</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button class="btn btn-primary btn-block m"><i class="fa fa-arrow-down"></i> Show More</button>
+
+                            </div>
+
+-->
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        </form>
+        
+            <!-- Footer block -->
+            {require "../~section/footer.html"}
+            <!-- End Footer block -->
+
+
+        </div>
+        </div>
+
+
+
+    <!-- Mainly scripts -->
+    <script src="../js/jquery-2.1.1.js"></script>
+    <script src="../js/bootstrap.js"></script>
+    <script src="../js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="../js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+    <!-- Custom and plugin javascript -->
+    <script src="../js/inspinia.js"></script>
+    <script src="../js/plugins/pace/pace.min.js"></script>
+
+    <!-- Peity -->
+    <script src="../js/plugins/peity/jquery.peity.min.js"></script>
+
+    <!-- Peity -->
+    <script src="../js/demo/peity-demo.js"></script>
+    
+    
+    <!-- iCheck -->
+    <script src="../js/plugins/iCheck/icheck.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                $('.i-checks').iCheck({
+                    checkboxClass: 'icheckbox_square-green',
+                    radioClass: 'iradio_square-green',
+                });
+            });
+        </script>
+        
+        
+    <!--Input file-->    
+    <script src="../js/plugins/input-file/custom-file-input.js"></script>
+
+</body>
+
+</html>

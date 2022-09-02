@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>{$title}</title>
+		<link href="../css/bootstrap.min.css" rel="stylesheet">
+		<link href="../font-awesome/css/font-awesome.css" rel="stylesheet">
+		<link href="../css/plugins/jsTree/style.min.css" rel="stylesheet">
+		<link href="../css/animate.css" rel="stylesheet">
+		<link href="../css/style.css" rel="stylesheet">
+	</head>
+	<body>
+		<div id="wrapper">
+			
+			<!--Главное меню слева-->
+			{section "../~section/mainmenu.html"}
+			<!--Конец меню-->
+			
+			<div id="page-wrapper" class="gray-bg">
+				
+				<!-- Head menu -->
+				{section "../~section/head.html"}
+				<!-- End head menu -->
+				
+				<!-- Менюшка title-->
+				{section "../~section/title.html"}
+				<!-- конец title-->    
+				
+			
+				<div class="wrapper wrapper-content animated fadeInRight">
+					{if $tree['info']}
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="ibox float-e-margins">
+								<div class="ibox-content">
+									{$$tree['info']}
+								</div>
+							</div>
+						</div>
+					</div>
+					{end}
+
+					<div class="row">
+						<div class="col-lg-8">
+							<div class="ibox float-e-margins">
+								<div class="ibox-title">
+									<h5>{$tree['head']}</h5>
+									<div class="ibox-tools">
+										<a class="collapse-link">
+										<i class="fa fa-chevron-up"></i>
+										</a>
+										<a class="close-link">
+										<i class="fa fa-times"></i>
+										</a>
+									</div>
+								</div>
+								<div class="ibox-content">
+									<div id="pagetree">
+										<ul>
+											<li class="jstree-open">
+												{$tree['host']}
+												<ul>
+													{printItem($tree['list'])}
+												</ul>
+											</li>
+											<literal>
+												<?php
+													function printItem($elements)
+													{
+														foreach ($elements as $_keyname => $_item)
+														{								
+															if (is_object($_item))
+															{
+																$page = json_encode($_item);
+																echo "\r\n<li class='text-navy' data-jstree='{\"type\":\"html\"}' data-page='{$page}' onclick='printPageInfo(this)' >$_keyname</li>";
+															}
+															
+															if (is_array($_item))
+															{
+																echo "\r\n<li class='jstree-open'>$_keyname";
+																	echo "\r\n<ul>";
+																		printItem($_item);
+																	echo "\r\n</ul>";
+																echo "\r\n</li>";
+															}
+														}
+													}
+													
+													?>
+											</literal>
+											<!--
+												<li class="jstree-open">Admin theme
+												    <ul>
+												        <li>css
+												            <ul>
+												                <li data-jstree='((("type":"css")))'>animate.css</li>
+												                <li data-jstree='((("type":"css")))'>bootstrap.css</li>
+												                <li data-jstree='((("type":"css")))'>style.css</li>
+												            </ul>
+												        </li>
+												        <li>email-templates
+												            <ul>
+												                <li data-jstree='((("type":"html")))'>action.html</li>
+												                <li data-jstree='((("type":"html")))'>alert.html</li>
+												                <li data-jstree='((("type":"html")))'>billing.html</li>
+												            </ul>
+												        </li>
+												        <li>fonts
+												            <ul>
+												                <li data-jstree='((("type":"svg")))'>glyphicons-halflings-regular.eot</li>
+												                <li data-jstree='((("type":"svg")))'>glyphicons-halflings-regular.svg</li>
+												                <li data-jstree='((("type":"svg")))'>glyphicons-halflings-regular.ttf</li>
+												                <li data-jstree='((("type":"svg")))'>glyphicons-halflings-regular.woff</li>
+												            </ul>
+												        </li>
+												        <li class="jstree-open">img
+												            <ul>
+												                <li data-jstree='((("type":"img")))'>profile_small.jpg</li>
+												                <li data-jstree='((("type":"img")))'>angular_logo.png</li>
+												                <li class="text-navy" data-jstree='((("type":"img")))'>html_logo.png</li>
+												                <li class="text-navy" data-jstree='((("type":"img")))'>mvc_logo.png</li>
+												            </ul>
+												        </li>
+												        <li class="jstree-open">js
+												            <ul>
+												                <li data-jstree='((("type":"js")))'>inspinia.js</li>
+												                <li data-jstree='((("type":"js")))'>bootstrap.js</li>
+												                <li data-jstree='((("type":"js")))'>jquery-2.1.1.js</li>
+												                <li data-jstree='((("type":"js")))'>jquery-ui.custom.min.js</li>
+												                <li  class="text-navy" data-jstree='((("type":"js")))'>jquery-ui-1.10.4.min.js</li>
+												            </ul>
+												        </li>
+												        <li data-jstree='((("type":"html")))'> affix.html</li>
+												        <li data-jstree='((("type":"html")))'> dashboard.html</li>
+												        <li data-jstree='((("type":"html")))'> buttons.html</li>
+												        <li data-jstree='((("type":"html")))'> calendar.html</li>
+												        <li data-jstree='((("type":"html")))'> contacts.html</li>
+												        <li data-jstree='((("type":"html")))'> css_animation.html</li>
+												        <li  class="text-navy" data-jstree='((("type":"html")))'> flot_chart.html</li>
+												        <li  class="text-navy" data-jstree='((("type":"html")))'> google_maps.html</li>
+												        <li data-jstree='((("type":"html")))'> icons.html</li>
+												        <li data-jstree='((("type":"html")))'> inboice.html</li>
+												        <li data-jstree='((("type":"html")))'> login.html</li>
+												        <li data-jstree='((("type":"html")))'> mailbox.html</li>
+												        <li data-jstree='((("type":"html")))'> profile.html</li>
+												        <li  class="text-navy" data-jstree='((("type":"html")))'> register.html</li>
+												        <li data-jstree='((("type":"html")))'> timeline.html</li>
+												        <li data-jstree='((("type":"html")))'> video.html</li>
+												        <li data-jstree='((("type":"html")))'> widgets.html</li>
+												    </ul>
+												</li>
+												
+												-->
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-lg-4">
+							<div class="ibox float-e-margins"  >
+								<div class="ibox-title">
+									<h5>Подробнее о ссылке</h5>
+									<div class="ibox-tools">
+										<a class="collapse-link">
+										<i class="fa fa-chevron-up"></i>
+										</a>
+										<a class="close-link">
+										<i class="fa fa-times"></i>
+										</a>
+									</div>
+								</div>
+								<div class="ibox-content" >
+									<div class="row" id="page-info"  style="position: sticky; top:0;"></div>
+								</div>
+								
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<!-- Footer block -->
+				{section "../~section/footer.html"}
+				<!-- End Footer block -->
+			</div>
+		</div>
+		<!-- Mainly scripts -->
+		<script src="../js/jquery-2.1.1.js"></script>
+		<script src="../js/bootstrap.min.js"></script>
+		<script src="../js/plugins/metisMenu/jquery.metisMenu.js"></script>
+		<script src="../js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+		<!-- Custom and plugin javascript -->
+		<script src="../js/inspinia.js"></script>
+		<script src="../js/plugins/pace/pace.min.js"></script>
+		<script src="../js/plugins/jsTree/jstree.min.js"></script>
+		<style>
+			.jstree-open > .jstree-anchor > .fa-folder:before {
+			content: "\f07c";
+			}
+			.jstree-default .jstree-icon.none {
+			width: 0;
+			}
+		</style>
+		<script>
+			$(document).ready(function()
+			{
+			
+			    $('#pagetree').jstree({
+			        'core' : {
+			            'check_callback' : true
+			        },
+			        'plugins' : [ 'types', 'dnd' ],
+			        'types' : {
+			            'default' : {
+			                'icon' : 'fa fa-folder'
+			            },
+			            'html' : {
+			                'icon' : 'fa fa-file-code-o'
+			            },
+			            'svg' : {
+			                'icon' : 'fa fa-file-picture-o'
+			            },
+			            'css' : {
+			                'icon' : 'fa fa-file-code-o'
+			            },
+			            'img' : {
+			                'icon' : 'fa fa-file-image-o'
+			            },
+			            'js' : {
+			                'icon' : 'fa fa-file-text-o'
+			            },
+			            'link' : {
+			                'icon' : 'fa fa-link'
+			            }
+			
+			        }
+			    });
+			
+			    //~ $('#using_json').jstree({ 'core' : {
+			        //~ 'data' : [
+			            //~ 'Empty Folder',
+			            //~ {
+			                //~ 'text': 'Resources',
+			                //~ 'state': {
+			                    //~ 'opened': true
+			                //~ },
+			                //~ 'children': [
+			                    //~ {
+			                        //~ 'text': 'css',
+			                        //~ 'children': [
+			                            //~ {
+			                                //~ 'text': 'animate.css', 'icon': 'none'
+			                            //~ },
+			                            //~ {
+			                                //~ 'text': 'bootstrap.css', 'icon': 'none'
+			                            //~ },
+			                            //~ {
+			                                //~ 'text': 'main.css', 'icon': 'none'
+			                            //~ },
+			                            //~ {
+			                                //~ 'text': 'style.css', 'icon': 'none'
+			                            //~ }
+			                        //~ ],
+			                        //~ 'state': {
+			                            //~ 'opened': true
+			                        //~ }
+			                    //~ },
+			                    //~ {
+			                        //~ 'text': 'js',
+			                        //~ 'children': [
+			                            //~ {
+			                                //~ 'text': 'bootstrap.js', 'icon': 'none'
+			                            //~ },
+			                            //~ {
+			                                //~ 'text': 'inspinia.min.js', 'icon': 'none'
+			                            //~ },
+			                            //~ {
+			                                //~ 'text': 'jquery.min.js', 'icon': 'none'
+			                            //~ },
+			                            //~ {
+			                                //~ 'text': 'jsTree.min.js', 'icon': 'none'
+			                            //~ },
+			                            //~ {
+			                                //~ 'text': 'custom.min.js', 'icon': 'none'
+			                            //~ }
+			                        //~ ],
+			                        //~ 'state': {
+			                            //~ 'opened': true
+			                        //~ }
+			                    //~ },
+			                    //~ {
+			                        //~ 'text': 'html',
+			                        //~ 'children': [
+			                            //~ {
+			                                //~ 'text': 'layout.html', 'icon': 'none'
+			                            //~ },
+			                            //~ {
+			                                //~ 'text': 'navigation.html', 'icon': 'none'
+			                            //~ },
+			                            //~ {
+			                                //~ 'text': 'navbar.html', 'icon': 'none'
+			                            //~ },
+			                            //~ {
+			                                //~ 'text': 'footer.html', 'icon': 'none'
+			                            //~ },
+			                            //~ {
+			                                //~ 'text': 'sidebar.html', 'icon': 'none'
+			                            //~ }
+			                        //~ ],
+			                        //~ 'state': {
+			                            //~ 'opened': true
+			                        //~ }
+			                    //~ }
+			                //~ ]
+			            //~ },
+			            //~ 'Fonts',
+			            //~ 'Images',
+			            //~ 'Scripts',
+			            //~ 'Templates',
+			        //~ ]
+			    //~ } });
+			
+			});
+			
+			function printPageInfo(pagelink)
+			{
+				var pageInfo = $(pagelink).data('page');
+				var htmlData = '';
+				
+				console.log(pageInfo);
+				
+				htmlData += `<h4 class="col-md-12"> &nbsp; ${pageInfo.title}	</h4> <br>`;
+				htmlData += `<a href="${pageInfo.link}" target="_blank"class="text-info">  <h4 class="col-md-12">	<i class="fa fa-link text-navy text-center"> </i> &nbsp; ${pageInfo.url}	</h4> </a> `;
+				htmlData += `<span class="col-md-12">	<i class="fa fa-file-code-o"></i> &nbsp;	${pageInfo.html}	</span>`;
+				htmlData += `<span class="col-md-12">	<i class="fa fa-calendar-o"></i> &nbsp;	${pageInfo.version}	</span>`;
+				htmlData += `<span class="col-md-12">	<i class="fa fa-sitemap"></i> &nbsp;	${pageInfo.sitemap}	</span>`;
+				htmlData += `<span class="col-md-12">	<i class="fa fa-eye"></i> &nbsp;	${pageInfo.public}	</span>`;
+
+				htmlData += "<span> &nbsp; </span>";
+				htmlData += `<div class="!col-md-12 mt-4 pt-4 text-center">
+								
+									<a class="btn !btn-block btn-sm !col-md-6 !col-sm-12 btn-w-m btn-outline btn-primary" href="${pageInfo.link}" target="_blank">	<i class="fa fa-eye"></i>View</a>
+									<a class="btn !btn-block btn-sm !col-md-6 !col-sm-12 btn-w-m btn-outline btn-info" href="${pageInfo.edit}" target="_blank">	<i class="fa fa-edit"></i>Edit</a>
+								
+							</div>`;
+				
+				$("#page-info").html(htmlData);
+			}
+		</script>
+	</body>
+</html>

@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{$head}</title>
+
+    <link href="../../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../css/animate.css" rel="stylesheet">
+    <link href="../../css/style.css" rel="stylesheet">
+
+	<base id='urlbase' href="{$$base}">	
+</head>
+
+<body>
+
+    <div id="wrapper">
+
+		<!--Главное меню слева-->
+		{require "../../~section/mainmenu.html"}
+		<!--Конец меню-->
+
+        <div id="page-wrapper" class="gray-bg">
+        <div class="row border-bottom">
+        <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div class="navbar-header">
+            <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " ><i class="fa fa-bars"></i> </a>
+            {if $form['searche']}
+            <form role="search" class="navbar-form-custom" method="post" action="search_results.html">
+                <div class="form-group">
+                    <input type="text" placeholder="{$form['searche']['head']}" class="form-control" name="top-search" id="top-search">
+                </div>
+            </form>
+            {end}   
+        </div>
+            <ul class="nav navbar-top-links navbar-right">
+                <li>
+                    <span class="m-r-sm text-muted welcome-message">Welcome to INSPINIA+ Admin Theme.</span>
+                </li>
+                <li class="dropdown">
+                    <a class="dropdown-toggle count-info" data-toggle="dropdown" >
+                        <i class="fa fa-envelope"></i>  <span class="label label-warning">16</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-messages">
+                        <li>
+                            <div class="dropdown-messages-box">
+                                <a href="profile.html" class="pull-left">
+                                    <img alt="image" class="img-circle" src="img/a7.jpg">
+                                </a>
+                                <div class="media-body">
+                                    <small class="pull-right">46h ago</small>
+                                    <strong>Mike Loreipsum</strong> started following <strong>Monica Smith</strong>. <br>
+                                    <small class="text-muted">3 days ago at 7:58 pm - 10.06.2014</small>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <div class="dropdown-messages-box">
+                                <a href="profile.html" class="pull-left">
+                                    <img alt="image" class="img-circle" src="img/a4.jpg">
+                                </a>
+                                <div class="media-body ">
+                                    <small class="pull-right text-navy">5h ago</small>
+                                    <strong>Chris Johnatan Overtunk</strong> started following <strong>Monica Smith</strong>. <br>
+                                    <small class="text-muted">Yesterday 1:21 pm - 11.06.2014</small>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <div class="dropdown-messages-box">
+                                <a href="profile.html" class="pull-left">
+                                    <img alt="image" class="img-circle" src="img/profile.jpg">
+                                </a>
+                                <div class="media-body ">
+                                    <small class="pull-right">23h ago</small>
+                                    <strong>Monica Smith</strong> love <strong>Kim Smith</strong>. <br>
+                                    <small class="text-muted">2 days ago at 2:30 am - 11.06.2014</small>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <div class="text-center link-block">
+                                <a href="mailbox.html">
+                                    <i class="fa fa-envelope"></i> <strong>Read All Messages</strong>
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
+                        <i class="fa fa-bell"></i>  <span class="label label-primary">8</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-alerts">
+                        <li>
+                            <a href="mailbox.html">
+                                <div>
+                                    <i class="fa fa-envelope fa-fw"></i> You have 16 messages
+                                    <span class="pull-right text-muted small">4 minutes ago</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="profile.html">
+                                <div>
+                                    <i class="fa fa-twitter fa-fw"></i> 3 New Followers
+                                    <span class="pull-right text-muted small">12 minutes ago</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="grid_options.html">
+                                <div>
+                                    <i class="fa fa-upload fa-fw"></i> Server Rebooted
+                                    <span class="pull-right text-muted small">4 minutes ago</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <div class="text-center link-block">
+                                <a href="notifications.html">
+                                    <strong>See All Alerts</strong>
+                                    <i class="fa fa-angle-right"></i>
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+
+
+                <li>
+                    <a href="login.html">
+                        <i class="fa fa-sign-out"></i> Log out
+                    </a>
+                </li>
+            </ul>
+
+        </nav>
+        </div>
+		
+		<!--Менюшка title-->
+		{if $nav['path']}
+            <div class="row wrapper border-bottom white-bg page-heading">
+                <div class="col-lg-10">
+
+                    <h2>{$nav['path']['head']}</h2> 
+					
+					{//Получаем ключ последнего элемента. нужен для выделения}
+                    {( $end_key = key( array_slice( $nav['path']['list'], -1, 1, TRUE ) ) )}
+   
+                    <ol class="breadcrumb">
+						{foreach $nav['path']['list'] as $key => $value}
+							{if $end_key == $key }
+								<li class="active">
+									<strong>{$value['head']}</strong>
+								</li>
+							{else}
+								<li>
+									<a>{$value['head']}</a>
+								</li>                        
+							{end}	 
+                        {end}
+                    </ol>
+                </div>
+                <div class="col-lg-2">
+
+                </div>
+            </div>
+        {end}  
+            
+            
+        <div class="wrapper wrapper-content  animated fadeInRight">
+            <div class="row">
+                <div class="col-md-4">
+                    <div id="nestable-menu">
+                        <button type="button" data-action="expand-all" class="btn btn-white btn-sm">Expand All</button>
+                        <button type="button" data-action="collapse-all" class="btn btn-white btn-sm">Collapse All</button>
+                    </div>
+                    </div>
+                </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="ibox ">
+                        <div class="ibox-title">
+                            <h5 id='menu-name'>Название меню</h5>
+                        </div>
+                        
+                        <div class="ibox-content">
+
+                            <div class="m-b-lg">
+                                <strong>Nestable</strong> is an interactive hierarchical list. You can drag and drop to rearrange the order. It works well on touch-screens.
+									
+									<div class="col-md-7 ">
+										<input type="text" class="form-control" placeholder="Имя нового элемента"></input>
+									</div>
+									<div class="col-md-5">
+										<button type="button" class="btn btn-block btn-white "><i class="fa fa-plus"></i> Добавить элемент</button>
+									</div>
+                            </div>
+                            <div class="m-t-md"><br></div>
+
+                            <div class="dd" id="nestable" >
+                                <ol class="dd-list" >
+                                    <li class="dd-item" data-id="1">
+										<div class='btn btn-circle btn-outline btn-danger pull-right fa fa-trash ' onclick="alert('!')"></div>
+										<div class='btn btn-circle btn-outline btn-primary pull-right fa fa-align-justify ' onclick="alert('!')"></div>
+                                         <div class="dd-handle">1 - Lorem ipsum </div>              
+                                    </li>
+                                    <li class="dd-item" data-id="2">
+                                        <div class="dd-handle">2 - Dolor sit</div>
+                                        <ol class="dd-list">
+                                            <li class="dd-item" data-id="3">
+                                                <div class="dd-handle">3 - Adipiscing elit</div>
+                                            </li>
+                                            <li class="dd-item" data-id="4">
+                                                <div class="dd-handle">4 - Nonummy nibh</div>
+                                            </li>
+                                        </ol>
+                                    </li>
+                                    <li class="dd-item" data-id="5">
+                                        <div class="dd-handle">5 - Consectetuer</div>
+                                        <ol class="dd-list">
+                                            <li class="dd-item" data-id="6">
+                                                <div class="dd-handle">6 - Aliquam erat</div>
+                                            </li>
+                                            <li class="dd-item" data-id="7">
+                                                <div class="dd-handle">7 - Veniam quis</div>
+                                            </li>
+                                        </ol>
+                                    </li>
+                                    <li class="dd-item" data-id="8">
+                                        <div class="dd-handle">8 - Tation ullamcorper</div>
+                                    </li>
+                                    <li class="dd-item" data-id="9">
+                                        <div class="dd-handle">9 - Ea commodo</div>
+                                    </li>
+                                </ol>
+                            </div>
+                            <div class="m-t-md">
+                                <h5>Serialised Output</h5>
+                            </div>
+                            <textarea id="nestable-output" class="form-control"></textarea>
+
+                        </div>
+                    
+                    
+                    </div>
+                </div>
+                
+                <div class="col-lg-6">
+                    <div class="ibox ">
+                        <div class="ibox-title">
+                            <h5 id='element-name'>Описание свойства элемента</h5>
+                            <a href="admin/constructor/object/edit" class="btn btn-primary btn-xs pull-right">Сохранить свойства объекта</a>
+                        </div>
+                        
+                        <div class="ibox-content">
+<!--
+                            <h2>
+                                List of built-in Validation methods
+                            </h2>
+-->
+
+							<p>
+<!--
+								<strong>Nestable</strong> is an interactive hierarchical list. You can drag and drop to rearrange the order. It works well on touch-screens.
+-->
+								<button  type="button" class="btn btn-block btn-white">Добавить элемент</button>
+							</p>
+							
+                                
+                            
+
+                            <table class="table table-bordered">
+                                <thead>
+                                <tr>
+                                    <th class="col-lg-3">Свойство</th>
+                                    <th>Содержание</th>
+                                </tr>
+                                </thead>
+                                <tbody id='object_info'>
+<!--
+                                <tr>
+                                    <td><input type="text" placeholder="placeholder" class="form-control"></td>
+                                    <td><input type="text" placeholder="placeholder" class="form-control"></td>
+                                </tr>
+-->
+                                <tr>
+                                    <td> head</td>
+                                    <td> Заголовок элемента</td>
+                                </tr>
+                                <tr>
+                                    <td> link</td>
+                                    <td> Cсылка элемента; для форм — контроллер действия</td>
+                                </tr>
+                                <tr>
+                                    <td> info</td>
+                                    <td> Дополнительная информация</td>
+                                </tr>
+                                <tr>
+                                    <td> image</td>
+                                    <td> Путь к файлу изображений</td>
+                                </tr>
+                                <tr>
+                                    <td> icon</td>
+                                    <td> Иконка элемента (при поддержке шаблоном bootstrap)</td>
+                                </tr>                              
+                                <tr>
+                                    <td> date</td>
+                                    <td> Дата</td>
+                                </tr>
+                                <tr>
+                                    <td> time</td>
+                                    <td> Время</td>
+                                </tr>
+                                <tr>
+                                    <td> active</td>
+                                    <td> Флаг активности элемента/компонента</td>
+                                </tr>
+                                <tr>
+                                    <td> name</td>
+                                    <td> Внутреннее имя элемента</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            <div class="pull-right">
+                10GB of <strong>250GB</strong> Free.
+            </div>
+            <div>
+                <strong>Copyright</strong> Example Company &copy; 2014-2015
+            </div>
+        </div>
+
+        </div>
+        </div>
+
+
+
+    <!-- Mainly scripts -->
+    <script src="../../js/jquery-2.1.1.js"></script>
+    <script src="../../js/bootstrap.min.js"></script>
+    <script src="../../js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="../../js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+    <!-- Nestable List -->
+    <script src="../../js/plugins/nestable/jquery.nestable.js"></script>
+
+    <!-- Custom and plugin javascript -->
+    <script src="../../js/inspinia.js"></script>
+    <script src="../../js/plugins/pace/pace.min.js"></script>
+    
+	<!--Object script constructor-->
+	<script src="../../js/data/objects-editor.js"></script>
+	<script src="../../js/data/http-get.js"></script>
+
+    <script>
+		function tree_inicial()
+		{
+			var updateOutput = function (e) 
+			{
+                 var list = e.length ? e : $(e.target),
+                         output = list.data('output');
+                 if (window.JSON) {
+                     output.val(window.JSON.stringify(list.nestable('serialize')));//, null, 2));
+                 } else {
+                     output.val('JSON browser support required for this demo.');
+                 }
+             };
+             // activate Nestable for list 1
+             $('#nestable').nestable(
+				{
+					group: 1
+				}).on('change', updateOutput);
+
+             // activate Nestable for list 2
+             //~ $('#nestable2').nestable({
+                 //~ group: 1
+             //~ }).on('change', updateOutput);
+
+             // output initial serialised data
+             updateOutput($('#nestable').data('output', $('#nestable-output')));
+             //~ updateOutput($('#nestable2').data('output', $('#nestable2-output')));
+
+            $('#nestable-menu').on('click', function (e) 
+			{
+                 var target = $(e.target),
+                         action = target.data('action');
+
+                 if (action === 'expand-all') {
+                     $('.dd').nestable('expandAll');
+                 }
+                 if (action === 'collapse-all') {
+                     $('.dd').nestable('collapseAll');
+                 }
+			});
+		}
+		//Штука нужна для того, что бы менюшку можно было двигать
+        $(document).ready(tree_inicial());
+             
+        
+        
+        function menu_repaint(name)
+        {
+			//Запрашиваем все необходимые данные
+			var urlbase = document.getElementById('urlbase').href;
+			var html_div_id = document.getElementById('nestable');			
+			var menu = url_get(urlbase+'admin/constructor/menu/get?name='+btoa(name));
+			
+			//Очищаем поле вывода
+			objects_tree_clear(html_div_id);			
+			//JSON в объект
+			menu = JSON.parse(  menu   );				
+			//Рисуем дерево меню и вешаем ссылку на редактирование
+			objects_tree_paint(html_div_id, menu, urlbase+'admin/constructor/menu/edit?name='+btoa(name));	
+			//Рисуем заголовок меню
+			document.getElementById('menu-name').innerHTML = name;
+			
+		}
+		
+		function menu_edit(name)
+		{
+			//Запрашиваем все необходимые данные
+			var urlbase = document.getElementById('urlbase').href;
+			var menuname = document.getElementById('menu-name').innerHTML;
+			
+			location.href = 'admin/constructor/menu/edit?menu='+(menuname);
+		}     
+            
+            
+        //Отрисуем дерево менюшки
+        var menuname = (parseGetParams()['menu']);
+        menu_repaint( menuname );   
+        
+        $('.infobtn').on('click', function(e)
+        {
+			//~ alert(this.treename);
+			//~ console.log(this.parentnode());
+			
+		});
+             
+            //~ $('#object_info').on('click', function(e)
+			//~ {
+				//~ var object = [];
+				//~ object.push(object_test_tree_create());
+				
+				//~ var html_div_id = document.getElementById('nestable');
+				//~ objects_tree_clear(html_div_id);
+				//~ objects_tree_paint(html_div_id, object);
+				
+				//~ var object = object_test_create();
+				//~ objects_table_paint('object_info', object);
+				//~ objects_table_getting('object_info');
+				//~ tree_inicial();
+			//~ });
+    
+    </script>
+
+</body>
+
+</html>

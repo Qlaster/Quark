@@ -1,0 +1,233 @@
+
+
+				<form method="POST" enctype="multipart/form-data" id='formx' action="javascript:void(null);" onsubmit="call2('{$$table['action']}')" >
+<!--
+				<form method="POST" enctype="multipart/form-data" id='formx' action="{$$table['action']}" >
+-->
+
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h5 class="modal-title">Запись в таблице</h5>
+<!--
+                        <small class="font-bold">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</small>
+-->
+                    </div>
+                    <div class="modal-body">
+						
+<!--
+						<div class="alert alert-warning alert-dismissable text-center hidden" id="message_alert" >
+                                <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                                <p id='alert'></p>
+                        </div>
+-->
+						<div id='ModalEditBody'>
+							
+
+							
+							{foreach (array) $table['data']['list'] as $_key => $_record}
+								{if 		$_record['type'] == 'INT'}
+									<div class="form-group"><label class="col-sm-12 control-label">{$_record['head']}  [{$_record['name']}]</label>
+										<div class="col-sm-12">
+											<input  name="{$_record['name']}" type="number" placeholder="{$_record['name']}" class="form-control  m-b" value="{$_record['text']}">
+										</div>
+									</div>
+								{elseif 	$_record['type'] == 'REAL'}
+									<div class="form-group"><label class="col-sm-12 control-label">{$_record['head']}  [{$_record['name']}]</label>
+										<div class="col-sm-12">
+											<input  name="{$_record['name']}" type="number" step="any" placeholder="{$_record['name']}" class="form-control m-b" value="{$_record['text']}">
+										</div>
+									</div>
+								{elseif $_record['type'] == 'HTML'}
+									<div class="form-group"><label class="col-sm-12 control-label">{$_record['head']}  [{$_record['name']}]</label>
+										<div class="col-sm-12">
+											{;$_i++}
+											<textarea name="{$_record['name']}" placeholder="{$_record['name']}" class="form-control html-editor" id="editor-{$_i}">{$_record['text']}</textarea> 
+										</div>
+										
+									</div>
+								{elseif $_record['type'] == 'LINK'}
+									<div class="form-group"><label class="col-sm-12 control-label">{$_record['head']}  [{$_record['name']}]</label>
+										<div class="col-sm-12">
+											<input  name="{$_record['name']}" type="text" placeholder="{$_record['name']}" class="form-control  m-b" value="{$_record['text']}">
+										</div>
+									</div>
+								{elseif $_record['type'] == 'IMAGE'}
+									<div class="form-group"><label class="col-sm-12 control-label">{$_record['head']}  [{$_record['name']}]</label>
+										<div class="col-sm-12">		
+											<div class="input-group">
+													<input class="form-control m-b" type="text" id="input_{$_record['name']}" name="{$_record['name']}" value="{$_record['text']}">
+                                                    <span class="input-group-btn">
+                                                        <button class="btn btn-primary" type="button" onclick=" this.childNodes[1].click();">
+															
+															Загрузить
+															<input type="file"  class="hidden" name="{$_record['name']}" multiple accept="image/*,image/jpeg" onchange="$('#input_{$_record['name']}').val(this.value.replace(/.*(\/|\\)/, '')); ">
+                                                        </button>
+<!--
+                                                        <a class="btn btn-primary" data-toggle="modal" data-target="#ModalForm_HTML">
+															<i class="fa fa-file-code-o"></i>
+														</a>
+-->													
+                                                    </span>
+                                            </div>
+										</div>
+									</div>
+								{elseif $_record['type'] == 'AUDIO'}
+									<div class="form-group"><label class="col-sm-12 control-label">{$_record['head']}  [{$_record['name']}]</label>
+										<div class="col-sm-12">		
+											<div class="input-group">
+													<input class="form-control m-b" type="text" id="input_{$_record['name']}" name="{$_record['name']}" value="{$_record['text']}">
+                                                    <span class="input-group-btn">
+                                                        <button class="btn btn-primary" type="button" onclick=" this.childNodes[1].click();">
+															
+															Загрузить
+															<input type="file"  class="hidden" name="{$_record['name']}" multiple accept="audio/*" onchange="$('#input_{$_record['name']}').val(this.value.replace(/.*(\/|\\)/, '')); ">
+                                                        </button>
+                                                    </span>
+                                            </div>
+										</div>
+									</div>
+								{else}
+									<div class="form-group"><label class="col-sm-12 control-label">{$_record['head']}  [{$_record['name']}]</label>
+										<div class="col-sm-12">
+											<textarea name="{$_record['name']}" placeholder="{$_record['name']}" class="form-control">{$_record['text']}</textarea> 
+										</div>
+									</div>
+								{end}
+							{end}
+							<strong>-</strong>
+							
+
+						</div>
+                    </div>
+
+                    <div class="modal-footer">
+						
+                        <button type="button" class="btn btn-white" data-dismiss="modal">  Close</button>
+<!--
+                        <button type="button" class="btn btn-primary"> <img height="20px" src="themes/admin/img/animation/load20.gif" class="" id="loading"> Save changes</button>
+-->
+                      
+                        <input type="submit" class="btn btn-primary" value='Save changes' id='submit_button'>
+                        <img height="30px" src="../themes/admin/img/animation/load4.gif" class="hidden" id="loading">
+                    </div>
+				</form>
+
+				<!-- Mainly scripts -->
+<!--
+				<script src="~/js/jquery-2.1.1.js"></script>
+-->
+<!--
+				<script src="~/js/bootstrap.min.js"></script>
+-->
+
+
+				<!-- <script src="~/js/plugins/ckeditor/ckeditor_run.js"></script> -->
+
+				
+				
+
+
+					<script type="text/javascript" language="javascript">
+						function call(act) 
+						{
+						  var msg   = $('#formx').serialize();
+							$.ajax({
+							  type: 'POST',
+							  url: act,
+							  data: msg,
+							  success: function(data) 
+							  {
+								$('#alert').html(data);						//загружаем ответ на форму
+								$('#table-alert').html(data);				//отображаем ответ в таблице
+								$('#table-alert').removeClass('hidden');	//показываем
+								//$('#table-alert').addClass('alert-warning');//помечаем измененную строку
+								
+							  },
+							  error:  function(xhr, str){
+							alert('Возникла ошибка: ' + xhr.responseCode);
+							  }
+							});
+							
+							$("#ModalEdit").modal('hide');
+							//~ $('#ModalEdit').close();
+						}
+						
+						
+						function call2(act)
+						{	
+							//Костыль для автоматического обновления textarea в CKEditor	
+							for (key in CKEDITOR.instances) console.log(CKEDITOR.instances[key].updateElement());
+							//for (var i = 1; i <= 100; i++) 
+							//	if (CKEDITOR.instances['editor-'+i] !== undefined) CKEDITOR.instances['editor-1'].updateElement();
+							
+						
+							var form = document.forms.formx;
+							var formData = new FormData(form); 
+				
+							var xhr = new XMLHttpRequest();
+							xhr.open("POST", act);
+							
+							xhr.onreadystatechange = function() 
+							{
+										if (xhr.readyState == 4) {
+											if(xhr.status == 200) {
+												data = xhr.responseText;
+
+												$('#alert').html(data);						//загружаем ответ на форму
+												$('#table-alert').html(data);				//отображаем ответ в таблице
+												$('#table-alert').removeClass('hidden');	//показываем
+												
+												$("#ModalEdit").modal('hide');
+											}
+										}
+							};
+							xhr.send(formData);
+							$('#loading').removeClass('hidden');
+							$('#submit_button').val('Loading...');
+						}
+						
+							  //~ $(document).ready(function(){
+								   //~ $("#submit").click(function()
+								   //~ {
+										//~ if($(this).hasClass("somecls"))
+											//~ $("#formx").submit();
+										//~ return false;
+										//~ javascript:void(null);
+								   //~ })
+								   
+								//~ })
+							
+						
+					</script>
+					
+					
+					<!-- Редактор контента -->
+					<script>
+						$(document).ready(function(){
+
+							//$('.summernote').summernote();
+
+					   });
+						var edit = function() {
+							$('.click2edit').summernote({focus: true});
+						};
+						var save = function() {
+							var aHTML = $('.click2edit').code(); //save HTML If you need(aHTML: array).
+							$('.click2edit').destroy();
+						};
+						
+						initSample();
+					</script>
+					
+					<script>//Костыль для работы в модальном окне CKEditor
+						$(document).on('focusin.modal', function (e) 
+						{
+								if (modal_this.$element[0] !== e.target && !modal_this.$element.has(e.target).length
+								// add whatever conditions you need here:
+								&&
+								!$(e.target.parentNode).hasClass('cke_dialog_ui_input_select') && !$(e.target.parentNode).hasClass('cke_dialog_ui_input_text')) 
+								{
+									modal_this.$element.focus()
+								}
+						})
+					</script>	

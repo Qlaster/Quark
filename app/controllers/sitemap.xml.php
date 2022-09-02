@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='UTF-8'?>
+						<urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
+								<url>
+								<loc>http://beta.qlaster.tech/index</loc>
+								<lastmod>2021-06-10</lastmod>
+							</url>
+						 	<url>
+								<loc>http://beta.qlaster.tech/activity/computer-service</loc>
+								<lastmod>2020-09-10</lastmod>
+							</url>
+						 	<url>
+								<loc>http://beta.qlaster.tech/activity/video</loc>
+								<lastmod>2020-07-20</lastmod>
+							</url>
+						 	<url>
+								<loc>http://beta.qlaster.tech/activity/linux</loc>
+								<lastmod>2020-07-20</lastmod>
+							</url>
+						 	<url>
+								<loc>http://beta.qlaster.tech/activity/app-develop</loc>
+								<lastmod>2020-07-20</lastmod>
+							</url>
+						 	<url>
+								<loc>http://beta.qlaster.tech/activity/network</loc>
+								<lastmod>2020-07-20</lastmod>
+							</url>
+						 	<url>
+								<loc>http://beta.qlaster.tech/activity/ad</loc>
+								<lastmod>2021-06-01</lastmod>
+							</url>
+						 	<url>
+								<loc>http://beta.qlaster.tech/info/about</loc>
+								<lastmod>2020-01-04</lastmod>
+							</url>
+						 	<url>
+								<loc>http://beta.qlaster.tech/index_fork</loc>
+								<lastmod>2021-07-21</lastmod>
+							</url>
+						 
+						</urlset>

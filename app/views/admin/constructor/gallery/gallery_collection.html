@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>{$title}</title>
+		<link href="../../css/bootstrap.min.css" rel="stylesheet">
+		<link href="../../font-awesome/css/font-awesome.css" rel="stylesheet">
+		<link href="../../css/animate.css" rel="stylesheet">
+		<link href="../../css/style.css" rel="stylesheet">
+		<base id='urlbase' href="{$$base}">
+	</head>
+	<body>
+		<div id="wrapper">
+			<!--Главное меню слева-->
+			{require "../../~section/mainmenu.html"}
+			<!--Конец меню-->
+			<div id="page-wrapper" class="gray-bg">
+				<!-- Head menu -->
+				{require "../../~section/head.html"}
+				<!-- End head menu -->   
+				<!-- Менюшка title-->
+				{require "../../~section/title.html"}
+				<!-- конец title-->   
+				<div class="wrapper wrapper-content">
+					<div class="row">
+						<div class="col-lg-4 animated fadeInDown">
+							<div class="ibox float-e-margins">
+								<div class="ibox-content">
+									<div class="file-manager">
+										<h5>{$catalog['collection']['head']}</h5>
+										<!--
+											<a href="#" class="file-control active">Ale</a>
+											<a href="#" class="file-control">Documents</a>
+											<a href="#" class="file-control">Audio</a>
+											<a href="#" class="file-control">Images</a>
+											-->
+										<div class="hr-line-dashed"></div>
+										<form action="{$form['collection']['action']}" method='get'>
+											<input name='name' placeholder="Название новой галереи" class="form-control">   
+											<p></p>
+											<button type="submit" class="btn btn-primary btn-block">{$form['collection']['button']['add']['head']}</button>
+										</form>
+										<div class="hr-line-dashed"></div>
+										<h5>{$catalog['collection']['info']}</h5>
+										<ul class="folder-list" style="padding: 0">
+											{foreach (array) $catalog['collection']['list'] as $_value}
+											{if $_value['active']}
+											<li class='text-info'>
+												{else}
+											<li>
+												{end}
+												<a href="{$_value['link']}"><i class="{$_value['icon']}"></i>{$_value['head']}</a>
+												<!--
+													<a onclick="menu_repaint('{$_value['head']}')"><i class="{$_value['icon']}"></i>{$_value['head']}</a>
+													-->
+												<a href="{$_value['delete_link']}">
+												<button type="button" class="btn btn-warning btn-xs pull-right"><span class="fa {$_value['delete_icon']}"></span> {$_value['delete_head']}</button>
+												</a>
+											</li>
+											{end}
+										</ul>
+										<div class="clearfix"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-lg-8 animated fadeInRight">
+							<div class="row">
+								<div class="col-lg-12">
+									<div class="ibox ">
+										<div class="ibox-title">
+											<h5>Содержимое:</h5>
+											<a href="{$catalog['objects']['button']['edit']['link']}" class="btn btn-success btn-xs pull-right"> <span class="{$catalog['objects']['button']['edit']['icon']}"></span> {$catalog['objects']['button']['edit']['head']}</a>
+										</div>
+										<div class="ibox-content" id='menuname'>
+											<div class="carousel slide" id="carousel2">
+												<ol class="carousel-indicators">
+													{;$active = 'active'}
+													{foreach (array)$catalog['object']['list'] as $_key => $_value}
+													<li data-slide-to="$_key" data-target="#carousel2"  class="{$active}"></li>
+													{unset($active)}
+													{end}
+													<!--
+														<li data-slide-to="1" data-target="#carousel2"></li>
+														<li data-slide-to="2" data-target="#carousel2" class=""></li>
+														-->
+												</ol>
+												<div class="carousel-inner">
+													{;$active = 'active'}
+													{foreach (array)$catalog['object']['list'] as $_key => $_value}
+													<div class="item {$active} ">
+														<img alt="image"  class="img-responsive" style="margin: auto; min-height:10em" src="{$_value['image']}">
+														<div class="carousel-caption">
+															<p class="label">{$_value['head']}</p>
+														</div>
+													</div>
+													{unset($active)}
+													{end}
+													<!--
+														<div class="item ">
+															<img alt="image"  class="img-responsive" src="~/img/p_big3.jpg">
+															<div class="carousel-caption">
+																<p>This is simple caption 2</p>
+															</div>
+														</div>
+														<div class="item">
+															<img alt="image"  class="img-responsive" src="~/img/p_big2.jpg">
+															<div class="carousel-caption">
+																<p>This is simple caption 3</p>
+															</div>
+														</div>
+														-->
+												</div>
+												<a data-slide="prev" href="#carousel2" class="left carousel-control">
+												<span class="icon-prev"></span>
+												</a>
+												<a data-slide="next" href="#carousel2" class="right carousel-control">
+												<span class="icon-next"></span>
+												</a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- Footer block -->
+				{require "../../~section/footer.html"}
+				<!-- End Footer block -->
+			</div>
+		</div>
+		<!-- Mainly scripts -->
+		<script src="../../js/jquery-2.1.1.js"></script>
+		<script src="../../js/bootstrap.min.js"></script>
+		<script src="../../js/plugins/metisMenu/jquery.metisMenu.js"></script>
+		<script src="../../js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+		<!-- Custom and plugin javascript -->
+		<script src="../../js/inspinia.js"></script>
+		<script src="../../js/plugins/pace/pace.min.js"></script>
+		<script src="../../js/data/http-get.js"></script>
+		<!-- Menu getter/construction tools -->
+		<script src="../../js/data/menu-editor.js"></script>
+		<script src="../../js/data/objects-editor.js"></script>
+
+		<script>
+			 $(document).ready(function(){
+				 $('.file-box').each(function() {
+					 animationHover(this, 'pulse');
+				 });
+			 });
+			 
+			 
+			 function menu_repaint(name)
+			 {
+				 //Запрашиваем все необходимые данные
+				 var urlbase = document.getElementById('urlbase').href;
+				 var html_div_id = document.getElementById('nestable');			
+				 var menu = url_get(urlbase+'admin/constructor/gallery/get?name='+encodeURIComponent(name));
+				 
+				 
+				 //~ alert(menu);
+				 //Очищаем поле вывода
+				 objects_tree_clear(html_div_id);			
+				 //JSON в объект
+				 menu = JSON.parse(  menu   );	
+				 
+				 
+				 
+				 //Рисуем дерево меню и вешаем ссылку на редактирование
+				 objects_tree_paint(html_div_id, menu, urlbase+'admin/constructor/gallery/edit?name='+encodeURIComponent(name));	
+				 //Рисуем заголовок меню
+				 document.getElementById('menuname').innerHTML = name;
+				 
+			 }
+			 
+			 function menu_edit(name)
+			 {
+				 //Запрашиваем все необходимые данные
+				 var urlbase = document.getElementById('urlbase').href;
+				 var menuname = document.getElementById('menuname').innerHTML;
+				 
+				 location.href = 'admin/constructor/gallery/edit?name='+encodeURIComponent(menuname);
+			 }
+			 
+			 
+			 function test()
+			 {
+				 
+				 //Запрашиваем все необходимые данные
+				 var urlbase = document.getElementById('urlbase').href;
+				 var html_div_id = document.getElementById('nestable');
+				 var menuname = document.getElementById('menuname').innerHTML;
+				 
+				 //Находим меню
+				 var test = document.getElementById('nestable');		
+				 //Забираем данные из тела документа
+				 var res = object_tree_compilation(test);
+				 //Ценнейшая функция от парня с запада=)
+				 res = jsObj2phpObj(res);
+				 
+				 //~ alert(res);
+				 //~ res = $.makeArray(res);
+				 //~ res = JSON.stringify(res);
+				 //~ console.log(res.serializeArray());
+				 //~ console.log(res);
+				 
+				 var data = encodeURIComponent(res);
+				 var name = encodeURIComponent('menuname');
+				 
+				 
+				 
+				 //~ $.ajax
+				 //~ ({
+				 //~ type: "POST",
+				 //~ url: urlbase+'admin/constructor/menu/set',
+				 //~ data: name+'='+data,
+				 //~ });
+				 
+				 
+				 
+				 //~ $.post(urlbase+'admin/constructor/menu/set', { name: '"'+res+'"' } );
+				 
+				 //Отправляем инфу на сервер
+				 $.post(urlbase+'admin/constructor/gallery/set', { name: menuname, data: (res) });
+				 
+				 //~ url_post(urlbase+'admin/constructor/menu/save', 'menu', );
+				 
+				 
+			 
+			 }
+			 
+			 
+			 
+			 
+			 
+		</script>
+   </body>
+</html>

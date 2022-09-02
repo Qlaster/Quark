@@ -1,0 +1,44 @@
+
+											<h4> 
+												{if $info['dir']}<i class="fa fa-folder text-navy text-center" > </i> {else}<i class="fa fa-file text-navy text-center" > </i>{end}
+												
+												
+												{$info['name']}
+											
+											</h4>
+
+										
+<!--
+												<div class="col-md-3 col-lg-3 text-center">
+													{if $info['dir']}
+														<i class="fa fa-folder forum-icon mid-icon text-navy text-center" > </i>
+													{else}
+														<i class="fa fa-file forum-icon mid-icon text-navy text-center" > </i>
+													{end}											
+												</div>
+-->
+										
+									
+
+											<div class="">
+												<ul class="list-unstyled project-files ">
+													<li>	<i class="fa fa-file"></i> Создан:	{$info['ctime']}			</li>
+													<li>	<i class="fa fa-download"></i> Изменен:	{$info['mtime']}			</li>
+													<li>	<i class="fa fa-file-picture-o"></i> Размер: {$info['size']}	</li>
+													{if $info['write']}
+														<li>	<i class="fa fa-unlock-alt"></i> доступ: <label class="label text-success">полный </label>	</li>
+													{else}
+														<li>	<i class="fa fa-lock"></i> доступ: <label class="label text-success">	ограниченный</label>	</li>
+													{end}
+
+												</ul>
+												
+												{if !$info['dir']}
+												<div class="text-center m-t-md">
+													<a href="admin/app/codeeditor/?file={$info['path']}" class="btn btn-xs btn-primary text-center">Редактировать</a>
+												</div>
+												{end}
+											</div>
+										
+
+

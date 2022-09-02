@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Qlaser | File Manager</title>
+
+    <link href="../../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../font-awesome/css/font-awesome.css" rel="stylesheet">
+	
+	<link href="../../css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="../../css/animate.css" rel="stylesheet">
+    <link href="../../css/style.css" rel="stylesheet">
+	
+	<base href="{$$base}" id='baseurl' data-info='../../'>	
+</head>
+
+<body >
+
+    <div id="wrapper">
+		
+		<!--Главное меню слева-->
+		{require "../../~section/mainmenu.html"}
+		<!--Конец меню-->
+        
+
+        <div id="page-wrapper" class="gray-bg">
+		
+		<!-- Head menu -->
+		{require "../../~section/head.html"}
+		<!-- End head menu -->   
+			
+   		<!--Менюшка title-->
+		{if $nav['path']}
+            <div class="row wrapper border-bottom white-bg page-heading">
+                <div class="col-lg-7">
+
+                    <h2>{$nav['path']['head']}</h2> 
+					
+					{//Получаем ключ последнего элемента. нужен для выделения}
+                    {( $end_key = key( array_slice( $nav['path']['list'], -1, 1, TRUE ) ) )}
+   
+                    <ol class="breadcrumb">
+						{foreach $nav['path']['list'] as $key => $value}
+							{if $end_key == $key }
+								<li class="active">
+									<strong>{$value['head']}</strong>
+								</li>
+							{else}
+								<li>
+									<a>{$value['head']}</a>
+								</li>                        
+							{end}	 
+                        {end}
+                        
+                        <div class='pull-right' >
+<!--
+							<button type="button" class="btn btn-w-m btn-white">{$path}</button>
+-->
+<!--
+                            <li></li>
+-->
+                        </div>
+                    </ol>
+                </div>
+                <div class="col-lg-5">
+<!--
+					<button type="button" class="btn btn-primary btn-w-m btn-white pull-right">{$path}</button>
+					<li role="tab" class="disabled" aria-disabled="true"><a id="wizard-t-1" href="#wizard-h-1" aria-controls="wizard-p-1"><span class="number">2.</span> {$path} </a></li>
+-->
+					
+					<div class="form-group">
+                        <h3> </h3>
+                        <input id="userName" name="userName" class="form-control required" aria-required="true" type="text" value="{$path}">
+                    </div>
+                                            
+                </div>
+            </div>
+        {end}  
+        
+        <div class="wrapper wrapper-content">
+            <div class="row">
+                <div class="col-lg-2 " style='padding:0'>
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-content" >
+                            <div class="file-manager" >
+								
+								<div class='text-center'>
+									<a href="{$menu['buttons']['back']['link']}" title="Назад">
+										<button class="btn btn-default"> <i class="fa fa-mail-reply"> </i> </button>
+									</a>
+
+									
+									<a  title="Создать директорию" onclick="create_dir('', '{$path}')">
+										<button class="btn btn-default">✛<i class="fa fa-folder-open-o"></i></button>
+									</a>
+									<a  title="Создать файл" onclick="create_file('', '{$path}')">
+										<button class="btn btn-default">✛<i class="fa fa-file-o"></i></button>
+									</a>
+<!--
+									<a href="{$menu['buttons']['create_file']['link']}" title="Вставить">
+										<button class="btn btn-default"><i class="fa fa-paste "></i></button>
+									</a>
+-->
+								</div>
+								
+								
+                               
+                                <div class="hr-line-dashed"></div>  
+                                
+<!--
+                                <input class="form-control m-b" type="text" id="input_{$_record['name']}" name="{$_record['name']}" value="{$_record['text']}">
+                                <button class="btn btn-primary" type="button" onclick=" this.childNodes[1].click();">
+									Загрузить file
+									<input type="file"  class="hidden" name="{$_record['name']}" multiple accept="image/*,image/jpeg" onchange="$('#input_{$_record['name']}').val(this.value.replace(/.*(\/|\\)/, '')); ">
+                                </button>   
+-->
+                                 
+                                <div id='load-info'>
+									Выделите элемент для просмотра информации о нём                                
+								</div>                          
+								
+                                <button class="btn btn-primary btn-block" onclick="$('#files').click();">
+									Загрузить файл
+                                </button>
+                                
+                                <form id='uploadform' onsubmit="alert('submit'); return false;">
+									<input  id="files" type="file"  class="hidden" name="files[]" onchange="upload_repaint(this, 'load-info'); " > <!--multiple-->
+									<div id="cnuploader_progresscomplete"></div>
+									<input type='submit'>
+								</form>
+
+                                <div class="hr-line-dashed"></div>
+                                <h5>{$menu['folders']['head']}</h5>
+                                <ul class="folder-list" style="padding: 0">
+									{foreach $menu['folders']['list'] as $_key => $_section}
+										<li><a href="{$_section['link']}"><i class="fa {$_section['icon']}"></i>{$_section['head']}</a></li>
+                                    {end}
+<!--
+                                    <li><a href=""><i class="fa fa-folder"></i> Pictures</a></li>
+                                    <li><a href=""><i class="fa fa-folder"></i> Web pages</a></li>
+                                    <li><a href=""><i class="fa fa-folder"></i> Illustrations</a></li>
+                                    <li><a href=""><i class="fa fa-folder"></i> Films</a></li>
+                                    <li><a href=""><i class="fa fa-folder"></i> Books</a></li>
+-->
+                                </ul>
+                                                                  
+<!--
+                                <h5>Буфер обмена:</h5>                               
+                                <div id='ibox-content'>
+									<p class="file-control ">Выделите элемент для просмотра информации о нём</p>									
+								</div>
+-->
+								
+                                
+                                <div class="hr-line-dashed"></div>     
+                                
+                                <h5>Информация:</h5>                               
+                                <div id='ibox-content'>
+									<p class="file-control ">Выделите элемент для просмотра информации о нём</p>									
+								</div>
+								
+								
+<!--
+                                <h5 class="tag-title">Tags</h5>
+                                <ul class="tag-list" style="padding: 0">
+                                    <li><a href="">Family</a></li>
+                                    <li><a href="">Work</a></li>
+                                    <li><a href="">Home</a></li>
+                                    <li><a href="">Children</a></li>
+                                    <li><a href="">Holidays</a></li>
+                                    <li><a href="">Music</a></li>
+                                    <li><a href="">Photography</a></li>
+                                    <li><a href="">Film</a></li>
+                                </ul>
+-->
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                
+                
+                <div class="col-lg-10 animated fadeInRight">
+                    <div class="row">
+                        <div class="col-lg-12 ">
+							
+							{foreach $folder as $_key => $_element}
+							
+                            <div class="file-box ">							
+                                <div class="file ">
+																			
+									<div class="col-lg-12 text-center">										
+
+										<input type="checkbox" class="btn i-checks ">
+										
+										<button class="btn btn-xs btn-default btn-white  " title='Копировать'> 												
+											<i class="fa fa-copy">		</i>
+										</button>
+										
+										<button class="btn btn-xs btn-default btn-white " title='Переименовать' onclick="rename_file('{$_element['head']}', '{$_element['path']}')" >	
+											<i class="fa fa-ellipsis-h">	</i>
+										</button>
+										
+										{if $_element['isfile']}
+										<a class="btn btn-xs btn-default btn-white  " title='Скачать' href="{$_element['load']}" >
+											<i class="fa fa-download">		</i>
+										</a>										
+										{end}
+										
+										<button class="btn btn-xs btn-default btn-white  " title='Удалить' onclick="if ( delete_file('{$_element['head']}', '{$_element['path']}') ) $(this).remove();"> 
+											<i class="fa fa-trash-o" >		</i>
+										</button>
+										
+										
+									</div>
+									
+<!--
+                                    <a href="{$_element['link']}" {if $_element['isfile']} target="_blank" {end} >
+-->
+									<file href="{$_element['link']} " path="{$_element['path']}" {if $_element['isfile']} target="_blank" {end} id="elem_{$i++}">
+                                        <span class="corner"></span>
+
+                                        <div class="icon ">
+                                            <i class="{$_element['icon']} "></i>
+                                        </div>
+                                        <div class="file-name ">
+                                            {$_element['head']}
+                                            <br/>
+                                            <small>{$_element['ctime']}</small>
+                                        </div>
+                                    </file>
+<!--
+                                    </a>
+-->
+                                </div>
+
+                            </div>
+                            
+                            {end}
+                            
+                            
+                            <script>
+								function rename_file(filename, path)
+								{
+									var result = prompt('Переименование объекта. Введите новое имя:', filename);									
+									if (result == null || result == filename) return;
+									$.get( "admin/app/filemanager/file_rename.php", { old_name: path, new_name: result } )
+										.done(function( data ) 
+										{
+											if (data == '') return true;
+											alert( "Метод вернул результат: " + data );
+										});								
+								}
+								
+								function create_dir(filename, path)
+								{
+									var result = prompt('Create directory:', '');									
+									if (result == null || result == '') return;
+									
+									$.get( "admin/app/filemanager/create_dir.php", { path: path, filename: result } )
+										.done(function( data ) 
+										{
+											if (data == '') return true;
+											alert( "Метод вернул результат: " + data );
+										});								
+								}
+								
+								function create_file(filename, path)
+								{
+									var result = prompt('Enter file name:', '');									
+									if (result == null || result == '') return;
+									
+									$.get( "admin/app/filemanager/create_file.php", { path: path, filename: result } )
+										.done(function( data ) 
+										{
+											if (data == '') return true;
+											alert( "Метод вернул результат: " + data );
+										});								
+								}
+								
+								function delete_file(filename, path)
+								{
+									var isDel = confirm("Удалить объект \""+filename+"\"?");
+									if (isDel)
+									{
+										$.get( "admin/app/filemanager/file_delete.php", { filename: filename, path: path } )
+											.done(function( data ) 
+											{
+												if (data == '') return true;
+												if (data != '')	alert( "Метод вернул результат: " + data );
+											});	
+									}
+								}
+								
+								function unselect()
+								{
+									$('file').each(function(idx){ $(this).removeClass('active'); });
+									
+									return;
+									var elems = $("file");
+									var elemsTotal = elems.length;
+									
+									console.log(elems);
+									
+									for(var i=0; i<elemsTotal; ++i)
+									{
+										$(elems[i]).removeClass('active');
+									}
+								}
+							
+								function getCookie(name) 
+								{
+									var v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+									return v ? v[2] : null;
+								}
+								
+								
+								function setCookie(name, value, days) 
+								{
+									var d = new Date;
+									d.setTime(d.getTime() + 24*60*60*1000*days);
+									document.cookie = name + "=" + value + ";path=/;expires=" + d.toGMTString();
+								}
+								
+								function upload_repaint(input, id_info)
+								{
+									var info = '';									
+									$.each(input.files, function(index,value)
+									{ 
+									  // действия, которые будут выполняться для каждого элемента массива
+									  // index - это текущий индекс элемента массива (число)
+									  // value - это значение текущего элемента массива
+									  info = info +  "<i class='fa fa-file'></i> "+ value.name.toString() + "<br>";
+									  
+									  info = info +
+									  '<div  class="progress" >'+
+									  '		<div id="cnuploader_progressbar" style="width: 0%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="35" role="progressbar" class="progress-bar progress-bar-success"></div>'+
+									  '</div>';
+									  
+									  
+									  //console.log('Индекс: ' + index.toString() + '; Значение: ' + value.toString());
+									});
+									$('#'+id_info).html(info);
+									//~ $('#uploadform').submit();
+									upload_show();
+								}
+								
+								function upload_show() 
+								{
+
+									var uploader=new FileUploader( {
+										message_error: 'Ошибка при загрузке файла', 
+										form: 'uploadform',
+										formfiles: 'files',
+										uploadid: '<?php print $hash;?>',
+										uploadscript: '/admin/app/filemanager/file_upload',
+										redirect_success: './step2.php?hash=<?php print $hash;?>',
+										redirect_abort: './abort.php?hash=<?php print $hash;?>',
+										portion: 1024*1024*2
+										});
+									
+									
+									if (!uploader) document.location='/upload/iframe.php?hash=<?php print $hash;?>';
+									else {
+										if (!uploader.CheckBrowser()) document.location='/upload/iframe.php?hash=<?php print $hash;?>';
+										else {
+											var e=document.getElementById('uploadform');
+											if (e) e.style.display='block';
+
+											}
+										}
+									alert('ss');
+									uploader.Upload();
+								}
+
+								
+								window.onload=function()
+								{
+									//Двойной клик на файле (или диретории)
+									$('file').dblclick(function (event)
+									{
+										var path = $(this).attr('href');
+										if (path == undefined) return;
+										
+										var target = $(this).attr('target');										
+										//var target = event.target.parentNode; // где был клик?
+										//~ alert(target);
+																				
+										if (target)	
+											window.open(path);											
+										else
+											location.href = path;																		
+									});
+									
+									//Одинарный клик на файле (или диретории)
+									$('file').click(function (event)
+									{										
+										$('#'+getCookie('select_id')).removeClass('active');
+										
+										
+										//~ if (path == undefined) return;
+										//~ unselect();
+										$(this).addClass('active');
+										setCookie('select_id', $(this).attr('id'));
+										
+										var path = $(this).attr('path');
+										$('#ibox-content').load('admin/app/filemanager/file_info.php?version=min&path='+path);
+										
+										//~ var target = event.target.parentNode; // где был клик?										
+										
+										//~ alert(this.tagName);
+										
+										//target = event.target;
+										//~ $(event.target).addClass('active');
+										
+										
+										//~ if (! $(target).hasClass( "active" ))
+											//~ $(target).addClass('active');
+										//~ else
+											//~ $(target).removeClass('active');
+										//~ alert(path);
+										
+										//location.href = path;																		
+								
+									});
+								}
+							</script>                            
+
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                
+                
+                
+            </div>
+			<!-- Footer block -->
+			{require "../../~section/footer.html"}
+			<!-- End Footer block -->
+
+        </div>
+    </div>
+    
+
+
+
+    <!-- Mainly scripts -->
+    <script src="../../js/jquery-2.1.1.js"></script>
+    <script src="../../js/bootstrap.min.js"></script>
+    <script src="../../js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="../../js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+    <!-- Custom and plugin javascript -->
+    <script src="../../js/inspinia.js"></script>
+    <script src="../../js/plugins/pace/pace.min.js"></script>
+    
+    <!--File loader--->
+    <script src="../../js/data/file-uploader.js"></script>    
+    
+    <!-- iCheck -->
+    <script src="../../js/plugins/iCheck/icheck.min.js"></script>
+    
+    <script>
+        $(document).ready(function () {
+            $('.i-checks').iCheck({
+                checkboxClass: 'icheckbox_square-green',
+                radioClass: 'iradio_square-green',
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function()
+        {
+            $('.file-box').each(function() {
+                animationHover(this, 'pulse');
+            });
+            
+        });
+    </script>
+</body>
+
+</html>

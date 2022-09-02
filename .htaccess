@@ -1,0 +1,17 @@
+#Рекомендованный вывод ошибок АПАЧ
+php_value display_errors 1
+php_value error_reporting E_ALL
+
+#Рекомендованный вывод ошибок хостингом Sweb
+php_value error_reporting 2047
+
+#Время жизни сессии 1 неделя
+php_value session.gc_maxlifetime 16048000
+php_value session.cookie_lifetime 16048000
+
+
+
+RewriteEngine on
+#RewriteBase / 
+#Замыкание на index
+RewriteRule .*$ index.php [L]

@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{$title}</title>
+
+    <link href="~/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="~/css/animate.css" rel="stylesheet">
+    <!-- Редакторы контента -->
+    <link href="~/css/plugins/summernote/summernote.css" rel="stylesheet">
+    <link href="~/css/plugins/summernote/summernote-bs3.css" rel="stylesheet">    
+	<!-- Переключатели и флажки -->
+    <link href="~/css/plugins/switchery/switchery.css" rel="stylesheet">
+    <link href="~/css/plugins/iCheck/custom.css" rel="stylesheet">
+    <!-- Простое css дерево без изысков -->
+    <link href="~/css/plugins/simpleTree/simpleTree.css" rel="stylesheet">
+	<!--Выпадающий список-->
+	<link href="~/css/plugins/chosen/chosen.css" rel="stylesheet">
+    <!-- Сложное и дорогое для процессора дерево -->
+<!--
+    <link href="css/plugins/jsTree/style.min.css" rel="stylesheet">
+-->
+    
+    <!-- TinyMCE Визуальный html редактор -->
+<!--
+    <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
+    <script>tinymce.init({ selector:'textarea', language: 'ru' });</script>
+-->
+    
+<!--
+    Вообще не имею понятия - зачем эти скрипты тут
+-->
+<!--
+        <link href="css/plugins/colorpicker/bootstrap-colorpicker.min.css" rel="stylesheet">
+
+        <link href="css/plugins/cropper/cropper.min.css" rel="stylesheet">
+
+        <link href="css/plugins/switchery/switchery.css" rel="stylesheet">
+
+        <link href="css/plugins/jasny/jasny-bootstrap.min.css" rel="stylesheet">
+
+        <link href="css/plugins/nouslider/jquery.nouislider.css" rel="stylesheet">
+
+        <link href="css/plugins/datapicker/datepicker3.css" rel="stylesheet">
+
+        <link href="css/plugins/ionRangeSlider/ion.rangeSlider.css" rel="stylesheet">
+        <link href="css/plugins/ionRangeSlider/ion.rangeSlider.skinFlat.css" rel="stylesheet">
+-->
+    
+    
+    
+    
+    
+    <link href="~/css/style.css" rel="stylesheet">
+	<base href="{$$base}">	
+</head>
+
+<body>
+
+    <div id="wrapper">
+
+		<!--Главное меню слева-->
+		{section "~section/mainmenu.html"}
+		<!--Конец меню-->
+    
+    
+
+        <div id="page-wrapper" class="gray-bg">
+		
+		<!-- Head menu -->
+		{section "../~section/head.html"}
+		<!-- End head menu --> 
+			
+		<!-- Title menu-->
+		{section "~section/title.html"}
+		<!-- End title menu -->   
+		
+		
+        <form name="editpage" method="post" action="admin/content/article/save" class="form-horizontal">
+        <div class="wrapper wrapper-content">
+            <div class="row">
+				
+						<!--Шапка формы управления-->
+						<div class="col-lg-12">
+                            <div class="ibox float-e-margins">
+                                <div class="ibox-title">
+                                    <h5>
+                                    Служебная информация
+										<!-- {$form['edit']['head']} -->
+<!--
+										All form elements
+                                        <small>With custom checbox and radion elements.</small>
+-->
+                                    </h5>
+                                    <div class="ibox-tools">
+                                        <a class="collapse-link">
+                                            <i class="fa fa-chevron-up"></i>
+                                        </a>
+                                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                            <i class="fa fa-wrench"></i>
+                                        </a>
+                                        <ul class="dropdown-menu dropdown-user">
+                                            <li>
+                                                <a href="#">Config option 1</a>
+                                            </li>
+                                            <li>
+                                                <a href="#">Config option 2</a>
+                                            </li>
+                                        </ul>
+                                        <a class="close-link">
+                                            <i class="fa fa-times"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                
+                                
+                                
+                                <!-- Начало страницы -->
+                                <!-- Управление параметрами страницы -->
+                                 <div class="ibox-content">
+									
+				                    <div class="form-group">
+                            <label class="col-sm-2 control-label">Имя (id)</label>
+                                <div class="col-sm-10">                                            
+                                    <input class="form-control" name='name' type="text" value="{$catalog['article']['name']}" required>
+                                </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Язык</label>
+                                <div class="col-sm-10">            
+                                    <select class="form-control" name='language' value="{$catalog['article']['language']}">
+                                    {if ($catalog['article']['language'] == "Русский")}
+                                        <option selected value="Русский">Русский</option>
+                                        <option>English</option>
+                                    {end}
+                                    {if ($catalog['article']['language'] == "English")}
+                                        <option>Русский</option>
+                                        <option selected value="English">English</option>
+                                    {end}
+                                    {if ($catalog['article']['language'] == null)}
+                                        <option>Русский</option>
+                                        <option>English</option>
+                                    {end}
+                                    </select>
+                                </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Метка (тег)</label>
+                                <div class="col-sm-10">                                            
+                                    <input class="form-control" name='tag' type="text" value="{$catalog['article']['tag']}">
+                                </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Раздел</label>
+                                <div class="col-sm-10">                                            
+                                    <input class="form-control" name='section' type="text" value="{$catalog['article']['section']}">
+                                </div>
+                        </div>
+
+                                    <!-- <form name="formbasic" class="form-horizontal" method="get"  action="{$form['edit']['action']}" > -->
+
+										<!-- <div class="form-group ">
+                                            <label class="col-sm-2 control-label">{$form['edit']['url']['head']}</label>
+
+                                            <div class="col-sm-10">
+                                                <div class="input-group m-b">
+                                                    <span class="input-group-addon">{$form['edit']['url']['info']}</span>
+                                                    <input class="form-control" placeholder="" name="URL" type="text" value="{$form['edit']['url']['text']}">
+                                                </div>                                                
+                                             </div>
+                                        </div> -->
+                                        <!-- <div class="hr-line-dashed"></div> -->
+                                         
+                                         
+										
+										<!-- <div class="form-group"> -->
+                                            <!-- <label class="col-sm-2 control-label"></label> -->
+
+                                            <!-- <div class="col-sm-10"> -->
+
+                                                <!-- <div class="input-group m-b">
+
+                                                    <span class="input-group-btn">
+														<a class="btn btn-primary">
+																<i class="fa fa-file"></i>
+														</a>
+													</span>	
+														
+                                                    <input class="form-control" type="text">
+                                                </div> -->
+
+                                                
+                                                
+                                                <!-- <div class="input-group"> -->
+													<!-- <input class="form-control" type="text" id="template_file" name="template_file" value="{$form['edit']['html']['text']}"> -->
+                                                    <!-- <span class="input-group-btn"> -->
+
+                                                        <!-- <button class="btn btn-primary" type="button">file
+                                                        </button> -->
+
+														
+                                                        <!-- <a class="btn btn-primary" data-toggle="modal" data-target="#ModalForm_HTML" >
+															<i class="fa fa-list-ul"></i>
+															<i class="fa fa-file-code-o"></i>
+														</a> -->
+																											
+
+                                                        <!-- <a class="btn btn-white btn-bitbucket">
+															<i class="fa fa-file"></i>
+                                                        </a> -->   
+
+                                                    <!-- </span> -->
+                                                <!-- </div> -->
+                                                <!-- <span class="help-block m-b-none">A block of help text that breaks onto a new line and may extend beyond one line.</span> -->
+                                            <!-- </div> -->
+                                        <!-- </div> -->
+                                        <!-- <div class="hr-line-dashed"></div> -->
+                                        
+										
+										<!-- Публикация -->
+										<div class="form-group">
+                                            <label class="col-sm-2 control-label">Публицация</label>
+                                            <div class="col-sm-10">
+												
+												<input class="js-switch" name='public' type="checkbox" value="checked" />
+
+                                                <button class="btn btn-primary" type="submit">Сохранить</button>
+												
+												<!-- <label class="checkbox-inline i-checks">
+													<input {$form['edit']['sitemap']['text']} type="checkbox" name="check_sitemap" value="checked">
+													{$form['edit']['sitemap']['head']}
+												</label>
+												<label class="checkbox-inline i-checks">
+													<input {$form['edit']['index']['text']} type="checkbox" name="check_index" value="checked">
+													{$form['edit']['index']['head']}
+												</label> -->
+												
+
+												<!-- <label class="checkbox-inline"> При включенном состоянии данная страница будет добавлена в карту сайта </label> -->
+
+												
+
+												<!-- <label class="checkbox-inline">
+                                                    <input checked id="inlineCheckbox1" type="checkbox" value="option1">
+                                                    Add to sitemap
+                                                </label>
+                                                
+                                                <label class="checkbox-inline">
+                                                    <input checked id="inlineCheckbox1" type="checkbox" value="option1">
+                                                    including indexing by search engines 
+                                                </label> -->
+
+                                                
+											</div>
+
+											
+											<!-- <div class="col-sm-10">
+                                                <label class="checkbox-inline">
+                                                    <input id="inlineCheckbox1" type="checkbox" value="option1">
+                                                    a
+                                                </label>
+                                                <label class="checkbox-inline">
+                                                    <input id="inlineCheckbox2" type="checkbox" value="option2">
+                                                    b
+                                                </label>
+                                                <label class="checkbox-inline">
+                                                    <input id="inlineCheckbox3" type="checkbox" value="option3">
+                                                    c
+                                                </label>
+                                            </div> -->
+
+
+												<!-- <input  checked class="js-switch_2" type="checkbox"/> -->
+
+                                        </div>
+                                        <!-- <div class="hr-line-dashed"></div> -->
+                                        
+
+                                       
+                                        <!-- <div class="form-group">
+                                            <div class="col-sm-4 col-sm-offset-2">
+                                                <button class="btn btn-white" type="submit">{$form['edit']['button']['cancel']['head']}</button>
+                                                <button data-toggle="button" class="btn btn-primary btn-outline" type="button">Apply</button>
+                                            </div>
+                                        </div>  -->
+
+                                    
+
+                                </div>
+                            </div>
+                        </div>
+
+				
+				<!-- Поля ввода данных -->
+                <div class="col-lg-12">
+                    <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>Статья</h5>
+                    </div>
+                    <div class="ibox-content">
+
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Заголовок</label>
+                                <div class="col-sm-10">                                            
+                                    <input class="form-control" name='head' type="text" value="{$catalog['article']['head']}">
+                                </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Текст</label>
+                                <div class="col-sm-10">                                            
+                                    <textarea class="form-control" name='text' id='editor' type="text" value="{$catalog['article']['text']}"></textarea>
+                                </div>
+                        </div>
+                    </div>
+
+                </div>
+                </div>
+
+                </form>
+				
+				<!-- Аккордион-панелька-->
+				<!--
+				<div class="col-lg-12">
+					<div class="ibox float-e-margins">
+					<div class="ibox-title">
+						<h5>Collaps panels</h5>
+						<div class="ibox-tools">
+						<a class="collapse-link">
+							<i class="fa fa-chevron-up"></i>
+						</a>
+						<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+							<i class="fa fa-wrench"></i>
+						</a>
+						<ul class="dropdown-menu dropdown-user">
+							<li>
+							<a href="#">Config option 1</a>
+							</li>
+							<li>
+							<a href="#">Config option 2</a>
+							</li>
+						</ul>
+						<a class="close-link">
+							<i class="fa fa-times"></i>
+						</a>
+						</div>
+					</div>
+					<div class="ibox-content">
+						<div class="panel-body">
+						<div class="panel-group" id="accordion">
+							<div class="panel panel-default">
+							<div class="panel-heading">
+								<h5 class="panel-title">
+								<a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" class="collapsed">Collapsible Group Item #1</a>
+								</h5>
+							</div>
+							<div id="collapseOne" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;">
+								<div class="panel-body">
+								
+									Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+															
+								</div>
+							</div>
+							</div>
+							<div class="panel panel-default">
+							<div class="panel-heading">
+								<h4 class="panel-title">
+									<a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" class="collapsed" aria-expanded="false">Collapsible Group Item #2</a>
+								</h4>
+							</div>
+							<div id="collapseTwo" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;">
+								<div class="panel-body">
+								
+									Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+															
+								</div>
+							</div>
+							</div>
+							<div class="panel panel-default">
+							<div class="panel-heading">
+								<h4 class="panel-title">
+									<a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" class="" aria-expanded="true">Collapsible Group Item #3</a>
+								</h4>
+							</div>
+							<div id="collapseThree" class="panel-collapse collapse in" aria-expanded="true" style="">
+								<div class="panel-body">
+								
+									Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+															
+								</div>
+							</div>
+							</div>
+						</div>
+						</div>
+					</div>
+					</div>
+				</div>
+				-->
+				
+				
+				
+				
+				<!-- ПЕРВАЯ ПАНЕЛЬКА-->
+				<!--Блок подклоючения строковых переменных-->
+				{if $section['single']}
+						
+					<div class="col-lg-12">
+						<div class="ibox float-e-margins">
+							<div class="ibox-title">
+								<h5>{$section['single']['head']}</h5>  <!-- Menu <small>Навигационные компоненты, основные и побочные</small>  -->
+								<div class="ibox-tools">
+									<a class="collapse-link">
+										<i class="fa fa-chevron-up"></i>
+									</a>
+									<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+										<i class="fa fa-wrench"></i>
+									</a>
+									<ul class="dropdown-menu dropdown-user">
+										<li><a href="#">Config option 1</a>
+										</li>
+										<li><a href="#">Config option 2</a>
+										</li>
+									</ul>
+									<a class="close-link">
+										<i class="fa fa-times"></i>
+									</a>
+								</div>
+							</div>
+							<div class="ibox-content">
+									
+									<!--Пример блока данных с заполнением-->
+									{foreach $section['single']['list'] as $_block}
+									<div class="form-group"><label class="col-sm-2 control-label">{$_block['head']}</label>
+										<div class="col-sm-10"><input name="{$_block['name']}" type="text" placeholder="" class="form-control" value="{$_block['text']}"></div>
+									</div>
+<!--
+									<div class="hr-line-dashed"></div>									
+-->
+									{end}
+									<!--Конец примера блока данных-->
+									
+									
+									
+									
+									
+									
+								
+								
+							</div>
+						</div>
+					</div>
+				{end}	
+					
+					
+				
+				
+				
+				<!-- ЯЩУР-панелька-->
+				<!--Блок подклоючения источников-->
+		
+				{if $section['frames']}
+<!--
+					<form method="post" action="save" class="form-horizontal">
+-->
+				
+					{foreach $section['frames'] as $_frame}
+					<div class="col-lg-12">
+						<div class="ibox float-e-margins">
+							<div class="ibox-title">
+								<h5>{$_frame['head']}</h5>  <!-- Menu <small>Навигационные компоненты, основные и побочные</small>  -->
+								<div class="ibox-tools">
+									<a class="collapse-link">
+										<i class="fa fa-chevron-up"></i>
+									</a>
+									<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+										<i class="fa fa-wrench"></i>
+									</a>
+									<ul class="dropdown-menu dropdown-user">
+										<li><a href="#">Config option 1</a>
+										</li>
+										<li><a href="#">Config option 2</a>
+										</li>
+									</ul>
+									<a class="close-link">
+										<i class="fa fa-times"></i>
+									</a>
+								</div>
+							</div>
+							<div class="ibox-content">
+									
+									<!--Пример блока данных с заполнением-->
+									{foreach $_frame['list'] as $_block}
+									<div class="form-group"><label class="col-sm-2 control-label">{$_block['head']}</label>
+										<div class="col-sm-4">
+												<select name="{$_block['name']}" data-placeholder="Select group object..." class="chosen-select chosen-single-with-deselect" style="width:100%"  tabindex="2">
+													<option value=""></option>
+	
+													{foreach $_block['select'] as $_object}
+														{if $_object['disabled']}
+															<option disabled class="group-result" value="{$_object['value']}">{$_object['head']}</option>
+														{else}															
+															{if $_object['active']}
+																<option class="active-result group-option" value="{$_object['value']}" selected>{$_object['head']}</option>
+															{else}
+																<option class="active-result group-option" value="{$_object['value']}">{$_object['head']}</option>
+															{end}
+														{end}
+													{end}
+													
+<!--
+													<option class="active-result group-option" value="United States">galllery</option>
+													<option class="active-result group-option" value="United Kingdom">admin</option>
+													<option class="active-result group-option" value="Afghanistan">forms</option>
+													<option class="active-result group-option" value="Aland Islands">banners</option>
+													<option class="active-result group-option" value="Albania">Albania</option>
+													{for $x=0; $x++<320;}
+													<option class="active-result group-option" value="Algeria">{$x}temp{$x}</option>
+													{end}
+-->
+
+
+<!--
+
+													<option disabled class="group-result">Коллекции объектов</option>
+													<option disabled class="group-result">Другие источники</option>
+													<option class="active-result group-option" value="">Объект без коллекции</option>
+													<option class="active-result group-option" value="American Samoa">Выполнить php:</option>
+													<option class="active-result group-option" value="American Samoa">Указать значение явно:</option>
+-->
+													
+													
+													
+<!--
+													<option class="active-result group-option" value="Andorra">Не использовать</option>
+													<option disabled class="group-result">Коллекции объектов</option>
+-->
+													
+												</select>
+										</div>
+										
+										<div class="col-sm-6"><input name="{$_block['edit']['name']}" type="text" placeholder="Enter name of include file " value="{$_block['edit']['value']}" class="form-control"></div>
+									</div>
+<!--
+									<div class="hr-line-dashed"></div>									
+-->
+									{end}
+									<!--Конец примера блока данных-->
+									
+									
+									
+									
+									
+									
+								
+								
+							</div>
+						</div>
+					</div>
+					{end}
+					
+					
+					
+					
+					
+					
+					
+					
+					<!--РЕДАКТОР КОНТЕНТА сТРАНИЦЫ--->
+					{foreach $section['html'] as $_html}
+						<div class="col-lg-12">
+							<div class="ibox float-e-margins">
+									<div class="ibox-title">
+										<h5>{$_html['head']}</h5>
+										<div class="ibox-tools">
+											<a class="collapse-link">
+												<i class="fa fa-chevron-up"></i>
+											</a>
+											<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+												<i class="fa fa-wrench"></i>
+											</a>
+											<ul class="dropdown-menu dropdown-user">
+												<li><a href="#">Config option 1</a>
+												</li>
+												<li><a href="#">Config option 2</a>
+												</li>
+											</ul>
+											<a class="close-link">
+												<i class="fa fa-times"></i>
+											</a>
+										</div>
+									</div>
+									<div class="ibox-content no-padding">
+										
+											<textarea class="!!summernote" id="editor" name="{$_html['name']}">
+												{$$_html['text']}
+											</textarea>
+											
+									</div>
+									
+							</div>
+						</div>
+					{end}
+					
+					
+
+						
+					
+
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+							<div class="col-lg-12">
+								<div class="ibox float-e-margins">
+									<div class="ibox-content">
+										<div class="alert alert-warning">
+											Full documentation for Summernote.js, including examples and API calls, keybored shortcuts, PHP Examples, Django installation, and Rails (gem) integration can be found at:
+											<a href="http://hackerwins.github.io/summernote/features.html#api">http://hackerwins.github.io/summernote/features.html#api</a>
+											<!--<div class="summernote">summernote 2</div>-->
+										</div>
+										<div class="panel-body">
+												<div class="col-sm-10 col-sm-offset-4">
+													<button class="btn btn-primary" type="submit">Save page</button>
+													<button class="btn btn-info" type="submit">Preview</button>         
+												</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+					
+					
+				{end}
+				
+				</form>
+				
+				
+				
+				
+				
+				
+				
+				<!-- Редактор контента страницы -->
+<!--
+				<div class="col-lg-12">
+					<div class="ibox float-e-margins">
+							<div class="ibox-title">
+								<h5>Wyswig Summernote Editor</h5>
+								<div class="ibox-tools">
+									<a class="collapse-link">
+										<i class="fa fa-chevron-up"></i>
+									</a>
+									<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+										<i class="fa fa-wrench"></i>
+									</a>
+									<ul class="dropdown-menu dropdown-user">
+										<li><a href="#">Config option 1</a>
+										</li>
+										<li><a href="#">Config option 2</a>
+										</li>
+									</ul>
+									<a class="close-link">
+										<i class="fa fa-times"></i>
+									</a>
+								</div>
+							</div>
+							<div class="ibox-content no-padding">
+									<div class="summernote">
+										<h3>Lorem Ipsum is simply</h3>
+										dummy text of the printing and typesetting industry. <strong>Lorem Ipsum has been the industry's</strong> standard dummy text ever since the 1500s,
+										when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic
+										typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with
+										<br/>
+										<br/>
+										<ul>
+											<li>Remaining essentially unchanged</li>
+											<li>Make a type specimen book</li>
+											<li>Unknown printer</li>
+										</ul>
+									</div>
+							</div>
+							
+					</div>
+				</div>
+				
+-->
+				
+				
+				
+				
+				
+				
+			</div>
+			<!---ROW END--->
+            
+
+            
+
+<!--
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                            <h5>Example of Edit by click and save as a html</h5>
+                            <button id="edit" class="btn btn-primary btn-xs m-l-sm" onclick="edit()" type="button">Edit</button>
+                            <button id="save" class="btn btn-primary  btn-xs" onclick="save()" type="button">Save</button>
+                            <div class="ibox-tools">
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                    <i class="fa fa-wrench"></i>
+                                </a>
+                                <ul class="dropdown-menu dropdown-user">
+                                    <li><a href="#">Config option 1</a>
+                                    </li>
+                                    <li><a href="#">Config option 2</a>
+                                    </li>
+                                </ul>
+                                <a class="close-link">
+                                    <i class="fa fa-times"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="ibox-content no-padding">
+
+                            <div class="click2edit wrapper p-md">
+                                <h3>Lorem Ipsum is simply</h3>
+                                dummy text of the printing and typesetting industry. <strong>Lorem Ipsum has been the industry's</strong> standard dummy text ever since the 1500s,
+                                when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic
+                                typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with
+                                <br/>
+                                <br/>
+                                <ul>
+                                    <li>Remaining essentially unchanged</li>
+                                    <li>Make a type specimen book</li>
+                                    <li>Unknown printer</li>
+                                </ul>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+-->
+            
+            
+            
+            <!--Модальная формочка выбора файла-->
+            <div class="row">
+				<div class="col-lg-4">
+					<div class="ibox float-e-margins">
+<!--
+                        <div class="ibox">
+-->
+<!--
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal6">
+                                    Small Modal
+                                </button>
+-->
+
+							<?php
+								//Рисует дерево файлов
+								function PrintFiles($files, $path='')
+								{
+									echo "<ul>";
+									foreach ($files as $name => $value)
+									{
+										if (is_array($value)) 
+										{
+											echo "<li> <i class='fa fa-folder'> $name </i>";
+											PrintFiles($value, $path.$name.'/');
+										}
+										else
+										{
+											
+											echo "<li> <a onclick=\"ModaForm_HTML_show(this.name)\" name='$path$value' data-dismiss='modal' class='fa fa-file-code-o'>  $value </a> </li>";
+										}
+									}
+									echo "</ul>";
+								}
+							?>
+							
+                            <div class="modal inmodal fade" id="ModalForm_HTML" tabindex="-1" role="dialog"  aria-hidden="true">
+                                <div class="modal-dialog modal-sm">
+                                    <div class="modal-content">
+                                        <!-- <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                            <h4 class="modal-title">Select template file for page</h4>
+                                        </div> -->
+                                        <div class="modal-body">
+											<!-- Дерево -->
+											<ul	class="tree">
+													{PrintFiles($form['file']['list'])}
+												
+												
+												
+												
+<!--
+													<li> <i class="fa fa-delicious"> Admin themes </i>
+														<ul>
+															<li> <i class="fa fa-file-zip-o"> Birds.zip </i> </li>
+															<li> <i class="fa fa-folder"> Mammals </i> 
+																<ul>
+																	<li> <i class="fa fa-file-image-o"> icons.png</i> </li>
+																	<li> <a class="text-navy fa fa-file-code-o"> Mouse.html </a> </li>
+																</ul>
+															</li>
+															<li	class="last">Reptiles</li>
+														</ul>
+													</li>							
+													<li> <i class="fa fa-th-large"> Шаблон с русским названием </i>
+														<ul >
+															<li>Birds</li>
+															<li> <i class="fa fa-folder"> Mammals </i> 
+																<ul>
+																	<li>Elephant</li>
+																	<li	class="last">Mouse</li>
+																	<li>	<a	class="text-navy fa fa-file-code-o" 
+																				onclick="ModaForm_HTML_show('themes/Akono/index.html')"
+																				data-dismiss="modal"> 
+																				index.html
+																			</a> 
+																	</li>
+																</ul>
+															</li>
+															<li	class="last">Reptiles</li>
+														</ul>
+													</li>
+													<li	class="last"> <i class="fa fa-newspaper-o"> Shop </i> 
+														<ul>
+															<li> <i class="fa fa-folder"> Flowers </i>  
+																<ul>
+																	<li>Rose</li>
+																	<li	class="last">Tulip</li>
+																</ul>
+															</li>
+															<li	class="last">Trees</li>
+														</ul>
+													</li>
+-->
+											</ul>
+										
+										
+										
+										
+											<div class="hr-line-dashed"></div>
+											
+											<p>
+												<strong>Справка</strong> Выберите файл, который будет использоваться как каркас для заполнения содержимым.
+												Зеленым подсвечены файлы пригодные для использования в качестве шаблонов. Вы можете использовать файлы шаблонов из разных тем.
+												Будте внимательны - разные файлы шаблонов, могут предоставлять разный функционал.
+											</p>
+											<literal>                                            
+<!--
+
+											  <div id="jstree1">
+												<ul>
+													<li class="jstree-open">Admin theme
+														<ul>
+															<li>css
+																<ul>
+																	<li data-jstree='{"type":"css"}'>animate.css</li>
+																	<li data-jstree='{"type":"css"}'>bootstrap.css</li>
+																	<li data-jstree='{"type":"css"}'>style.css</li>
+																</ul>
+															</li>
+															<li>email-templates
+																<ul>
+																	<li data-jstree='{"type":"html"}'>action.html</li>
+																	<li data-jstree='{"type":"html"}'>alert.html</li>
+																	<li data-jstree='{"type":"html"}'>billing.html</li>
+																</ul>
+															</li>
+															<li>fonts
+																<ul>
+																	<li data-jstree='{"type":"svg"}'>glyphicons-halflings-regular.eot</li>
+																	<li data-jstree='{"type":"svg"}'>glyphicons-halflings-regular.svg</li>
+																	<li data-jstree='{"type":"svg"}'>glyphicons-halflings-regular.ttf</li>
+																	<li data-jstree='{"type":"svg"}'>glyphicons-halflings-regular.woff</li>
+																</ul>
+															</li>
+															<li class="jstree-open">img
+																<ul>
+																	<li data-jstree='{"type":"img"}'>profile_small.jpg</li>
+																	<li data-jstree='{"type":"img"}'>angular_logo.png</li>
+																	<li class="text-navy" data-jstree='{"type":"img"}'>html_logo.png</li>
+																	<li class="text-navy" data-jstree='{"type":"img"}'>mvc_logo.png</li>
+																</ul>
+															</li>
+															<li class="jstree-open">js
+																<ul>
+																	<li data-jstree='{"type":"js"}'>inspinia.js</li>
+																	<li data-jstree='{"type":"js"}'>bootstrap.js</li>
+																	<li data-jstree='{"type":"js"}'>jquery-2.1.1.js</li>
+																	<li data-jstree='{"type":"js"}'>jquery-ui.custom.min.js</li>
+																	<li  class="text-navy" data-jstree='{"type":"js"}'>jquery-ui-1.10.4.min.js</li>
+																</ul>
+															</li>
+															<li data-jstree='{"type":"html"}'> affix.html</li>
+															<li data-jstree='{"type":"html"}'> dashboard.html</li>
+															<li data-jstree='{"type":"html"}'> buttons.html</li>
+															<li data-jstree='{"type":"html"}'> calendar.html</li>
+															<li data-jstree='{"type":"html"}'> contacts.html</li>
+															<li data-jstree='{"type":"html"}'> css_animation.html</li>
+															<li  class="text-navy" data-jstree='{"type":"html"}'> flot_chart.html</li>
+															<li  class="text-navy" data-jstree='{"type":"html"}'> google_maps.html</li>
+															<li data-jstree='{"type":"html"}'> icons.html</li>
+															<li data-jstree='{"type":"html"}'> inboice.html</li>
+															<li data-jstree='{"type":"html"}'> login.html</li>
+															<li data-jstree='{"type":"html"}'> mailbox.html</li>
+															<li data-jstree='{"type":"html"}'> profile.html</li>
+															<li  class="text-navy" data-jstree='{"type":"html"}'> register.html</li>
+															<li data-jstree='{"type":"html"}'> timeline.html</li>
+															<li data-jstree='{"type":"html"}'> video.html</li>
+															<li data-jstree='{"type":"html"}'> widgets.html</li>
+														</ul>
+													</li>
+												</ul>
+											</div>    
+-->
+										</literal>                                           
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
+<!--
+                                            <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="SelectFileTemplate('lalaka')">Save changes</button>
+-->
+                                            
+                                            <script type='text/javascript'>
+												function ModaForm_HTML_show(value)
+												{		
+													template_file.value = 'error';
+													//~ document.forms['formbasic'].template_file.value = value;
+													//alert(document.forms['editpage'].template_file.value);
+													document.forms['editpage'].template_file.value = value;
+												}
+											</script>
+										
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+<!--
+                        </div>
+-->
+                    </div>
+				</div>
+			</div>	
+				
+				
+<!--
+			<div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-content">
+							<div class="alert alert-warning">
+								Full documentation for Summernote.js, including examples and API calls, keybored shortcuts, PHP Examples, Django installation, and Rails (gem) integration can be found at:
+								<a href="http://hackerwins.github.io/summernote/features.html#api">http://hackerwins.github.io/summernote/features.html#api</a>
+								<div class="summernote">summernote 2</div>
+							</div>
+							
+								<h2>
+									Summernote
+								</h2>
+								<p>
+									Super Simple WYSIWYG Editor on Bootstrap
+								</p>
+							
+							<div class="panel-body">
+
+
+
+
+								
+							
+									<div class="col-sm-10 col-sm-offset-4">
+										<button class="btn btn-primary" type="submit">Save page</button>
+										<button class="btn btn-info" type="submit">Preview</button>         
+									</div>
+							</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+-->
+      
+      
+      
+        </div>
+        <div class="footer">
+            <div class="pull-right">
+                10GB of <strong>250GB</strong> Free.
+            </div>
+            <div>
+                <strong>Copyright</strong> Example Company &copy; 2014-2015
+            </div>
+        </div>
+
+        </div>
+        </div>
+
+
+
+    <!-- Mainly scripts -->
+    <script src="~/js/jquery-2.1.1.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+    <script src="~/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="~/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+    <!-- Custom and plugin javascript -->
+    <script src="~/js/inspinia.js"></script>
+    <script src="~/js/plugins/pace/pace.min.js"></script>
+
+
+    
+
+    
+    <!-- Data picker -->
+    <script src="~/js/plugins/datapicker/bootstrap-datepicker.js"></script>
+    <!-- Switchery -->
+    <script src="~/js/plugins/switchery/switchery.js"></script>    
+    <!-- iCheck -->
+    <script src="~/js/plugins/iCheck/icheck.min.js"></script>    
+    <!-- Image cropper -->
+    <script src="~/js/plugins/cropper/cropper.min.js"></script>
+    <!-- SUMMERNOTE -->
+    <script src="~/js/plugins/summernote/summernote.min.js"></script>
+    <!-- Chosen -->
+    <script src="~/js/plugins/chosen/chosen.jquery.js"></script>
+    
+    <!-- CKEditor -->
+    <script src="~/js/plugins/ckeditor/ckeditor.js"></script>
+    <script src="~/js/plugins/ckeditor/ckeditor_run.js"></script>
+    <script src="~/js/plugins/ckeditor/style.js"></script>
+    
+    <!-- Сложное и дорогое для процессора дерево -->
+<!--
+    <script src="js/plugins/jsTree/jstree.min.js"></script>
+-->
+
+
+
+
+
+    <!-- Switchery -->
+<!--
+    <script src="js/plugins/switchery/switchery.js"></script>
+-->
+    
+    <!-- iCheck -->
+<!--
+    <script src="js/plugins/iCheck/icheck.min.js"></script>  
+-->
+       
+    <!-- IonRangeSlider -->
+<!--
+    <script src="~/js/plugins/ionRangeSlider/ion.rangeSlider.min.js"></script>
+-->
+  
+          
+       <!-- Custom and plugin javascript -->
+<!--
+        <script src="js/inspinia.js"></script>
+        <script src="js/plugins/pace/pace.min.js"></script>
+        <script src="js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+-->
+
+        <!-- Chosen -->
+<!--
+        <script src="js/plugins/chosen/chosen.jquery.js"></script>
+-->
+
+        <!-- JSKnob -->
+<!--
+        <script src="js/plugins/jsKnob/jquery.knob.js"></script>
+-->
+
+        <!-- Input Mask-->
+<!--
+        <script src="js/plugins/jasny/jasny-bootstrap.min.js"></script>
+-->
+
+        <!-- NouSlider -->
+<!--
+        <script src="js/plugins/nouslider/jquery.nouislider.min.js"></script>
+-->
+
+        <!-- IonRangeSlider -->
+<!--
+        <script src="js/plugins/ionRangeSlider/ion.rangeSlider.min.js"></script>
+-->
+
+        <!-- Color picker -->
+<!--
+        <script src="js/plugins/colorpicker/bootstrap-colorpicker.min.js"></script>
+-->
+
+
+
+
+
+       <!-- Дерево элементов -->
+<!--
+       <script>
+		$(document).ready(function(){
+
+			$('#jstree1').jstree({
+				'core' : {
+					'check_callback' : true
+				},
+				//'plugins' : [ 'types', 'dnd' ],
+				'plugins' : [ 'types' ],
+				'types' : {
+					'default' : {
+						'icon' : 'fa fa-folder'
+					},
+					'html' : {
+						'icon' : 'fa fa-file-code-o'
+					},
+					'svg' : {
+						'icon' : 'fa fa-file-picture-o'
+					},
+					'css' : {
+						'icon' : 'fa fa-file-code-o'
+					},
+					'img' : {
+						'icon' : 'fa fa-file-image-o'
+					},
+					'js' : {
+						'icon' : 'fa fa-file-text-o'
+					}
+
+				}
+			});
+		});
+	</script>   
+-->
+          
+          
+          
+    <!-- Редактор контента -->
+    <script>
+        $(document).ready(function(){
+
+            $('.summernote').summernote();
+
+       });
+        var edit = function() {
+            $('.click2edit').summernote({focus: true});
+        };
+        var save = function() {
+            var aHTML = $('.click2edit').code(); //save HTML If you need(aHTML: array).
+            $('.click2edit').destroy();
+        };
+        
+        initSample();
+    </script>
+    
+    
+    
+    
+       
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+	<!-- Обработка GUI элементов -->
+    <script>
+	$(document).ready(function () {
+
+    var $image = $(".image-crop > img")
+    $($image).cropper({
+        aspectRatio: 1.618,
+        preview: ".img-preview",
+        done: function (data) {
+            // Output the result data for cropping image.
+        }
+    });
+
+    var $inputImage = $("#inputImage");
+    if (window.FileReader) {
+        $inputImage.change(function () {
+            var fileReader = new FileReader(),
+                files = this.files,
+                file;
+
+            if (!files.length) {
+                return;
+            }
+
+            file = files[0];
+
+            if (/^image\/\w+$/.test(file.type)) {
+                fileReader.readAsDataURL(file);
+                fileReader.onload = function () {
+                    $inputImage.val("");
+                    $image.cropper("reset", true).cropper("replace", this.result);
+                };
+            } else {
+                showMessage("Please choose an image file.");
+            }
+        });
+    } else {
+        $inputImage.addClass("hide");
+    }
+ 
+    $("#download").click(function () {
+        window.open($image.cropper("getDataURL"));
+    });
+ 
+    $("#zoomIn").click(function () {
+        $image.cropper("zoom", 0.1);
+    });
+ 
+    $("#zoomOut").click(function () {
+        $image.cropper("zoom", -0.1);
+    });
+ 
+    $("#rotateLeft").click(function () {
+        $image.cropper("rotate", 45);
+    });
+ 
+    $("#rotateRight").click(function () {
+        $image.cropper("rotate", -45);
+    });
+ 
+    $("#setDrag").click(function () {
+        $image.cropper("setDragMode", "crop");
+    });
+ 
+    $('#data_1 .input-group.date').datepicker({
+        todayBtn: "linked",
+        keyboardNavigation: false,
+        forceParse: false,
+        calendarWeeks: true,
+        autoclose: true
+    });
+ 
+    $('#data_2 .input-group.date').datepicker({
+        startView: 1,
+        todayBtn: "linked",
+        keyboardNavigation: false,
+        forceParse: false,
+        autoclose: true
+    });
+
+    $('#data_3 .input-group.date').datepicker({
+        startView: 2,
+        todayBtn: "linked",
+        keyboardNavigation: false,
+        forceParse: false,
+        autoclose: true
+    });
+
+    $('#data_4 .input-group.date').datepicker({
+        minViewMode: 1,
+        keyboardNavigation: false,
+        forceParse: false,
+        autoclose: true,
+        todayHighlight: true
+    });
+
+    $('#data_5 .input-daterange').datepicker({
+        keyboardNavigation: false,
+        forceParse: false,
+        autoclose: true
+    });
+
+    var elem = document.querySelector('.js-switch');
+    var switchery = new Switchery(elem, {
+        color: '#1AB394'
+    });
+
+    var elem_2 = document.querySelector('.js-switch_2');
+    var switchery_2 = new Switchery(elem_2, {
+        color: '#ED5565'
+    });
+
+    var elem_3 = document.querySelector('.js-switch_3');
+    var switchery_3 = new Switchery(elem_3, {
+        color: '#1AB394'
+    });
+
+    $('.i-checks').iCheck({
+        checkboxClass: 'icheckbox_square-green',
+        radioClass: 'iradio_square-green'
+    });
+
+    $('.demo1').colorpicker();
+
+    var divStyle = $('.back-change')[0].style;
+    $('#demo_apidemo').colorpicker({
+        color: divStyle.backgroundColor
+    }).on('changeColor', function (ev) {
+        divStyle.backgroundColor = ev.color.toHex();
+    });
+
+	});
+	var config = {
+		'.chosen-select': {},
+		'.chosen-select-deselect': {
+			allow_single_deselect: true
+		},
+		'.chosen-select-no-single': {
+			disable_search_threshold: 10
+		},
+		'.chosen-select-no-results': {
+			no_results_text: 'Oops, nothing found!'
+		},
+		'.chosen-select-width': {
+			width: "95%"
+		}
+	}
+	
+           
+            
+	for (var selector in config) {
+		$(selector).chosen(config[selector]);
+	}
+
+	$("#ionrange_1").ionRangeSlider({
+		min: 0,
+		max: 5000,
+		type: 'double',
+		prefix: "$",
+		maxPostfix: "+",
+		prettify: false,
+		hasGrid: true
+	});
+
+	$("#ionrange_2").ionRangeSlider({
+		min: 0,
+		max: 10,
+		type: 'single',
+		step: 0.1,
+		postfix: " carats",
+		prettify: false,
+		hasGrid: true
+	});
+
+	$("#ionrange_3").ionRangeSlider({
+		min: -50,
+		max: 50,
+		from: 0,
+		postfix: "°",
+		prettify: false,
+		hasGrid: true
+	});
+
+	$("#ionrange_4").ionRangeSlider({
+		values: [
+			"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
+		],
+		type: 'single',
+		hasGrid: true
+	});
+
+	$("#ionrange_5").ionRangeSlider({
+		min: 10000,
+		max: 100000,
+		step: 100,
+		postfix: " km",
+		from: 55000,
+		hideMinMax: true,
+		hideFromTo: false
+	});
+
+	$(".dial").knob();
+
+	$("#basic_slider").noUiSlider({
+		start: 40,
+		behaviour: 'tap',
+		connect: 'upper',
+		range: {
+			'min': 20,
+			'max': 80
+		}
+	});
+
+	$("#range_slider").noUiSlider({
+		start: [
+			40, 60
+		],
+		behaviour: 'drag',
+		connect: true,
+		range: {
+			'min': 20,
+			'max': 80
+		}
+	});
+
+	$("#drag-fixed").noUiSlider({
+		start: [
+			40, 60
+		],
+		behaviour: 'drag-fixed',
+		connect: true,
+		range: {
+			'min': 20,
+			'max': 80
+		}
+	});
+    </script>
+        
+        
+       

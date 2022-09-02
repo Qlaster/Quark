@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{$title}</title>
+
+    <link href="../../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../font-awesome/css/font-awesome.css" rel="stylesheet">
+
+    <link href="../../css/animate.css" rel="stylesheet">
+    <link href="../../css/style.css" rel="stylesheet">
+	
+	<base id='urlbase' href="{$$base}">	
+</head>
+
+<body>
+
+    <div id="wrapper">
+
+   <!--Главное меню слева-->
+      <nav class="navbar-default navbar-static-side" role="navigation">
+        <div class="sidebar-collapse">
+            <ul class="nav" id="side-menu">
+                <li class="nav-header">
+					<!--PROFILE MENU-->
+                    <div class="dropdown profile-element"> <span>
+							{if $profile['logo'] != ''}
+								<img alt="image" class="img-circle" width="50px" src="{$profile['logo']}" />
+							{else}
+								<img alt="image" class="img-circle" width="50px" src="../../img/avatars/profile1.png" />
+							{end}
+                             </span>
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                            <span class="clear"> <span class="block m-t-xs"> <strong class="font-bold">{$profile['name']}</strong>
+                             </span> <span class="text-muted text-xs block">{$profile['login']}<b class="caret"></b></span> </span> </a>
+                        <ul class="dropdown-menu animated fadeInRight m-t-xs">
+							{foreach $nav['profile']['list'] as $_item}
+								<li><a href="{$_item['link']}">{$_item['head']}</a></li>
+							{end}
+                        </ul>
+                    </div>
+                    <div class="logo-element">
+                        IN+
+                    </div>
+                </li>
+                
+                {if $nav['main']}
+					{foreach $nav['main']['list'] as $_item}  
+					
+						{if $_item['active']} <li class="active"> {else} <li> {end}
+							<a href="{$_item['link']}">
+								<i class="{$_item['image']}"></i> <span class="nav-label">{$_item['head']}</span> 
+								{if $_item['info']} 
+									<span class="pull-right label label-primary">{$_item['info']}</span>
+								{end}
+								{if ($_item['list']) and (!$_item['info'])}
+									<span class="fa arrow"></span>
+								{end}
+							</a>
+							{if $_item['list']}
+								<ul class="nav nav-second-level">
+									{foreach $_item['list'] as $node} 
+										{if $node['active']}
+											<li class="active">
+										{else}
+											<li>
+										{end}
+												<a href="{$node['link']}">{$node['head']}  
+												{if $node['info']} <span class="pull-right label label-primary"> {$node['info']} </span> {end}
+												</a>
+											</li>
+									{end}
+								</ul>
+							{end}
+						</li>
+						
+					{end}
+				{end}
+				
+            </ul>
+
+        </div>
+    </nav>
+    <!--Конец меню-->
+    
+
+        <div id="page-wrapper" class="gray-bg">
+        <div class="row border-bottom">
+        <nav class="navbar navbar-static-top  " role="navigation" style="margin-bottom: 0">
+        <div class="navbar-header">
+            <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " ><i class="fa fa-bars"></i> </a>
+            {if $form['searche']}
+            <form role="search" class="navbar-form-custom" method="post" action="search_results.html">
+                <div class="form-group">
+                    <input type="text" placeholder="{$form['searche']['head']}" class="form-control" name="top-search" id="top-search">
+                </div>
+            </form>
+            {end}   
+        </div>
+            <ul class="nav navbar-top-links navbar-right">
+                <li>
+                    <span class="m-r-sm text-muted welcome-message">Welcome to INSPINIA+ Admin Theme.</span>
+                </li>
+                <li class="dropdown">
+                    <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
+                        <i class="fa fa-envelope"></i>  <span class="label label-warning">16</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-messages">
+                        <li>
+                            <div class="dropdown-messages-box">
+                                <a href="profile.html" class="pull-left">
+                                    <img alt="image" class="img-circle" src="img/a7.jpg">
+                                </a>
+                                <div class="media-body">
+                                    <small class="pull-right">46h ago</small>
+                                    <strong>Mike Loreipsum</strong> started following <strong>Monica Smith</strong>. <br>
+                                    <small class="text-muted">3 days ago at 7:58 pm - 10.06.2014</small>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <div class="dropdown-messages-box">
+                                <a href="profile.html" class="pull-left">
+                                    <img alt="image" class="img-circle" src="img/a4.jpg">
+                                </a>
+                                <div class="media-body ">
+                                    <small class="pull-right text-navy">5h ago</small>
+                                    <strong>Chris Johnatan Overtunk</strong> started following <strong>Monica Smith</strong>. <br>
+                                    <small class="text-muted">Yesterday 1:21 pm - 11.06.2014</small>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <div class="dropdown-messages-box">
+                                <a href="profile.html" class="pull-left">
+                                    <img alt="image" class="img-circle" src="img/profile.jpg">
+                                </a>
+                                <div class="media-body ">
+                                    <small class="pull-right">23h ago</small>
+                                    <strong>Monica Smith</strong> love <strong>Kim Smith</strong>. <br>
+                                    <small class="text-muted">2 days ago at 2:30 am - 11.06.2014</small>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <div class="text-center link-block">
+                                <a href="mailbox.html">
+                                    <i class="fa fa-envelope"></i> <strong>Read All Messages</strong>
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
+                        <i class="fa fa-bell"></i>  <span class="label label-primary">8</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-alerts">
+                        <li>
+                            <a href="mailbox.html">
+                                <div>
+                                    <i class="fa fa-envelope fa-fw"></i> You have 16 messages
+                                    <span class="pull-right text-muted small">4 minutes ago</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="profile.html">
+                                <div>
+                                    <i class="fa fa-twitter fa-fw"></i> 3 New Followers
+                                    <span class="pull-right text-muted small">12 minutes ago</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="grid_options.html">
+                                <div>
+                                    <i class="fa fa-upload fa-fw"></i> Server Rebooted
+                                    <span class="pull-right text-muted small">4 minutes ago</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <div class="text-center link-block">
+                                <a href="notifications.html">
+                                    <strong>See All Alerts</strong>
+                                    <i class="fa fa-angle-right"></i>
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+
+
+                <li>
+                    <a href="login.html">
+                        <i class="fa fa-sign-out"></i> Log out
+                    </a>
+                </li>
+            </ul>
+
+        </nav>
+        </div>
+        
+        
+		<!--Менюшка title-->
+		{if $nav['path']}
+            <div class="row wrapper border-bottom white-bg page-heading">
+                <div class="col-lg-10">
+
+                    <h2>{$nav['path']['head']}</h2> 
+					
+					{//Получаем ключ последнего элемента. нужен для выделения}
+                    {( $end_key = key( array_slice( $nav['path']['list'], -1, 1, TRUE ) ) )}
+   
+                    <ol class="breadcrumb">
+						{foreach $nav['path']['list'] as $key => $value}
+							{if $end_key == $key }
+								<li class="active">
+									<strong>{$value['head']}</strong>
+								</li>
+							{else}
+								<li>
+									<a>{$value['head']}</a>
+								</li>                        
+							{end}	 
+                        {end}
+                    </ol>
+                </div>
+                <div class="col-lg-2">
+
+                </div>
+            </div>
+        {end}  
+            
+            
+        <div class="wrapper wrapper-content">
+            <div class="row">
+                <div class="col-lg-4 animated fadeInDown">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-content">
+                            <div class="file-manager">
+                                <h5>{$catalog['collection']['head']}</h5>
+<!--
+                                <a href="#" class="file-control active">Ale</a>
+                                <a href="#" class="file-control">Documents</a>
+                                <a href="#" class="file-control">Audio</a>
+                                <a href="#" class="file-control">Images</a>
+-->
+                                <div class="hr-line-dashed"></div>
+                                <form action="{$form['collection']['action']}" method='get'>
+									<input name='collection' placeholder="Название нового меню" class="form-control">   
+									<p></p>
+									<button type="submit" class="btn btn-primary btn-block">{$form['collection']['button']['add']['head']}</button>
+								</form>
+                                <div class="hr-line-dashed"></div>
+                                
+                                <h5>{$catalog['collection']['info']}</h5>
+                                <ul class="folder-list" style="padding: 0">
+                                {foreach $catalog['collection']['list'] as $_value}
+									
+									{if $_value['active']}
+									<li class='text-info'>
+									{else}
+									<li>
+										
+									{end}
+										
+<!--
+										<a href="{$_value['link']}"><i class="{$_value['icon']}"></i>{$_value['head']}</a>
+-->
+										<a onclick="menu_repaint('{$_value['head']}')"><i class="{$_value['icon']}"></i>{$_value['head']}</a>
+										
+										<a href="{$_value['delete_link']}">
+											<button type="button" class="btn btn-warning btn-xs pull-right">{$_value['delete_head']}</button>
+										</a>
+										
+										
+	
+									</li> 
+								{end}
+								</ul>
+								
+
+                                <div class="clearfix"></div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                
+                <div class="col-lg-8 animated fadeInRight">
+					
+					
+                    <div class="row">
+						<div class="col-lg-12">
+							<div class="ibox ">
+								<div class="ibox-title">
+									<h5>Nestable basic list</h5>
+								</div>
+								
+								<div class="ibox-content">
+									<h4 class="text-center"  id='menuname'></h4>
+									<p  class="m-b-lg">
+<!--
+										<strong>Nestable</strong> is an interactive hierarchical list. You can drag and drop to rearrange the order. It works well on touch-screens.
+-->
+										
+										<button type="button" class="btn btn-block btn-white" onclick="menu_edit()">Редактировать меню</button>
+										
+									</p>
+
+									<a class="dd" id="nestable" >
+<!--
+										<ol class="dd-list" >
+											<li class="dd-item" data-id="1">
+												<div class="dd-handle">1 - Lorem ipsum </div>               
+											</li>
+											<li class="dd-item" data-id="2">
+												<div class="dd-handle">2 - Dolor sit</div>
+												<ol class="dd-list">
+													<li class="dd-item" data-id="3">
+														<div class="dd-handle">3 - Adipiscing elit</div>
+													</li>
+													<li class="dd-item" data-id="4">
+														<div class="dd-handle">4 - Nonummy nibh</div>
+													</li>
+												</ol>
+											</li>
+											<li class="dd-item" data-id="5">
+												<div class="dd-handle">5 - Consectetuer</div>
+												<ol class="dd-list">
+													<li class="dd-item" data-id="6">
+														<div class="dd-handle">6 - Aliquam erat</div>
+													</li>
+													<li class="dd-item" data-id="7">
+														<div class="dd-handle">7 - Veniam quis</div>
+													</li>
+												</ol>
+											</li>
+											<li class="dd-item" data-id="8">
+												<div class="dd-handle">8 - Tation ullamcorper</div>
+											</li>
+											<li class="dd-item" data-id="9">
+												<div class="dd-handle">9 - Ea commodo</div>
+											</li>
+										</ol>
+-->
+									</a>
+<!--
+									<div class="m-t-md">
+										<h5>Serialised Output</h5>
+									</div>
+									<textarea id="nestable-output" class="form-control"></textarea>
+-->
+
+								</div>
+							
+							
+							</div>
+						</div>
+                
+
+					</div>
+   
+               
+               
+                </div>
+                    
+                </div>
+                </div>
+        <div class="footer">
+            <div class="pull-right">
+                10GB of <strong>250GB</strong> Free.
+            </div>
+            <div>
+                <strong>Copyright</strong> Example Company &copy; 2014-2015
+            </div>
+        </div>
+
+        </div>
+            </div>
+
+
+    <!-- Mainly scripts -->
+    <script src="../../js/jquery-2.1.1.js"></script>
+    <script src="../../js/bootstrap.min.js"></script>
+    <script src="../../js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="../../js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+    <!-- Custom and plugin javascript -->
+    <script src="../../js/inspinia.js"></script>
+    <script src="../../js/plugins/pace/pace.min.js"></script>
+	
+	<script src="../../js/data/http-get.js"></script>
+	
+	<!-- Menu getter/construction tools -->
+    <script src="../../js/data/menu-editor.js"></script>
+    <script src="../../js/data/objects-editor.js"></script>
+    
+    <script>
+        $(document).ready(function(){
+            $('.file-box').each(function() {
+                animationHover(this, 'pulse');
+            });
+        });
+        
+        
+        function menu_repaint(name)
+        {
+			//Запрашиваем все необходимые данные
+			var urlbase = document.getElementById('urlbase').href;
+			var html_div_id = document.getElementById('nestable');			
+			var menu = url_get(urlbase+'admin/constructor/menu/get?name='+btoa(name));
+			
+			//Очищаем поле вывода
+			objects_tree_clear(html_div_id);			
+			//JSON в объект
+			menu = JSON.parse(  menu   );				
+			//Рисуем дерево меню и вешаем ссылку на редактирование
+			objects_tree_paint(html_div_id, menu, urlbase+'admin/constructor/menu/edit?name='+btoa(name));	
+			//Рисуем заголовок меню
+			document.getElementById('menuname').innerHTML = name;
+			
+		}
+		
+		function menu_edit(name)
+		{
+			//Запрашиваем все необходимые данные
+			var urlbase = document.getElementById('urlbase').href;
+			var menuname = document.getElementById('menuname').innerHTML;
+			
+			location.href = 'admin/constructor/menu/edit?menu='+encodeURIComponent(menuname);
+		}
+		
+	
+		function test()
+		{
+			
+			//Запрашиваем все необходимые данные
+			var urlbase = document.getElementById('urlbase').href;
+			var html_div_id = document.getElementById('nestable');
+			var menuname = document.getElementById('menuname').innerHTML;
+			
+			//Находим меню
+			var test = document.getElementById('nestable');		
+			//Забираем данные из тела документа
+			var res = object_tree_compilation(test);
+			//Ценнейшая функция от парня с запада=)
+			res = jsObj2phpObj(res);
+			
+			//~ alert(res);
+			//~ res = $.makeArray(res);
+			//~ res = JSON.stringify(res);
+			//~ console.log(res.serializeArray());
+			//~ console.log(res);
+			
+			var data = encodeURIComponent(res);
+			var name = atob('menuname');
+			
+			
+			
+			//~ $.ajax
+			//~ ({
+			  //~ type: "POST",
+			  //~ url: urlbase+'admin/constructor/menu/set',
+			  //~ data: name+'='+data,
+			//~ });
+			
+			
+			
+			//~ $.post(urlbase+'admin/constructor/menu/set', { name: '"'+res+'"' } );
+			
+			//Отправляем инфу на сервер
+			$.post(urlbase+'admin/constructor/menu/set', { name: menuname, data: (res) });
+
+			//~ url_post(urlbase+'admin/constructor/menu/save', 'menu', );
+			
+			
+			
+		}
+		
+		
+
+
+        
+    </script>
+</body>
+
+</html>

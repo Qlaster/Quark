@@ -1,0 +1,58 @@
+/*
+
+    Name:       php
+    Author:    Vladimir
+
+
+*/
+
+
+.cm-s-php .cm-keyword {font-weight: bold; color: #880017;}
+.cm-s-php .cm-atom {color: #219;}
+.cm-s-php .cm-number {color: #164;}
+.cm-s-php .cm-def {color: #00f;}
+.cm-s-php .cm-punctuation,
+.cm-s-php .cm-property { color: #00865F; }
+.cm-s-php .cm-operator {}
+.cm-s-php .cm-variable { }
+.cm-s-php .cm-variable-2 {color: #008855;}
+.cm-s-php .cm-variable-3 {color: #008855;}
+.cm-s-php .cm-comment {color: #0066FF;}
+.cm-s-php .cm-string {color: #800080;}
+.cm-s-php .cm-string-2 {color: #f50;}
+.cm-s-php .cm-meta {color: #555;}
+.cm-s-php .cm-qualifier {color: #555;}
+.cm-s-php .cm-builtin {color: #30a;}
+.cm-s-php .cm-bracket {color: #997;}
+.cm-s-php .cm-tag {color: #170;}
+.cm-s-php .cm-attribute {color: #008855;}
+.cm-s-php .cm-header {color: blue;}
+.cm-s-php .cm-quote {color: #090;}
+.cm-s-php .cm-hr {color: #999;}
+.cm-s-php .cm-link {color: #00c;}
+
+
+
+/*
+ПОПРАВЬ ЗДЕСЬ СТИЛИ
+*/
+
+
+/*
+.cm-s-php span.cm-comment { color: #0066FF; }
+
+.cm-s-php span.cm-keyword { line-height: 1em; font-weight: bold; color: #AC0017; }
+.cm-s-php span.cm-string { color: #800080; }
+.cm-s-php span.cm-property  { color: black; }
+.cm-s-php span.cm-builtin { line-height: 1em; font-weight: bold; color: #077; }
+.cm-s-php span.cm-special { line-height: 1em; font-weight: bold; color: #0aa; }
+.cm-s-php span.cm-variable { color: #00865F; }
+.cm-s-php span.cm-number, .cm-s-neat span.cm-atom { color: #3a3; }
+.cm-s-php span.cm-meta { color: #555; }
+.cm-s-php span.cm-link { color: #3a3; }
+      
+.cm-s-php .CodeMirror-activeline-background { background: #e8f2ff; }
+.cm-s-php .CodeMirror-matchingbracket { outline:1px solid grey; color:black !important; }
+
+*/
+

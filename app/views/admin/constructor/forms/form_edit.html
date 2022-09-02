@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>{$title}</title>
+		<link href="../../css/bootstrap.min.css" rel="stylesheet">
+		<link href="../../font-awesome/css/font-awesome.css" rel="stylesheet">
+		<!--
+			<link href="~/css/plugins/blueimp/css/blueimp-gallery.min.css" rel="stylesheet">
+			-->
+		<link href="../../css/plugins/blueimp/css/blueimp-gallery.css" rel="stylesheet">
+		<link href="../../css/animate.css" rel="stylesheet">
+		<link href="../../css/style.css" rel="stylesheet">
+		<base id='urlbase' href="{$$base}">
+	</head>
+	<body>
+		<div id="wrapper">
+			
+			<!--Главное меню слева-->
+			{require "../../~section/mainmenu.html"}
+			<!--Конец меню-->
+			
+			<div id="page-wrapper" class="gray-bg">
+				
+				<!-- Head menu -->
+				{require "../../~section/head.html"}
+				<!-- End head menu -->   
+				
+				<!-- Менюшка title-->
+				{require "../../~section/title.html"}
+				<!-- конец title-->   
+				
+				<form method="post"  enctype="multipart/form-data">
+					<input class="hidden" name="files[]" id="files" type="file" multiple onChange="this.form.submit()">
+				</form>
+				<div class="wrapper wrapper-content">
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="ibox float-e-margins">
+								<div class="ibox-content">
+									<form method="post" class="form-horizontal">
+										<h2 class="!text-center ">
+											Настройки галереи 
+											<div class="pull-right">
+												<button type="button" class="btn btn-white btn-rounded  btn-outline" onclick="$('#files').click();"> <i class="fa fa-paperclip"></i> Загрузить файлы </button>
+												<button type="button" class="btn btn-white btn-rounded  btn-outline  hidden" data-toggle="modal" data-target="#Modal-Image-Select"> <i class="fa fa-image"></i> Добавить из галереи </button>
+												<button type="submit" class="btn btn-primary  "> Сохранить</button>
+											</div>
+										</h2>
+										<div class="hr-line-dashed"></div>
+										<div class="form-group has-success">
+											<input type="text" class="form-control" name="head" placeholder="Заголовок галереи" value="{$gallery['head']}">
+										</div>
+										<!--
+											<div class="hr-line-dashed"></div>
+											-->
+										<!--
+											<h2>Lightbox image gallery</h2>
+											-->
+										<div class="form-group row">								
+											<label class="">Описание</label>								
+											<textarea class="col-md-12 form-control" name="text" placeholder="Описание галереи" rows="3">{$gallery['text']}</textarea>
+										</div>
+										<!--
+											<div class="hr-line-dashed"></div>
+											-->
+										<hr>
+										<!--
+											<div class="hr-line-dashed"></div>
+											-->
+										<!--
+											<br><br><br><br><br><br>
+											-->
+										<div class="" >
+											<div class="lightBoxGallery " id="gallery" 
+												style="  
+												<!--
+												display: flex;
+												flex-wrap: wrap;
+												align-content: space-between; 
+												-->
+												<!--
+												align-content: flex-end; 
+												display: flex;
+												flex-wrap: wrap;
+												align-content: flex-end;
+												-->
+												">
+												{foreach (array) $gallery['list'] as $_key => $_item}
+												<div class="gallery-item-box {$_item['selected']}" id="item_{$_key}">
+													<a href="{$_item['image']}"   title="{$_item['head']}" data-gallery="" >											
+													<img class="gallery-image-item" src="{$_item['image']}">		
+													</a>	
+													<input name="list[{$_key}][image]" type="hidden" value="{$_item['image']}">													
+													<div class="gallery-item-toolbox align-center text-center" style="" draggable="false">
+														<button type="submit" class="btn btn-white btn-sm" onclick="$('#item_{$_key}').remove();"><i class="fa fa-trash-o"></i></button>	
+														<input name="list[{$_key}][head]" type="text" class="form-control" value="{$_item['head']}" placeholder="Заголовок">							
+														<input name="list[{$_key}][text]" type="text" class="form-control" value="{$_item['text']}" placeholder="Информация">
+														<input name="list[{$_key}][link]" type="text" class="form-control" value="{$_item['link']}" placeholder="Ссылка">	
+													</div>
+												</div>
+												{end}
+												<!--
+													<a href="~/img/gallery/1.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/1.jpg"></a>
+													<a href="~/img/gallery/2.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/2.jpg"></a>
+													<a href="~/img/gallery/3.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/3.jpg"></a>
+													<a href="~/img/gallery/4.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/4.jpg"></a>
+													<a href="~/img/gallery/5.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/5.jpg"></a>
+													<a href="~/img/gallery/6.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/6.jpg"></a>
+													<a href="~/img/gallery/7.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/7.jpg"></a>
+													<a href="~/img/gallery/8.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/8.jpg"></a>
+													<a href="~/img/gallery/9.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/9.jpg"></a>
+													<a href="~/img/gallery/10.jpg"  title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/10.jpg"></a>
+													<a href="~/img/gallery/12.jpg"  title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/12.jpg"></a>
+													<a href="~/img/gallery/4.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/4s.jpg"></a>
+													<a href="~/img/gallery/5.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/5s.jpg"></a>
+													<a href="~/img/gallery/6.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/6s.jpg"></a>
+													<a href="~/img/gallery/7.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/7s.jpg"></a>
+													<a href="~/img/gallery/2.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/2s.jpg"></a>
+													<a href="~/img/gallery/3.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/3s.jpg"></a>
+													<a href="~/img/gallery/1.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/1s.jpg"></a>
+													<a href="~/img/gallery/9.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/9s.jpg"></a>
+													<a href="~/img/gallery/10.jpg"  title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/10s.jpg"></a>
+													<a href="~/img/gallery/11.jpg"  title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/11s.jpg"></a>
+													<a href="~/img/gallery/12.jpg"  title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/12s.jpg"></a>
+													<a href="~/img/gallery/4.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/4s.jpg"></a>
+													<a href="~/img/gallery/5.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/5s.jpg"></a>
+													<a href="~/img/gallery/4.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/4s.jpg"></a>
+													<a href="~/img/gallery/5.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/5s.jpg"></a>
+													<a href="~/img/gallery/6.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/6s.jpg"></a>
+													<a href="~/img/gallery/12.jpg"  title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/12s.jpg"></a>
+													<a href="~/img/gallery/4.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/4s.jpg"></a>
+													<a href="~/img/gallery/5.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/5s.jpg"></a>
+													<a href="~/img/gallery/10.jpg"  title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/10s.jpg"></a>
+													<a href="~/img/gallery/1.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/1s.jpg"></a>
+													<a href="~/img/gallery/2.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/2s.jpg"></a>
+													<a href="~/img/gallery/3.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/3s.jpg"></a>
+													<a href="~/img/gallery/4.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/4s.jpg"></a>
+													<a href="~/img/gallery/5.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/5s.jpg"></a>
+													<a href="~/img/gallery/6.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/6s.jpg"></a>
+													<a href="~/img/gallery/7.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/7s.jpg"></a>
+													<a href="~/img/gallery/8.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/8s.jpg"></a>
+													<a href="~/img/gallery/9.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/9s.jpg"></a>
+													<a href="~/img/gallery/10.jpg"  title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/10s.jpg"></a>
+													<a href="~/img/gallery/11.jpg"  title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/11s.jpg"></a>
+													<a href="~/img/gallery/12.jpg"  title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/12s.jpg"></a>
+													<a href="~/img/gallery/4.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/4s.jpg"></a>
+													<a href="~/img/gallery/5.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/5s.jpg"></a>
+													<a href="~/img/gallery/6.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/6s.jpg"></a>
+													<a href="~/img/gallery/7.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/7s.jpg"></a>
+													<a href="~/img/gallery/2.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/2s.jpg"></a>
+													<a href="~/img/gallery/3.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/3s.jpg"></a>
+													<a href="~/img/gallery/1.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/1s.jpg"></a>
+													<a href="~/img/gallery/9.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/9s.jpg"></a>
+													<a href="~/img/gallery/10.jpg"  title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/10s.jpg"></a>
+													<a href="~/img/gallery/11.jpg"  title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/11s.jpg"></a>
+													<a href="~/img/gallery/12.jpg"  title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/12s.jpg"></a>
+													<a href="~/img/gallery/4.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/4s.jpg"></a>
+													<a href="~/img/gallery/7.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/7s.jpg"></a>
+													<a href="~/img/gallery/8.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/8s.jpg"></a>
+													<a href="~/img/gallery/9.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/9s.jpg"></a>
+													<a href="~/img/gallery/10.jpg"  title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/10s.jpg"></a>
+													<a href="~/img/gallery/11.jpg"  title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/11s.jpg"></a>
+													<a href="~/img/gallery/12.jpg"  title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/12s.jpg"></a>
+													<a href="~/img/gallery/4.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/4s.jpg"></a>
+													<a href="~/img/gallery/5.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/5s.jpg"></a>
+													<a href="~/img/gallery/5.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/5s.jpg"></a>
+													<a href="~/img/gallery/4.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/4s.jpg"></a>
+													<a href="~/img/gallery/5.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/5s.jpg"></a>
+													<a href="~/img/gallery/6.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/6s.jpg"></a>
+													<a href="~/img/gallery/12.jpg"  title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/12s.jpg"></a>
+													<a href="~/img/gallery/4.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/4s.jpg"></a>
+													<a href="~/img/gallery/5.jpg"   title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/5s.jpg"></a>
+													<a href="~/img/gallery/10.jpg"  title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/10s.jpg"></a>
+													<a href="~/img/gallery/11.jpg"  title="Image from Unsplash" data-gallery="" ><img class="gallery-image-item" src="~/img/gallery/11s.jpg"></a>
+													-->
+												<!-- The Gallery as lightbox dialog, should be a child element of the document body -->
+												<div id="blueimp-gallery" class="blueimp-gallery">
+													<div class="slides"></div>
+													<h3 class="title"></h3>
+													<a class="prev">‹</a>
+													<a class="next">›</a>
+													<a class="close">×</a>
+													<a class="play-pause"></a>
+													<ol class="indicator"></ol>
+												</div>
+											</div>
+										</div>
+										<div class="hr-line-dashed"></div>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!--- Модальная форма выбора изображения --->
+				<div class="modal inmodal fade" id="Modal-Image-Select" tabindex="-1" role="dialog"  aria-hidden="true">
+					<div class="modal-dialog modal-lg">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+								<h4 class="modal-title">Выберите изображения</h4>
+								<!--
+									<small class="font-bold">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</small>
+									-->
+							</div>
+							<div class="modal-body">
+								<div class="col-lg-12 col-md-12">
+									<div class="file-box">
+										<div class="file">
+											<a href="#">
+												<span class="corner"></span>
+												<div class="icon">
+													<i class="fa fa-file"></i>
+												</div>
+												<div class="file-name">
+													Document_2014.doc
+													<br>
+													<small>Added: Jan 11, 2014</small>
+												</div>
+											</a>
+										</div>
+									</div>
+									<div class="file-box">
+										<div class="file">
+											<a href="#">
+												<span class="corner"></span>
+												<div class="image">
+													<img alt="image" class="img-responsive" src="~/img/p1.jpg">
+												</div>
+												<div class="file-name">
+													Italy street.jpg
+													<br>
+													<small>Added: Jan 6, 2014</small>
+												</div>
+											</a>
+										</div>
+									</div>
+									<div class="file-box">
+										<div class="file">
+											<a href="#">
+												<span class="corner"></span>
+												<div class="image">
+													<img alt="image" class="img-responsive" src="~/img/p2.jpg">
+												</div>
+												<div class="file-name">
+													My feel.png
+													<br>
+													<small>Added: Jan 7, 2014</small>
+												</div>
+											</a>
+										</div>
+									</div>
+									<div class="file-box">
+										<div class="file">
+											<a href="#">
+												<span class="corner"></span>
+												<div class="icon">
+													<i class="fa fa-music"></i>
+												</div>
+												<div class="file-name">
+													Michal Jackson.mp3
+													<br>
+													<small>Added: Jan 22, 2014</small>
+												</div>
+											</a>
+										</div>
+									</div>
+									<div class="file-box">
+										<div class="file">
+											<a href="#">
+												<span class="corner"></span>
+												<div class="image">
+													<img alt="image" class="img-responsive" src="~/img/p3.jpg">
+												</div>
+												<div class="file-name">
+													Document_2014.doc
+													<br>
+													<small>Added: Fab 11, 2014</small>
+												</div>
+											</a>
+										</div>
+									</div>
+									<div class="file-box">
+										<div class="file">
+											<a href="#">
+												<span class="corner"></span>
+												<div class="icon">
+													<i class="img-responsive fa fa-film"></i>
+												</div>
+												<div class="file-name">
+													Monica's birthday.mpg4
+													<br>
+													<small>Added: Fab 18, 2014</small>
+												</div>
+											</a>
+										</div>
+									</div>
+									<div class="file-box">
+										<a href="#">
+											<div class="file">
+												<span class="corner"></span>
+												<div class="icon">
+													<i class="fa fa-bar-chart-o"></i>
+												</div>
+												<div class="file-name">
+													Annual report 2014.xls
+													<br>
+													<small>Added: Fab 22, 2014</small>
+												</div>
+											</div>
+										</a>
+									</div>
+									<div class="file-box">
+										<div class="file">
+											<a href="#">
+												<span class="corner"></span>
+												<div class="icon">
+												</div>
+												<div class="file-name">
+													Document_2014.doc
+													<br>
+													<small>Added: Jan 11, 2014</small>
+												</div>
+											</a>
+										</div>
+									</div>
+									<div class="file-box">
+										<div class="file">
+											<a href="#">
+												<span class="corner"></span>
+												<div class="image">
+													<img alt="image" class="img-responsive" src="~/img/p1.jpg">
+												</div>
+												<div class="file-name">
+													Italy street.jpg
+													<br>
+													<small>Added: Jan 6, 2014</small>
+												</div>
+											</a>
+										</div>
+									</div>
+									<div class="file-box">
+										<div class="file">
+											<a href="#">
+												<span class="corner"></span>
+												<div class="image">
+													<img alt="image" class="img-responsive" src="~/img/p2.jpg">
+												</div>
+												<div class="file-name">
+													My feel.png
+													<br>
+													<small>Added: Jan 7, 2014</small>
+												</div>
+											</a>
+										</div>
+									</div>
+									<div class="file-box">
+										<div class="file">
+											<a href="#">
+												<span class="corner"></span>
+												<div class="icon">
+													<i class="fa fa-music"></i>
+												</div>
+												<div class="file-name">
+													Michal Jackson.mp3
+													<br>
+													<small>Added: Jan 22, 2014</small>
+												</div>
+											</a>
+										</div>
+									</div>
+									<div class="file-box">
+										<div class="file">
+											<a href="#">
+												<span class="corner"></span>
+												<div class="image">
+													<img alt="image" class="img-responsive" src="~/img/p3.jpg">
+												</div>
+												<div class="file-name">
+													Document_2014.doc
+													<br>
+													<small>Added: Fab 11, 2014</small>
+												</div>
+											</a>
+										</div>
+									</div>
+									<div class="file-box">
+										<div class="file">
+											<a href="#">
+												<span class="corner"></span>
+												<div class="icon">
+													<i class="img-responsive fa fa-film"></i>
+												</div>
+												<div class="file-name">
+													Monica's birthday.mpg4
+													<br>
+													<small>Added: Fab 18, 2014</small>
+												</div>
+											</a>
+										</div>
+									</div>
+									<div class="file-box">
+										<a href="#">
+											<div class="file">
+												<span class="corner"></span>
+												<div class="icon">
+													<i class="fa fa-bar-chart-o"></i>
+												</div>
+												<div class="file-name">
+													Annual report 2014.xls
+													<br>
+													<small>Added: Fab 22, 2014</small>
+												</div>
+											</div>
+										</a>
+									</div>
+									<div class="file-box">
+										<div class="file">
+											<a href="#">
+												<span class="corner"></span>
+												<div class="icon">
+													<i class="fa fa-file"></i>
+												</div>
+												<div class="file-name">
+													Document_2014.doc
+													<br>
+													<small>Added: Jan 11, 2014</small>
+												</div>
+											</a>
+										</div>
+									</div>
+									<div class="file-box">
+										<div class="file">
+											<a href="#">
+												<span class="corner"></span>
+												<div class="image">
+													<img alt="image" class="img-responsive" src="~/img/p1.jpg">
+												</div>
+												<div class="file-name">
+													Italy street.jpg
+													<br>
+													<small>Added: Jan 6, 2014</small>
+												</div>
+											</a>
+										</div>
+									</div>
+									<div class="file-box">
+										<div class="file">
+											<a href="#">
+												<span class="corner"></span>
+												<div class="image">
+													<img alt="image" class="img-responsive" src="~/img/p2.jpg">
+												</div>
+												<div class="file-name">
+													My feel.png
+													<br>
+													<small>Added: Jan 7, 2014</small>
+												</div>
+											</a>
+										</div>
+									</div>
+									<div class="file-box">
+										<div class="file">
+											<a href="#">
+												<span class="corner"></span>
+												<div class="icon">
+													<i class="fa fa-music"></i>
+												</div>
+												<div class="file-name">
+													Michal Jackson.mp3
+													<br>
+													<small>Added: Jan 22, 2014</small>
+												</div>
+											</a>
+										</div>
+									</div>
+									<div class="file-box">
+										<div class="file">
+											<a href="#">
+												<span class="corner"></span>
+												<div class="image">
+													<img alt="image" class="img-responsive" src="~/img/p3.jpg">
+												</div>
+												<div class="file-name">
+													Document_2014.doc
+													<br>
+													<small>Added: Fab 11, 2014</small>
+												</div>
+											</a>
+										</div>
+									</div>
+									<div class="file-box">
+										<div class="file">
+											<a href="#">
+												<span class="corner"></span>
+												<div class="icon">
+													<i class="img-responsive fa fa-film"></i>
+												</div>
+												<div class="file-name">
+													Monica's birthday.mpg4
+													<br>
+													<small>Added: Fab 18, 2014</small>
+												</div>
+											</a>
+										</div>
+									</div>
+									<div class="file-box">
+										<a href="#">
+											<div class="file">
+												<span class="corner"></span>
+												<div class="icon">
+													<i class="fa fa-bar-chart-o"></i>
+												</div>
+												<div class="file-name">
+													Annual report 2014.xls
+													<br>
+													<small>Added: Fab 22, 2014</small>
+												</div>
+											</div>
+										</a>
+									</div>
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-white" data-dismiss="modal">Закрыть</button>
+								<button type="button" class="btn btn-primary">Save changes</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!--- Конец --->    
+				
+				<!-- Footer block -->
+				{require "../../~section/footer.html"}
+				<!-- End Footer block -->
+			</div>
+		</div>
+		<!-- Mainly scripts -->
+		<script src="../../js/jquery-2.1.1.js"></script>
+		<script src="../../js/bootstrap.min.js"></script>
+		<script src="../../js/plugins/metisMenu/jquery.metisMenu.js"></script>
+		<script src="../../js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+		<!-- Custom and plugin javascript -->
+		<script src="../../js/inspinia.js"></script>
+		<script src="../../js/plugins/pace/pace.min.js"></script>
+		<!-- blueimp gallery -->
+		<script src="../../js/plugins/blueimp/jquery.blueimp-gallery.min.js"></script>
+		<!-- Drag&Drop Library -->
+		<script src="../../js/plugins/sortable/sortable.js"></script>
+		<script>
+			//~ var roomList = document.getElementById('room-list');
+			var roomList = document.getElementById('gallery');
+			// Grid demo
+			new Sortable(roomList, 
+				{
+					animation: 150,
+					ghostClass: 'blue-background-class'				
+				});
+			
+			$("input").attr("draggable", "false");
+		</script>
+	</body>
+</html>

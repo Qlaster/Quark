@@ -1,0 +1,73 @@
+		<!--Главное меню слева-->
+		<nav class="navbar-default navbar-static-side" role="navigation">
+			<div class="sidebar-collapse">
+				<ul class="nav" id="side-menu">
+					<li class="nav-header">
+						<!--PROFILE MENU-->
+						<div class="dropdown profile-element">
+							<span>
+							{if $profile['logo'] != ''}
+								<img alt="image" class="img-circle" width="50px" src="{$profile['logo']}" />
+							{else}
+								<img alt="image" class="img-circle" width="50px" src="~/img/avatars/profile1.png" />
+							{end}
+							</span>
+							<a data-toggle="dropdown" class="dropdown-toggle" href="#">
+							<span class="clear"> <span class="block m-t-xs"> <strong class="font-bold">{$profile['name']}</strong>
+							</span> <span class="text-muted text-xs block">{$profile['login']}<b class="caret"></b></span> </span> </a>
+							<ul class="dropdown-menu animated fadeInRight m-t-xs">
+								{foreach $nav['profile']['list'] as $_item}
+									<li><a href="{$_item['link']}">{$_item['head']}</a></li>
+								{end}
+								<!--
+									<li><a href="contacts.html">Contacts</a></li>
+									<li><a href="mailbox.html">Mailbox</a></li>
+									<li class="divider"></li>
+									<li><a href="login.html">Logout</a></li>
+									-->
+							</ul>
+						</div>
+						<div class="logo-element">
+							IN+
+						</div>
+					</li>
+					{if $nav['main']}
+						{foreach $nav['main']['list'] as $_item}  
+								{if $_item['active']} 
+									<li class="active"> 
+								{else} 
+									<li>
+								{end}
+										<a href="{$_item['link']}">
+										<i class="{$_item['image']}"></i> <span class="nav-label">{$_item['head']}</span> 
+										
+										{if $_item['info']} 
+											<span class="pull-right label label-primary">{$_item['info']}</span>
+										{end}
+										
+										{if ($_item['list']) and (!$_item['info'])}
+											<span class="fa arrow"></span>
+										{end}
+										</a>
+										{if $_item['list']}
+											<ul class="nav nav-second-level">
+												{foreach $_item['list'] as $_node} 
+													{if $_node['active']}
+														<li class="active">
+													{else}
+														<li>
+													{end}
+													<a href="{$_node['link']}">{$_node['head']}  
+														{if $_node['info']} <span class="pull-right label label-primary"> {$_node['info']} </span> {end}
+													</a>
+												</li>
+												{end}
+											</ul>
+										{end}
+									</li>
+						{end}
+					{end}
+				</ul>
+			</div>
+		</nav>
+		<!--Конец меню-->
