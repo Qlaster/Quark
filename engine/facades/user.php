@@ -179,6 +179,19 @@
 			return $this->db()->select(mb_strtolower($login));
 		}
 		
+		
+		/*
+		 * 
+		 * name: Получить пользователя по id
+		 * @param
+		 * @return
+		 * 
+		 */
+		public function get_id($id)
+		{
+			return $this->db()->where('id = ?', $id)->Select();
+		}
+		
 		/*
 		 * 
 		 * name: Проверяет наличие пользователя
@@ -316,6 +329,23 @@
 			if (! $user) return false;
 			
 			if (isset($user['access'][$access_item])) return $user['access'][$access_item];
+			return null;
+		}
+		
+		
+		/*
+		 * 
+		 * name: Проверяет запреты на исполнение контроллеров вошедшего пользователя
+		 * @param
+		 * @return
+		 * 
+		 */
+		public function denied($access_item=null)
+		{
+			$user = $this->logged();
+			if (! $user) return false;
+			
+			if (isset($user['denied'][$access_item])) return $user['denied'][$access_item];
 			return null;
 		}
 		

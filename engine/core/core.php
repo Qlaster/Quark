@@ -70,8 +70,8 @@
 			//Подключаем расширения ядра
 			foreach (glob($dir."/ext_*.php") as $filename) 
 			{
-					//Включаем файл в состав приложения
-					require($filename);
+				//Включаем файл в состав приложения
+				require($filename);
 			}
 		}
 		

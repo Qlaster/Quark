@@ -45,71 +45,38 @@
 			$this->config = $this->CorrectConfig($config);
 		}
 		
-		
-		//Запуск контроллера
-		public function run($controller='', $APP=null)
+		//Превращает адресный путь в путь к контроллеру
+		public function realpath($controller='')
 		{
 			//Корректируем конфиг. Если опции нет, то устанавливаем по дефолту.
 			$this->config = $this->CorrectConfig($this->config);
 			
-			//На всякий случай ставим косую в пути к контроллерам
-			//~ if ( $this->config['folder'] != '') $this->config['folder'] .= '/';
-			
 			//раскрывает все символические ссылки, переходы типа '/./', '/../' и лишние символы '/' в пути path, возвращая канонизированный путь к файлу.
-			$path = $this->realpath($controller);
+			$path = $this->filtering($controller);
 			
 			//Строим полный путь
 			$path = $this->config['folder'] .DIRECTORY_SEPARATOR. $path;
 			
-			//~ echo posix_getcwd(); 
-			//~ echo $path; die;
-			
 			//Вызываем с php.
-			if ( is_file($path.'.php')	) return include $path.'.php';
+			if ( is_file($path.'.php')	) return $path.'.php';
 			//Вызываем без php (обратились по имени, не указав расширение)
-			if ( is_file($path) 		) return include $path;
-			
-			
-			
+			if ( is_file($path) 		) return $path;
 			
 			//Если обратились к папке, в которой лежит обработчик по умолчанию
 			if ( (is_dir($path)) and ( is_file($path.'/'.$this->config['handler']) ) ) //and (substr($controller, -1) == '/')
 			{
 				//Случай №1. Нужно просто вызвать дефолтный метод контроллера
-				$result = include $path.'/'.$this->config['handler'];		
-				if ($result == null) 
-				{
-					return true;			
-				}		
-				else
-				{
-					return $result;
-				}
+				return $path.'/'.$this->config['handler'];		
 			}
+		}
+		
+		//Запуск контроллера
+		public function run($controller='', $APP=null)
+		{
+			if (! is_readable($ctrl = $this->realpath($controller))) return false;
 			
-			
-
-			
-			
-			
-			//Случай №2. Если предыдущий код закончился провалом, пытаемся разобраться с текущим путем. Может быть это метод контроллера?
-			
-			//~ //Вызываем с php.
-			//~ if ( is_file($path.'.php')	) return include $path.'.php';
-			//~ //Вызываем без php (обратились по имени, не указав расширение)
-			//~ if ( is_file($path) 		) return include $path;
-
-
-
-			//Случай №3. Запрашиваемого метода в текущем контроллере нет. Вызываем метод по умолчанию
-			//TODO: ЗАКРЫТО. Причина: дублирование правил
-			//~ if ( is_file( dirname($path).'/'.$this->config['handler']) )
-			//~ {
-				//~ //Случай №3. 
-				//~ return include dirname($path).'/'.$this->config['handler'];						
-			//~ }
-
-			return null;
+			$result = include $ctrl;
+			return ($result == null) ? true : $result;
 		}
 		
 
@@ -143,7 +110,7 @@
 		
 		
 		//Механизм проверки пути на валидность.
-		private function realpath($path)
+		private function filtering($path)
 		{
 			//Пока глупо уберем двойную и одинарную точки. Хах! Метод с кучей багов, который даже обсуждать не стоит.
 			//while ( strpos("/$path/", '/../') !== false ) $path = str_replace('..', '', $path);
@@ -171,7 +138,6 @@
 
 	}
 	
-
 		
 	# ---------------------------------------------------------------- #
 	# --------------[ СОЗДАЕМ И ПОДКЛЮЧАЕМ ИНТЕРФЕЙС ]---------------- #

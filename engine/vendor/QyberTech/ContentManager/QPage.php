@@ -450,7 +450,7 @@
 		
 		public function count($unique=null)
 		{
-			$table_page 	= $this->Table_Page;
+			$table_page = $this->Table_Page;
 			$STH = $this->PDO_INTERFACE->prepare("SELECT COUNT(*) FROM '$table_page';");
 			$STH->execute();				
 			

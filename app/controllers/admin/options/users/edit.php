@@ -8,74 +8,45 @@
 	if (isset($user))
 		$content['user'] = $user;
 
-	//~ else	//Если нет - то того, который залогинен
-		//~ $content['user'] = $APP->account->logged();
 	
 	
 	//Список всех файлов, которым предстаит дать права
 	//$files = $APP->utils->files->collection('controllers/admin', '*.php');
 	
-	//~ echo $APP->controller->config['folder']; die;
-	//~ echo $APP->controllers; die;
-	//~ echo $APP->controllers->config['folder'].'/admin'; die;
-	$files = $APP->utils->files->listing($APP->controller->config['folder'].'/admin', '*.php');
+	
+	$pathAdmin = $APP->controller->config['folder'].'/admin';
+	
+	$files = $APP->utils->files->listing($pathAdmin, '*.php');
 	//~ $tree  = $APP->utils->files->tree($APP->controller->config['folder'].'/admin', '*.php');
 	
 	sort($files);
 	
+	//~ print_r($files);
 	//Дополняем сведения и форматируем вывод
-	foreach($files as $_item)
-	{
+	foreach($files as &$_item)
+	{	
+		//Обрежем расположение директории админки
+		//~ $_item = ltrim( mb_strcut($_item, strlen($APP->controller->config['folder'])), DIRECTORY_SEPARATOR );
+		
+		
 		$info = pathinfo($_item);
 		$info['fullname'] = $_item;
 		
 		//Если правило найдено - ставим галку. Если пользователь новый (создается), то по умолчанию тоже
-		if (isset($user['access'][$_item]) or (! isset($user)))
-			$info['access'] = "active";
-				
+		//~ if (isset($user['access'][$_item]) or (! isset($user)))
+			//~ $info['access'] = "active";
+
+		//Если правило найдено - ставим галку
+		if (isset($user['denied'][$_item])) $info['denied'] ="active";
+		
 		$result[$info['dirname']][$info['basename']] = $info;		
 	}
 	
-	$content['user']['access'] = $result;
-	
-	
-	//~ print_r($tree); exit;
-	//~ print_r($result); exit;
-	//~ print_r($files); exit;
-	
-//	$content['user']['access'] = (array) $content['user']['access'];
+	//~ $content['user']['denied'] = $result;
+	$content['denied'] = $result;
 
-
-	
-	foreach ($files as &$value) 
-	{		
-		$fileinfo = pathinfo($value);
-		
-		$record = $fileinfo['dirname']."/".$fileinfo['filename'];
-		
-		$buffer['head'] = $record;
-		//~ $buffer['link'] = urlencode($record);
-		
-		//Если правило найдено - ставим галку. Если пользователь новый (создается), то по умолчанию тоже
-		if (isset($user['access'][$record]) or (! isset($user)))
-		{
-			$buffer['active'] = true;	
-		}
-		else
-		{
-			unset($buffer['active']);	
-		}
-		//~ $content['user']['access'][$record] = $buffer; 
-		//~ $value = $buffer; 
-	}
-	
 	$APP->template->file('admin/users/users_edit.html')->display($content);
 
-
-
-
-
-	
 
 
 	function files_convert_to_access($files)

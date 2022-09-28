@@ -452,7 +452,7 @@
 			//Устанавливаем код вывода ошибок из конфига
 			error_reporting($this->config['error_reporting']);
 			
-			
+			//~ print_r($vars_array); die;
 			if (isset($vars_array))
 			{
 				//Собираем все переменные из массива.
@@ -493,6 +493,7 @@
 		{
 			//Если файл шаблона не найден
 			if (! file_exists($this->file_link)) return false;
+			
 			
 			//Если каталог пуст - устанавливаем текущий. А что еще остается делать?
 			if ($this->config['compilation']['folder'] == '') $this->config['compilation']['folder'] = getcwd();
@@ -576,7 +577,7 @@
 			
 			//Если файл шаблона не найден
 			if (! file_exists($this->file_link)) return false;
-			
+						
 			//Загружаем содержимое файла
 			//~ $tpl_string = file_get_contents($this->file_link);
 			$tpl_string = $this->tpl_get_contents($this->file_link);

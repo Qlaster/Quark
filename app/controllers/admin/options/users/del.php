@@ -28,9 +28,4 @@
 	}
 	
 
-	
-
-	
-	
-
 	header('Location: '.$APP->url->home().'admin/options/users');

@@ -17,10 +17,10 @@
 	
 	
 	
-	//Получаем все галереи
+	//Получаем все формы
 	$form_list = $APP->object->collection('form')->all();
 	
-	//~ print_r($form_list); die;
+	
 	
 	//Клеим кнопочки и информацию
 	foreach ($form_list as $form_key => $form_data) 

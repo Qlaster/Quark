@@ -108,6 +108,7 @@
 			$this->qinfo['join']  = array();
 			$this->qinfo['concat'] = 'and';
 			$this->qinfo['pkey']  = array();
+			$this->qinfo['group'] = '';
 		}		
 		
 		/*
@@ -163,6 +164,30 @@
 			$this->PDO_INTERFACE->beginTransaction();
 			$this->transaction = true;
 			return $this;
+		}
+		
+		/*
+		 * 
+		 * name: Проверка на открытие транзакции
+		 * @param 
+		 * @return (bool)
+		 * 
+		 */	
+		function inTransaction()
+		{
+			return $this->PDO_INTERFACE->inTransaction();
+		}
+		
+		/*
+		 * 
+		 * name: Откат транзакции
+		 * @param 
+		 * @return (bool)
+		 * 
+		 */	
+		function rollBack()
+		{
+			return $this->PDO_INTERFACE->rollBack();
 		}
 		
 		/*
@@ -377,7 +402,7 @@
 			
 			//Формируем запрос	
 			($this->PDO_INTERFACE->getAttribute(\PDO::ATTR_DRIVER_NAME) != "sqlite") ? $returning = "RETURNING *" : $returning = "";
-						
+		
 			//Формируем запрос	
 			$stmt = $this->PDO_INTERFACE->prepare("INSERT INTO \"$table\" (\"$columns\") values ($values) $returning;");			
 			
@@ -431,7 +456,7 @@
 				if ($value == 'NULL') $value = null;
 			}	
 			$columns = implode(', ', $columns);
-			
+
 			//Выбираем условие
 			$where 	= $this->WhereComposition($this->qinfo['concat']);
 			$params = $this->WhereParams();
@@ -442,8 +467,11 @@
 			
 			if ($where)
 			{
+				//Формируем запрос возврата данных
+				($this->PDO_INTERFACE->getAttribute(\PDO::ATTR_DRIVER_NAME) != "sqlite") ? $returning = "RETURNING *" : $returning = "; SELECT last_insert_rowid();";
+								
 				//Формируем запрос	
-				$stmt = $this->PDO_INTERFACE->prepare("UPDATE \"$table\" SET $columns WHERE ($where);");	
+				$stmt = $this->PDO_INTERFACE->prepare("UPDATE \"$table\" SET $columns WHERE ($where) $returning;");	
 				
 				//Указываем значения
 				foreach ($record as $key => &$val) $stmt->bindParam(":$key", $val);	
@@ -586,14 +614,14 @@
           
 			//Join
 			$join = $this->joinComposition();
-	
+
 			if ($where)
 				//Подготавливаем запрос
 				$stmt = $this->PDO_INTERFACE->prepare("SELECT $columns $table $join WHERE ($where) $group $order $limit;");
 			else
 				//Подготавливаем запрос
 				$stmt = $this->PDO_INTERFACE->prepare("SELECT $columns $table $join $group $order $limit;");	
-			
+
 			//Выполняем запрос
 			$stmt->execute($params);
 			
@@ -720,10 +748,10 @@
 		 * @return ORM instance
 		 * 
 		 */
-		public function like()
+		public function like(...$args)
 		{
 			//Получаем аргументы функции
-			$args = func_get_args();
+			//~ $args = func_get_args();
 			
 			//Если нам передали 1 параметр
 			if ( (count($args) == 1) and ($args[0]))
@@ -750,24 +778,31 @@
 				{			
 					//Собираем условие запроса
 					foreach ($args[0] as $key => $value) 
-					{
-						if ($value == 'NULL') 
-						{							
-							//Если передали NULL
-							$this->qinfo['where']['sql'][] = "$key IS NULL";
-							//Этот параметр больше не будет учавствовать в запросе
-							unset($args[0][$key]);
+					{						
+						//Если указан целый набор значений, то объдиним их в "in ()"
+						if (is_array($value))
+						{
+							//Рассчитаем и сгенерируем нужное количество вопросов в запросе							
+							$this->qinfo['where']['sql'][] = rtrim(str_repeat("\"$key\" LIKE ? OR ", count($value)), ' OR ');
+							$values = array_merge((array)$values, $value);							
 						}
+						elseif (($value === 'NULL') or ($value === NULL))
+						{	
+							//Если передали NULL
+							$this->qinfo['where']['sql'][] = "\"$key\" IS NULL";
+						}												
 						else
-						{						
-							$this->qinfo['where']['sql'][] = $key . ' LIKE ?';
+						{			
+							$this->qinfo['where']['sql'][] = "\"$key\" LIKE ?";
+							$values[] = $value;							
 						}
 					}
-					
+
 					//Сбрасываем ключи переданного массива
-					$values = array_values($args[0]);
-					//Добавим %% к строке, что бы отрабатывал like
-					foreach	($values as &$_par) $_par = "%$_par%";
+					//~ $values = array_values($args[0]);
+					//Добавим %% к сроке, что бы отрабатывал like
+					if (isset($values))
+						foreach	($values as &$_par) $_par = "%$_par%";
 										
 					$this->qinfo['where']['params'] = array_merge( (array) $this->qinfo['where']['params'], (array) $values );
 					
@@ -871,8 +906,7 @@
 		 */
 		private function joinComposition()
 		{
-			if (!$this->qinfo['join']['sql']) return '';
-			//~ if (count($this->qinfo['join']['sql']) == 0) return '';			
+			if (count($this->qinfo['join']) == 0) return '';
 			return implode(" ", (array) $this->qinfo['join']['sql']);
 		}
 		
@@ -899,7 +933,8 @@
 		 */
 		public function whereParams()
 		{
-			return $this->qinfo['where']['params'];
+			if (isset($this->qinfo['where']['params']))
+				return $this->qinfo['where']['params'];
 		} 
 
 		/*

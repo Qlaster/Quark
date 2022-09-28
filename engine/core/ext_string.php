@@ -26,7 +26,9 @@ function mb_str_replace_once($search, $replace, $text)
 { 
    $pos = mb_strpos($text, $search); 
    return $pos!==false ? mb_substr_replace($text, $replace, $pos, mb_strlen($search)) : $text; 
-} 
+}
+use function mb_str_replace_once as str_replace_once;
+
 
 function is_json($string) 
 {

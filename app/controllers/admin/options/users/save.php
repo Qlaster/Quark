@@ -65,14 +65,15 @@
 	//========================================================
 	//				ПРАВА ПОЛЬЗОВАТЕЛЯ
 	//========================================================
-	unset($user['access']);
-	foreach ($_POST as $_name => $_value) 
-	{
-		if ($_value)
-		{
-			$user['access'][base64_decode($_name)] = $_value;
-		}
-	}
+	$user['denied'] = $_POST['denied'];
+	//~ unset($user['access']);
+	//~ foreach ($_POST as $_name => $_value) 
+	//~ {
+		//~ if ($_value)
+		//~ {
+			//~ $user['access'][base64_decode($_name)] = $_value;
+		//~ }
+	//~ }
 	
 
 	
