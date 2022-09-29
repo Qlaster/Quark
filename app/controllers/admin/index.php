@@ -25,11 +25,9 @@
 
 	
 	
-	$content = $APP->controller->run('admin/autoinclude', $APP);
-
-	//~ echo $APP->url->home().'admin/login/'; die;
-	
+	$content = $APP->controller->run('admin/autoinclude', $APP);	
 	header('Location: '.$APP->url->home().'admin/dashboard');
+	
 	//~ header('Location: http://'.$APP->url->host().''.$APP->url->home().'admin/dashboard/');
 	
 	//~ header('Location: '.$APP->url->host().'/'.$APP->url->home().'admin/dashboard/');

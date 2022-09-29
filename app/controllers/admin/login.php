@@ -18,7 +18,7 @@
 
 	
 	$content['form']['authorization']['head'] = 'Welcome to QEXT admin panel!';
-	$content['form']['authorization']['action'] = 'login';
+	$content['form']['authorization']['action'] = 'admin/login';
 	
 
 
