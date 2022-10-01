@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 	/*
 	 * visits
@@ -38,7 +38,7 @@
 	interface QVisitInterface
 	{
 		//Записать посещение в лог
-		public function run();
+		public function push();
 
 		//Получить информацию о посетителе (браузер, версия ОС, тип устройства, ip и т.д.)
 		public function get_info();
@@ -82,6 +82,9 @@
 		 */
 		private $shear = array('files'=>null, 'current'=>null, 'begin'=>null, 'end'=>null);
 		
+		//Переменная хранит состояние последнего запроса push.
+		//(для отложенной записи в лог и подсчету времени + несколько вызовов push не должно приводить к нескольким записям в журнал)
+		private $turn = [];
 		
 		public function __construct($userAgent, $url, $config=[])
 		{			
@@ -99,31 +102,43 @@
 			$this->config['folder'] = str_replace('%TEMP%', sys_get_temp_dir().'/', $this->config['folder']);			
 		}
 		
+		function __destruct() 
+		{
+			if (!$this->turn) return;
+			//Добавим время исполнения
+			$this->turn['data']['runtime'] = $this->runtime();
+			$this->turn['data']['mempeak'] = $this->mempeak();
+			//Запишем в лог
+			$this->save_file($this->turn['file'], $this->turn['data']);
+		}
 		/*
 		 * 
-		 * name: Записать посещение в лог
-		 * @param
+		 * name: Записать посещение в лог 
+		 * @param (string) advanced string info
 		 * @return
 		 * 
 		 */
-		public function run()
+		public function push($advanced_info = '')
 		{
 			$info = $this->get_info();
+			//Если передеали массив/объект/класс - превратим в json
+			//~ $advanced_info = !is_string($advanced_info) ? json_encode($advanced_info) : $advanced_info;
+			$info['info'] = (string) $advanced_info;
 			
 			//~ $filename = date('Y-m-d', $_SERVER['REQUEST_TIME']).'.log';
 			$filename = $this->date().'.log';
-			//~ $filename = 'xxx.log';
+
 			if (! $this->config['folder'] == '') 
 			{
 				//Если директории нет - создаем
 				if (! is_dir($this->config['folder'])) mkdir($this->config['folder'], 0777, true);
 				$filename =  $this->config['folder'] .'/'. $filename;
 			}
-			
-			
-			$this->save_file($filename, $info);
-		}
 
+			//Добавим в очередь на запись (мы это запишем при разрушении класса, в самом конце)
+			$this->turn['file'] = getcwd().DIRECTORY_SEPARATOR.$filename;
+			$this->turn['data'] = $info;
+		}
 
 		/*
 		 * 
@@ -142,6 +157,8 @@
 			if (!$this->userAgent) return trigger_error ( "Unit UserAgent not found!" , E_USER_ERROR );
 			
 			$return['time'] 			= $_SERVER['REQUEST_TIME_FLOAT'];
+			$return['runtime'] 			= $this->runtime();
+			$return['mempeak'] 			= $this->mempeak();
 			$return['ip'] 				= $this->client_ip();
 			$return['uri'] 				= $_SERVER['REQUEST_URI'];
 			$return['type'] 			= $this->userAgent->type;
@@ -150,8 +167,9 @@
 			$return['browserversion'] 	= $this->userAgent->browserversion;
 						
 			$return['page'] 			= $this->url->page();
-			$return['unique'] 			= $this->is_unique();				
+			$return['unique'] 			= $this->is_unique();			
 			$return['userid'] 			= $this->mark_user();
+
 			
 			return $return;
 		}
@@ -406,21 +424,50 @@
 		public function string_log_parse($string)
 		{
 			//Разбираем строчку на параметры
-			$buffer = explode($this->config['delimiter'], $string);
+			$buffer = explode($this->config['delimiter'], rtrim($string));
 			
 			$return['time'] 			= $buffer[0];
-			$return['ip'] 				= $buffer[1];
-			$return['uri'] 				= $buffer[2];
-			$return['type'] 			= $buffer[3];
-			$return['osname'] 			= $buffer[4];
-			$return['browsername'] 		= $buffer[5];
-			$return['browserversion'] 	= $buffer[6];
+			$return['runtime'] 			= $buffer[1];
+			$return['mempeak'] 			= $buffer[2];
+			$return['ip'] 				= $buffer[3];
+			$return['uri'] 				= $buffer[4];
+			$return['type'] 			= $buffer[5];
+			$return['osname'] 			= $buffer[6];
+			$return['browsername'] 		= $buffer[7];
+			$return['browserversion'] 	= $buffer[8];
 			
-			$return['page'] 			= $buffer[7];                              
-			$return['unique'] 			= $buffer[8];
-			$return['userid'] 			= $buffer[9];
+			$return['page'] 			= $buffer[9];             
+			$return['unique'] 			= $buffer[10];
+			$return['userid'] 			= $buffer[11];
+			$return['info'] 			= $buffer[12];
 		
 			return $return;
+		}
+		
+		
+		/*
+		 * 
+		 * name: Время выполнения скрипта от момента запуска до момента вызова runtime
+		 * @param
+		 * @return (int) run time seconds
+		 * 
+		 */	
+		public function runtime()
+		{
+			return round(microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'], 5);			
+			//~ echo 'Время выполнения скрипта: '.round(microtime(true) - $start, 4).' сек.';
+		}
+		
+		/*
+		 * 
+		 * name: Запросить пиковое использование памяти
+		 * @param
+		 * @return (int) get memory peak
+		 * 
+		 */	
+		public function mempeak($precision=0)
+		{
+			return round(memory_get_peak_usage()/1024, $precision);
 		}
 		
 		/*
@@ -528,9 +575,6 @@
 			
 			return $result;
 		}
-		
-		
-
 
 		function date()
 		{

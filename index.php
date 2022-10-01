@@ -16,8 +16,12 @@
 	$APP->config->loadENV('.env', 'app/.env');
 	//Симлинк на новый модуль
 	$APP->object = $APP->objects; 
-	//Записываем визит
-	$APP->visits->run($APP->user->logged()['login']);
+	//Записываем визит (регистрируется вызов после завершения скрипта)
+	$APP->visits->push($APP->user->logged()['login']);
+	//~ register_shutdown_function( function(){ $APP->visits->run($APP->user->logged()['login']); } );
+	//~ $APP->visits && register_shutdown_function(function($APP){ $APP->visits->run($APP->user->logged()['login']); }, $APP);
+	//~ $APP->visits && register_shutdown_function(function($APP){ echo getcwd(); }, $APP);
+	//~ register_shutdown_function([$APP, 'visits', 'run'], $APP->user->logged()['login']);
 
 	# ---------------------------------------------------------------- #
 	#            Обработка псевдонимов адресов страниц                 #

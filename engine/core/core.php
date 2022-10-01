@@ -64,7 +64,7 @@
 				$this->$unit = include($filename);
 			}
 		}
-			
+		
 		private function __includeExtension($dir=__DIR__)
 		{				
 			//Подключаем расширения ядра
@@ -74,6 +74,7 @@
 				require($filename);
 			}
 		}
+		
 		
 		
 	}
