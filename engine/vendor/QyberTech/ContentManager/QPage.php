@@ -44,6 +44,7 @@
 		
 		protected $Table_Page;			//Название таблицы со страницами
 		protected $Table_Content;		//Название таблицы с контентами
+		protected $Table_Service;		//Название таблицы со служебными страницами
 		
 	
 		
@@ -54,7 +55,7 @@
 		 * @return void
 		 * 
 		 */
-		function __construct($PDO_interface, $Table_Page='page', $Table_Content='content')
+		function __construct($PDO_interface, $Table_Page='page', $Table_Content='content', $Table_Service='service')
 		{
 			
 			//Если переданный клас не является PDO, то показываем ошибку
@@ -80,6 +81,7 @@
 			//Объявляем имена таблиц
 			$this->Table_Page 		= $Table_Page;
 			$this->Table_Content 	= $Table_Content;
+			$this->Table_Service 	= $Table_Service;
 			
 			//Построим таблицы, если их нет
 			$this->DBConstruct();
@@ -98,30 +100,31 @@
 		{
 			$this->PDO_INTERFACE->BeginTransaction();
 			
-			//Создаем таблицу с перечислением страниц
+			//- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+			//       Создаем таблицу с перечислением страниц
+			//- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 			$table = $this->Table_Page;
-
 			$stmt = $this->PDO_INTERFACE->prepare(		
 				"CREATE TABLE IF NOT EXISTS '$table'
 					(
 						'url',
+						'title',
 						'html',
-						'lang',			
 						'public',
 						'index',
+						'lang',
 						'sitemap',
-						'version',
-						'title'
+						'version'
+						
 					);
-				");
-			
-			$stmt->execute();
-			
+				")->execute();
 			//Создаем индекс
 			$this->PDO_INTERFACE->prepare("CREATE INDEX IF NOT EXISTS 'index_page' on '$table' ('url');")->execute();
 
 
+			//- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 			//Создаем таблицу с контентом
+			//- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 			$table = $this->Table_Content;
 			$stmt = $this->PDO_INTERFACE->prepare(		
 				"CREATE TABLE IF NOT EXISTS '$table'
@@ -134,12 +137,23 @@
 						'search',
 						'version'
 					);
-				");
-		
-			$stmt->execute();
-			
+				")->execute();
 			//Создаем индекс
 			$this->PDO_INTERFACE->prepare("CREATE INDEX IF NOT EXISTS 'index_content' on '$table' ('url','search');")->execute();
+			
+			//- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+			//Создаем таблицу с сервисными страницами (с кодами ошибок)
+			//- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+			//~ $table = $this->Table_Service;
+			//~ $stmt = $this->PDO_INTERFACE->prepare(		
+				//~ "CREATE TABLE IF NOT EXISTS '$table'
+					//~ (
+						//~ 'name',
+						//~ 'html',
+						//~ 'lang'
+					//~ );
+				//~ ")->execute();
+			
 			
 			//Применяем изменения
 			$this->PDO_INTERFACE->Commit();
@@ -274,14 +288,12 @@
 			
 			
 			//Первое, что нам предстоит сделать, это найти страницу в базе. Составляем запрос
-			$STH = $this->PDO_INTERFACE->prepare("SELECT * FROM '$table_page' WHERE ( ('url' = :url) and ('lang' = :lang) );");
+			$STH = $this->PDO_INTERFACE->prepare("SELECT * FROM '$table_page' WHERE ( (url = :url) and (lang = :lang) );");
 
-		
 			
 			//Если странице нужно присновить новый адрес
 			if ($url != $page['url'])
 			{			
-
 				//Узнаем, есть ли страница с таким адресом
 				$STH->bindParam(':url', $page['url']);
 				$STH->bindParam(':lang', $page['lang']);
@@ -307,22 +319,20 @@
 			$STH->bindParam(':url', 	$url);
 			$STH->bindParam(':lang', 	$page['lang']);
 			$STH->execute();	
-						
+
 			//Узнаем есть ли страница с текущим url
 			$current_url = $STH->fetchAll();
-			
+
 			//Если страницы нет, то составим запрос на добавление
 			if (count($current_url) == 0)
 			{
-				//echo "insert";
 				//Добавление страницы
-				$STH = $this->PDO_INTERFACE->prepare("INSERT INTO '$table_page' ('url', 'title', 'html', 'lang', 'public', 'index', 'sitemap', 'version') values (:url, :title, :html, :lang, :public, :index, :sitemap, :version);");
+				$STH = $this->PDO_INTERFACE->prepare("INSERT INTO '$table_page' (url, title, html, lang, public, \"index\", sitemap, version) values (:url, :title, :html, :lang, :public, :index, :sitemap, :version);");
 			}
 			else
 			{
-				//echo "update";
 				//Если есть - то запрос на обновление
-				$STH = $this->PDO_INTERFACE->prepare("UPDATE '$table_page' SET 'url'=:url, 'title'=:title, 'html'=:html, 'lang'=:lang, 'public'=:public, 'index'=:index, 'sitemap'=:sitemap, 'version'=:version WHERE ('url'=:wurl and 'lang'=:lang);");
+				$STH = $this->PDO_INTERFACE->prepare("UPDATE '$table_page' SET url=:url, title=:title, html=:html, lang=:lang, public=:public, \"index\"=:index, sitemap=:sitemap, version=:version WHERE (url=:wurl and lang=:lang);");
 				$STH->bindParam(':wurl',	$url);
 			}
 			
@@ -353,7 +363,7 @@
 			if ((isset($page['content'])) and (is_array($page['content'])))
 			{
 				//Подготавливам выражение для записи тегов с данными
-				$STH = $this->PDO_INTERFACE->prepare("INSERT INTO '$table_content' ('url', 'name', 'type', 'data', 'lang', 'search', 'version') values (:url, :name, :type, :data, :lang, :search, :version);");
+				$STH = $this->PDO_INTERFACE->prepare("INSERT INTO '$table_content' (url, name, type, data, lang, search, version) values (:url, :name, :type, :data, :lang, :search, :version);");
 				
 				foreach ($page['content'] as $tag_name => &$tag) 
 				{
@@ -460,20 +470,7 @@
 		
 		
 		public function versions($url, $lang=null)
-		{
-			//Если нам предоставили
-			//~ if ( is_array($lang) )
-			//~ {
-				//~ echo '!!!';
-				//~ $lang_count = 0;			
-				//~ 
-				//~ //$lang = implode(' or ', "lang = ?");
-				//~ 
-						//~ 
-				//~ 
-				//~ 
-			//~ }
-			
+		{			
 			//Явно приводим url к строке
 			$url = strval($url);	
 			
@@ -549,7 +546,7 @@
 			$table_page 	= $this->Table_Page;
 			
 			//Получаем URL, дату и язык для всех опубликованных страниц, индексация которых разрешена
-			$STH = $this->PDO_INTERFACE->prepare("SELECT url, version, lang FROM '$table_page' WHERE ( ('sitemap' <> '') and ('public' <> '') );");
+			$STH = $this->PDO_INTERFACE->prepare("SELECT url, version, lang FROM '$table_page' WHERE ( (sitemap <> '') and (public <> '') );");
 			
 			//Выполняем 
 			$STH->execute();

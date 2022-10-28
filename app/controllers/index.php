@@ -4,14 +4,18 @@
 
 	//Загрузим страницу из базы
 	$page = $APP->page->get($url);
-
-	//Записываем визит
-	$APP->visits->run();
+	
+	//Если не нашли такой страницы - подгрузим заглушку
+	if ($page === null)
+	{
+		http_response_code(404);
+		$page = $APP->page->get('error:404');
+	}		
 	
 	//Страница существует?
 	if (($page != null) and ($page['public']))
 	{
-		
+
 		if (! isset($page['content'])) $page['content'] = array();
 		$content = array();
 		
@@ -51,7 +55,6 @@
 			
 		}
 		
-		//~ print_r($content); 
 		//Пометим относительную директорию, что бы шаблонизатор мог указать его в шаблоне
 		$APP->template->base_html = $APP->url->home();		
 		//выводим используя встроенный шаблонизатор

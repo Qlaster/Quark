@@ -1,5 +1,6 @@
 <?php
-		
+	// Report all PHP errors
+	error_reporting(E_ALL);	
 	# ---------------------------------------------------------------- #
 	#             Объявление автозагрузки (стандарт PSR4)              #
 	# ---------------------------------------------------------------- #				
@@ -18,10 +19,7 @@
 	$APP->object = $APP->objects; 
 	//Записываем визит (регистрируется вызов после завершения скрипта)
 	$APP->visits->push($APP->user->logged()['login']);
-	//~ register_shutdown_function( function(){ $APP->visits->run($APP->user->logged()['login']); } );
-	//~ $APP->visits && register_shutdown_function(function($APP){ $APP->visits->run($APP->user->logged()['login']); }, $APP);
-	//~ $APP->visits && register_shutdown_function(function($APP){ echo getcwd(); }, $APP);
-	//~ register_shutdown_function([$APP, 'visits', 'run'], $APP->user->logged()['login']);
+
 
 	# ---------------------------------------------------------------- #
 	#            Обработка псевдонимов адресов страниц                 #
@@ -32,7 +30,6 @@
 		$APP->url->redirect = $APP->url->page;
 		$APP->url->page     = $alias;
 	}
-
 
 	# ---------------------------------------------------------------- #
 	#            Обработка правил маршрутеризации (роутинг)            #
@@ -57,10 +54,14 @@
 	#        Передача управления контроллеру (на основе правил)        #
 	# ---------------------------------------------------------------- #			
 	//Правила есть. Будем исполнять тот контроллер, который указан в правилах
-	if ($APP->controller->run($rout, $APP) === null) 
+	if ($ctrlResponse = $APP->controller->run($rout, $APP) === null) 
 	{
 		//Контроллера нет? Что ж... Попробуем запустить и передать управление стандартному index контроллеру
-		if ( $APP->controller->run($APP->controller->config['handler'], $APP) === null )  http_response_code(404);
+		if ($ctrlResponse = $APP->controller->run($APP->controller->config['handler'], $APP) === null )  
+		{
+			http_response_code(500);
+			$page = $APP->page->get('error:500');
+			$APP->template->file($page['html'])->display($page['content']);
+			//~ echo "code:500";
+		}
 	}
-
-

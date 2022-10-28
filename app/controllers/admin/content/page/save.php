@@ -8,10 +8,10 @@
 	//$page['url'] = $URL;
 	//$page['url'] = $URL;
 	
-	$URL = $_POST['URL'];
+	$URL = trim($_POST['URL']);
 		
 	//Забираем служебные теги и Формируем страницу
-	$page['url']	= $_POST['URL'];
+	$page['url']	= trim($_POST['URL']);
 	$page['html']	= $_POST['template_file'];
 	$page['public'] = $_POST['check_public'];	
 	$page['sitemap']= $_POST['check_sitemap'];	
@@ -70,7 +70,10 @@
 	
 	//$page['content']['gallery-->main']['data'] = array('1','xxxx');
 		
-	$APP->page->set($URL, $page);
+	//~ print_r($page); die;
+	if (!$APP->page->set($URL, $page))
+		trigger_error ( "Не удается сохранить страницу" , E_USER_WARNING ); 
+		
 	$APP->page->sitemap('controllers/sitemap.xml.php');
 	
 	//~ print_r($APP->page->get($URL));

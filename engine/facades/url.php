@@ -60,10 +60,14 @@
 			if ($this->page === null)			
 			{
 				//Получаем URL домашней папки расположения
-				$home = $this->Home($verbatim); 
+				$home = $this->home($verbatim); 
 				//Берем запрошенную страницу
-				$uri  = parse_url($this->URI($verbatim)); 			
-				$uri  = $uri['path'];
+				//TODO: Данный код плохо обрабатывает наличие двоеточий т др. спец символов в названии страницы
+				//~ $uri  = parse_url($this->URI($verbatim));
+				//~ $uri  = $uri['path'];
+				
+				//Аналогичный, грубоватый, но работоспособный код
+				$uri = explode('?', $this->URI($verbatim))[0];
 				
 				//Вырезаем домашнюю папку из общего пути
 				$this->page  = mb_substr($uri, mb_strlen($home), mb_strlen($uri)); 
@@ -76,7 +80,7 @@
 		//Получить весь ЧПУ с пареметрами url скрипта (домен не возвращается). ЧПУ возвращается полностью, исключая только домен.
 		public function uri($verbatim=false)
 		{
-			$result = urldecode($_SERVER['REQUEST_URI']);			
+			$result = urldecode($_SERVER['REQUEST_URI']);
 			if ($verbatim == false) $result = $this->correct($result);
 			return $result;
 		}

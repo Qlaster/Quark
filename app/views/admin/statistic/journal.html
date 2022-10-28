@@ -110,9 +110,9 @@
 						{foreach (array) $journal['list'] as $_record}
 						<tr class="gradeX">
 							<td class="center">{$_record['date']}</td>
-							<td class="text-right">{$_record['runtime']}</td>
-							<td class="text-right">{$_record['mempeak']}</td>
-							<td>{= str_replace("?", "<br>?", $_record['uri'])}</td>
+							<td >{$_record['runtime']}</td>
+							<td >{$_record['mempeak']}</td>
+							<td style="word-wrap: break-word" title="{$fullUri}">{= mb_strimwidth($_record['uri'], 0, 100, "...")}</td>
 							<td class="center">{$_record['ip']}</td>
 							<td >{$_record['type']} {$_record['browsername']} <br> {$_record['osname']}</td>
 							<td class="center">{$_record['info']}</td>
@@ -179,6 +179,7 @@
             $('.dataTables-example').dataTable({
                 responsive: true,
                 "dom": 'T<"clear">lfrtip',
+                "order": [[ 0, "desc" ]],
                 "tableTools": {
                     "sSwfPath": "../js/plugins/dataTables/swf/copy_csv_xls_pdf.swf"
                 }
@@ -192,7 +193,7 @@
             });
             
             /* Init DataTables */
-            var oTable = $('#editable').dataTable();
+            var oTable = $('#editable').dataTable( {"order": [[ 0, "desc" ]] });
 
             //~ /* Apply the jEditable handlers to the table */
             //~ oTable.$('td').editable( '../example_ajax.php', {
