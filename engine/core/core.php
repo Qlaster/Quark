@@ -52,9 +52,19 @@
 
 		public function __facades()
 		{
-
+			//Пройдемся по всем директориям моделей, что бы найти нужный модуль
+			foreach	($this->core_config['path_units'] as $interfaceAlias => $modelDir)
+				foreach (glob($modelDir."/*.php") as $filename)
+				{
+					//Получаем название модуля из имени файла
+					$facade = basename($filename, '.php');
+					$result[$facade] = $filename;
+				}
+			return $result;
 		}
 
+
+		//TODO: DEPRICATED
 		public function __includeUnits($dir)
 		{
 			//Подключаем модули расширений

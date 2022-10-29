@@ -3,8 +3,11 @@
 
 	$content = $APP->controller->run('admin/autoinclude', $APP);
 
-	//Получаем список модулей
-	$units_path = glob($APP->core_config['path_units']['app']."/*.php");
+	//Получаем список модулей (фасадов и моделей)
+	$units_path = $APP->__facades();
+
+	//~ $units_path = glob($APP->core_config['path_units']['app']."/*.php");
+
 
 	//Получаем базовое имя модуля
 	foreach ($units_path as $key => &$unitfile)
