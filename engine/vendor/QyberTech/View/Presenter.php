@@ -58,11 +58,13 @@
 			//Теги, разбор в которых не производится
 			$this->config['literal']['literal']		['open']	= '<literal>';
 			$this->config['literal']['literal']		['close']	= '</literal>';
+			$this->config['literal']['comment']		['open']	= '<!--';
+			$this->config['literal']['comment']		['close']	= '-->';
 			$this->config['literal']['script']		['open']	= '<script';
 			$this->config['literal']['script']		['close']	= '</script>';
 			$this->config['literal']['style']		['open']	= '<style';
 			$this->config['literal']['style']		['close']	= '</style>';
-			$this->config['literal']['php']			['open']	= '<?php ';
+			$this->config['literal']['php']			['open']	= '<?php';
 			$this->config['literal']['php']			['close']	= '?>';
 
 			//Статические теги
@@ -140,10 +142,72 @@
 		//Данный метод очень удобен для фильтрации тегов.
 		private function literal_count($literal_tag='')
 		{
-
 			//Если не указали тег, то проверяем на открытость литеральных тегов
 			if ($literal_tag == '')
 			{
+				//Просто найдем любой тег, который открыт. Ну хоть один...
+				foreach ($this->literal_count as $tag_name => $flag_open)
+				{
+					if ($flag_open != 0) return true;
+				}
+				return false;
+			}
+
+
+
+			//Проходим по всем тегам
+			foreach ($this->config['literal'] as $tag_name => $syntax)
+			{
+
+				//Если тег одновременно открыли и закрыли - то не нужно менять состояние (например такой тег <!-- C -->)
+				if  (
+						( mb_substr($literal_tag, 0, mb_strlen($syntax['open']) ) == $syntax['open'] )
+							and
+						( mb_substr($literal_tag,  -mb_strlen($syntax['close']) ) == $syntax['close'] )
+					)
+				{
+					continue;
+				}
+
+				if (strpos($literal_tag, $syntax['open']) === 0)
+				{
+
+					if (! isset($this->literal_count[$tag_name]) ) $this->literal_count[$tag_name] = 0;
+
+					$this->literal_count[$tag_name]++;
+
+					return true;
+					break;
+				}
+
+				if (strpos($literal_tag, $syntax['close']) === 0)
+				{
+					if (! isset($this->literal_count[$tag_name]) ) $this->literal_count[$tag_name] = 0;
+
+					$this->literal_count[$tag_name]--;
+					if ($this->literal_count[$tag_name]<0)	$this->literal_count[$tag_name] = 0;
+
+					return true;
+					break;
+				}
+			}
+		}
+
+
+		//Метод считает открытие/закрытие литеральных тегов. Ты отправляешь ему тег, он определеяет, литеральный он или нет. Если литеральный, то сморит, открытый или закртытый.
+		//Если открытый - увеличивает счетчик. Если закрытый - уменьшает. Если тег пуст, то возвращает true/false в зависимости от того, открыт/закрыт хоть один литеральный тег.
+		//Данный метод очень удобен для фильтрации тегов.
+		private function literal_count_OLD($literal_tag='')
+		{
+			//~ var_dump($literal_tag);
+			if (mb_substr($literal_tag, 0, 5) == '<?php')
+			{
+				//~ var_dump($literal_tag); die;
+			}
+			//Если не указали тег, то проверяем на открытость литеральных тегов
+			if ($literal_tag == '')
+			{
+				return false;
 				//Просто найдем любой тег, который открыт. Ну хоть один...
 				foreach ($this->literal_count as $tag_name => $flag_open)
 				{
@@ -266,6 +330,7 @@
 			//Получем список всех тегов
 			$all_tags = $this->get_tags($tpl_string);
 
+			//~ print_r($all_tags); die;
 
 			//Двигаемся от тега к тегу, по телу документа
 			foreach ($all_tags as $key => &$tag)
@@ -583,6 +648,10 @@
 			$tpl_string = str_replace(array("\r\n", "\r", "\n"), '', $tpl_string);
 
 			//Получем список всех тегов
+			return $this->get_tags($tpl_string);
+
+			//TODO: Прежняя версия кода. Устарело
+			//Получем список всех тегов
 			$all_tags = $this->get_tags($tpl_string);
 
 			//Двигаемся от тега к тегу, по телу документа
@@ -598,7 +667,7 @@
 					if ($literal_tag) continue;
 
 					//Если нет открытых литеральных тегов - добавляем в выдачу
-					if (! $this->literal_count('') )
+					if (! $this->literal_count() )
 					{
 						$result[] = $tag;
 					}
@@ -619,13 +688,16 @@
 
 
 			//~ $math = "#(\\$L(.*?)\\$R)|(\<(.*?)\>)#";	//|(\<!--(.*?)--\>)
-			//~ $math = "#(\\$L(.*?)\\$R)|(<!--(.*?)-->)|(\<(.*?)\>)#";	//|(\<!--(.*?)--\>)
-			$math = "/\s*(\\$L(.*?)\\$R)|(<!--(.*?)-->)|(\<(.*?)\>)\s*/s";
+			$math = "#(\\$L(.*?)\\$R)|(<!--(.*?)-->)|(\<(.*?)\>)#";	//|(\<!--(.*?)--\>)
+			$math = "/\s*(\\$L(.*?)\\$R)|(<!--(.*?)-->)|(\<\?php(.*?)\?\>)|(\<(.*?)\>)\s*/s";
+
 			if (preg_match_all($math, $string, $list))
 			{
 				//Лист содержит весь список тегов
 				$list = (array) $list[0];
 			}
+
+			//~ return $list;
 
 			//~ print_r($list); die;
 
@@ -633,12 +705,20 @@
 			$math = "#(\\$L(.*?)\\$R)#";
 			foreach ($list as $value)
 			{
-				//В комментарии HTML не заглядываем
-				if (mb_substr($value, 0, 4) == '<!--')
+				//Если это литеральный тег - мы его пропустим. В нем не нужно копаться
+				if ($this->literal_count($value))
 				{
 					$result[] = $value;
 					continue;
 				}
+
+				//TODO:predicated
+				//В комментарии HTML не заглядываем
+				//~ if (mb_substr($value, 0, 4) == '<!--')
+				//~ {
+					//~ $result[] = $value;
+					//~ continue;
+				//~ }
 
 				if (preg_match_all($math, $value, $buflist))
 				{
