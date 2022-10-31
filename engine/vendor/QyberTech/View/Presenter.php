@@ -194,59 +194,6 @@
 		}
 
 
-		//Метод считает открытие/закрытие литеральных тегов. Ты отправляешь ему тег, он определеяет, литеральный он или нет. Если литеральный, то сморит, открытый или закртытый.
-		//Если открытый - увеличивает счетчик. Если закрытый - уменьшает. Если тег пуст, то возвращает true/false в зависимости от того, открыт/закрыт хоть один литеральный тег.
-		//Данный метод очень удобен для фильтрации тегов.
-		private function literal_count_OLD($literal_tag='')
-		{
-			//~ var_dump($literal_tag);
-			if (mb_substr($literal_tag, 0, 5) == '<?php')
-			{
-				//~ var_dump($literal_tag); die;
-			}
-			//Если не указали тег, то проверяем на открытость литеральных тегов
-			if ($literal_tag == '')
-			{
-				return false;
-				//Просто найдем любой тег, который открыт. Ну хоть один...
-				foreach ($this->literal_count as $tag_name => $flag_open)
-				{
-					if ( ($flag_open != 0) or ($flag_open != 0)  )
-					{
-						return true;
-					}
-				}
-				return false;
-			}
-
-			//Проходим по всем тегам
-			foreach ($this->config['literal'] as $tag_name => $sintax)
-			{
-
-				if (strpos($literal_tag, $sintax['open']) === 0)
-				{
-
-					if (! isset($this->literal_count[$tag_name]) ) $this->literal_count[$tag_name] = 0;
-
-					$this->literal_count[$tag_name]++;
-
-					return true;
-					break;
-				}
-
-				if (strpos($literal_tag, $sintax['close']) === 0)
-				{
-					if (! isset($this->literal_count[$tag_name]) ) $this->literal_count[$tag_name] = 0;
-
-					$this->literal_count[$tag_name]--;
-					if ($this->literal_count[$tag_name]<0)	$this->literal_count[$tag_name] = 0;
-
-					return true;
-					break;
-				}
-			}
-		}
-
 		private function compile_resource($tpl_string)
 		{
 			//А лучше добавить код, который автоматически выгрузит путь из шаблонизатора
@@ -301,9 +248,7 @@
 			$tpl_string = str_replace($resource_replace['search'], $resource_replace['replace'], $tpl_string);
 
 			//Заменим все относительные симлинки путями к шаблону
-			$tpl_string = str_replace($this->config['url_link_tag'], '<?=$this->base_link?>', $tpl_string);
-
-			return $tpl_string;
+			return str_replace($this->config['url_link_tag'], '<?=$this->base_link?>', $tpl_string);
 		}
 
 
@@ -574,8 +519,7 @@
 				return $cache_file;
 			}
 
-			//Загрушаем шаблон документа tpl
-			//~ $document = file_get_contents($this->file_link);
+			//Загружаем шаблон документа tpl
 			$document = $this->tpl_get_contents($this->file_link);
 
 			//Компилируем содержимое
@@ -688,7 +632,7 @@
 
 
 			//~ $math = "#(\\$L(.*?)\\$R)|(\<(.*?)\>)#";	//|(\<!--(.*?)--\>)
-			$math = "#(\\$L(.*?)\\$R)|(<!--(.*?)-->)|(\<(.*?)\>)#";	//|(\<!--(.*?)--\>)
+			//~ $math = "#(\\$L(.*?)\\$R)|(<!--(.*?)-->)|(\<(.*?)\>)#";	//|(\<!--(.*?)--\>)
 			$math = "/\s*(\\$L(.*?)\\$R)|(<!--(.*?)-->)|(\<\?php(.*?)\?\>)|(\<(.*?)\>)\s*/s";
 
 			if (preg_match_all($math, $string, $list))
@@ -696,10 +640,6 @@
 				//Лист содержит весь список тегов
 				$list = (array) $list[0];
 			}
-
-			//~ return $list;
-
-			//~ print_r($list); die;
 
 			//Проверяем, есть ли внури тегов html, теги шаблонизатора
 			$math = "#(\\$L(.*?)\\$R)#";
