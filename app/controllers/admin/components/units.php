@@ -12,6 +12,7 @@
 	//Получаем базовое имя модуля
 	foreach ($units_path as $key => &$unitfile)
 	{
+		$content['units']['list'][$key]['file']		= str_replace('/', ' / ',  $unitfile);
 		$content['units']['list'][$key]['name']		= basename($unitfile);
 		$content['units']['list'][$key]['alias']	= basename($unitfile, '.php');
 		$content['units']['list'][$key]['create']	= date('d.m.Y H:i:s', filemtime($unitfile));
