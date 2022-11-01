@@ -6,13 +6,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>INSPINIA | Login</title>
+    <title>{$title}</title>
 
     <link href="~/css/bootstrap.min.css" rel="stylesheet">
     <link href="~/font-awesome/css/font-awesome.css" rel="stylesheet">
 
     <link href="~/css/animate.css" rel="stylesheet">
-    <link href="~/css/style.css" rel="stylesheet">    
+    <link href="~/css/style.css" rel="stylesheet">
 </head>
 
 <body class="gray-bg">
@@ -28,10 +28,10 @@
             <h3>{$form['authorization']['head']}</h3>
             {if $message}
             <p class="alert alert-info">
-				{$message}                
-            </p>            
+				{$message}
+            </p>
             {end}
-            <form method="post" class="m-t" role="form" action="{$form['authorization']['action']}">				
+            <form method="post" class="m-t" role="form" action="{$form['authorization']['action']}">
                 <div class="form-group">
                     <input name='login' class="form-control" placeholder="Username" required="">
                 </div>
@@ -39,10 +39,12 @@
                     <input name='password' type="password" class="form-control" placeholder="Password" required="">
                 </div>
                 <button type="submit" class="btn btn-primary block full-width m-b">Login</button>
+<!--
 
                 <a href="#"><small>Forgot password?</small></a>
                 <p class="text-muted text-center"><small>Do not have an account?</small></p>
                 <a class="btn btn-sm btn-white btn-block" href="register.html">Create an account</a>
+-->
             </form>
             <p class="m-t"> <small>Inspinia we app framework base on Bootstrap 3 &copy; 2014</small> </p>
         </div>

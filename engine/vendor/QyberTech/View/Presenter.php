@@ -641,6 +641,7 @@
 				$list = (array) $list[0];
 			}
 
+			$result = [];
 			//Проверяем, есть ли внури тегов html, теги шаблонизатора
 			$math = "#(\\$L(.*?)\\$R)#";
 			foreach ($list as $value)
@@ -651,14 +652,6 @@
 					$result[] = $value;
 					continue;
 				}
-
-				//TODO:predicated
-				//В комментарии HTML не заглядываем
-				//~ if (mb_substr($value, 0, 4) == '<!--')
-				//~ {
-					//~ $result[] = $value;
-					//~ continue;
-				//~ }
 
 				if (preg_match_all($math, $value, $buflist))
 				{

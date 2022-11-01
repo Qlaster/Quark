@@ -9,7 +9,13 @@
 							{if $profile['logo'] != ''}
 								<img alt="image" class="img-circle" width="50px" src="{$profile['logo']}" />
 							{else}
+								<div alt="image" class="img-circle" width="50px"/><i class="fa fa-twitch" style="color:#E5E5E5; font-size:50px"></i></div>
+<!--
+								<div alt="image" class="img-circle" width="50px"/><i class="fa fa-coffee" style="color:#E5E5E5; font-size:50px"></i></div>
+-->
+<!--
 								<img alt="image" class="img-circle" width="50px" src="~/img/avatars/profile1.png" />
+-->
 							{end}
 							</span>
 							<a data-toggle="dropdown" class="dropdown-toggle" href="#">
@@ -32,32 +38,32 @@
 						</div>
 					</li>
 					{if $nav['main']}
-						{foreach $nav['main']['list'] as $_item}  
-								{if $_item['active']} 
-									<li class="active"> 
-								{else} 
+						{foreach $nav['main']['list'] as $_item}
+								{if $_item['active']}
+									<li class="active">
+								{else}
 									<li>
 								{end}
 										<a href="{$_item['link']}">
-										<i class="{$_item['image']}"></i> <span class="nav-label">{$_item['head']}</span> 
-										
-										{if $_item['info']} 
+										<i class="{$_item['image']}"></i> <span class="nav-label">{$_item['head']}</span>
+
+										{if $_item['info']}
 											<span class="pull-right label label-primary">{$_item['info']}</span>
 										{end}
-										
+
 										{if ($_item['list']) and (!$_item['info'])}
 											<span class="fa arrow"></span>
 										{end}
 										</a>
 										{if $_item['list']}
 											<ul class="nav nav-second-level">
-												{foreach $_item['list'] as $_node} 
+												{foreach $_item['list'] as $_node}
 													{if $_node['active']}
 														<li class="active">
 													{else}
 														<li>
 													{end}
-													<a href="{$_node['link']}">{$_node['head']}  
+													<a href="{$_node['link']}">{$_node['head']}
 														{if $_node['info']} <span class="pull-right label label-primary"> {$_node['info']} </span> {end}
 													</a>
 												</li>

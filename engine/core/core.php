@@ -4,20 +4,17 @@
 	class APP extends stdClass
 	{
 		//Конфигурация ядра
-		public $core_config = array();
-
-
+		public $core_config = [];
 
 		function __construct($path_ext='', $paths_facades=['engine/facades'], $path_vendor='engine/vendor')
 		{
 			//Запоминаем путь, где лежат файлы модулей
-			$this->core_config['path_units']  = $paths_facades;
+			$this->core_config['path_units']  = (array) $paths_facades;
 			$this->core_config['path_vendor'] = $path_vendor;
 
 			//Подключаем расширения
 			$this->__includeExtension($path_ext);
 		}
-
 
 		//Подгрузка модуля
 		public function __get($unit)
@@ -26,7 +23,7 @@
 			foreach	($this->core_config['path_units'] as $interfaceAlias => $modelDir)
 			{
 				//Строим полный путь к файлу модуля
-				$filename = $modelDir . "/$unit.php";
+				$filename = $modelDir ? $modelDir.DIRECTORY_SEPARATOR."$unit.php" : "$unit.php";
 
 				//Проверим наличие
 				if (is_readable($filename))
@@ -41,14 +38,12 @@
 			return $this->$unit;
 		}
 
-
 		//Обработка ситуации, когда попытались вызвать метод, который еще не зарегистрирован в ядре.
 		public function __call($method, $args)
 		{
-			echo "Указанный метод не поддерживается ядром: ";
-			var_dump($method, $args);
+			throw new Exception("Метод '$method' не поддерживается ядром. Аргументы вызова: ");
+			var_dump($args);
 		}
-
 
 		public function __facades()
 		{
@@ -62,7 +57,6 @@
 				}
 			return $result;
 		}
-
 
 		//TODO: DEPRICATED
 		public function __includeUnits($dir)
@@ -80,18 +74,13 @@
 			}
 		}
 
-
-
 		private function __includeExtension($dir=__DIR__)
 		{
 			//Подключаем расширения ядра
-			foreach (glob($dir."/ext_*.php") as $filename)
+			foreach (glob($dir."/ext.*.php") as $filename)
 			{
 				//Включаем файл в состав приложения
 				require($filename);
 			}
 		}
-
-
-
 	}

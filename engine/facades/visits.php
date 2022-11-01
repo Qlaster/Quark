@@ -154,7 +154,7 @@
 			//Если данные были получены до этго - возвращаем
 			if (isset($return)) return $return;
 
-			if (!$this->userAgent) return trigger_error ( "Unit UserAgent not found!" , E_USER_ERROR );
+			//~ if (!$this->userAgent) return trigger_error ( "Unit UserAgent not found!" , E_USER_ERROR );
 
 			$return['time'] 			= $_SERVER['REQUEST_TIME_FLOAT'];
 			$return['runtime'] 			= $this->runtime();
@@ -318,14 +318,6 @@
 			$this->shear['end'] = $time_end;
 			$this->shear['keywords'] = $keywords;
 
-			//~ foreach ($this->shear_files as &$log_file)
-			//~ {
-				//~
-			//~ }
-
-			//~ $p_begin = date_parse($time_begin);
-			//~ $p_end = date_parse($time_end);
-
 			return $this->shear['files'];
 		}
 
@@ -341,18 +333,6 @@
 
 				//Открываем для чтения
 				$this->shear['current'] = fopen($current_log, "r");
-
-				//~
-				//~ $this->shear['current'] = fopen(, "r");
-				//~
-				//~
-				//~ $handle = fopen("/tmp/inputfile.txt", "r");
-				//~ while (!feof($handle))
-				//~ {
-					//~ $buffer = fgets($handle, 4096);
-					//~ echo $buffer;
-				//~ }
-				//~ fclose($handle);
 			}
 
 			//Если достигнут конец файла...

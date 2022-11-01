@@ -1,5 +1,5 @@
 <?php
-	//~ namespace unit\controller;
+	namespace unit\controller;
 
 	/*
 		Алгоритм работы механизма поддержки контроллеров следующий:
@@ -63,10 +63,10 @@
 			if ( is_file($path) 		) return $path;
 
 			//Если обратились к папке, в которой лежит обработчик по умолчанию
-			if ( (is_dir($path)) and ( is_file($path.'/'.$this->config['handler']) ) ) //and (substr($controller, -1) == '/')
+			if ( (is_dir($path)) and ( is_file($path.DIRECTORY_SEPARATOR.$this->config['handler']) ) ) //and (substr($controller, -1) == '/')
 			{
 				//Случай №1. Нужно просто вызвать дефолтный метод контроллера
-				return $path.'/'.$this->config['handler'];
+				return $path.DIRECTORY_SEPARATOR.$this->config['handler'];
 			}
 			return $path;
 		}
@@ -133,19 +133,20 @@
 
 			//Удалим возможность возврата за корневую директорию.
 			//Для этого, разберем путь на составные части:
-			$dir = explode('/', $path);
+			$dir = explode(DIRECTORY_SEPARATOR, $path);
 
 			//Чистанем от вторичных директорий
 			$dir = array_diff($dir, ['', '.', '..']);
 
 			//Собираем готовый путь
-			$res_path = implode('/', $dir);
+			$res_path = implode(DIRECTORY_SEPARATOR, $dir);
 
 			//Если первоначальный вариант пути заканчивался на /, то мы должны поправить эту ситуацию, вернув его на место.
-			if ( substr($path, -1) == '/' ) $res_path .= '/';
+			if ( substr($path, -1) == DIRECTORY_SEPARATOR ) $res_path .= DIRECTORY_SEPARATOR;
 
 			//до тех пор, пока в строке есть хоть один двойной повтор слешей - заменять их на одинарный.
-			while ( strpos($res_path, '//') !== false ) $res_path = str_replace('//', '/', $res_path);
+			while ( strpos($res_path, '//') !== false )
+				$res_path = str_replace('//', '/', $res_path);
 
 			//Вернем готовый путь
 			return $res_path;
@@ -159,5 +160,5 @@
 	# ---------------------------------------------------------------- #
 
 	//Создаем класс управления контроллерами
-	return  new Controller($this->config->get(__file__), $this);
+	return new Controller($this->config->get(__file__), $this);
 

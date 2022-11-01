@@ -29,7 +29,7 @@
 	# ---------------------------------------------------------------- #
 	#                 РЕАЛИЗАЦИЯ   ИНТЕРФЕЙСА                          #
 	# ---------------------------------------------------------------- #
-	class Q_Memcached_Interface implements QCacheInterface
+	class QMemcachedInterface implements QCacheInterface
 	{
 
 
@@ -163,7 +163,7 @@
 	/**
 	 * Класс отвечает за процес предоставления интерфейса кеширования через файлы
 	 */
-	class Q_File_Cache_Interface
+	class QFileCacheInterface
 	{
 
 		public $config;
@@ -205,7 +205,7 @@
 	/**
 	 * Класс отвечает за интеграцию всех интерфейсов в платформу
 	 */
-	class Q_Cache implements QCacheInterface
+	class Cache implements QCacheInterface
 	{
 		public $config;
 		public $memcached;
@@ -217,8 +217,8 @@
 			$this->config = $config;
 
 			//Поключим внешние интерфейсы кеширования
-			$this->filecache = new Q_File_Cache_Interface($config['filecache']);
-			$this->memcached = new Q_Memcached_Interface($config['memcached']);
+			$this->filecache = new QFileCacheInterface($config['filecache']);
+			$this->memcached = new QMemcachedInterface($config['memcached']);
 		}
 
 		public function get($key)
@@ -244,8 +244,6 @@
 			//Выполняем запрос
 			return $this->$default_provider->delete($key);
 		}
-
-
 	}
 
 
@@ -253,4 +251,4 @@
 	# --------------[ СОЗДАЕМ И ПОДКЛЮЧАЕМ ИНТЕРФЕЙС ]---------------- #
 	# ---------------------------------------------------------------- #
 
-	return new Q_Cache( $this->config->get(__file__) );
+	return new Cache( $this->config->get(__file__) );

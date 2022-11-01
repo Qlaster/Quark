@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 	/*
 
@@ -53,7 +53,7 @@
 	$parser->chromeos
 	$parser->macosx
 	$parser->blackberry
-	* 
+	*
 	*/
 
 	namespace unit\useragent;
@@ -61,7 +61,7 @@
 	# ---------------------------------------------------------------- #
 	#                 РЕАЛИЗАЦИЯ   ИНТЕРФЕЙСА                          #
 	# ---------------------------------------------------------------- #
-	class parseUserAgentStringClass 
+	class ParseUserAgentStringClass
 	{
 		public $classVersion = "1.19";
 
@@ -137,8 +137,8 @@
 			if (isset($t[1])) {$result['minor'] = $t[1];}	else $t[1] = '';
 			if (isset($t[2])) {$result['build'] = $t[2];}	else $t[2] = '';
 			if (isset($t[3])) {$result['rev'] = $t[3]  ;}	else $t[3] = '';
-			
-			
+
+
 			return $result;
 		}
 
@@ -651,7 +651,7 @@
 					$t = explode(".", trim($matches[1]));
 
 					$browserVersion = trim($t[0]);
-					
+
 					$this->rawVersion = $this->parseRawVersion($t);
 				}
 				else $browserVersion = trim($matches[1]);
@@ -1064,7 +1064,7 @@
 				$t = explode(".", trim($matches[1]));
 
 				$browserVersion = $t[0];
-				
+
 				$this->rawVersion = $this->parseRawVersion($t);
 
 				$this->type = $this->deviceTypeMobile;
@@ -2090,7 +2090,7 @@
 
 			return $operatingSystem;
 		}
-		
+
 
 	}
 
@@ -2104,7 +2104,7 @@
 	$error_reporting = error_reporting();
 	error_reporting(0);
 
-	$parser = new parseUserAgentStringClass(); // This creates a new instance of this class object.
+	$parser = new ParseUserAgentStringClass(); // This creates a new instance of this class object.
 	$parser->includeAndroidName = true;
 	$parser->includeWindowsName = true;
 	$parser->includeMacOSName = true;
