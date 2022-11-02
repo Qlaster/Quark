@@ -166,7 +166,9 @@
 						( mb_substr($literal_tag,  -mb_strlen($syntax['close']) ) == $syntax['close'] )
 					)
 				{
-					continue;
+					//Не смотря на то, что тег не меняет счетик открытых/закрытых тегов, это все таки литеральный (цитируемый тег)
+					//Значит нам нужно вернуть флаг, что его обрабатывать не нужно
+					return true;
 				}
 
 				if (strpos($literal_tag, $syntax['open']) === 0)
@@ -268,14 +270,13 @@
 				$tpl_string = str_replace($key, $value, $tpl_string);
 			}
 
-
 			//Заменим симлинки относительными путями
 			$tpl_string = $this->compile_resource($tpl_string);
 
 			//Получем список всех тегов
 			$all_tags = $this->get_tags($tpl_string);
 
-			//~ print_r($all_tags); die;
+			//~ print_r($all_tags);
 
 			//Двигаемся от тега к тегу, по телу документа
 			foreach ($all_tags as $key => &$tag)
@@ -641,6 +642,7 @@
 				$list = (array) $list[0];
 			}
 
+			//~ print_r($list); die;
 			$result = [];
 			//Проверяем, есть ли внури тегов html, теги шаблонизатора
 			$math = "#(\\$L(.*?)\\$R)#";
