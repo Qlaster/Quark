@@ -1,66 +1,6 @@
 <?php
 
 
-	//~ lib('db_adapter/dba.php');
-	//~
-	//~ class berkley_adapter
-	//~ {
-		//~ //Конфигурациооный файл
-		//~ public $config;
-		//~
-		//~ //Указатели на открытые базы данных
-		//~ protected $HDB = array();
-		//~
-		//~ public function __construct($mode='c', $hadle='db4')
-		//~ {
-			//~ $this->config['folder'] = '';
-			//~ $this->config['mode'] 	= $mode;
-			//~ $this->config['hadle'] 	= $hadle;
-		//~ }
-		//~
-		//~ public function db($db)
-		//~ {
-			//~ //Если файл базы данных не открыт - создаем соединение
-			//~ if (! isset($this->HDB[$db]) )
-			//~ {
-				//~ $filename = '';
-				//~
-				//~ //Если путь указан, то поставим вконце него косую, что бы отделить путь от названия файла
-				//~ if ($this->config['folder'] != '') $filename = $this->config['folder'].'/';
-				//~
-				//~ $filename = $filename . $db;
-				//~ $this->HDB[$db] = new db_adapter_dba( $filename, $this->config['mode'], $this->config['hadle']);
-			//~ }
-			//~
-			//~ //Возвращаем указатель
-			//~ return $this->HDB[$db];
-		//~ }
-		//~
-		//~
-		//~
-		//~ //Проверка на существование базы
-		//~ public function db_exists($db)
-		//~ {
-			//~ $filename = '';
-			//~
-			//~ //Если путь указан, то поставим вконце него косую, что бы отделить путь от названия файла
-			//~ if ($this->config['folder'] != '') $filename = $this->config['folder'].'/';
-		//~
-						//~
-			//~ //Строим имя файла
-			//~ $filename = $filename . $db;
-//~
-			//~ //Возвращаем результат наличия базы
-			//~ return file_exists($filename);
-		//~ }
-		//~
-	//~ }
-	//~
-
-
-
-
-
 	class Berkley_Adapter2
 	{
 		//Конфигурациооный файл
@@ -242,15 +182,6 @@
 		}
 
 	}
-
-
-
-
-
-
-
-
-
 
 
 

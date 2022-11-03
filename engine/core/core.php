@@ -64,7 +64,6 @@
 			//Подключаем модули расширений
 			foreach (glob($dir."/*.php") as $filename)
 			{
-
 				//Получаем название модуля из имени файла
 				$unit = basename($filename, '.php');
 
