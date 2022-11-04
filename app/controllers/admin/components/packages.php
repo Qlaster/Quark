@@ -22,6 +22,7 @@
 			$packages[$_vendor][$_packege] = $_packegeHead;
 		}
 
+	$content['packages']['head'] = 'Установленые пакеты composer';
 	$content['packages']['list'] = $packages;
 	//~ print_r($packages);
 
