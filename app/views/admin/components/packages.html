@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{$title}</title>
+
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../font-awesome/css/font-awesome.css" rel="stylesheet">
+
+    <link href="../css/animate.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+	<base href="{$$base}" id='baseurl' data-info='~/'>
+</head>
+
+<body>
+
+    <div id="wrapper">
+
+		<!--Главное меню слева-->
+		{section "../~section/mainmenu.html"}
+		<!--Конец меню-->
+
+        <div id="page-wrapper" class="gray-bg">
+
+		<!-- Head menu -->
+		{section "../~section/head.html"}
+		<!-- End head menu -->
+
+        <!-- Менюшка title-->
+		{section "../~section/title.html"}
+        <!-- конец title-->
+
+
+        <div class="row">
+
+        <div class="col-lg-12 wrapper wrapper-content animated fadeInUp">
+        <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h5>Найденные пакеты в системе</h5>
+            <div class="ibox-tools">
+                <a class="collapse-link">
+                    <i class="fa fa-chevron-up"></i>
+                </a>
+<!--
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <i class="fa fa-wrench"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-user">
+                    <li><a href="#">Config option 1</a>
+                    </li>
+                    <li><a href="#">Config option 2</a>
+                    </li>
+                </ul>
+-->
+                <a class="close-link">
+                    <i class="fa fa-times"></i>
+                </a>
+            </div>
+        </div>
+        <div class="ibox-content">
+            <div class="row">
+                <div class="col-sm-9 m-b-xs">
+                    <div data-toggle="buttons" class="btn-group">
+                        <label class="btn btn-sm btn-white active"> <input type="radio" id="option1" name="options"> Все </label>
+                        <label class="btn btn-sm btn-white "> <input type="radio" id="option2" name="options"> Vendor </label>
+<!--
+                        <label class="btn btn-sm btn-white"> <input type="radio" id="option3" name="options"> Month </label>
+-->
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="input-group">
+						<input type="text" placeholder="Search" class="input-sm form-control" onkeyup="tableSearch(document.getElementById('table-packages'), this)">
+						<span class="input-group-btn">
+							<button type="button" class="btn btn-sm btn-primary"> Go!</button>
+						</span>
+					</div>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped" id="table-packages" >
+                    <thead>
+                    <tr>
+
+                        <th>#</th>
+                        <th>Пакет </th>
+                        <th>Вендор </th>
+                        <th>Описание </th>
+                        <th>Тип </th>
+                        <th>Добавлен</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+					{foreach (array) $packages['list'] as $_vendor => $_packlist}
+						{foreach $_packlist as $_package}
+						<tr>
+							<td>{= ++$_i}</td>
+							<td><strong>{$_package['name']}</strong></td>
+							<td>{$_vendor}</td>
+							<td>{$_package['description']}</td>
+							<td>{$_package['type']}</td>
+							<td>{$_package['createdate']}</td>
+							<td><a href="#"><i class="fa fa-check text-navy"></i></a></td>
+						</tr>
+						{end}
+                    {end}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+        </div>
+        </div>
+
+        </div>
+
+
+        <!-- Footer block -->
+        {section "../~section/footer.html"}
+        <!-- End Footer block -->
+
+        </div>
+        </div>
+
+
+
+
+
+		<div class="modal inmodal fade" id="modal-test" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title">Ошибки модуля</h4>
+                        <small class="font-bold">Окно показывает, какие ошибки возникли при инициализации модуля</small>
+                    </div>
+                    <div class="modal-body" id="response">
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-white" data-dismiss="modal">Закрыть</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    <!-- Mainly scripts -->
+    <script src="../js/jquery-2.1.1.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="../js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+    <!-- Custom and plugin javascript -->
+    <script src="../js/inspinia.js"></script>
+    <script src="../js/plugins/pace/pace.min.js"></script>
+
+    <script>
+        $(document).ready(function(){
+
+            $('#analize-btn').click(function () {
+                btn = $(this);
+                simpleLoad(btn, true);
+
+                // Ajax example
+//                $.ajax().always(function () {
+//                    simpleLoad($(this), false)
+//                });
+
+                //~ simpleLoad(btn, false)
+            });
+        });
+
+		function tableSearch(table, phrase)
+		{
+			var regPhrase = new RegExp(phrase.value, 'i');
+			var flag = false;
+			for (var i = 1; i < table.rows.length; i++) {
+				flag = false;
+				for (var j = table.rows[i].cells.length - 1; j >= 0; j--) {
+					flag = regPhrase.test(table.rows[i].cells[j].innerHTML);
+					if (flag) break;
+				}
+				if (flag) {
+					table.rows[i].style.display = "";
+				} else {
+					table.rows[i].style.display = "none";
+				}
+
+			}
+		}
+
+        function simpleLoad(btn, state)
+        {
+            if (state) {
+                btn.children().addClass('fa-spin');
+                btn.contents().last().replaceWith(" Проверяю...");
+            } else {
+                setTimeout(function () {
+                    btn.children().removeClass('fa-spin');
+                    btn.contents().last().replaceWith(" Refresh");
+                }, 2000);
+            }
+        }
+    </script>
+</body>
+
+</html>
