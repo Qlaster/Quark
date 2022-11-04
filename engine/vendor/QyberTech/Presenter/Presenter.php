@@ -1,5 +1,5 @@
 <?php
-	namespace QyberTech\View;
+	namespace QyberTech\Presenter;
 
 	class Presenter
 	{

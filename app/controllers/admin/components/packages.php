@@ -6,13 +6,21 @@
 	//Получаем список модулей (фасадов и моделей)
 	//~ $units_path = $APP->__facades();
 
-	//~ print_r( $APP->core_config['path_vendor'] );
-	$vendors  = $APP->utils->files->dirListing( $APP->core_config['path_vendor']['path'] );
+	$vendorDir = $APP->core_config['path_vendor']['path'];
+	$vendors  = $APP->utils->files->dirListing($vendorDir);
 
+	//Проходимся по доступным вендорам, заглядывая в пакеты
 	foreach ($vendors as $_vendor)
-	{
-		$packages[$_vendor] = $APP->utils->files->dirListing( $APP->core_config['path_vendor']['path'] . '/' .$_vendor);
-	}
+		foreach ((array)$APP->utils->files->dirListing($vendorDir.DIRECTORY_SEPARATOR.$_vendor) as $_packege)
+		{
+			//Сгенерируем ссылку на описание пакета
+			$composerJson = $vendorDir.DIRECTORY_SEPARATOR.$_vendor.DIRECTORY_SEPARATOR.$_packege.DIRECTORY_SEPARATOR."composer.json";
+			if (!file_exists($composerJson)) continue;
+
+			$_packegeHead = json_encode(file_get_contents($composerJson));
+			//~ $_packegeHead = $_packege;
+			$packages[$_vendor][$_packege] = $_packegeHead;
+		}
 
 
 

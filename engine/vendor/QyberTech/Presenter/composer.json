@@ -1,0 +1,20 @@
+{
+    "name": "QyberTech/Presenter",
+    "type": "library",
+    "description": "Simple and super fast templating engine",
+    "license": "Apache",
+    "authors": [
+        {
+            "name": "Vladimir Kushtynov",
+            "email": "system512@ya.ru"
+        }
+    ],
+    "require": {
+        "php": ">=7.0.0  || ^8.0",
+    },
+    "autoload": {
+       "files": [
+            "Presenter.php"
+        ]
+    }
+}

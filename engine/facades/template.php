@@ -1,7 +1,7 @@
 <?php
 
 
-	use QyberTech\View\Presenter;
+	use QyberTech\Presenter\Presenter;
 
 
 	# ---------------------------------------------------------------- #
