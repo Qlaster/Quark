@@ -24,9 +24,6 @@
 
 	$content['packages']['head'] = 'Установленые пакеты composer';
 	$content['packages']['list'] = $packages;
-	//~ print_r($packages);
-
 
 
 	$APP->template->file('admin/components/packages.html')->display($content);
-
