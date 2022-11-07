@@ -1,10 +1,7 @@
 <?php
-	namespace unit\qblog;
+	namespace unit\review;
 
 /*
-
-
-
 	$blog->post->insert();
 	$blog->post->delete();
 	$blog->post->update();
@@ -41,11 +38,10 @@
 	$blog->post('1')->Comment('')->All(1,10);
 
 	*/
-	//Поиск по find
 
 
 
-	class quick_blog
+	class QuickReviews
 	{
 		public $post;
 		public $comments;
@@ -70,15 +66,13 @@
 
 			//Создаем интерфейс для постов
 			$this->post = new quick_blog_db_editor($ORM_PDO, 'posts');
-
+ 
 			//Создаем интерфейс для комментариев
 			$this->comments = new quick_blog_db_editor($ORM_PDO, 'comments');
 
 			//Создаем интерфейс для визитов
 			$this->visits = $ORM_PDO;
 		}
-
-
 
 
 		public function Post($id_post=null)
@@ -89,11 +83,8 @@
 		}
 
 
-
-
 		public function Comments($id_post=null)
 		{
-			//~ $this->post->select = $id_post;
 			$this->comments->select = $id_post;
 			return $this->comments;
 		}
@@ -215,4 +206,4 @@
 
 
 	//Создадим экземпляр кода
-	return new quick_blog($this->db->connect('blog'), $this->config->get(__file__));
+	return new QuickReviews($this->db->connect('review'), $this->config->get(__file__));
