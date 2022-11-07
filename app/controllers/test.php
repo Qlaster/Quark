@@ -1,3 +1,3 @@
 <?php
 
-	$APP->cache;
+	$APP->review;

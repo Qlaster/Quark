@@ -41,7 +41,7 @@
 
 
 
-	class QuickReviews
+	class QuickReview
 	{
 		public $post;
 		public $comments;
@@ -64,16 +64,15 @@
 			$ORM_PDO->SQL('CREATE TABLE IF NOT EXISTS comments (id INTEGER PRIMARY KEY AUTOINCREMENT, post, text, find, date, logo, author, label, unixtime);');
 			$ORM_PDO->SQL('CREATE TABLE IF NOT EXISTS visits (id INTEGER PRIMARY KEY AUTOINCREMENT, login, unixtime);');
 
-			//Создаем интерфейс для постов
-			$this->post = new quick_blog_db_editor($ORM_PDO, 'posts');
- 
+			//~ //Создаем интерфейс для постов
+			$this->post = new QuickDBEditor($ORM_PDO, $config['table']['posts']);
+
 			//Создаем интерфейс для комментариев
-			$this->comments = new quick_blog_db_editor($ORM_PDO, 'comments');
+			$this->comments = new QuickDBEditor($ORM_PDO, $config['table']['comments']);
 
 			//Создаем интерфейс для визитов
 			$this->visits = $ORM_PDO;
 		}
-
 
 		public function Post($id_post=null)
 		{
@@ -116,7 +115,7 @@
 
 
 
-	class quick_blog_db_editor
+	class QuickDBEditor
 	{
 		private $table_name;
 		public $ORM_PDO;
@@ -206,4 +205,4 @@
 
 
 	//Создадим экземпляр кода
-	return new QuickReviews($this->db->connect('review'), $this->config->get(__file__));
+	return new QuickReview($this->db->connect('review'), $this->config->get(__file__));
