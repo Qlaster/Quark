@@ -15,24 +15,24 @@
 
     <link href="~/css/animate.css" rel="stylesheet">
     <link href="~/css/style.css" rel="stylesheet">
-	
-	<base href="{$$base}" id='baseurl' data-info='~/'>	
+
+	<base href="{$$base}" id='baseurl' data-info='~/'>
 </head>
 
 <body class="fixed-navigation">
     <div id="wrapper">
-		
+
 		<!--Главное меню слева-->
 		{section "~section/mainmenu.html"}
 		<!--Конец меню-->
-			
-         
-        
+
+
+
         <div id="page-wrapper" class="gray-bg content"> <!--  sidebar-content - более узкий вариант --->
-			
+
 			<!-- Head menu -->
 			{section "~section/head.html"}
-			<!-- End head menu --> 
+			<!-- End head menu -->
 
 <!--
             <div class="sidebard-panel">
@@ -121,21 +121,17 @@
                     <div class="col-lg-12">
                         <div class="ibox float-e-margins">
                             <div class="ibox-content">
-                                    <div>				
+                                    <div>
                                         <span class="pull-right text-right">
-                                        <small>Average value of sales in the past month in: <strong>United states</strong></small>
-                                            <br/>
-                                            All sales: 162,862
+											{$$graph['head']}
                                         </span>
-<!--
-                                        														<div class="col-sm-9 m-b-xs">
-															<div data-toggle="buttons" class="btn-group">
-																<label class="btn btn-sm btn-white"> <input type="radio" id="option1" name="options"> Day </label>
-																<label class="btn btn-sm btn-white active"> <input type="radio" id="option2" name="options"> Week </label>
-																<label class="btn btn-sm btn-white"> <input type="radio" id="option3" name="options"> Month </label>
-															</div>
-														</div>
--->
+                                        <div class="col-sm-9 m-b-xs">
+											<div data-toggle="buttons" class="btn-group">
+												<label class="btn btn-sm btn-white active" onclick="GetChartsData(10)"> <input type="radio" id="option1" name="countDay" > 10 дней </label>
+												<label class="btn btn-sm btn-white " onclick="GetChartsData(20)"> <input type="radio" id="option2" name="countDay"> 20 дней </label>
+												<label class="btn btn-sm btn-white"  onclick="GetChartsData(30)"> <input type="radio" id="option3" name="countDay"> 30 дней </label>
+											</div>
+										</div>
 <!--
                                         <h1 class="m-b-xs">$ 50,992</h1>
                                         <h3 class="font-bold no-margins">
@@ -143,21 +139,23 @@
                                         </h3>
 -->
 
+<!--
                                         <small>Sales marketing.</small>
+-->
                                     </div>
 
-                                <div>
+                                <div id="lineChartBlock">
                                     <canvas id="lineChart" height="70"></canvas>
                                 </div>
 
                                 <div class="m-t-md">
                                     <small class="pull-right">
                                         <i class="fa fa-clock-o"> </i>
-                                        Update on 16.07.2015
+                                        Update on {= date('d.m.Y')}
+                                        {$$graph['info']}
                                     </small>
                                    <small>
-                                       <strong>Analysis of sales:</strong> The value has been changed over time, and last month reached a level over $50,000.
-
+                                       {$$graph['text']}
                                    </small>
                                 </div>
 
@@ -165,7 +163,7 @@
                         </div>
                     </div>
                 </div>
-                
+
 				<div class="row">
 					<div class="col-lg-4">
 						<div class="ibox float-e-margins">
@@ -180,7 +178,7 @@
 							</div>
 						</div>
 					</div>
-					
+
 					<div class="col-lg-4">
 						<div class="ibox float-e-margins">
 							<div class="ibox-title">
@@ -195,7 +193,7 @@
 							</div>
 						</div>
 					</div>
-					
+
 					<div class="col-lg-4">
 						<div class="ibox float-e-margins">
 							<div class="ibox-title">
@@ -209,7 +207,7 @@
 							</div>
 						</div>
 					</div>
-					
+
 
 				</div>
 
@@ -234,7 +232,7 @@
                         </div>
                     </div>
                     {end}
-                    
+
 <!--
                     <div class="col-lg-4">
                         <div class="ibox float-e-margins">
@@ -497,7 +495,7 @@
     <script src="~/js/demo/sparkline-demo.js"></script>
 
     <!-- ChartJS-->
-    <script src="~/js/plugins/chartJs/Chart.min.js"></script>    
+    <script src="~/js/plugins/chartJs/Chart.min.js"></script>
     <script src="~/js/data/dashboard.js"></script>
 
 <!--

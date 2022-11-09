@@ -10,9 +10,29 @@
 	$distFile = "$workDir/quark.zip";
 	if (!file_exists($workDir))	mkdir($workDir);
 
-	file_put_contents($distFile, file_get_contents(DistributionZIP));
 
-	system("unzip $distFile -d $workDir");
+
+	//Скачаиваем файл с предложенного хоста
+	copy(DistributionZIP, $distFile);
+
+	//Распаковываем дистрибутив
+	//~ system("unzip $distFile -d $workDir");
+
+	exec("unzip -o $distFile -d $workDir");
+	//~ $res = exec("echo EXEC");
+
+	//~ echo $res;
+	//~ print_r($res);
+
+
+
+
+	//~ file_put_contents($distFile, file_get_contents(DistributionZIP));
+	//~ system("unzip $distFile -d $workDir");
+
+	//~ system("unzip $distFile -d $workDir");
+	//~ echo $distFile; die;
+
 
 	//~ $zipArchive = new ZipArchive();
 	 //~ $zip = new \ZipArchive;
@@ -28,7 +48,7 @@
 
 
 		//~ $url = DistributionZIP; // откуда скачиваем файл
-		//~ $path = "$workDir/quark.zip";  // куда сохраняем файл
+		//~ $path = $distFile;  // куда сохраняем файл
 
 		//~ $fp = fopen($path, 'w');
 		//~ $ch = curl_init($url);
@@ -58,13 +78,13 @@
 	//~ curl_exec($ch);
 
 
-
+	echo PHP_EOL;
 	echo round(memory_get_peak_usage()/1024, 0)." kb \r\n";
-	echo round(memory_get_usage()/1024, 0)."kb \r\n";
+	echo round(memory_get_usage()/1024, 0)." kb \r\n";
 
 
 	exit();
-	$fp = fopen("$workDir/quark.zip", 'w'); // создание файла
+		$fp = fopen("$workDir/quark.zip", 'w'); // создание файла
 		$ch = curl_init(DistributionZIP);
 
 

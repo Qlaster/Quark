@@ -175,7 +175,7 @@
 			$handle_content = opendir ($dir); //Открываем директорию
 			if ($dir != "") $dir = $dir. "/"; //Если нам подсунули не пустую папку, то ставим слеш в конце
 
-			while ($cat = readdir ($handle_content))
+			while ($cat = readdir($handle_content))
 				{
 					if (is_dir($dir.$cat) and ($cat != '.') and ($cat != '..'))
 					{
@@ -234,7 +234,7 @@
 		//Возвращает basename (написана из-за ошибки в работе стоковой функции basename с русскими буквами)
 		function basename($path)
 		{
-			return substr(strrchr($path, "/"), 1);
+			return substr(strrchr($path, DIRECTORY_SEPARATOR), 1);
 		}
 
 

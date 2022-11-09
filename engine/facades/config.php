@@ -2,30 +2,30 @@
 
 	/*
 	 * config
-	 * 
+	 *
 	 * Version 1.0
-	 * Copyright 2022 
-	 * 
-	 * 	
+	 * Copyright 2022
+	 *
+	 *
 	 * - Получить конфигурацию модуля
 	 * $APP->config->get();
-	 * 
+	 *
 	 * - Сохранить конфигурацию модуля
-	 * $APP->config->get($config); 
-	 * 
-	 * 
+	 * $APP->config->get($config);
+	 *
+	 *
 	*/
-	
+
 	namespace unit\config;
-	
+
 	# ---------------------------------------------------------------- #
 	#                  ОПИСАНИЕ     ИНТЕРФЕЙСА                         #
 	# ---------------------------------------------------------------- #
 	interface QConfigInterface
-	{		
+	{
 		// Получить конфигурацию модуля
 		public function get();
-		
+
 		// Перезаписать конфигурацию модуля
 		public function set($config);
 	}
@@ -39,71 +39,71 @@
 		{
 			static $ini;
 			if (!isset($ini)) $ini = new Core_Ini_Reader;
-			
+
 			//Если нам забыли указать имя файла, вызываем отладчик и посмотрим сами
 			if ($filename == null)
 			{
 				//Это пипец как дорого, но вариантов не много.
-				$debug 		= debug_backtrace();	
+				$debug 		= debug_backtrace();
 				$filename 	= $debug[0]['file'];
 			}
-			
+
 			//Конфигурируем ссылку на ini файл
 			$PI = $this->CompIniFile($filename);
 			// Обрабатываем конфиг если файл существует
-			if (file_exists($PI)) 
+			if (file_exists($PI))
 				return $ini->fromFile($PI);
-				
+
 			return null;
 		}
-		
+
 		public function set($config, $filename=null)
-		{		
+		{
 			static $ini;
 			if (!isset($ini)) $ini = new Core_Ini_Writer;
-			
+
 			//Если нам забыли указать имя файла, вызываем отладчик и посмотрим сами
 			if ($filename == null)
 			{
-				$debug 		= debug_backtrace();	
+				$debug 		= debug_backtrace();
 				$filename 	= $debug[0]['file'];
-			}		
-			
+			}
+
 			//Конфигурируем ссылку на ini файл
-			$PI = $this->CompIniFile($filename);		
-			
+			$PI = $this->CompIniFile($filename);
+
 			$inistring = $ini->processConfig($config);
 			return file_put_contents($PI, $inistring);
 		}
-		
+
 
 		/*
-		 * 
+		 *
 		 * name: readFile
 		 * @param (string) path to config file
 		 * @return (array) configuration
-		 * 
-		 */		
+		 *
+		 */
 		public function readFile($filename)
 		{
 			static $ini;
 			if (!isset($ini)) $ini = new Core_Ini_Reader;
-			
+
 			if (is_readable($filename))
 				return $ini->fromFile($filename);
 			return null;
 		}
-		
+
 		/*
-		 * 
+		 *
 		 * name: Load ENV file to $_ENV
 		 * @param  path to env file
 		 * @return (bool) result operation?
-		 * 
-		 */		
+		 *
+		 */
 		public function loadENV()
 		{
-			foreach (func_get_args() as $envfile) 
+			foreach (func_get_args() as $envfile)
 			{
 				if ($ENV = $this->readFile($envfile))
 				{
@@ -112,17 +112,17 @@
 				}
 			}
 		}
-		
+
 		//Ты ей файл модуля, она тебе путь к файлу конфигурации, который лежит в той е папке
 		private function CompIniFile($filename, $ext='ini')
 		{
 			//Еще нужно сделать проверку, по которой, будет контролироваться путь к файлу, что бы он не уходил дальше public директории фо\реймворка
 			$PI = pathinfo($filename);
 			//Суть кода в следующем. Мы ищем конфигурацию модуля в той же папке, где он лежит, но только с расширением ini
-			return $PI['dirname'].'/'.$PI['filename'].".$ext";	
+			return $PI['dirname'].DIRECTORY_SEPARATOR.$PI['filename'].".$ext";
 		}
-		
-		
+
+
 	}
 
 
@@ -162,7 +162,7 @@
 		 */
 		public function fromFile($filename)
 		{
-			if (!is_file($filename) || !is_readable($filename)) 
+			if (!is_file($filename) || !is_readable($filename))
 			{
 				throw new Exception (sprintf(
 					"File '%s' doesn't exist or not readable",
@@ -323,67 +323,67 @@
 				}
 			}
 		}
-		
-		
-			
+
+
+
 		//аналог pars_ini_file
 		function  my_parse_ini_file($filename, $sections=true)
 		{
 			if (! file_exists($filename) ) throw new Exception ('File INI not found');
 			$ini = file($filename);
-			
+
 			$result = array();
-			
-			foreach ($ini as $string) 
+
+			foreach ($ini as $string)
 			{
 				$string = trim($string);
 				if (($string == '') or ($string[0] == '#') or ($string[0] == ';')) continue;
-				
-				
+
+
 				//Это секция
 				if (($string[0] == '[') and (mb_substr($string, -1) == ']'))
 				{
-					$section_name = mb_substr($string, 1, -1); 
+					$section_name = mb_substr($string, 1, -1);
 					$result[$section_name] = array();
 				}
-				
+
 				$separator = mb_strpos($string, '=');
 				//=== не стоит потому, что даже теоретически ini строка не может начинаться со знака равно
 				//TODO: исправлено - в некоторых конфигах есть такая потребность, значит все таки может=)
 				if ($separator !== false)
-				{	
+				{
 					//Разберем строку на ключ и значеник
-					$value 	= trim( mb_substr($string, $separator+1) );				
+					$value 	= trim( mb_substr($string, $separator+1) );
 					if ($separator == 0) $separator = 1;
 					$var 	= trim( mb_substr($string, 0, $separator-1) );
-					
+
 					//Очистим озачение от ковычек (если ни имеются, конечно)
 					if ($value != '')
 						if ( ((mb_substr($value, 0, 1) == '"') and (mb_substr($value, -1) == '"')) or ((mb_substr($value, 0, 1) == "'") and (mb_substr($value, -1) == "'"))  )
 						{
-							$value = mb_substr($value, 1, -1); 
+							$value = mb_substr($value, 1, -1);
 						}
-					
+
 					//Если мы находимся внутри секции - то будем добавлять перемнные туда. А вот если нет - то просто кинем их в корень
 					if (isset($section_name) and ($section_name != ''))
 					{
 						$result[$section_name][$var] = $value;
 					}
-					else 
+					else
 					{
 						$result[$var] = $value;
 					}
-					
+
 				}
-				
-				
+
+
 			}
-			
+
 			return $result;
 		}
-		
-		
-		
+
+
+
 	}
 
 
@@ -538,10 +538,10 @@
 
 			return $config;
 		}
-		
 
-		
-		
+
+
+
 	}
 
 
@@ -553,5 +553,5 @@
 	# ---------------------------------------------------------------- #
 	# --------------[ СОЗДАЕМ И ПОДКЛЮЧАЕМ ИНТЕРФЕЙС ]---------------- #
 	# ---------------------------------------------------------------- #
-	
+
 	return new Config;
