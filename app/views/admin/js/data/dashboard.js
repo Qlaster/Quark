@@ -29,17 +29,17 @@ function GetChartsData(countDay=10)
 
 		//Переводим в формат ISO
 		stringDate = now.toISOString().substring(0, 10);
-
+		//~ stringDate = now.toDateString();
+		//~ alert(stringDate); return;
 		//~ alert(GetBaseUrl()+'/admin/dashboard/info?date='+stringDate);
+
 	    statistic[stringDate] = new XMLHttpRequest();
 	    //~ statistic[1].timeout = day;
 
 		statistic[stringDate].open('GET', GetBaseUrl()+'/admin/dashboard/info?date='+stringDate, true);
 		statistic[stringDate].send();
 
-
-
-
+		//~ stringDate = stringDate.replace(/\-/g, '.');
 
 		statistic[stringDate].onreadystatechange = 	function ()
 		{
@@ -66,7 +66,7 @@ function GetChartsData(countDay=10)
 				//Десериализуем элемент
 				statistic[date] = JSON.parse(statistic[date].responseText);
 
-				lineWaveData['labels'].push(date);
+				lineWaveData['labels'].push(date.replace(/\-/g, '.'));
 				if (statistic[date] != undefined && statistic[date].length != 0)
 				{
 					if (statistic[date][date]['page'] 	== undefined) statistic[date][date]['page'] = 0;
