@@ -65,8 +65,9 @@ function GetChartsData(countDay=10)
 			{
 				//Десериализуем элемент
 				statistic[date] = JSON.parse(statistic[date].responseText);
-
+				//Поменяем тира на точку
 				lineWaveData['labels'].push(date.replace(/\-/g, '.'));
+
 				if (statistic[date] != undefined && statistic[date].length != 0)
 				{
 					if (statistic[date][date]['page'] 	== undefined) statistic[date][date]['page'] = 0;

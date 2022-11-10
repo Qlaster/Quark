@@ -16,16 +16,16 @@
          {section "../~section/mainmenu.html"}
          <!--Конец меню-->
          <div id="page-wrapper" class="gray-bg">
-			
+
 			<!-- Head menu -->
 			{section "../~section/head.html"}
-			<!-- End head menu -->   
-            
+			<!-- End head menu -->
+
 			<!-- Title menu-->
 			{section "../~section/title.html"}
-			<!-- End title menu -->   
-            
-            
+			<!-- End title menu -->
+
+
             <div class="row">
                <div class="col-lg-12">
                   <div class="wrapper wrapper-content animated fadeInRight">
@@ -53,7 +53,7 @@
                                  <span class="caret"></span>
                                  </button>
                                  <ul class="dropdown-menu pull-right">
-                                    <li><a onclick="$('#type').val('mysql');">MYSQL</a></li>
+                                    <li><a onclick="$('#type').val('mysql');">MysSQL</a></li>
                                     <li><a onclick="$('#type').val('pgsql');">PostgreSQL</a></li>
                                     <li><a onclick="$('#type').val('oci');" >Oracle Call Interface</a></li>
                                     <li class="divider"></li>
@@ -114,10 +114,12 @@
                               </div>
                               <div class="col-md-1 forum-info">
                                  <span class="views-number">
-                                 1216
+									{$db['size']}
                                  </span>
                                  <div>
-                                    <small>Views</small>
+									{if is_numeric($db['size'])}
+										<small> Mb</small>
+                                    {end}
                                  </div>
                               </div>
                               <div class="col-md-1 forum-info">
