@@ -24,6 +24,7 @@
 
 	$content['packages']['head'] = 'Установленые пакеты composer';
 	$content['packages']['list'] = $packages;
+	$content['packages']['info'] = 'Установить дополнительные пакеты можно через <b> composer </b> в директорию <b> engine/vendor </b>';
 
 
 	$APP->template->file('admin/components/packages.html')->display($content);
