@@ -541,7 +541,7 @@
 			foreach ($record as $key => &$val) $stmt->bindParam(":$key", $val);
 
 			//отправляем запрос на выполнение
-			$stmt->execute();
+			$result = $stmt->execute();
 
 			//Закинем последнее состояние в интерфейс состояния PDO
 			$this->PDO->stmt = $stmt;
@@ -994,7 +994,7 @@
 					return $this->lastRecord();
 			}
 
-			throw new Exception("Method not found - $method");
+			throw new \Exception("Method not found - $method");
 		}
 
 	}
