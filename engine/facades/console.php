@@ -101,10 +101,9 @@
 			if (!file_exists($to))   throw new \Exception('Target not specified');
 
 			//Проверим наличие ключевых компонентов в корневой диерктории обновляемой системы, иначе рискуем сломать по совместимости
-			if (! file_exists($to.DIRECTORY_SEPARATOR.'index.php')) throw new \Exception("Target directory '$to' does not contain platform");
-			if (! file_exists($to.DIRECTORY_SEPARATOR.'.env'))      throw new \Exception("Target directory '$to' does not contain platform");
-			if (! file_exists($to.DIRECTORY_SEPARATOR.'engine'))    throw new \Exception("Target directory '$to' does not contain platform");
-			if (! file_exists($to.DIRECTORY_SEPARATOR.'app'))       throw new \Exception("Target directory '$to' does not contain platform");
+			foreach ($this->config['update'] as $rootmarker)
+				if (! file_exists($to.DIRECTORY_SEPARATOR.$rootmarker)) throw new \Exception("Target directory '$to' does not contain platform");
+
 
 			//Список файлов на обновление
 			$listing = $this->app->utils->files->listing($from);
@@ -126,33 +125,11 @@
 				//Если мы должны произвести слияние конфигурации
 				if (isRules($this->config['update']['merge'], $relativePath)) continue;
 
+				//Перемещаем файлы
 				rename($sourcefile, $to.DIRECTORY_SEPARATOR.$relativePath);
-				//~ echo "$sourcefile ===> $to".DIRECTORY_SEPARATOR.$relativePath.PHP_EOL;
-				//~ unset($listing[$key]);
 			}
 
-
-			//~ copy()
-			//~ print_r($listing);
 			return true;
-		}
-
-
-
-		function listingC($path, $mask=null)
-		{
-			$rii = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path));
-			$files = array();
-			foreach ($rii as $file)
-			{
-				if (!$file->isDir())
-					if (!$mask)
-						$files[] = $file->getPathname();
-					else
-						fnmatch($mask, $file->getFilename()) ? $files[] = $file->getPathname() : null;
-			}
-			return $files;
-
 		}
 
 		function update()

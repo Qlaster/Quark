@@ -47,9 +47,6 @@ $APP = new APP($_ENV['core']['path'], $_ENV['facades'], $_ENV['vendor']);
 $APP->config->loadENV('.env', 'app/.env');
 
 
-//~ $config = parse_ini_file("console.ini", true);
-//~ print_r($config);
-
 $method = $argv[1];
 
 try
