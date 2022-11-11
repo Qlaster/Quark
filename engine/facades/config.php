@@ -226,15 +226,20 @@
 		{
 			$config = array();
 
-			foreach ($data as $section => $value) {
-				if (is_array($value)) {
-					if (mb_strpos($section, $this->nestSeparator) !== false) {
+			foreach ($data as $section => $value)
+			{
+				if (is_array($value))
+				{
+					if (mb_strpos($section, $this->nestSeparator) !== false)
+					{
 						$sections = explode($this->nestSeparator, $section);
 						$config = array_merge_recursive($config, $this->buildNestedSection($sections, $value));
-					} else {
+					} else
+					{
 						$config[$section] = $this->processSection($value);
 					}
-				} else {
+				} else
+				{
 					$this->processKey($section, $value, $config);
 				}
 			}

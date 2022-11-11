@@ -73,9 +73,9 @@
 
 				if ($file != '.' && $file != '..' && $file != '')
 				{
-					if (is_dir($start.'/'.$file))
+					if (is_dir($start.DIRECTORY_SEPARATOR.$file))
 					{
-						$dir = $this->tree($start.'/'.$file, $mask);
+						$dir = $this->tree($start.DIRECTORY_SEPARATOR.$file, $mask);
 						//Если в директории есть файлы - показыаем
 						if (count($dir) > 0) $files[$file] = $dir;
 					}
@@ -148,20 +148,20 @@
 			$fp=opendir($folder);
 			while($cv_file=readdir($fp))
 			{
-				if(is_file($folder."/".$cv_file))
+				if(is_file($folder.DIRECTORY_SEPARATOR.$cv_file))
 				{
 					if ($mask !== null)
 					{
-						if (fnmatch($mask, $folder."/".$cv_file)) $all_files[]=$folder."/".$cv_file;
+						if (fnmatch($mask, $folder.DIRECTORY_SEPARATOR.$cv_file)) $all_files[]=$folder.DIRECTORY_SEPARATOR.$cv_file;
 					}
 					else
 					{
-						$all_files[]=$folder."/".$cv_file;
+						$all_files[]=$folder.DIRECTORY_SEPARATOR.$cv_file;
 					}
 				}
-				elseif ($cv_file!="." && $cv_file!=".." && is_dir($folder."/".$cv_file))
+				elseif ($cv_file!="." && $cv_file!=".." && is_dir($folder.DIRECTORY_SEPARATOR.$cv_file))
 				{
-					$this->listing($folder."/".$cv_file, $mask, $all_files);
+					$this->listing($folder.DIRECTORY_SEPARATOR.$cv_file, $mask, $all_files);
 				}
 			}
 			closedir($fp);
@@ -269,7 +269,7 @@
 
 		/*
 		 *
-		 * name: неизвестно
+		 * name: Список файлов, переданных на загрузку
 		 * @param Если указан tree - прикрепит к каждому полю ввода список файлов. Если false - создаст "плосский" список с перечислением файлов
 		 * @return FILES structures
 		 *
