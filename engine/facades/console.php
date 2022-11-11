@@ -45,6 +45,18 @@
 			$this->print(str_repeat(' ', $tabulator).$line);
 			$this->print(str_repeat('-', $widthTterminal));
 		}
+
+		function errorPrint($line)
+		{
+			$widthTterminal = $this->widthTterminal;
+			$tabulator = ($widthTterminal - mb_strlen($line))/2;
+			if ($tabulator < 0) $tabulator = 0;
+
+			$this->print();
+			$this->print(str_repeat('!', $widthTterminal));
+			$this->print(str_repeat(' ', $tabulator).$line);
+			$this->print(str_repeat('!', $widthTterminal));
+		}
 	}
 
 
@@ -87,10 +99,63 @@
 
 			if (!file_exists($from)) throw new \Exception('Source not specified');
 			if (!file_exists($to))   throw new \Exception('Target not specified');
+
+			//Проверим наличие ключевых компонентов в корневой диерктории обновляемой системы, иначе рискуем сломать по совместимости
+			if (! file_exists($to.DIRECTORY_SEPARATOR.'index.php')) throw new \Exception("Target directory '$to' does not contain platform");
+			if (! file_exists($to.DIRECTORY_SEPARATOR.'.env'))      throw new \Exception("Target directory '$to' does not contain platform");
+			if (! file_exists($to.DIRECTORY_SEPARATOR.'engine'))    throw new \Exception("Target directory '$to' does not contain platform");
+			if (! file_exists($to.DIRECTORY_SEPARATOR.'app'))       throw new \Exception("Target directory '$to' does not contain platform");
+
+			//Список файлов на обновление
+			$listing = $this->app->utils->files->listing($from);
+
+			function isRules($ruleses, $relativePath)
+			{
+				//Пройдемся по спецификации обновления и ищем подходящие правила
+				foreach ($ruleses as $mask)
+					if (fnmatch($mask, $relativePath)) return true;
+			}
+
+			//Пройдемся по файликам и ищем подходящие правила
+			foreach ($listing as $key => $sourcefile)
+			{
+				$relativePath = mb_substr($sourcefile, mb_strlen($from)+1);
+
+				//Если мы должны проигнорировать этот файл
+				if (isRules($this->config['update']['ignore'], $relativePath)) continue;
+				//Если мы должны произвести слияние конфигурации
+				if (isRules($this->config['update']['merge'], $relativePath)) continue;
+
+				//~ rename($sourcefile, $to.DIRECTORY_SEPARATOR.$relativePath);
+				copy($sourcefile, $to.DIRECTORY_SEPARATOR.$relativePath);
+				//~ echo "$sourcefile ===> $to".DIRECTORY_SEPARATOR.$relativePath.PHP_EOL;
+				//~ unset($listing[$key]);
+			}
+
+			return true;
+		}
+
+
+
+		function listingC($path, $mask=null)
+		{
+			$rii = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path));
+			$files = array();
+			foreach ($rii as $file)
+			{
+				if (!$file->isDir())
+					if (!$mask)
+						$files[] = $file->getPathname();
+					else
+						fnmatch($mask, $file->getFilename()) ? $files[] = $file->getPathname() : null;
+			}
+			return $files;
+
 		}
 
 		function update()
 		{
+
 			//Если функция exec не включена или не работает - выведем исключение
 			if (!((function_exists('exec')) and (exec('echo EXEC') == 'EXEC')))
 				throw new \Exception('Function "exec" not wornikg!');
@@ -104,8 +169,6 @@
 			if (!file_exists($workDir))	throw new \Exception('Failed to create temporary directory');
 
 			$listing = $this->app->utils->files->listing("$workDir/Quark-main");
-			//~ print_r($listing);
-			//~ die;
 
 			//Получаем ссылки на дистрибутив
 			$distrLink = $this->config['update']['distr']['zip'];
@@ -117,6 +180,7 @@
 
 			$this->tools->printH3("Скачиваем свежий дистрибутив");
 			$this->tools->print($distrLink);
+
 			//Скачаиваем файл с предложенного хоста
 			copy($distrLink, $workFile);
 			$this->tools->print('Готово');
@@ -130,19 +194,11 @@
 			//Создаем резервную копию
 			$this->backup();
 
-
-
 			//Проверяем ключевые параметры перед обновлением
 			$this->tools->printH3("Слияние обновлений");
+			//Мержим проект
+			$this->merge(["/tmp/quark/Quark-main/", getcwd()]);
 		}
-
-		function test($params)
-		{
-			print_r($params);
-		}
-
-
-
 	}
 
 
