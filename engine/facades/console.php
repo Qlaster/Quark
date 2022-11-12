@@ -101,7 +101,7 @@
 			if (!file_exists($to))   throw new \Exception('Target not specified');
 
 			//Проверим наличие ключевых компонентов в корневой диерктории обновляемой системы, иначе рискуем сломать по совместимости
-			foreach ($this->config['update'] as $rootmarker)
+			foreach ($this->config['update']['rootmarker'] as $rootmarker)
 				if (! file_exists($to.DIRECTORY_SEPARATOR.$rootmarker)) throw new \Exception("Target directory '$to' does not contain platform");
 
 
@@ -124,6 +124,7 @@
 				if (isRules($this->config['update']['ignore'], $relativePath)) continue;
 				//Если мы должны произвести слияние конфигурации
 				if (isRules($this->config['update']['merge'], $relativePath)) continue;
+				//Проложим путь для директории, если ее
 
 				//Перемещаем файлы
 				rename($sourcefile, $to.DIRECTORY_SEPARATOR.$relativePath);
