@@ -131,7 +131,7 @@
 					$configOld = $this->app->config->get($fullPath);
 					$configNew = $this->app->config->get($sourcefile);
 					//перезапишем конфигурацю во временной директории
-					file_put_contents($sourcefile, array_merge_recursive((array)$configNew, (array)$configOld);
+					$this->app->config->set(array_replace_recursive((array)$configNew, (array)$configOld), $sourcefile);
 					//~ continue;
 				}
 
