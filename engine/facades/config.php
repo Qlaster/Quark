@@ -108,7 +108,7 @@
 				if ($ENV = $this->readFile($envfile))
 				{
 					//Дополняем переменные окружения
-					$_ENV = array_merge($_ENV, (array) $ENV);
+					$_ENV = array_replace($_ENV, (array) $ENV);
 				}
 			}
 		}
