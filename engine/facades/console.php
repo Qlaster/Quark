@@ -118,14 +118,27 @@
 			//Пройдемся по файликам и ищем подходящие правила
 			foreach ($listing as $key => $sourcefile)
 			{
+				//Относительнуй путь внутри обновляемой платформы
 				$relativePath = mb_substr($sourcefile, mb_strlen($from)+1);
+				//Полный путь внутри обновляемой платформы
+				$fullPath = $to.DIRECTORY_SEPARATOR.$relativePath;
 
 				//Если мы должны проигнорировать этот файл
 				if (isRules($this->config['update']['ignore'], $relativePath)) continue;
 				//Если мы должны произвести слияние конфигурации
-				if (isRules($this->config['update']['merge'], $relativePath)) continue;
-				//Проложим путь для директории, если ее
+				if (isRules($this->config['update']['merge'], $relativePath))
+				{
+					$configOld = $this->app->config->get($fullPath);
+					$configNew = $this->app->config->get($sourcefile);
+					//перезапишем конфигурацю во временной директории
+					file_put_contents($sourcefile, array_merge_recursive((array)$configNew, (array)$configOld);
+					//~ continue;
+				}
 
+				//Проложим путь для директории, если ее
+				$mergeDir = $to.DIRECTORY_SEPARATOR.dirname($relativePath);
+				if (!file_exists($mergeDir))
+					if (!mkdir($mergeDir, 0775, true)) throw new \Exception("Directory '$mergeDir' creation denied");
 				//Перемещаем файлы
 				rename($sourcefile, $to.DIRECTORY_SEPARATOR.$relativePath);
 			}
