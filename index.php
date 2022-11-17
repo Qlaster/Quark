@@ -73,4 +73,4 @@
 			//~ echo "code:500";
 		}
 	}
-	echo "<!---".$APP->utils->runtime()."-->";
+	//~ echo "<!---".$APP->utils->runtime()."-->";

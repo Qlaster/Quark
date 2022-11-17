@@ -128,10 +128,11 @@
 				//Если мы должны произвести слияние конфигурации
 				if (isRules($this->config['update']['merge'], $relativePath))
 				{
-					$configOld = $this->app->config->get($fullPath);
-					$configNew = $this->app->config->get($sourcefile);
+					$configOld = (array)$this->app->config->get($fullPath);
+					$configNew = (array)$this->app->config->get($sourcefile);
 					//перезапишем конфигурацю во временной директории
-					$this->app->config->set(array_replace_recursive((array)$configNew, (array)$configOld), $sourcefile);
+					//Хитрость тройного указания конфига (старый, новый, старый) в том, что бы сохранить порядок элементов как в старом
+					$this->app->config->set(array_replace_recursive($configOld, $configNew, $configOld), $sourcefile);
 					//~ continue;
 				}
 

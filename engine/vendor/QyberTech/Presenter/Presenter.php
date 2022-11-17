@@ -115,15 +115,6 @@
 				$this->file_link = $file_link;
 				$this->file_path = pathinfo($this->file_link)['dirname'].'/';
 				$this->file_path = str_replace('//', '/', $this->file_path);
-
-				//Тут же разбираемся с путями до ресурсов
-				//Если базовый путь не указан, возмем путь из файла
-				//~ if ($this->base_link === null)
-				//~ {
-					//~ $url_path = pathinfo($_SERVER['SCRIPT_NAME'])['dirname'];
-					//~ $url_path = $url_path.DIRECTORY_SEPARATOR.$this->file_path;
-					//~ $this->base_link = str_replace('//', '/', $url_path);
-				//~ }
 			}
 
 			return $this;
@@ -198,15 +189,6 @@
 
 		private function compile_resource($tpl_string)
 		{
-			//А лучше добавить код, который автоматически выгрузит путь из шаблонизатора
-			/* $tpl_string = str_replace($this->config['url_link_tag'], '<?=$this->base_link?>', $tpl_string);*/
-
-			//Код, который добавит пути к относительным ссылкам на скрипты и стили
-			/*preg_match_all("/<script.*?src=[\"'](.*?)[\"'].*?>|<link.*?href=[\"'](.*?)[\"'].*?>/", $tpl_string, $resource_link);*/
-
-
-			//~ preg_match_all("/(.*)\<head\>(.*)</head>(.*)/sm",  $tpl_string, $htmlhead);
-
 			$htmlhead = strstr($tpl_string, "<head>");
 			$htmlhead = strstr($htmlhead, "</head>", true);
 
@@ -217,13 +199,6 @@
 
 			if ($head)
 				$tpl_string = str_replace($htmlhead, $htmlhead .= $head, $tpl_string);
-
-			//~ print_r($htmlhead); die;
-
-			/*
-			preg_match_all("<script.*?src=[\"'](.*?)[\"'].*?>", $tpl_string, $scripts_tags);
-			preg_match_all("<link.*?href=[\"'](.*?)[\"'].*?>",  $tpl_string, $links_tags);
-			*/
 
 			preg_match_all("<script.*?src=[\"'](.*?)[\"'].*?>", $tpl_string, $scripts_tags);
 			preg_match_all("<link.*?href=[\"'](.*?)[\"'].*?>",  $htmlhead, $links_tags);
@@ -307,7 +282,6 @@
 						$result .= $this->compile_tag($tag);
 						continue;
 					}
-
 				}
 
 				//Если вышестоящие условия отработали безрезультатно - игнорируем этот тег и выводим (он не попадает под правила.)
@@ -404,7 +378,7 @@
 
 			//===== ПРАВИЛА СБОРКИ ТЕГОВ =========
 			//Пытаемся определить, что же нам подсунули.
-				//Этап 1. Это переменная?
+			//Этап 1. Это переменная?
 			//Ставим её первой, потому что это самое частое выражение в шаблонах. Рискуем сэкономить на спичках.
 			//Из-за ссылок на конфиг - это не код, а какой то адский пиздец.... Еще немного и можно переписать на брайнфаке. =(
 			//Пока, я сделал все что мог, что бы это хоть как то читалось.	//Будет время - введу define
@@ -589,7 +563,6 @@
 			if (! file_exists($this->file_link)) return false;
 
 			//Загружаем содержимое файла
-			//~ $tpl_string = file_get_contents($this->file_link);
 			$tpl_string = $this->tpl_get_contents($this->file_link);
 			$tpl_string = str_replace(array("\r\n", "\r", "\n"), '', $tpl_string);
 
@@ -632,7 +605,6 @@
 			$L = $this->config['left_delimiter'];
 			$R = $this->config['right_delimiter'];
 
-
 			//~ $math = "#(\\$L(.*?)\\$R)|(\<(.*?)\>)#";	//|(\<!--(.*?)--\>)
 			//~ $math = "#(\\$L(.*?)\\$R)|(<!--(.*?)-->)|(\<(.*?)\>)#";	//|(\<!--(.*?)--\>)
 			$math = "/\s*(\\$L(.*?)\\$R)|(<!--(.*?)-->)|(\<\?php(.*?)\?\>)|(\<(.*?)\>)\s*/s";
@@ -643,7 +615,6 @@
 				$list = (array) $list[0];
 			}
 
-			//~ print_r($list); die;
 			$result = [];
 			//Проверяем, есть ли внури тегов html, теги шаблонизатора
 			$math = "#(\\$L(.*?)\\$R)#";
@@ -705,9 +676,6 @@
 				//Сумма дат изменений всех файлов, входящих в состав страницы (что бы перекомпилировать шаблон, если один из фрагментов изменится)
 				$edit_date = date('YdmHis', (int) array_sum($this->file_time));
 
-				//Дата последнего изменения файла
-				//~ $edit_date = date('YdmHis', filectime($filename));
-
 				//~ $filename = basename($filename, '.' . pathinfo($filename, PATHINFO_EXTENSION));
 				$filename = str_replace(DIRECTORY_SEPARATOR, '-', $filename);
 				$filename = $filename . "~$edit_date." . $this->config['compilation']['extent'];
@@ -728,10 +696,8 @@
 			//Выделяем имя tlp шаблона
 			$tlp_filename = basename($tlp_filename, '.'.pathinfo($tlp_filename, PATHINFO_EXTENSION));
 
-
 			//Создаем маску выборки
 			$mask = $this->config['compilation']['folder'].'/'.$tlp_filename.'~*'.$this->config['compilation']['extent'];
-
 
 			//Создаем список файлов, попадающих под эту маску
 			$cache_list = glob($mask);
