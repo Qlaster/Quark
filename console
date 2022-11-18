@@ -46,13 +46,23 @@ $APP = new APP($_ENV['core']['path'], $_ENV['facades'], $_ENV['vendor']);
 //Загрузим переменные окружения
 $APP->config->loadENV('.env', 'app/.env');
 
-$method = $argv[1];
 
+$method = isset($argv[1]) ? $argv[1] : 'help';
 try
 {
-	$result = $APP->console->$method(array_slice($argv, 2));
+	$result = $APP->console->$method(array_slice((array)$argv, 2));
 }
-catch (Exception $e)
+catch (Throwable $e)
 {
+echo "
+　　　　　　／＞　 フ
+　　　　　 /　_　 _|
+　 　　　／`ミ _x 彡
+　　 　 /　　　 　/
+　　　 /　 ヽ　　 ﾉ
+　／￣|　　 |　| |
+　| (￣ヽ＿_ヽ_)_)
+　＼二つ
+";
 	$APP->console->tools->errorPrint( $e->getMessage() );
 }
