@@ -1,6 +1,6 @@
 <?php
 /*
- * about.php
+ * save about.php
  *
  * Copyright 2022 vladimir <vladimir@MacBookAir>
  *
@@ -22,22 +22,10 @@
  *
  */
 
-	$content = $APP->controller->run('admin/autoinclude', $APP);
+	echo "EXEC!!!"; die;
+	//~ file_put_contents('1.txt', 'kkks');
 
-	//Если нам передали постер
-	if ($_FILES)
-	{
-		if ($_FILES['poster']['error'] === 0)
-		{
-			move_uploaded_file($_FILES['poster']['tmp_name'], 'public/images/poster.png');
-		}
-	}
+	$_POST['poster'] = 'public/images/poster.png';
 
-	$content['form_info'] = $APP->objects->collection('admin')->get('about');
-	$content['poster']['link'] = 'public/images/poster.png?';
-
-	$APP->template->file('admin/options/about.html')->display($content);
-
-
-
+	echo $APP->objects->collection('admin')->set('about', $_POST) ? "OK" : "";
 

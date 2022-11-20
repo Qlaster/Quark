@@ -39,6 +39,8 @@
 		if (isset($_SESSION['lock']))
 		{
 			header('Location: '.$APP->url->home().'admin/options/users/lock');
+			exit();
+			return false;
 		}
 
 		//============================================================================================================================
@@ -47,6 +49,7 @@
 		if (! $APP->user->logged() and (!in_array($APP->url->page(), ['admin/login', 'admin/options/users/lock'])))
 		{
 			header('Location: '.$APP->url->home().'admin/login');
+			exit();
 			return false;
 		}
 
@@ -57,6 +60,7 @@
 		{
 			//~ echo $APP->url->page(); die;
 			header('Location: '.$APP->url->home().'admin/options/users/deny');
+			exit();
 			return false;
 		}
 

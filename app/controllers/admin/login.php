@@ -18,7 +18,7 @@
 
 
 	$content['title'] = 'Авторизация';
-	$content['form']['authorization']['head'] = 'Welcome to QEXT admin panel!';
+	$content['form']['authorization']['head'] = $APP->objects->collection('admin')->get('about')['head'];
 	$content['form']['authorization']['action'] = 'admin/login';
 	$content['poster']['link'] = 'public/images/poster.png';
 

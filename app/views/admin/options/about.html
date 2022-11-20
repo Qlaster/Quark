@@ -11,8 +11,9 @@
     <link href="../css/bootstrap.min.css" rel="stylesheet">
     <link href="../font-awesome/css/font-awesome.css" rel="stylesheet">
     <link href="../css/animate.css" rel="stylesheet">
+    <!-- Toastr style -->
+    <link href="../css/plugins/toastr/toastr.min.css" rel="stylesheet">
     <link href="../css/style.css" rel="stylesheet">
-
 </head>
 
 <body>
@@ -43,7 +44,7 @@
                         </div>
                         <div>
                             <div class="ibox-content no-padding border-left-right">
-                                <img alt="image" class="img-responsive" style="margin:auto" src="{$poster['link']}">
+                                <img alt="image" onclick="$('#poster-file').trigger('click');" class="img-responsive" style="margin:auto" src="{$poster['link']}">
                             </div>
 
                             <div class="ibox-content profile-content">
@@ -51,14 +52,19 @@
 
                                 <div class="user-button">
                                     <div class="row">
-                                        <div class="col-md-12">
-                                            <button type="button" class="btn btn-primary btn-sm btn-block"><i class="fa fa-image"></i> Загрузить новый постер </button>
-                                        </div>
+										<form id="form-poster" method="POST" role="form" enctype="multipart/form-data">
+											<div hidden >
+												<input id="poster-file" name="poster" type="file" onchange="$('#form-poster').submit();">
+											</div>
+											<div class="col-md-12">
+												<button type="button" onclick="$('#poster-file').trigger('click');" class="btn btn-primary btn-sm btn-block"><i class="fa fa-image"></i> Загрузить новый постер </button>
+											</div>
 <!--
                                         <div class="col-md-6">
                                             <button type="button" class="btn btn-default btn-sm btn-block"><i class="fa fa-coffee"></i> Buy a coffee</button>
                                         </div>
 -->
+										</form>
                                     </div>
 								</div>
 								<h4><strong>Геопривязка</strong></h4>
@@ -110,9 +116,11 @@
 									<h3 class="m-t-none m-b">Sign in</h3>
 									<p>Sign in today for more expirience.</p>
 -->
-									<form role="form">
-										<div class="form-group"><label>Название компании</label> <input type="text" placeholder="Название компании" class="form-control"></div>
-										<div class="form-group"><label>Приветствие</label> <input type="text" placeholder="Приветствие" class="form-control"></div>
+									<form id="form-info" role="form" enctype="multipart/form-data">
+										<div class="form-group"><label>Название компании</label> <input type="text" name="name" value="{$form_info['name']}" placeholder="Название компании" class="form-control"></div>
+										<div class="form-group"><label>Приветствие</label> <input type="text" name="head" value="{$form_info['head']}" placeholder="Приветствие" class="form-control"></div>
+										<div class="form-group"><label>Описание</label> <textarea name="text" value="{$forn_info['text']}" placeholder="Описание и справочная информация" class="form-control"></textarea></div>
+
 										<div>
 <!--
 											<button class="btn btn-sm btn-primary pull-right m-t-n-xs" type="submit"><strong>Сохранить описание</strong></button>
@@ -131,13 +139,7 @@
 
 
 
-
-
-
-
-
-
-                                <button class="btn btn-primary !btn-block m"><i class="fa fa-save"></i> Сохранить </button>
+                                <button class="btn btn-primary !btn-block m" onclick="saveAbout()"><i class="fa fa-save"></i> Сохранить </button>
 
                             </div>
 
@@ -167,10 +169,60 @@
     <script src="../js/plugins/pace/pace.min.js"></script>
 
     <!-- Peity -->
+<!--
     <script src="../js/plugins/peity/jquery.peity.min.js"></script>
+-->
 
     <!-- Peity -->
+<!--
     <script src="../js/demo/peity-demo.js"></script>
+-->
+
+    <!-- Toastr -->
+    <script src="../js/plugins/toastr/toastr.min.js"></script>
+
+	<script>
+		function saveAbout()
+		{
+			//~ toastr.info('Сохраняю...', '');
+
+			//~ $('input[type=file]').on('change', function(){
+				//~ files = this.files;
+			//~ });
+
+			$.ajax(
+				{
+					url: 'admin/options/about/save',
+					type: 'POST',
+					data: $('#form-info').serialize(),
+					success: function (response)
+					{
+						response == 'OK' ? toastr.success(response, '') : toastr.warning(response, 'Возникли проблемы');
+						//~ toastr.options =
+						//~ {
+							//~ closeButton: true,
+							//~ progressBar: true,
+							//~ showMethod: 'slideDown',
+							//~ timeOut: 4000
+						//~ };
+						//~ toastr.success('Responsive Admin Theme', 'Welcome to INSPINIA');
+					},
+					error: function ()
+					{
+						toastr.error('', 'Возникла ошибка клиент-сервера!');
+					}
+				});
+
+
+		}
+
+		$(document).ready(function()
+		{
+
+
+
+        });
+	</script>
 
 </body>
 
