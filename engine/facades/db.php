@@ -16,7 +16,7 @@
 	class DBConnect
 	{
 		public $config = [];
-		private $PDO_INTERFACE;
+		private $ORMConnections;
 		private $APP;
 
 		function __construct($APP)
@@ -28,7 +28,7 @@
 		public function connect($name)
 		{
 			//Если нет подключения
-			if ( !isset($this->PDO_INTERFACE[$name]) )
+			if ( !isset($this->ORMConnections[$name]) )
 			{
 				//Если нет настроек для текущей базы
 				if ( !isset($this->config['connect'][$name]) )
@@ -58,11 +58,11 @@
 					{
 						$path = $this->config['settings']['sqlite']['path'];
 						if (! file_exists("$path/$base")) return null;
-						$this->PDO_INTERFACE[$name] = new \PDO("$type:$path/$base");
+						$this->ORMConnections[$name] = new \PDO("$type:$path/$base");
 					}
 					else
 					{
-						$this->PDO_INTERFACE[$name] = new \PDO("$type:host=$host;dbname=$base;$params", $user, $password);
+						$this->ORMConnections[$name] = new \PDO("$type:host=$host;dbname=$base;$params", $user, $password);
 					}
 				}
 				catch (PDOException $e)
@@ -72,18 +72,18 @@
 				}
 
 				//вешаем orm интерфейс к подключению бд
-				$this->ORM_INTERFACE[$name] = new QORM($this->PDO_INTERFACE[$name]);
+				$this->ORMConnections[$name] = new QORM($this->ORMConnections[$name]);
 			}
 
-			return $this->ORM_INTERFACE[$name];
+			return $this->ORMConnections[$name];
 		}
 
-		public function connects()
+		public function connections()
 		{
-			return $this->PDO_INTERFACE;
+			return $this->ORMConnections;
 		}
 
-		public function list()
+		public function listing()
 		{
 			return $this->config['connect'];
 		}

@@ -37,7 +37,7 @@
 	$content['widgets']['list']['users']['text'] = count($APP->user->all());
 
 	$content['widgets']['list']['db']['head'] = 'Баз данных';
-	$content['widgets']['list']['db']['text'] = count($APP->db->list());
+	$content['widgets']['list']['db']['text'] = count($APP->db->listing());
 
 	$content['graph']['head'] = 'Статистика посещаемости ресурса за последние дни';
 	$content['graph']['text'] = '<label class="label label-primary">Зеленым</label> отмечены уникальные пользователи, <label class="label label-default">серым</label> - объем страниц, который они посетили';
