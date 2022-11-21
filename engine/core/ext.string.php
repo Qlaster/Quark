@@ -22,15 +22,16 @@ function mb_substr_replace($str, $repl, $start, $length = null)
 	return implode($ar[0]);
 }
 
-function mb_str_replace_once($search, $replace, $text) 
-{ 
-   $pos = mb_strpos($text, $search); 
-   return $pos!==false ? mb_substr_replace($text, $replace, $pos, mb_strlen($search)) : $text; 
+function mb_str_replace_once($search, $replace, $text)
+{
+   $pos = mb_strpos($text, $search);
+   return $pos!==false ? mb_substr_replace($text, $replace, $pos, mb_strlen($search)) : $text;
 }
-use function mb_str_replace_once as str_replace_once;
+//Такая запись моет быть доступна только с верси php >= 7.0.
+//~ use function mb_str_replace_once as str_replace_once;
 
 
-function is_json($string) 
+function is_json($string)
 {
    json_decode($string);
    return json_last_error() === JSON_ERROR_NONE;
