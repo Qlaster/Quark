@@ -14,6 +14,7 @@
 	$one_percent = $statistic['uri'][$APP->url->home().'index'] / 100;
 
 	//~ echo $one_percent; die;
+	$content['title'] = 'Работа со страницами сайта';
 
 	//Прикрепляем страницы
 	$buffer = $APP->page->all($_GET['limit'], $_GET['offset']);

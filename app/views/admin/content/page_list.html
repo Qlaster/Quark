@@ -3,14 +3,14 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>INSPINIA | Dashboard v.4</title>
+		<title>{$title}</title>
 		<link href="../css/bootstrap.min.css" rel="stylesheet">
 		<link href="../font-awesome/css/font-awesome.css" rel="stylesheet">
 		<!-- Morris -->
 		<link href="../css/plugins/morris/morris-0.4.3.min.css" rel="stylesheet">
 		<link href="../css/animate.css" rel="stylesheet">
 		<link href="../css/style.css" rel="stylesheet">
-		<base href="{$$base}">
+
 		<style>
 			.dataTables_length
 			{
@@ -20,21 +20,21 @@
 	</head>
 	<body>
 		<div id="wrapper">
-			
+
 			<!--Главное меню слева-->
 			{section "../~section/mainmenu.html"}
 			<!--Конец меню-->
-			
+
 			<div id="page-wrapper" class="gray-bg">
-				
+
 				<!-- Head menu -->
 				{section "../~section/head.html"}
-				<!-- End head menu -->    
-				
+				<!-- End head menu -->
+
 				<!-- Title menu -->
 				{section "../~section/title.html"}
-				<!-- End title menu -->    
-				
+				<!-- End title menu -->
+
 				<!--Начало контента страницы-->
 				<div class="wrapper wrapper-content">
 					<!-- <div class="row">
@@ -64,7 +64,7 @@
 						        </div>
 						    </div>
 						</div>
-						
+
 						<div class="col-md-4">
 						    <div class="ibox float-e-margins">
 						        <div class="ibox-title">
@@ -72,7 +72,7 @@
 						            <h5>Vistits</h5>
 						        </div>
 						        <div class="ibox-content">
-						
+
 						            <div class="row">
 						                <div class="col-md-6">
 						                    <h1 class="no-margins">$ 406,420</h1>
@@ -83,8 +83,8 @@
 						                    <div class="font-bold text-navy">22% <i class="fa fa-level-up"></i> <small>Slow pace</small></div>
 						                </div>
 						            </div>
-						
-						
+
+
 						        </div>
 						    </div>
 						</div>
@@ -101,10 +101,10 @@
 						                <div class="flot-chart-content" id="flot-chart1"></div>
 						            </div>
 						        </div>
-						
+
 						    </div>
 						</div>
-						
+
 						</div>-->
 					<!-- ===СТАТИСТИКА ТОПА САЙТА ===-->
 					<!--
@@ -123,9 +123,9 @@
 						                    </h3>
 						                    <small>Sales marketing.</small>
 						                </div>
-						
+
 						                <div class="m-t-sm">
-						
+
 						                    <div class="row">
 						                        <div class="col-md-8">
 						                            <div>
@@ -151,9 +151,9 @@
 						                            </ul>
 						                        </div>
 						                    </div>
-						
+
 						                </div>
-						
+
 						                <div class="m-t-md">
 						                    <small class="pull-right">
 						                        <i class="fa fa-clock-o"> </i>
@@ -163,14 +163,14 @@
 						                        <strong>Analysis of sales:</strong> The value has been changed over time, and last month reached a level over $50,000.
 						                    </small>
 						                </div>
-						
+
 						            </div>
 						        </div>
 						    </div>
-						    
-						    
-						
-						    
+
+
+
+
 						    <div class="col-lg-4">
 						        <div class="ibox float-e-margins">
 						            <div class="ibox-title">
@@ -183,7 +183,7 @@
 						                        <small class="stats-label">Pages / Visit</small>
 						                        <h4>236 321.80</h4>
 						                    </div>
-						
+
 						                    <div class="col-xs-4">
 						                        <small class="stats-label">% New Visits</small>
 						                        <h4>46.11%</h4>
@@ -200,7 +200,7 @@
 						                        <small class="stats-label">Pages / Visit</small>
 						                        <h4>643 321.10</h4>
 						                    </div>
-						
+
 						                    <div class="col-xs-4">
 						                        <small class="stats-label">% New Visits</small>
 						                        <h4>92.43%</h4>
@@ -217,7 +217,7 @@
 						                        <small class="stats-label">Pages / Visit</small>
 						                        <h4>436 547.20</h4>
 						                    </div>
-						
+
 						                    <div class="col-xs-4">
 						                        <small class="stats-label">% New Visits</small>
 						                        <h4>150.23%</h4>
@@ -230,10 +230,10 @@
 						            </div>
 						        </div>
 						    </div>
-						
+
 						</div>
 						-->
-					<!-- === КОНЕЦ: СТАТИСТИКА ТОПА САЙТА ===--> 
+					<!-- === КОНЕЦ: СТАТИСТИКА ТОПА САЙТА ===-->
 					<div class="row">
 						<div class="col-lg-12">
 							<div class="ibox float-e-margins">
@@ -272,7 +272,7 @@
 										</div>
 										<div class="col-sm-3">
 											<div class="input-group">
-												<input type="text" placeholder="Поиск" class="input-sm form-control" onkeyup="tableSearch(document.getElementById('table-page-list'), this)"> 
+												<input type="text" placeholder="Поиск" class="input-sm form-control" onkeyup="tableSearch(document.getElementById('table-page-list'), this)">
 												<span class="input-group-btn"><button type="button" class="btn btn-sm btn-primary"> Go!</button></span>
 											</div>
 										</div>
@@ -296,7 +296,7 @@
 												{foreach $catalog['page'] as &$_record}
 												<tr>
 													<td>
-														{if $_record['public']}<i class="fa fa-check text-navy"></i> {else}<i class="fa fa-minus-circle text-warning"></i>{end}								
+														{if $_record['public']}<i class="fa fa-check text-navy"></i> {else}<i class="fa fa-minus-circle text-warning"></i>{end}
 													</td>
 													<td> <a href="{$_record['link_edit']}" class="font-bold text-primary "> {$_record['url']}  </a> </td>
 													<td> {$_record['title']}</td>
@@ -319,16 +319,16 @@
 													<td> {$_record['version']}</td>
 													<td>
 														<!--
-															<button type="button" class="btn btn-outline btn-white btn-xs"><i class="fa fa-pencil"> Edit</i></button> 
-															<button type="button" class="btn btn-outline btn-white btn-xs"><i class="fa fa-sign-out"> View</i></button> 
-															<button type="button" class="btn btn-outline btn-white btn-xs"><i class="fa fa-trash-o"> Delete</i></button> 
+															<button type="button" class="btn btn-outline btn-white btn-xs"><i class="fa fa-pencil"> Edit</i></button>
+															<button type="button" class="btn btn-outline btn-white btn-xs"><i class="fa fa-sign-out"> View</i></button>
+															<button type="button" class="btn btn-outline btn-white btn-xs"><i class="fa fa-trash-o"> Delete</i></button>
 															-->
-														<a type="button" class="btn btn-outline btn-success btn-xs" title="Edit page"     href="{$_record['link_edit']}"><i class="fa fa-pencil"> Edit</i></a> 
-														<a type="button" class="btn btn-outline btn-primary btn-xs" title="Preview page" target='_blank'  href="{$_record['link_view']}"><i class="fa fa-desktop"> View</i></a> 
+														<a type="button" class="btn btn-outline btn-success btn-xs" title="Edit page"     href="{$_record['link_edit']}"><i class="fa fa-pencil"> Edit</i></a>
+														<a type="button" class="btn btn-outline btn-primary btn-xs" title="Preview page" target='_blank'  href="{$_record['link_view']}"><i class="fa fa-desktop"> View</i></a>
 														<!--
-															<a type="button" class="btn btn-outline btn-primary btn-xs" title="Page version"  href="{$_record['link_view']}"><i class="fa fa-copy"> Version</i></a> 
+															<a type="button" class="btn btn-outline btn-primary btn-xs" title="Page version"  href="{$_record['link_view']}"><i class="fa fa-copy"> Version</i></a>
 															-->
-														<a type="button" class="btn btn-outline btn-danger btn-xs"  title="Delete"        href="{$_record['link_del']}"><i class="fa fa-times"> </i></a> 
+														<a type="button" class="btn btn-outline btn-danger btn-xs"  title="Delete" onclick="$('#delete-btn').attr('href', '{$_record['link_del']}')" data-toggle="modal" data-target="#Modal-Delete"><i class="fa fa-times"> </i></a>
 													</td>
 												</tr>
 												{end}
@@ -356,13 +356,32 @@
 						</div>
 					</div>
 				</div>
-				
-				
+
+
 				<!-- Footer block -->
 				{section "../~section/footer.html"}
 				<!-- End Footer block -->
 			</div>
 		</div>
+
+		 <div class="modal inmodal fade" id="Modal-Delete" tabindex="-1" role="dialog"  aria-hidden="true">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title">Уверены?</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p><img class="img-responsive" src="~/../img/icons/icon_delete.png"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-white" data-dismiss="modal">Отмена</button>
+                        <a type="button" class="btn btn-warning" id="delete-btn">Удалить страницу</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 		<!-- Mainly scripts -->
 		<script src="../js/jquery-2.1.1.js"></script>
 		<script src="../js/bootstrap.min.js"></script>
@@ -399,118 +418,8 @@
 		<script src="../js/plugins/dataTables/dataTables.responsive.js"></script>
 		<script src="../js/plugins/dataTables/dataTables.tableTools.min.js"></script>
 		<script>
-			$(document).ready(function() 
+			$(document).ready(function()
 			{
-
-
-					var d1 = [
-						[1262304000000, 6],
-						[1264982400000, 3057],
-						[1267401600000, 20434],
-						[1270080000000, 31982],
-						[1272672000000, 26602],
-						[1275350400000, 27826],
-						[1277942400000, 24302],
-						[1280620800000, 24237],
-						[1283299200000, 21004],
-						[1285891200000, 12144],
-						[1288569600000, 10577],
-						[1291161600000, 10295]
-					];
-					var d2 = [
-						[1262304000000, 5],
-						[1264982400000, 200],
-						[1267401600000, 1605],
-						[1270080000000, 6129],
-						[1272672000000, 11643],
-						[1275350400000, 19055],
-						[1277942400000, 30062],
-						[1280620800000, 39197],
-						[1283299200000, 37000],
-						[1285891200000, 27000],
-						[1288569600000, 21000],
-						[1291161600000, 17000]
-					];
-
-					//~ var data1 = [
-					//~ { label: "Data 1", data: d1, color: '#17a084'},
-					//~ { label: "Data 2", data: d2, color: '#127e68' }
-					//~ ];
-					//~ $.plot($("#flot-chart1"), data1, {
-					//~ xaxis: {
-					//~ tickDecimals: 0
-					//~ },
-					//~ series: {
-					//~ lines: {
-					//~ show: true,
-					//~ fill: true,
-					//~ fillColor: {
-					//~ colors: [{
-					//~ opacity: 1
-					//~ }, {
-					//~ opacity: 1
-					//~ }]
-					//~ },
-					//~ },
-					//~ points: {
-					//~ width: 0.1,
-					//~ show: false
-					//~ },
-					//~ },
-					//~ grid: {
-					//~ show: false,
-					//~ borderWidth: 0
-					//~ },
-					//~ legend: {
-					//~ show: false,
-					//~ }
-					//~ });
-
-					var lineData = {
-						labels: ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"],
-						datasets: [{
-								label: "Example dataset",
-								fillColor: "rgba(220,220,220,0.5)",
-								strokeColor: "rgba(220,220,220,1)",
-								pointColor: "rgba(220,220,220,1)",
-								pointStrokeColor: "#fff",
-								pointHighlightFill: "#fff",
-								pointHighlightStroke: "rgba(220,220,220,1)",
-								data: [165, 159, 140, 151, 136, 125, 140]
-							},
-							{
-								label: "Example dataset",
-								fillColor: "rgba(26,179,148,0.5)",
-								strokeColor: "rgba(26,179,148,0.7)",
-								pointColor: "rgba(26,179,148,1)",
-								pointStrokeColor: "#fff",
-								pointHighlightFill: "#fff",
-								pointHighlightStroke: "rgba(26,179,148,1)",
-								data: [48, 48, 60, 39, 56, 37, 30]
-							}
-						]
-					};
-
-					var lineOptions = {
-						scaleShowGridLines: true,
-						scaleGridLineColor: "rgba(0,0,0,.05)",
-						scaleGridLineWidth: 1,
-						bezierCurve: true,
-						bezierCurveTension: 0.4,
-						pointDot: true,
-						pointDotRadius: 4,
-						pointDotStrokeWidth: 1,
-						pointHitDetectionRadius: 20,
-						datasetStroke: true,
-						datasetStrokeWidth: 2,
-						datasetFill: true,
-						responsive: true,
-					};
-
-
-					//~ var ctx = document.getElementById("lineChart").getContext("2d");
-					//~ var myNewChart = new Chart(ctx).Line(lineData, lineOptions);
-
 
 
 
@@ -544,7 +453,7 @@
 
 					}
 				}
-			
+
 		</script>
 	</body>
 </html>

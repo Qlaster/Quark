@@ -21,10 +21,6 @@
  *
  *
  */
-
-	echo "EXEC!!!"; die;
-	//~ file_put_contents('1.txt', 'kkks');
-
 	$_POST['poster'] = 'public/images/poster.png';
 
 	echo $APP->objects->collection('admin')->set('about', $_POST) ? "OK" : "";
