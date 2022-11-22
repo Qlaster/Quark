@@ -40,7 +40,6 @@
 		{
 			header('Location: '.$APP->url->home().'admin/options/users/lock');
 			exit();
-			return false;
 		}
 
 		//============================================================================================================================
@@ -50,7 +49,6 @@
 		{
 			header('Location: '.$APP->url->home().'admin/login');
 			exit();
-			return false;
 		}
 
 		//============================================================================================================================
@@ -61,7 +59,6 @@
 			//~ echo $APP->url->page(); die;
 			header('Location: '.$APP->url->home().'admin/options/users/deny');
 			exit();
-			return false;
 		}
 
 		//~ echo $ctrl; die;
@@ -80,9 +77,27 @@
 		$page = $APP->url->page();
 		$page = explode('/', $page);
 		$page = array_filter($page);
-		$content['nav']['main']['list'][$page[1]]['active'] = true;
 
-		if (count($page) == 3)	$content['nav']['main']['list'][$page[1]]['list'][$page[2]]['active'] = true;
+		//Выделение элемента меню
+		if ($content['nav']['main']['list'][$page[1]])
+		{
+			//Если структура меню очевидна из ключей
+			$content['nav']['main']['list'][$page[1]]['active'] = true;
+			if (count($page) == 3) $content['nav']['main']['list'][$page[1]]['list'][$page[2]]['active'] = true;
+		}
+		else
+		{
+			//Если нужно пробежаться по меню и найти страницу по ссылке
+			foreach ($content['nav']['main']['list'] as $key => &$mainSection)
+				if ($mainSection['list'])
+					foreach ($mainSection['list'] as $subkey => &$item)
+						if ($item['link'] == $APP->url->page())
+						{
+							$item['active'] = true;
+							$mainSection['active'] = true;
+						}
+		}
+
 
 
 		//============================================================================================================================

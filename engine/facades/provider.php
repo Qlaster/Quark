@@ -77,6 +77,8 @@
 
 		public function listing($path='', $math="*.php")
 		{
+			if (!file_exists($this->config['folder'] .DIRECTORY_SEPARATOR. $path)) return [];
+
 			$pathLength = mb_strlen($this->config['folder'].DIRECTORY_SEPARATOR.$path)+1;
 			$providerlist = $this->utils->listing($this->config['folder'] .DIRECTORY_SEPARATOR. $path, $math);
 

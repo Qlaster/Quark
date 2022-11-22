@@ -760,10 +760,10 @@
 		 * @return ORM instance
 		 *
 		 */
-		public function like(...$args)
+		public function like()
 		{
 			//Получаем аргументы функции
-			//~ $args = func_get_args();
+			$args = func_get_args();
 
 			//Если нам передали 1 параметр
 			if ( (count($args) == 1) and ($args[0]))
