@@ -532,10 +532,12 @@
 			//Приклеиваем двоеточие ко всем ключам массива
 			foreach ($record as $key => &$value) $values[] = ":$key";
 			$values  = implode(', ', $values);
-
-			//~ exit("REPLACE INTO \"$table\" (\"$columns\") values ($values);");
+					
+			//Формируем запрос возврата данных			
+			$this->lastQuery = "REPLACE INTO $table (\"$columns\") values ($values);";
+			
 			//Формируем запрос
-			$stmt = $this->PDO_INTERFACE->prepare("REPLACE INTO $table (\"$columns\") values ($values);");
+			$stmt = $this->PDO_INTERFACE->prepare($this->lastQuery);
 
 			//Указываем значения
 			foreach ($record as $key => &$val) $stmt->bindParam(":$key", $val);
