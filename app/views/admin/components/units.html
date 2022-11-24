@@ -66,14 +66,15 @@
                                     <tr>
                                         <td class="project-status">
 											{if $_unit['analize']['check']}
-												<button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-test" onclick="$('#response').load('{$_unit['testlink']}')"><i class="fa fa-check"></i> {$_unit['analize']['status']}</button>
+
+												<button type="button" class="btn btn-sm btn-primary" {if $_unit['testlink']} data-toggle="modal" data-target="#modal-test" onclick="$('#response').load('{$_unit['testlink']}')" {end}><i class="fa fa-check"></i> {$_unit['analize']['status']}</button>
 <!--
 												<span class="label btn-sm label-primary" ><i class="fa fa-check"></i> {$_unit['analize']['status']}</span>
 -->
                                             {elseif  $_unit['analize']['check']=== null}
 												<span class="label">{$_unit['analize']['status']}</span>
                                             {else}
-												<button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#modal-test" onclick="$('#response').load('{$_unit['testlink']}')"><i class="fa fa-times"></i>  {$_unit['analize']['status']}</button>
+												<button type="button" class="btn btn-sm btn-warning" {if $_unit['testlink']} data-toggle="modal" data-target="#modal-test" onclick="$('#response').load('{$_unit['testlink']}')" {end}><i class="fa fa-times"></i>  {$_unit['analize']['status']}</button>
 <!--
 												<span class="label label-warning"><i class="fa fa-times"></i> {$_unit['analize']['status']}</span>
 -->
