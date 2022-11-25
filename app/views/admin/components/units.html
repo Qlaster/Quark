@@ -62,7 +62,7 @@
 
                                 <table class="table table-hover" id="table-units">
                                     <tbody>
-									{foreach $units['list'] as $_key => $_unit}
+									{foreach (array) $units['list'] as $_key => $_unit}
                                     <tr>
                                         <td class="project-status">
 											{if $_unit['analize']['check']}
