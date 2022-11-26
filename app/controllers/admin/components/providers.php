@@ -64,7 +64,7 @@
 	}
 
 	//Рассчитаем предполагаемое влияние на загрузку
-	if ($_GET['analize'])
+	if ($_GET['analize'] and $content['units']['list'])
 	{
 		$min = min($times);
 		$max = max($times);

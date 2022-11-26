@@ -72,7 +72,7 @@
         <!-- конец title-->
 
 
-        <form name="editpage" method="post" action="admin/content/page/save" class="form-horizontal">
+        <form name="editpage" id="editpage" method="post" action="admin/content/page/save" class="form-horizontal">
         <div class="wrapper wrapper-content">
             <div class="row">
 
@@ -175,7 +175,7 @@
 														</a>
                                                     </span>
                                                 </div>
-                                                <span class="help-block m-b-none">A block of help text that breaks onto a new line and may extend beyond one line.</span>
+                                                <span class="help-block m-b-none">{$form['edit']['html']['info']}</span>
                                             </div>
                                         </div>
                                         <div class="hr-line-dashed"></div>
@@ -249,10 +249,23 @@
 
 
                                         <div class="form-group">
-                                            <div class="col-sm-4 col-sm-offset-2">
-                                                <button class="btn btn-white" type="submit">{$form['edit']['button']['cancel']['head']}</button>
-                                                <button class="btn btn-primary" type="submit">{$form['edit']['button']['apply']['head']}</button>
+                                            <div class="col-sm-12 !col-sm-offset-2 text-center">
 <!--
+												<button class="btn btn-primary" type="submit">{$form['edit']['button']['apply']['head']}</button>
+-->
+												{foreach $form['edit']['button'] as $btnname => $_button}
+													<button
+															class="btn {$_button['class']}"
+															{if $_button['type']} type="{$_button['type']}" {end}
+															{if $_button['action']} onclick="$('#editpage').attr('action', '{$_button['action']}')" {end}
+															>
+
+															<i class="fa {$_button['icon']}"></i> {$_button['head']}
+													</button>
+												{end}
+
+<!--
+                                                <button class="btn btn-white" type="submit">{$form['edit']['button']['cancel']['head']}</button>
                                                 <button data-toggle="button" class="btn btn-primary btn-outline" type="button">Apply</button>
 -->
                                             </div>
@@ -555,37 +568,27 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 				{if $section}
 							<div class="col-lg-12">
 								<div class="ibox float-e-margins">
 									<div class="ibox-content">
+										{if $form['edit']['info']}
 										<div class="alert alert-warning">
-											Full documentation for Summernote.js, including examples and API calls, keybored shortcuts, PHP Examples, Django installation, and Rails (gem) integration can be found at:
-											<a href="http://hackerwins.github.io/summernote/features.html#api">http://hackerwins.github.io/summernote/features.html#api</a>
-											<!--<div class="summernote">summernote 2</div>-->
+											{$$form['edit']['info']}
 										</div>
+										{end}
 										<div class="panel-body">
-												<div class="col-sm-10 col-sm-offset-4">
-													<button class="btn btn-primary" type="submit">Save page</button>
-													<button class="btn btn-info" type="submit">Preview</button>
+												<div class="col-sm-12 !col-sm-offset-4 text-center">
+													{foreach $form['edit']['button'] as $btnname => $_button}
+														<button
+																class="btn {$_button['class']}"
+																{if $_button['type']} type="{$_button['type']}" {end}
+																{if $_button['action']} onclick="$('#editpage').attr('action', '{$_button['action']}')" {end}
+																>
+
+																<i class="fa {$_button['icon']}"></i> {$_button['head']}
+														</button>
+													{end}
 												</div>
 										</div>
 									</div>
