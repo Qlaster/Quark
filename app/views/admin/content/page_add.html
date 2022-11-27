@@ -257,7 +257,7 @@
 													<button
 															class="btn {$_button['class']}"
 															{if $_button['type']} type="{$_button['type']}" {end}
-															{if $_button['action']} onclick="$('#editpage').attr('action', '{$_button['action']}')" {end}
+															{if $_button['action']} onclick="$('#editpage').attr('action', '{$_button['action']}'); $('#editpage').attr('target', '{$_button['target']}');" {end}
 															>
 
 															<i class="fa {$_button['icon']}"></i> {$_button['head']}

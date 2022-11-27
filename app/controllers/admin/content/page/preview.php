@@ -66,24 +66,7 @@
 
 	//print_r($content); die;
 
-	//~ $page['content'] = $content;
+	$page['content'] = $content;
 
-	$APP->template->file($page['html'])->display($content);
-
-
-	//$page['content']['gallery-->main']['data'] = array('1','xxxx');
-
-	//~ print_r($page); die;
-	//~ if (!$APP->page->set($URL, $page))
-		//~ trigger_error ( "Не удается сохранить страницу" , E_USER_WARNING );
-
-	//~ $APP->page->sitemap('controllers/sitemap.xml.php');
-
-	//~ print_r($APP->page->get($URL));
-
-	//~ header('Location: index#pages');
-
-	//~ echo exec('ls');
-	//~
-	//~ die;
-	//print_r($page);
+	//Запустим контроллер рендеринга страницы
+	$APP->controller->run('index', $APP);

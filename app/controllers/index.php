@@ -1,26 +1,27 @@
 <?php
-	
+
 	$url = $APP->url->page();
 
-	//Загрузим страницу из базы
-	$page = $APP->page->get($url);
-	
+	//Загрузим страницу из базы, если нам ее не передали
+	if (!isset($page))
+		$page = $APP->page->get($url);
+
 	//Если не нашли такой страницы - подгрузим заглушку
 	if ($page === null)
 	{
 		http_response_code(404);
 		$page = $APP->page->get('error:404');
-	}		
-	
+	}
+
 	//Страница существует?
 	if (($page != null) and ($page['public']))
 	{
 
 		if (! isset($page['content'])) $page['content'] = array();
 		$content = array();
-		
+
 		//да, страница существует - осуществляем небольшую предподготовку
-		foreach ($page['content'] as $name => &$tag) 
+		foreach ($page['content'] as $name => &$tag)
 		{
 			switch ($tag['type'])
 			{
@@ -31,7 +32,7 @@
 						list ($collection, $object) = explode(':', $tag['data']);
 						$collection = base64_decode($collection);
 						$object = base64_decode($object);
-						
+
 						$tag_name = explode(':', $tag['name']);
 						$tag_name[0] = base64_decode($tag_name[0]);
 						$tag_name[1] = base64_decode($tag_name[1]);
@@ -50,13 +51,13 @@
 						//~ $content[$class][$name] = $APP->controller->run($tag['data'], $APP);
 					break;
 				default:
-					
+
 			}
-			
+
 		}
-		
+
 		//Пометим относительную директорию, что бы шаблонизатор мог указать его в шаблоне
-		$APP->template->base_html = $APP->url->home();		
+		$APP->template->base_html = $APP->url->home();
 		//выводим используя встроенный шаблонизатор
 		$APP->template->file($page['html'])->display($content);
 	}
@@ -66,6 +67,6 @@
 		$content = array();
 		http_response_code(404);
 	}
-	
-	
-	
+
+
+
