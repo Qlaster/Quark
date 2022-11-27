@@ -22,7 +22,7 @@
  *
  */
 
-	$content = $APP->controller->run('admin/autoinclude', $APP);
+	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
 	//Если нам передали постер
 	if ($_FILES)

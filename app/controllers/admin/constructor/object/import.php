@@ -1,6 +1,6 @@
 <?php
 
-	$content = $APP->controller->run('admin/autoinclude', $APP);
+	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
 
 	if ($APP->objects->import($_POST['jsonData']))
@@ -11,5 +11,5 @@
 	{
 		echo "Ошибка загрузки списка объектов";
 	}
-	
+
 	exit();

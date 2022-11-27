@@ -1,7 +1,7 @@
 <?php
 
 	error_reporting(E_ALL & ~E_NOTICE);
-	$content = $APP->controller->run('admin/autoinclude', $APP);
+	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
 	//Имя базы, конструктор которой мы хотим открыть
 	$dbname = $_GET['dbname'];

@@ -1,6 +1,6 @@
-﻿<?php                                                                                               
+﻿<?php
 
-$content = $APP->controller->run('admin/autoinclude', $APP);
+$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
 $config = $APP->config->get();
 
@@ -14,19 +14,19 @@ $hash=$_SERVER["HTTP_UPLOAD_ID"];
 
 openlog("html5upload.php", LOG_PID | LOG_PERROR, LOG_LOCAL0);
 
-if (preg_match("/^[0123456789abcdef]{32}$/i",$hash)) 
+if (preg_match("/^[0123456789abcdef]{32}$/i",$hash))
 {
 
-	if ($_SERVER["REQUEST_METHOD"]=="GET") 
+	if ($_SERVER["REQUEST_METHOD"]=="GET")
 	{
-		if ($_GET["action"]=="abort") 
+		if ($_GET["action"]=="abort")
 			{
 				if (is_file($uploaddir."/".$hash.".html5upload")) unlink($uploaddir."/".$hash.".html5upload");
 				print "ok abort";
 				return;
 			}
 
-		if ($_GET["action"]=="done") 
+		if ($_GET["action"]=="done")
 			{
 				syslog(LOG_INFO, "Finished for hash ".$hash);
 
@@ -37,19 +37,19 @@ if (preg_match("/^[0123456789abcdef]{32}$/i",$hash))
 				$fw=fopen($uploaddir."/".$hash.".original_ready","wb");if ($fw) fclose($fw);
 			}
 	}
-	elseif ($_SERVER["REQUEST_METHOD"]=="POST") 
+	elseif ($_SERVER["REQUEST_METHOD"]=="POST")
 	{
 
 		syslog(LOG_INFO, "Uploading chunk. Hash ".$hash." (".intval($_SERVER["HTTP_PORTION_FROM"])."-".intval($_SERVER["HTTP_PORTION_FROM"]+$_SERVER["HTTP_PORTION_SIZE"]).", size: ".intval($_SERVER["HTTP_PORTION_SIZE"]).")");
 
 		$filename=$uploaddir."/".$hash.".html5upload";
 
-		if (intval($_SERVER["HTTP_PORTION_FROM"])==0) 
+		if (intval($_SERVER["HTTP_PORTION_FROM"])==0)
 			$fout=fopen($filename,"wb");
 		else
 			$fout=fopen($filename,"ab");
 
-		if (!$fout) 
+		if (!$fout)
 		{
 			syslog(LOG_INFO, "Can't open file for writing: ".$filename);
 			header("HTTP/1.0 500 Internal Server Error");
@@ -58,9 +58,9 @@ if (preg_match("/^[0123456789abcdef]{32}$/i",$hash))
 		}
 
 		$fin = fopen("php://input", "rb");
-		if ($fin) 
+		if ($fin)
 		{
-			while (!feof($fin)) 
+			while (!feof($fin))
 			{
 				$data=fread($fin, 1024*1024);
 				fwrite($fout,$data);
@@ -74,7 +74,7 @@ if (preg_match("/^[0123456789abcdef]{32}$/i",$hash))
 	header("HTTP/1.0 200 OK");
 	print "ok\n";
 }
-else 
+else
 {
 	syslog(LOG_INFO, "Uploading chunk. Wrong hash ".$hash);
 	header("HTTP/1.0 500 Internal Server Error");

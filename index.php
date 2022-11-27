@@ -62,10 +62,10 @@
 	#        Передача управления контроллеру (на основе правил)        #
 	# ---------------------------------------------------------------- #
 	//Правила есть. Будем исполнять тот контроллер, который указан в правилах
-	if ($ctrlResponse = $APP->controller->run($rout, $APP) === null)
+	if ($ctrlResponse = $APP->controller->run($rout, ['APP'=>$APP]) === null)
 	{
 		//Контроллера нет? Что ж... Попробуем запустить и передать управление стандартному index контроллеру
-		if ($ctrlResponse = $APP->controller->run($APP->controller->config['handler'], $APP) === null )
+		if ($ctrlResponse = $APP->controller->run($APP->controller->config['handler'], ['APP'=>$APP]) === null )
 		{
 			http_response_code(500);
 			$page = $APP->page->get('error:500');

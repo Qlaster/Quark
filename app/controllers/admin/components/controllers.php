@@ -1,7 +1,7 @@
 <?php
 
 
-	$content = $APP->controller->run('admin/autoinclude', $APP);
+	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
 
 	//Получим путь до директориии с контроллерами

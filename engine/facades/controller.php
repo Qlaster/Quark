@@ -72,8 +72,12 @@
 		}
 
 		//Запуск контроллера
-		public function run($controller='', $APP=null)
+		public function run($controller='', array $_VARS=[])
 		{
+			//Создадим переменные окружения, которые передали для исполения
+			foreach ($_VARS as $_enviroment_var_name => $_enviroment_var_value) $$_enviroment_var_name = $_enviroment_var_value;
+			unset($_enviroment_var_name, $_enviroment_var_value);
+
 			if (! is_readable($ctrl = $this->realpath($controller))) return null;
 
 			$result = include $ctrl;

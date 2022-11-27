@@ -3,7 +3,7 @@
 	//~ error_reporting(E_ALL & ~E_NOTICE);
 
 
-	$content = $APP->controller->run('admin/autoinclude', $APP);
+	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
 	//Собираем статистику (посещения) по страницам
 	$APP->visits->shear('2018-1-1', date('Y-m-d'));

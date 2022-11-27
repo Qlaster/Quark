@@ -1,6 +1,6 @@
 <?php
-	
-	$content = $APP->controller->run('admin/autoinclude', $APP);
+
+	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
 	$jsonData = $APP->objects->export();
 
