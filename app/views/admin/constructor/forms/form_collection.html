@@ -17,9 +17,9 @@
     <link href="../../css/plugins/codemirror/ambiance.css" rel="stylesheet">
     <!-- Toastr style -->
     <link href="../../css/plugins/toastr/toastr.min.css" rel="stylesheet">
-    
+
     <link href="../../css/animate.css" rel="stylesheet">
-    <link href="../../css/style.css" rel="stylesheet"> 
+    <link href="../../css/style.css" rel="stylesheet">
 
 </head>
 
@@ -30,23 +30,23 @@
 		<!--Главное меню слева-->
 		{section "../../~section/mainmenu.html"}
 		<!--Конец меню-->
-			
+
         <div id="page-wrapper" class="gray-bg">
-		
+
 		<!-- Head menu -->
 		{section "../../~section/head.html"}
 		<!-- End head menu -->
-		
+
 		<!-- Менюшка title-->
 		{section "../../~section/title.html"}
-		<!-- конец title-->    
-				
+		<!-- конец title-->
+
         <div class="wrapper wrapper-content">
         <div class="row">
-            
 
-            
-            
+
+
+
 						<div class="col-lg-4 animated fadeInDown">
 							<div class="ibox float-e-margins">
 								<div class="ibox-content">
@@ -59,13 +59,13 @@
 											<a href="#" class="file-control">Images</a>
 											-->
 										<div class="hr-line-dashed"></div>
-									
+
 										<form action="{$form['collection']['action']}" method='get'>
-											<input name='name' placeholder="Название новой формы" class="form-control">   
+											<input name='name' placeholder="Название новой формы" class="form-control">
 											<p></p>
 											<button type="submit" class="btn btn-primary btn-block">{$form['collection']['button']['add']['head']}</button>
 										</form>
-										
+
 										<div class="hr-line-dashed"></div>
 										<h5>{$catalog['collection']['info']}</h5>
 										<ul class="folder-list" style="padding: 0">
@@ -90,29 +90,29 @@
 								</div>
 							</div>
 						</div>
-            
-            
+
+
 				<div class="col-lg-8 animated fadeInRight">
-					
-					
-					
-					
-					
+
+
+
+
+
 							<div class="row">
 								<div class="col-lg-12">
 									<div class="ibox ">
 										<div class="ibox-title">
-											<h5>Содержимое: <b class="text-success">{$objectName}</b></h5>											
-											<a id="btn-save" !href="{$catalog['objects']['button']['save']['link']}" class="btn btn-primary btn-xs pull-right m-l-sm"> <span class="{$catalog['objects']['button']['save']['icon']}"></span> {$catalog['objects']['button']['save']['head']}</a> 
+											<h5>Содержимое: <b class="text-success">{$objectName}</b></h5>
+											<a id="btn-save" !href="{$catalog['objects']['button']['save']['link']}" class="btn btn-primary btn-xs pull-right m-l-sm"> <span class="{$catalog['objects']['button']['save']['icon']}"></span> {$catalog['objects']['button']['save']['head']}</a>
 <!--
 											<a href="{$catalog['objects']['button']['edit']['link']}" class="btn btn-success btn-xs pull-right"> <span class="{$catalog['objects']['button']['edit']['icon']}"></span> {$catalog['objects']['button']['edit']['head']}</a>
 -->
 										</div>
 										<form id="form-code" method="POST">
-											<div class="ibox-content" id='menuname'>												
+											<div class="ibox-content" id='menuname'>
 												<div class="input-group m-b"><span class="input-group-addon">action: </span> <input class="form-control" type="text" name="action" value="{$$catalog['object']['action']}" placeholder="Action form" ></div>
-												<div class="input-group m-b"><span class="input-group-addon">method: </span> <input class="form-control" type="text" name="method" value="{$$catalog['object']['method']}" placeholder="Method" ></div>														
-											</div>	
+												<div class="input-group m-b"><span class="input-group-addon">method: </span> <input class="form-control" type="text" name="method" value="{$$catalog['object']['method']}" placeholder="Method" ></div>
+											</div>
 
 											<style>
 												.CodeMirror-scroll { min-height: 300px; }
@@ -122,8 +122,8 @@
 									</div>
 								</div>
 							</div>
-					
-					
+
+
 							<div class="row">
 								<div class="col-lg-12">
 									<div class="ibox-title">
@@ -132,36 +132,38 @@
 									<div class="ibox">
 										<div class="ibox-content">
 											<section >
-												{$$catalog['object']['html']}
+													<code id="display-form">
+														{$$catalog['object']['html']}
+													</code>
 											</section>
 										</div>
 									</div>
 								</div>
 							</div>
-					
-					
+
+
 <!--
 					<div class="ibox ">
 						<div class="ibox-title">
 								<h5>Содержимое: <b class="text-success">{$objectName}</b></h5>
-								<a id="btn-save" !href="{$catalog['objects']['button']['save']['link']}" class="btn btn-primary btn-xs pull-right m-l-sm"> <span class="{$catalog['objects']['button']['save']['icon']}"></span> {$catalog['objects']['button']['save']['head']}</a> 
+								<a id="btn-save" !href="{$catalog['objects']['button']['save']['link']}" class="btn btn-primary btn-xs pull-right m-l-sm"> <span class="{$catalog['objects']['button']['save']['icon']}"></span> {$catalog['objects']['button']['save']['head']}</a>
 								<a href="{$catalog['objects']['button']['edit']['link']}" class="btn btn-success btn-xs pull-right"> <span class="{$catalog['objects']['button']['edit']['icon']}"></span> {$catalog['objects']['button']['edit']['head']}</a>
 						</div>
 						<div class="!mail-box-header">
 
 							<div class="mail-box">
-											
-											
-											<section>	
-												<form id="form-code" method="POST">													
+
+
+											<section>
+												<form id="form-code" method="POST">
 													<div class="input-group m-b"><span class="input-group-addon">action: </span> <input class="form-control" type="text" name="action" value="{$$catalog['object']['action']}" placeholder="Action form" ></div>
 													<div class="input-group m-b"><span class="input-group-addon">method: </span> <input class="form-control" type="text" name="method" value="{$$catalog['object']['method']}" placeholder="Method" ></div>
-													
+
 													<textarea name="html" id="html-code" class="!form-control" >{$$catalog['object']['html']}</textarea>
 												</form>
 											</section>
-											
-											
+
+
 								<div class="mail-text">
 									<style>
 										.CodeMirror-scroll { min-height: 300px; }
@@ -172,15 +174,15 @@
 						</div>
 					</div>
 -->
-					
-					
-					
-					
-					
-					
+
+
+
+
+
+
 				</div>
 			</div>
-        
+
 			<!-- Footer block -->
 			{section "../../~section/footer.html"}
 			<!-- End Footer block -->
@@ -197,17 +199,17 @@
     <!-- Custom and plugin javascript -->
     <script src="../../js/inspinia.js"></script>
     <script src="../../js/plugins/pace/pace.min.js"></script>
-    
+
     <!-- CodeMirror -->
     <script src="../../js/plugins/codemirror/codemirror.js"></script>
     <script src="../../js/plugins/codemirror/mode/javascript/javascript.js"></script>
 
     <!-- iCheck -->
     <script src="../../js/plugins/iCheck/icheck.min.js"></script>
-    
+
     <!-- Toastr script -->
     <script src="../../js/plugins/toastr/toastr.min.js"></script>
-    
+
     <!-- SUMMERNOTE -->
     <script src="../../js/plugins/summernote/summernote.min.js"></script>
     <script>
@@ -220,7 +222,7 @@
 
 
             //~ $('.summernote').summernote();
-            
+
 
             //~ window.editor_head = CodeMirror.fromTextArea(document.getElementById("head-code"), {
                  //~ lineNumbers: true,
@@ -228,7 +230,7 @@
                  //~ styleActiveLine: true,
                  //~ theme:"ambiance"
              //~ });
-             
+
 
 			window.editor_html = CodeMirror.fromTextArea(document.getElementById("html-code"), {
 				 lineNumbers: true,
@@ -236,20 +238,30 @@
 				 styleActiveLine: true,
 				 theme:"ambiance"
 			});
-				
-				
-			$('#btn-save').click(function() 
+
+
+			$('#btn-save').click(function()
 			{
 				$("#form-code").submit();
 				return false;
 			});
 
+			//~ $('.CodeMirror').keypress(function()
+			//~ {
+				//~ var text = window.editor_html.getValue();
+				//~ $("#display-form").html( text );
+				//~ return true;
+			//~ });
 
+			//~ $(".CodeMirror").on("keypress", function(e)
+			//~ {
+				//~ updateCode();
+			//~ });
 
 
 
         });
-        
+
         var edit = function() {
             $('.click2edit').summernote({focus: true});
         };
@@ -258,6 +270,14 @@
             $('.click2edit').destroy();
         };
 
+
+		function updateCode()
+		{
+			var text = window.editor_html.getValue();
+			$("#display-form").html( text );
+		}
+
+		setInterval(function run() { updateCode(); }, 1000);
     </script>
 </body>
 
