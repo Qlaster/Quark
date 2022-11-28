@@ -24,7 +24,13 @@
 		//Счетчик открытых/закрытых литеральных тегов. $literal_count['название тега'] = количество открытий (вложений)
 		private $literal_count = array();
 
-
+		/*
+		 * 
+		 * Конструктор
+		 * @param array configuration
+		 * @return $this
+		 * 
+		 */
 		public function __construct($config=[])
 		{
 			$this->config['left_delimiter']		= "{";		// the left delimiter for template tags
@@ -92,9 +98,18 @@
 
 			//Заменим переменную окружения на реальный путь
 			$this->config['compilation']['folder'] = str_replace('%TEMP%', sys_get_temp_dir().'/', $this->config['compilation']['folder']);
+			return $this;
 		}
 
-		//Указывает, над каким файлом выполнить операции (html файл шаблона)
+
+		/*
+		 * 
+		 * Указывает, над каким файлом выполнить операции (html файл шаблона)
+		 * 
+		 * @param string html file link
+		 * @return $this
+		 * 
+		 */
 		public function file($file_link)
 		{
 			$this->file_time = [];
@@ -119,18 +134,33 @@
 
 			return $this;
 		}
-
-		//Указывает, как добраться до ресурсов html файла по url.
+		
+		/*
+		 * 
+		 * Указывает, как добраться до ресурсов html файла по url, внутри самого html
+		 * Проще говоря - ссылка на файл со стороны браузера 
+		 * (необязательно)
+		 * 
+		 * @param string url link
+		 * @return $this
+		 * 
+		 */		
 		public function themelink($link)
 		{
 			$this->base_link = $link;
 			return $this;
 		}
 
-
-		//Метод считает открытие/закрытие литеральных тегов. Ты отправляешь ему тег, он определеяет, литеральный он или нет. Если литеральный, то сморит, открытый или закртытый.
-		//Если открытый - увеличивает счетчик. Если закрытый - уменьшает. Если тег пуст, то возвращает true/false в зависимости от того, открыт/закрыт хоть один литеральный тег.
-		//Данный метод очень удобен для фильтрации тегов.
+		/*
+		 * 
+		 * Метод считает открытие/закрытие литеральных тегов. Ты отправляешь ему тег, он определеяет, литеральный он или нет. Если литеральный, то сморит, открытый или закртытый.
+		 * Если открытый - увеличивает счетчик. Если закрытый - уменьшает. Если тег пуст, то возвращает true/false в зависимости от того, открыт/закрыт хоть один литеральный тег.
+		 * Данный метод очень удобен для фильтрации тегов.
+		 * 
+		 * @param string literal tag
+		 * @return bool true|false
+		 * 
+		 */		
 		private function literal_count($literal_tag='')
 		{
 			//Если не указали тег, то проверяем на открытость литеральных тегов
@@ -187,6 +217,14 @@
 		}
 
 
+		/*
+		 * 
+		 * Компилировать tpl строку (строку html с тегами)
+		 * 
+		 * @param string tpl html code
+		 * @return string html/php code string
+		 * 
+		 */
 		private function compile_resource($tpl_string)
 		{
 			$htmlhead = strstr($tpl_string, "<head>");
@@ -228,8 +266,15 @@
 			return str_replace($this->config['url_link_tag'], '<?=$this->base_link?>', $tpl_string);
 		}
 
-
-		//Метод компилирует строку (теги LITERAL учитываются)
+		
+		/*
+		 * 
+		 * Метод компилирует строку (теги LITERAL учитываются)
+		 * 
+		 * @param string tpl html code
+		 * @return string html/php code string
+		 * 
+		 */		
 		public function compile_data($tpl_string)
 		{
 			$result = '';
@@ -306,8 +351,15 @@
 
 		}
 
-
-		//Соберем TPL файл со всеми зависимостями
+		
+		/*
+		 * 
+		 * Соберем TPL файл со всеми зависимостями
+		 * 
+		 * @param string link tpl file
+		 * @return string document
+		 * 
+		 */
 		private function tpl_get_contents($tpl_file)
 		{
 			//Запишем последнее время изменения файла TPL
@@ -357,8 +409,16 @@
 			return $document;
 		}
 
-
-		//Ты ей () тег, а она тебе скомпилированный php код этого тега
+		
+		/*
+		 * 
+		 * Компиляция тега
+		 * Ты ей () тег, а она тебе скомпилированный php код этого тега
+		 * 
+		 * @param string tag (tpl or html)
+		 * @return string compiled expression
+		 * 
+		 */		
 		private function compile_tag($tag)
 		{
 
@@ -426,8 +486,15 @@
 			}
 		}
 
-
-		//Функции (а точнее, метод класса) передается список переменных, которые должны быть выведены на шаблон. Метод компилирует шаблон и выводит его браузеру. Источник шаблона берется в методе $tpl_file.
+		
+		/*
+		 * 
+		 * В метод передается список переменных, которые должны быть выведены на шаблон. Метод компилирует шаблон и выводит его браузеру. Источник шаблона берется в методе $tpl_file.
+		 * 
+		 * @param array content data
+		 * @return full html document and return to browser
+		 * 
+		 */
 		public function display($vars_array = array())
 		{
 
@@ -474,7 +541,15 @@
 
 
 
-		//Компилируем шаблон и выводим его как строку. Источник шаблона берется в свойстве $tpl_file.
+		
+		/*
+		 * 
+		 * Компилируем шаблон и выводим его как строку. Источник шаблона берется в свойстве $tpl_file.
+		 * 
+		 * @param 
+		 * @return string compile html
+		 * 
+		 */		
 		public function compile()
 		{
 			//Если файл шаблона не найден
@@ -528,8 +603,15 @@
 
 		}
 
-
-		//Получить список переменных шаблона
+		
+		/*
+		 * 
+		 * Получить список переменных шаблона
+		 * 
+		 * @param
+		 * @return array list vars
+		 * 
+		 */		
 		public function vars()
 		{
 			//Получаем все теги шаблонизатора
@@ -554,7 +636,16 @@
 
 
 
-		//Список тегов, которые будут обработаны шаблонизатором
+		
+		/*
+		 * 
+		 * Список тегов, которые будут обработаны шаблонизатором
+		 * (только теги шаблонизатора)
+		 * 
+		 * @param
+		 * @return array tag list
+		 * 
+		 */
 		public function tag_list()
 		{
 			$this->literal_count = array();
@@ -596,8 +687,16 @@
 			return (array) $result;
 		}
 
-
-		//Метод ищет в строке теги, и возвращает их массивом.
+		
+		/*
+		 * 
+		 * Метод ищет в строке теги, и возвращает их массивом.
+		 * (все теги, попадающие под патерн, и html и tpl)
+		 * 
+		 * @param string html string
+		 * @return array tag list
+		 * 
+		 */
 		public function get_tags($string)
 		{
 			if ($string == '') return array();
@@ -641,8 +740,15 @@
 		}
 
 
-		//Метод возвращает true, если указанная строка содержит тег оформленный в соответствии с правилами синтаксического оформления тегов шаблонизатора.
-		//Проводится лишь поверхностный синтаксический анализ.
+		/*
+		 * 
+		 * Метод возвращает true, если указанная строка содержит тег оформленный в соответствии с правилами синтаксического оформления тегов шаблонизатора.
+		 * Проводится лишь поверхностный синтаксический анализ.
+		 * 
+		 * @param string tag
+		 * @return bool true|false
+		 * 
+		 */
 		private function is_tag($tag)
 		{
 			$tag = trim($tag);
@@ -661,11 +767,18 @@
 			}
 		}
 
-
-
-		//Метод генерирует имя скомпилированно tpl шаблона.
-		//$filename - имя файла шаблона. $all_path - если true - то добавлять к сгенерированному имени файла путь до каталога.
-		private function compile_gen_filename($filename, $all_path=true)
+		
+		/*
+		 * 
+		 * Метод генерирует имя скомпилированно tpl шаблона.			
+		 * $filename - имя файла шаблона. $full_path - если true - то добавлять к сгенерированному имени файла путь до каталога.
+		 * 
+		 * @param string filename
+		 * @param bool full_path
+		 * @return string filename
+		 * 
+		 */
+		private function compile_gen_filename($filename, $full_path=true)
 		{
 			if (file_exists($filename))
 			{
@@ -681,7 +794,7 @@
 				$filename = $filename . "~$edit_date." . $this->config['compilation']['extent'];
 
 				//Если попросили указать полный путь до файла
-				if ($all_path)
+				if ($full_path)
 					$filename = $this->config['compilation']['folder'].'/'. $filename;
 
 				return $filename;
@@ -689,8 +802,15 @@
 
 		}
 
-
-		//Очищает все версии кеша шаблона $tlp_filename. Опять же - потенциально опасна.
+		
+		/*
+		 * 
+		 * Очищает все версии кеша шаблона $tlp_filename. Опять же - потенциально опасна.	
+		 * 
+		 * @param string tlp_filename		 
+		 * @return bool true|false
+		 * 
+		 */
 		private function clear_cache_file($tlp_filename)
 		{
 			//Выделяем имя tlp шаблона
@@ -707,9 +827,75 @@
 			{
 				if (file_exists($filename))
 				{
-					unlink($filename);
+					return unlink($filename);
 				}
 			}
 		}
+		
+		
+		/*
+		 * 
+		 * Выравнивает структуру html документа, организуя правильные отступы
+		 * 
+		 * @param string html document		 
+		 * @return  string formatted html document	
+		 * 
+		 */
+		function formattingHTML($content, $tab="\t")
+		{
+			$content = preg_replace('/(>)(<)(\/*)/', "$1\n$2$3", $content); // add marker linefeeds to aid the pretty-tokeniser (adds a linefeed between all tag-end boundaries)
+			$token = strtok($content, "\n"); // now indent the tags
+			$result = ''; // holds formatted version as it is built
+			$pad = 0; // initial indent
+			$matches = array(); // returns from preg_matches()
+			$padPrev = '';
+			$voidTag = '';
+			// scan each line and adjust indent based on opening/closing tags
+			while ($token !== false && strlen($token)>0)
+			{
+				$padPrev = $padPrev ?: $pad; // previous padding //Artis
+				$token = trim($token);
+				// test for the various tag states
+				if (preg_match('/.+<\/\w[^>]*>$/', $token, $matches)){// 1. open and closing tags on same line - no change
+					$indent=0;
+				}elseif(preg_match('/^<\/\w/', $token, $matches)){// 2. closing tag - outdent now
+					$pad--;
+					if($indent>0) $indent=0;
+				}elseif(preg_match('/^<\w[^>]*[^\/]>.*$/', $token, $matches)){// 3. opening tag - don't pad this one, only subsequent tags (only if it isn't a void tag)
+					foreach($matches as $m){
+						if (preg_match('/^<(area|base|br|col|command|embed|hr|img|input|keygen|link|meta|param|source|track|wbr)/im', $m)){// Void elements according to http://www.htmlandcsswebdesign.com/articles/voidel.php
+							$voidTag=true;
+							break;
+						}
+					}
+					$indent = 1;
+				}else{// 4. no indentation needed
+					$indent = 0;
+				}
+
+				if ($token == "<textarea>") {
+					$line = str_pad($token, strlen($token) + $pad, $tab, STR_PAD_LEFT); // pad the line with the required number of leading spaces
+					$result .= $line; // add to the cumulative result, with linefeed
+					$token = strtok("\n"); // get the next token
+					$pad += $indent; // update the pad size for subsequent lines
+				} elseif ($token == "</textarea>") {
+					$line = $token; // pad the line with the required number of leading spaces
+					$result .= $line . "\n"; // add to the cumulative result, with linefeed
+					$token = strtok("\n"); // get the next token
+					$pad += $indent; // update the pad size for subsequent lines
+				} else {
+					$line = str_pad($token, strlen($token) + $pad, $tab, STR_PAD_LEFT); // pad the line with the required number of leading spaces
+					$result .= $line . "\n"; // add to the cumulative result, with linefeed
+					$token = strtok("\n"); // get the next token
+					$pad += $indent; // update the pad size for subsequent lines
+					if ($voidTag) {
+						$voidTag = false;
+						$pad--;
+					}
+				}           		  
+			}  
+			return $result;
+		}
+
 	}
 

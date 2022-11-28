@@ -110,8 +110,8 @@
 										</div>
 										<form id="form-code" method="POST">
 											<div class="ibox-content" id='menuname'>
-												<div class="input-group m-b"><span class="input-group-addon">action: </span> <input class="form-control" type="text" name="action" value="{$$catalog['object']['action']}" placeholder="Action form" ></div>
-												<div class="input-group m-b"><span class="input-group-addon">method: </span> <input class="form-control" type="text" name="method" value="{$$catalog['object']['method']}" placeholder="Method" ></div>
+												<div class="input-group m-b"><span class="input-group-addon">Внешние js: </span> <input class="form-control" type="text" name="action" value="{$$catalog['object']['action']}" placeholder="Action form" ></div>
+												<div class="input-group m-b"><span class="input-group-addon">Внешние css: </span> <input class="form-control" type="text" name="method" value="{$$catalog['object']['method']}" placeholder="Method" ></div>
 											</div>
 
 											<style>
@@ -131,10 +131,8 @@
 									</div>
 									<div class="ibox">
 										<div class="ibox-content">
-											<section >
-													<code id="display-form">
-														{$$catalog['object']['html']}
-													</code>
+											<section id="display-form">													
+													{$$catalog['object']['html']}													
 											</section>
 										</div>
 									</div>
