@@ -51,8 +51,12 @@
 
 
 		//Выполнение провайдера
-		public function execute($provider, $APP=null)
+		public function execute($provider, array $_VARS=[])
 		{
+			//Создадим переменные окружения, которые передали для исполения
+			foreach ($_VARS as $_enviroment_var_name => $_enviroment_var_value) $$_enviroment_var_name = $_enviroment_var_value;
+			unset($_enviroment_var_name, $_enviroment_var_value);
+			
 			//Определим, сетевой путь или локальный
 			if (array_key_exists('scheme', parse_url($provider)))
 			{

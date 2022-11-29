@@ -46,7 +46,7 @@
 						$class = base64_decode($class);
 						$name = base64_decode($name);
 						//Получим контент от провайдера данных
-						$content[$class][$name] = $APP->provider->execute($tag['data'], $APP);
+						$content[$class][$name] = $APP->provider->execute($tag['data'], ['APP'=>$APP]);
 						//Строим объект контента
 						//~ $content[$class][$name] = $APP->controller->run($tag['data'], $APP);
 					break;
