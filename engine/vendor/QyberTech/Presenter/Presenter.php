@@ -25,11 +25,11 @@
 		private $literal_count = array();
 
 		/*
-		 * 
+		 *
 		 * Конструктор
 		 * @param array configuration
 		 * @return $this
-		 * 
+		 *
 		 */
 		public function __construct($config=[])
 		{
@@ -103,12 +103,12 @@
 
 
 		/*
-		 * 
+		 *
 		 * Указывает, над каким файлом выполнить операции (html файл шаблона)
-		 * 
+		 *
 		 * @param string html file link
 		 * @return $this
-		 * 
+		 *
 		 */
 		public function file($file_link)
 		{
@@ -134,17 +134,17 @@
 
 			return $this;
 		}
-		
+
 		/*
-		 * 
+		 *
 		 * Указывает, как добраться до ресурсов html файла по url, внутри самого html
-		 * Проще говоря - ссылка на файл со стороны браузера 
+		 * Проще говоря - ссылка на файл со стороны браузера
 		 * (необязательно)
-		 * 
+		 *
 		 * @param string url link
 		 * @return $this
-		 * 
-		 */		
+		 *
+		 */
 		public function themelink($link)
 		{
 			$this->base_link = $link;
@@ -152,15 +152,15 @@
 		}
 
 		/*
-		 * 
+		 *
 		 * Метод считает открытие/закрытие литеральных тегов. Ты отправляешь ему тег, он определеяет, литеральный он или нет. Если литеральный, то сморит, открытый или закртытый.
 		 * Если открытый - увеличивает счетчик. Если закрытый - уменьшает. Если тег пуст, то возвращает true/false в зависимости от того, открыт/закрыт хоть один литеральный тег.
 		 * Данный метод очень удобен для фильтрации тегов.
-		 * 
+		 *
 		 * @param string literal tag
 		 * @return bool true|false
-		 * 
-		 */		
+		 *
+		 */
 		private function literal_count($literal_tag='')
 		{
 			//Если не указали тег, то проверяем на открытость литеральных тегов
@@ -194,36 +194,29 @@
 
 				if (strpos($literal_tag, $syntax['open']) === 0)
 				{
-
 					if (! isset($this->literal_count[$tag_name]) ) $this->literal_count[$tag_name] = 0;
-
 					$this->literal_count[$tag_name]++;
-
 					return true;
-					break;
 				}
 
 				if (strpos($literal_tag, $syntax['close']) === 0)
 				{
 					if (! isset($this->literal_count[$tag_name]) ) $this->literal_count[$tag_name] = 0;
 
-					$this->literal_count[$tag_name]--;
-					if ($this->literal_count[$tag_name]<0)	$this->literal_count[$tag_name] = 0;
-
+					if (--$this->literal_count[$tag_name]<0) $this->literal_count[$tag_name] = 0;
 					return true;
-					break;
 				}
 			}
 		}
 
 
 		/*
-		 * 
+		 *
 		 * Компилировать tpl строку (строку html с тегами)
-		 * 
+		 *
 		 * @param string tpl html code
 		 * @return string html/php code string
-		 * 
+		 *
 		 */
 		private function compile_resource($tpl_string)
 		{
@@ -266,15 +259,15 @@
 			return str_replace($this->config['url_link_tag'], '<?=$this->base_link?>', $tpl_string);
 		}
 
-		
+
 		/*
-		 * 
+		 *
 		 * Метод компилирует строку (теги LITERAL учитываются)
-		 * 
+		 *
 		 * @param string tpl html code
 		 * @return string html/php code string
-		 * 
-		 */		
+		 *
+		 */
 		public function compile_data($tpl_string)
 		{
 			$result = '';
@@ -351,14 +344,14 @@
 
 		}
 
-		
+
 		/*
-		 * 
+		 *
 		 * Соберем TPL файл со всеми зависимостями
-		 * 
+		 *
 		 * @param string link tpl file
 		 * @return string document
-		 * 
+		 *
 		 */
 		private function tpl_get_contents($tpl_file)
 		{
@@ -409,16 +402,16 @@
 			return $document;
 		}
 
-		
+
 		/*
-		 * 
+		 *
 		 * Компиляция тега
 		 * Ты ей () тег, а она тебе скомпилированный php код этого тега
-		 * 
+		 *
 		 * @param string tag (tpl or html)
 		 * @return string compiled expression
-		 * 
-		 */		
+		 *
+		 */
 		private function compile_tag($tag)
 		{
 
@@ -486,14 +479,14 @@
 			}
 		}
 
-		
+
 		/*
-		 * 
+		 *
 		 * В метод передается список переменных, которые должны быть выведены на шаблон. Метод компилирует шаблон и выводит его браузеру. Источник шаблона берется в методе $tpl_file.
-		 * 
+		 *
 		 * @param array content data
 		 * @return full html document and return to browser
-		 * 
+		 *
 		 */
 		public function display($vars_array = array())
 		{
@@ -541,15 +534,15 @@
 
 
 
-		
+
 		/*
-		 * 
+		 *
 		 * Компилируем шаблон и выводим его как строку. Источник шаблона берется в свойстве $tpl_file.
-		 * 
-		 * @param 
+		 *
+		 * @param
 		 * @return string compile html
-		 * 
-		 */		
+		 *
+		 */
 		public function compile()
 		{
 			//Если файл шаблона не найден
@@ -603,15 +596,15 @@
 
 		}
 
-		
+
 		/*
-		 * 
+		 *
 		 * Получить список переменных шаблона
-		 * 
+		 *
 		 * @param
 		 * @return array list vars
-		 * 
-		 */		
+		 *
+		 */
 		public function vars()
 		{
 			//Получаем все теги шаблонизатора
@@ -636,15 +629,15 @@
 
 
 
-		
+
 		/*
-		 * 
+		 *
 		 * Список тегов, которые будут обработаны шаблонизатором
 		 * (только теги шаблонизатора)
-		 * 
+		 *
 		 * @param
 		 * @return array tag list
-		 * 
+		 *
 		 */
 		public function tag_list()
 		{
@@ -687,15 +680,15 @@
 			return (array) $result;
 		}
 
-		
+
 		/*
-		 * 
+		 *
 		 * Метод ищет в строке теги, и возвращает их массивом.
 		 * (все теги, попадающие под патерн, и html и tpl)
-		 * 
+		 *
 		 * @param string html string
 		 * @return array tag list
-		 * 
+		 *
 		 */
 		public function get_tags($string)
 		{
@@ -741,13 +734,13 @@
 
 
 		/*
-		 * 
+		 *
 		 * Метод возвращает true, если указанная строка содержит тег оформленный в соответствии с правилами синтаксического оформления тегов шаблонизатора.
 		 * Проводится лишь поверхностный синтаксический анализ.
-		 * 
+		 *
 		 * @param string tag
 		 * @return bool true|false
-		 * 
+		 *
 		 */
 		private function is_tag($tag)
 		{
@@ -767,16 +760,16 @@
 			}
 		}
 
-		
+
 		/*
-		 * 
-		 * Метод генерирует имя скомпилированно tpl шаблона.			
+		 *
+		 * Метод генерирует имя скомпилированно tpl шаблона.
 		 * $filename - имя файла шаблона. $full_path - если true - то добавлять к сгенерированному имени файла путь до каталога.
-		 * 
+		 *
 		 * @param string filename
 		 * @param bool full_path
 		 * @return string filename
-		 * 
+		 *
 		 */
 		private function compile_gen_filename($filename, $full_path=true)
 		{
@@ -802,14 +795,14 @@
 
 		}
 
-		
+
 		/*
-		 * 
-		 * Очищает все версии кеша шаблона $tlp_filename. Опять же - потенциально опасна.	
-		 * 
-		 * @param string tlp_filename		 
+		 *
+		 * Очищает все версии кеша шаблона $tlp_filename. Опять же - потенциально опасна.
+		 *
+		 * @param string tlp_filename
 		 * @return bool true|false
-		 * 
+		 *
 		 */
 		private function clear_cache_file($tlp_filename)
 		{
@@ -831,15 +824,15 @@
 				}
 			}
 		}
-		
-		
+
+
 		/*
-		 * 
+		 *
 		 * Выравнивает структуру html документа, организуя правильные отступы
-		 * 
-		 * @param string html document		 
-		 * @return  string formatted html document	
-		 * 
+		 *
+		 * @param string html document
+		 * @return  string formatted html document
+		 *
 		 */
 		function formattingHTML($content, $tab="\t")
 		{
@@ -892,8 +885,8 @@
 						$voidTag = false;
 						$pad--;
 					}
-				}           		  
-			}  
+				}
+			}
 			return $result;
 		}
 
