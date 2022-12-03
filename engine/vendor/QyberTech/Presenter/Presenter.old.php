@@ -86,13 +86,11 @@
 			$this->config['compilation']['folder']	= sys_get_temp_dir().'/presenter';
 			$this->config['compilation']['extent']	= 'php';
 			$this->config['compilation']['nobody'] 	= true;		//Автотрансляция тегов в php код неизвестных тегов. Предполагается, что если мы не смогли определить что это - то это php
-			$this->config['compilation']['mutex']   = false;
 
 			//Параметры управления шаблонами
 			$this->config['templates']['folder']	= "";	//Явное указание директории с шаблонами
 
 			//Жёсткая замена тегов
-			$this->config['replace']	= [];
 			#$this->config['replace']['demotest']	= 'replace_demo_test';
 
 			//Перезапишем стандартные параметры переданными значениями
@@ -184,9 +182,9 @@
 
 				//Если тег одновременно открыли и закрыли - то не нужно менять состояние (например такой тег <!-- C -->)
 				if  (
-						( substr($literal_tag, 0, strlen($syntax['open']) ) == $syntax['open'] )
+						( mb_substr($literal_tag, 0, mb_strlen($syntax['open']) ) == $syntax['open'] )
 							and
-						( substr($literal_tag,  -strlen($syntax['close']) ) == $syntax['close'] )
+						( mb_substr($literal_tag,  -mb_strlen($syntax['close']) ) == $syntax['close'] )
 					)
 				{
 					//Не смотря на то, что тег не меняет счетик открытых/закрытых тегов, это все таки литеральный (цитируемый тег)
@@ -229,7 +227,7 @@
 			//Доп. код в заголовок
 			if ($this->head)		$head .= "	\r\n".$this->head;
 
-			if (isset($head))
+			if ($head)
 				$tpl_string = str_replace($htmlhead, $htmlhead .= $head, $tpl_string);
 
 			preg_match_all("<script.*?src=[\"'](.*?)[\"'].*?>", $tpl_string, $scripts_tags);
@@ -242,10 +240,10 @@
 			foreach ($resource_tags[1] as $_iterator => &$_stript_tag)
 			{
 				//Для этого тега уже был поставлен симлинк, пропустим его
-				if (strpos($_stript_tag, $this->config['url_link_tag']) === 0) continue;
+				if (mb_strpos($_stript_tag, $this->config['url_link_tag']) === 0) continue;
 				//Если указан полный путь на внешний ресурс - нам торже не требуется учавствовать в этом
-				if (strpos($_stript_tag, 'http://') === 0) continue;
-				if (strpos($_stript_tag, 'https://') === 0) continue;
+				if (mb_strpos($_stript_tag, 'http://') === 0) continue;
+				if (mb_strpos($_stript_tag, 'https://') === 0) continue;
 
 				//Создадим правила замены для ресрсов
 				$resource_replace['search'][$_iterator] = $resource_tags[0][$_iterator];
@@ -297,14 +295,14 @@
 			foreach ($all_tags as $key => &$tag)
 			{
 				//Узнаем позицию текущего тега
-				$pos = strpos($tpl_string, $tag);
+				$pos = mb_strpos($tpl_string, $tag);
 				//Переносим часть документа до тега в результат (не обрабатываемые даннные)
-				$result .= substr($tpl_string, 0, $pos);
+				$result .= mb_substr($tpl_string, 0, $pos);
 				//Удаляем данные до тега и сам тег
-				$tpl_string = substr($tpl_string, $pos+strlen($tag));
+				$tpl_string = mb_substr($tpl_string, $pos+mb_strlen($tag));
 
 				//Если нас попросили не выводить комментарии - так же их пропустим
-				if ((substr($tag, 0, 4) == '<!--') and ($this->config['skip_comments'])) continue;
+				if ((mb_substr($tag, 0, 4) == '<!--') and ($this->config['skip_comments'])) continue;
 
 				//Обработка литерального тега
 				$literal_tag = $this->literal_count($tag);
@@ -333,11 +331,12 @@
 
 
 			//Удаляем избыточные теги. Если в опциях установлен флажек.
-			if ($this->config['compilation']['mutex'])
+			if ($this->config['php_mutex'])
 			{
 				$result = preg_replace('#\?\>\s*?\<\?php#', " ", $result);
 			}
 			/*$result = str_replace('?><?php', ' ', $result);*/
+
 
 			//Возвращаем откомпилированный шаблон
 			return $result;
@@ -416,8 +415,8 @@
 		{
 
 			//Очистим делимитеры тега.
-			$tag = substr($tag, strlen($this->config['left_delimiter']));
-			$tag = substr($tag, 0, strlen($tag)-strlen($this->config['right_delimiter']));
+			$tag = mb_substr($tag, mb_strlen($this->config['left_delimiter']));
+			$tag = mb_substr($tag, 0, mb_strlen($tag)-mb_strlen($this->config['right_delimiter']));
 
 			$tag = trim($tag);
 
@@ -437,11 +436,12 @@
 			//Пока, я сделал все что мог, что бы это хоть как то читалось.	//Будет время - введу define
 			foreach ($this->config['variable'] as $key => $value)
 			{
+
 				//Тег найден. Собираем.
 				if ( strpos($tag, $key) === 0)
 				{
 					//Вырезаем указатель переменной вместе с asis
-					$tag = substr( $tag, strlen($key));
+					$tag = mb_substr( $tag, mb_strlen($key));
 						//Компилируем переменную по правилам таблицы компиляции для переменной с необходимостью экранирования
 					return $value['open']
 							. $tag .
@@ -452,8 +452,8 @@
 
 
 			//Этап 2. Это управляющее выражение?
-			$expression = substr( $tag, 0, strpos($tag, ' ') );
-			if ($expression == '') $expression = substr( $tag, 0, strpos($tag, '(') ); //TODO: Довольно спорный участок кода
+			$expression = mb_substr( $tag, 0, mb_strpos($tag, ' ') );
+			if ($expression == '') $expression = mb_substr( $tag, 0, mb_strpos($tag, '(') ); //ЭТО Я ПИСАЛ???? ЧТО Я ИМЕЛ ВВИДУ??? ЗАЧЕМ????
 
 			if ($expression != '')
 			{
@@ -461,7 +461,7 @@
 				if (array_key_exists($expression, $this->config['snippets']))
 				{
 					//отрезаем управляющую структуру в теге (что бы потом заменить её на необходимую для php)
-					$tag = substr( $tag, strlen($expression) +1 ); //-1 - не забыть
+					$tag = mb_substr( $tag, mb_strlen($expression) +1 ); //-1 - не забыть
 
 					return $this->config['snippets'][$expression]['open']
 						   . $tag .
@@ -489,6 +489,7 @@
 		 */
 		public function display($vars_array = array())
 		{
+
 			$result = '';
 			//Запоминаем код вывода ошибок
 			$error_reporting = error_reporting();
@@ -544,7 +545,7 @@
 		public function compile()
 		{
 			//Если файл шаблона не найден
-			if (! is_readable($this->file_link)) return false;
+			if (! file_exists($this->file_link)) return false;
 
 			//Если каталог пуст - устанавливаем текущий. А что еще остается делать?
 			if ($this->config['compilation']['folder'] == '') $this->config['compilation']['folder'] = getcwd();
@@ -577,23 +578,20 @@
 				return false;
 			}
 
-			$this->clear_cache_file($this->file_link);
+			$this->Clear_Cache_File($this->file_link);
 
 			// Пишем содержимое в файл,
 			// и флаг LOCK_EX для предотвращения записи данного файла кем-нибудь другим в данное время
 			file_put_contents($cache_file, $compil, LOCK_EX);
 
-			//если все хорошо - возвращаем ссылку на скомпилированный шаблон
-			return file_exists($cache_file) ? $cache_file : false;
-
-			//~ if (file_exists($cache_file))
-			//~ {
-				//~ return $cache_file;
-			//~ }
-			//~ else
-			//~ {
-				//~ return false;
-			//~ }
+			if (file_exists($cache_file))
+			{
+				return $cache_file; //если все хорошо - возвращаем ссылку на скомпилированный шаблон
+			}
+			else
+			{
+				return false;
+			}
 
 		}
 
@@ -649,14 +647,12 @@
 
 			//Загружаем содержимое файла
 			$tpl_string = $this->tpl_get_contents($this->file_link);
-			$tpl_string = str_replace(["\r", "\n"], '', $tpl_string);
+			$tpl_string = str_replace(array("\r\n", "\r", "\n"), '', $tpl_string);
 
 			//Получем список всех тегов
 			return $this->get_tags($tpl_string);
 
-			//TODO: DEPRICATED
-			/*
-			//Прежняя версия кода. Устарело
+			//TODO: Прежняя версия кода. Устарело
 			//Получем список всех тегов
 			$all_tags = $this->get_tags($tpl_string);
 
@@ -681,7 +677,6 @@
 			}
 
 			return (array) $result;
-			*/
 		}
 
 
@@ -725,18 +720,15 @@
 
 				if (preg_match_all($math, $value, $buflist))
 				{
-					foreach ($buflist[0] as $newtag) $result[] = $newtag;
-					//Удивительно, но код выше ^^^ работает быстрее, чем объединять через специализированную функцию:
-					//~ $result = array_merge($result, $buflist[0]);
+					$result = array_merge($result, $buflist[0]);
 				}
 				else
 				{
 					$result[] = $value;
 				}
-
-
 			}
-			return $result;
+
+			return (array) $result;
 		}
 
 
@@ -752,21 +744,19 @@
 		private function is_tag($tag)
 		{
 			$tag = trim($tag);
-			return	( substr($tag, 0, strlen($this->config['left_delimiter']) ) == $this->config['left_delimiter']  )
-					and
-					( substr($tag,  -strlen($this->config['right_delimiter']) ) == $this->config['right_delimiter'] );
-			//~ if  (
-					//~ ( substr($tag, 0, strlen($this->config['left_delimiter']) ) == $this->config['left_delimiter']  )
-						//~ and
-					//~ ( substr($tag,  -strlen($this->config['right_delimiter']) ) == $this->config['right_delimiter'] )
-			    //~ )
-			//~ {
-				//~ return true;
-			//~ }
-			//~ else
-			//~ {
-				//~ return false;
-			//~ }
+
+			if  (
+					( mb_substr($tag, 0, mb_strlen($this->config['left_delimiter']) ) == $this->config['left_delimiter']  )
+						and
+					( mb_substr($tag,  -mb_strlen($this->config['right_delimiter']) ) == $this->config['right_delimiter'] )
+			    )
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}
 
 
@@ -795,13 +785,11 @@
 				$filename = str_replace(DIRECTORY_SEPARATOR, '-', $filename);
 				$filename = $filename . "~$edit_date." . $this->config['compilation']['extent'];
 
-				//Если попросили указать полный путь до файла - вернем с директорией. Иначе просто имя файла
-				return $full_path ? $this->config['compilation']['folder'].DIRECTORY_SEPARATOR.$filename : $filename;
+				//Если попросили указать полный путь до файла
+				if ($full_path)
+					$filename = $this->config['compilation']['folder'].'/'. $filename;
 
-				//~ if ($full_path)
-					//~ $filename = $this->config['compilation']['folder'].'/'. $filename;
-
-				//~ return $filename;
+				return $filename;
 			}
 
 		}
