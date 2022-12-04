@@ -416,10 +416,13 @@
 		{
 
 			//Очистим делимитеры тега.
-			$tag = substr($tag, strlen($this->config['left_delimiter']));
-			$tag = substr($tag, 0, strlen($tag)-strlen($this->config['right_delimiter']));
+			//~ $tag = substr($tag, strlen($this->config['left_delimiter']));
+			//~ $tag = substr($tag, 0, strlen($tag)-strlen($this->config['right_delimiter']));
+			//~ $tag = trim($tag);
 
-			$tag = trim($tag);
+			//Очистим делимитеры тега (более оптимизированная версия кода)
+			$tag = ltrim($tag, $this->config['left_delimiter']);
+			$tag = rtrim($tag, $this->config['right_delimiter']);
 
 			//Первым делом проверяем на статические теги
 			if ( array_key_exists($tag, $this->config['static']) )
@@ -437,6 +440,7 @@
 			//Пока, я сделал все что мог, что бы это хоть как то читалось.	//Будет время - введу define
 			foreach ($this->config['variable'] as $key => $value)
 			{
+
 				//Тег найден. Собираем.
 				if ( strpos($tag, $key) === 0)
 				{
@@ -453,7 +457,9 @@
 
 			//Этап 2. Это управляющее выражение?
 			$expression = substr( $tag, 0, strpos($tag, ' ') );
-			if ($expression == '') $expression = substr( $tag, 0, strpos($tag, '(') ); //TODO: Довольно спорный участок кода
+			if ($expression == '') $expression = substr( $tag, 0, strpos($tag, '(') ); //Спорный участок кокда
+			//~ $expression = strstr($tag, ' ', true);
+			//~ if ($expression == '') $expression = strstr($tag, '(', true);  //Спорный участок кокда
 
 			if ($expression != '')
 			{

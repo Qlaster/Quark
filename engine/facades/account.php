@@ -50,26 +50,42 @@
 	}
 
 
+	# ---------------------------------------------------------------- #
+	#                            ПРИМЕСИ                               #
+	# ---------------------------------------------------------------- #
+	trait Protection
+	{
+
+
+	}
+
 
 	# ---------------------------------------------------------------- #
 	#                 РЕАЛИЗАЦИЯ   ИНТЕРФЕЙСА                          #
 	# ---------------------------------------------------------------- #
-	class AccountUser implements QAccountInterface
+	class AccountUser implements QAccountInterface extends Protection;
 	{
 
 		public $orm_interface;
 		protected $tableColumns = array(
 			'id'      => 'integer PRIMARY KEY AUTOINCREMENT',
-			'login'   => 'text',
-			'name'    => 'text',
-			'head'    => 'text',
-			'hash'    => 'text',
-			'access'  => 'text',
-			'service' => 'text',
-			'image'   => 'text',
-			'info'    => 'text',
-			'disable' => 'boolean',
-			'online'  => 'integer');
+			'login'   => 'text',     //Логин пользователя
+			'name'    => 'text',     //Псевдоним пользователя
+			'head'    => 'text',     //Заголовок учетной записи
+			'hash'    => 'text',     //Хеш пароля
+			'access'  => 'text',     //Список прав
+			'service' => 'text',     //Сервисное поле на усмотрение разработчика
+			'image'   => 'text',     //Лого
+			'info'    => 'text',     //Описание
+			'disable' => 'boolean',  //Флаг отключения
+			'online'  => 'integer'); //unixtime последней активности
+
+		protected $serviceColumns = array(
+			'id'      => 'integer PRIMARY KEY AUTOINCREMENT',
+			'login'   => 'text',     //Логин пользователя
+			'ip'      => 'text',     //ip адрес, с которого выполнялось попытка входа
+			'attempt' => 'integer',  //Количество попыток авторизации
+			'updated' => 'integer'); //unixtime последнего изменения
 
 
 		function __construct($orm_interface, $config)
@@ -95,9 +111,9 @@
 		 * @return
 		 *
 		 */
-		public function db()
+		public function db($tableName='table')
 		{
-			return $this->orm_interface->table($this->config['db']['table']);
+			return $this->orm_interface->table($this->config['db'][$tableName]);
 		}
 
 
@@ -112,6 +128,8 @@
 		{
 			//Создаем таблицу с перечислением страниц
 			$this->db()->Create($this->tableColumns);
+			//Создаем табличку со служебной информацией
+			$this->db('service')->Create($this->serviceColumns);
 		}
 
 
@@ -167,6 +185,9 @@
 			//Если пользователь отключен
 			if ($user['disable']) return false;
 
+			//Проверим, не попадает ли текущая попытка авторизации под блокировку?
+			$serviceRecord = $this->db('service')->where(['login'=>$login])->select();
+
 			//Если верификация пройдена
 			if ($this->hash($password) == $user['hash'])
 			{
@@ -174,6 +195,8 @@
 				$_SESSION['login'] = $login;
 				return session_id();
 			}
+
+
 
 			return false;
 		}
@@ -316,6 +339,32 @@
 			return $this->db()->where("id = ( SELECT MAX(id) FROM \"$table\" )")->Select()[0];
 		}
 
+		/*
+		 *
+		 * name: Получить ip адрес клиента
+		 * @param
+		 * @return (string) ip address
+		 *
+		 */
+		public function client_ip()
+		{
+			$ipaddress = '';
+			if (getenv('HTTP_CLIENT_IP'))
+				$ipaddress = getenv('HTTP_CLIENT_IP');
+			else if(getenv('HTTP_X_FORWARDED_FOR'))
+				$ipaddress = getenv('HTTP_X_FORWARDED_FOR');
+			else if(getenv('HTTP_X_FORWARDED'))
+				$ipaddress = getenv('HTTP_X_FORWARDED');
+			else if(getenv('HTTP_FORWARDED_FOR'))
+				$ipaddress = getenv('HTTP_FORWARDED_FOR');
+			else if(getenv('HTTP_FORWARDED'))
+			   $ipaddress = getenv('HTTP_FORWARDED');
+			else if(getenv('REMOTE_ADDR'))
+				$ipaddress = getenv('REMOTE_ADDR');
+			else
+				$ipaddress = 'UNKNOWN';
+			return $ipaddress;
+		}
 	}
 
 
