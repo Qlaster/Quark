@@ -62,15 +62,30 @@
 	#        Передача управления контроллеру (на основе правил)        #
 	# ---------------------------------------------------------------- #
 	//Правила есть. Будем исполнять тот контроллер, который указан в правилах
-	if ($ctrlResponse = $APP->controller->run($rout, ['APP'=>$APP]) === null)
+	try
 	{
-		//Контроллера нет? Что ж... Попробуем запустить и передать управление стандартному index контроллеру
-		if ($ctrlResponse = $APP->controller->run($APP->controller->config['handler'], ['APP'=>$APP]) === null )
+		if ($ctrlResponse = $APP->controller->run($rout, ['APP'=>$APP]) === null)
 		{
-			http_response_code(500);
-			$page = $APP->page->get('error:500');
-			$APP->template->file($page['html'])->display($page['content']);
-			//~ echo "code:500";
+			//Контроллера нет? Что ж... Попробуем запустить и передать управление стандартному index контроллеру
+			if ($ctrlResponse = $APP->controller->run($APP->controller->config['handler'], ['APP'=>$APP]) === null )
+			{
+				throw new ErrorException('Default controller '.$APP->controller->config['handler'].' not found', 500);
+				//~ http_response_code(500);
+				//~ $page = $APP->page->get('error:500');
+				//~ $APP->template->file($page['html'])->display($page['content']);
+			}
 		}
 	}
+	catch (Error $e)
+	{
+		http_response_code(500);
+		$page = $APP->page->get('error:500');
+		$content['title'] = $page['content']['title']['data'];
+		$content['code']  = $page['content']['code']['data'];
+		$content['head']  = $page['content']['head']['data'];
+		$content['text']  = $e->getMessage(). ' in line '.$e->getLine();
+		$content['text']  .= '<br>'.$e->getFile();
+		$APP->template->file($page['html'])->display($content);
+	}
+
 	//~ echo "<!---".$APP->utils->runtime()."-->";

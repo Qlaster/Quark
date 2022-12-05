@@ -1,6 +1,6 @@
 <?php
 
-	$url = $APP->url->page();
+	$url = $APP->url->page();ss
 
 	//Загрузим страницу из базы, если нам ее не передали
 	if (!isset($page))

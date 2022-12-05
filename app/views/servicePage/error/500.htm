@@ -10,6 +10,7 @@
 		body {background:url('~/500.gif') center no-repeat #002A4B; margin-top:0}
 		h1{color:rgba(255,255,255,0.3); font-size: 6em; margin:10px; }
 		h3{color:rgba(255,255,255,0.3); font-size: x-large; margin:10px}
+		p{color:#5AB6DD}
 		img{height:60%}
 		.content {width:100%;text-align:center;position:absolute;bottom:10%;left:0px; }
 		.content a {display:inline-block;text-decoration:none}
@@ -21,12 +22,63 @@
 			.content a {display:block;width:100%;height:100%;position:absolute;top:0px;left:0px;font-size:0px;opacity:0;}
 			body {background-size:cover}
 		}
+
+		.accordion
+		{
+			width: 60%;
+			font-size:1em;
+			height: 5em;
+			margin: auto;
+			justify-content: center;
+			opacity:0.9;
+			color:#1E789F;
+			overflow: hidden;
+			border-radius:0.5em;
+			<!--
+				padding: 1em;
+			-->
+		}
+
+		.accordion:hover
+		{
+			box-shadow: 0px 0px 1px #67adb5;
+			background-color: #00497D;
+			box-shadow: 0px 0px 1px #67adb5;
+			transition:
+				flex-grow .3s linear,
+				background-color 0.3s ease-in
+		}
+
+		.accordion-item
+		{
+			flex-basis: 10%;
+			height: 1em;
+			margin-bottom: 1em;
+			border-radius: 5px;
+			justify-content: center;
+			align-items: center;
+			font-family: helvetica;
+			cursor: pointer;
+			overflow: hidden;
+		}
+
+		.accordion-item:hover
+		{
+			height:5em;
+			color: white;
+		}
 	</style>
 </head>
 <body>
 	<div class="content">
 		<h1>{$code}</h1>
-		<h3>{$head}</h3>
+		{if $head}
+			<h3>{$head}</h3>
+		{end}
+
+		<div class='accordion'>
+		  <div class='accordion-item'>Details for a web developer<p>{$$text}</p></div>
+		</div>
 	</div>
 </body>
 </html>
