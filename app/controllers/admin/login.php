@@ -11,7 +11,7 @@
 		}
 		else
 		{
-			$content['message'] = 'Invalod authorization.';
+			$content['message'] = 'Authorization failed';
 		}
 	}
 
