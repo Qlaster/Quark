@@ -424,10 +424,10 @@
 
 			//Формируем запрос
 			($this->PDO_INTERFACE->getAttribute(\PDO::ATTR_DRIVER_NAME) != "sqlite") ? $returning = "RETURNING *" : $returning = "";
-			
+
 			//Формируем запрос
 			$this->lastQuery = "INSERT INTO $table (\"$columns\") values ($values) $returning;";
-			
+
 			//Отдаем запрос а разбор
 			$stmt = $this->PDO_INTERFACE->prepare($this->lastQuery);
 

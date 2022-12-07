@@ -99,7 +99,7 @@
 				if ( $this->mem_interface->getResultCode() == 0 ) return $result;
 
 				//Это необходимо. Если один или несколько серверов вышли из строя - ребаланс
-				$this->mem_interface->setOption(Memcached::OPT_LIBKETAMA_COMPATIBLE, true);
+				$this->mem_interface->setOption(\Memcached::OPT_LIBKETAMA_COMPATIBLE, true);
 			}
 
 			return false;
@@ -126,7 +126,7 @@
 				if ( $this->mem_interface->getResultCode() == 0 ) return $result;
 
 				//Это необходимо. Если один или несколько серверов вышли из строя - ребаланс
-				$this->mem_interface->setOption(Memcached::OPT_LIBKETAMA_COMPATIBLE, true);
+				$this->mem_interface->setOption(\Memcached::OPT_LIBKETAMA_COMPATIBLE, true);
 			}
 
 			return false;
@@ -152,7 +152,7 @@
 				if ( $this->mem_interface->getResultCode() == 0 ) return $result;
 
 				//Это необходимо. Если один или несколько серверов вышли из строя - ребаланс
-				$this->mem_interface->setOption(Memcached::OPT_LIBKETAMA_COMPATIBLE, true);
+				$this->mem_interface->setOption(\Memcached::OPT_LIBKETAMA_COMPATIBLE, true);
 			}
 
 			return false;
