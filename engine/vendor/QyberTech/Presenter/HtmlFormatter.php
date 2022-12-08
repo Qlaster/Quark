@@ -12,7 +12,7 @@ class HtmlFormatter
 	 * @param string $tagsWithoutIndentation Comma-separated list of HTML tags that should not be indented (default = html,link,img,meta)
 	 * @return string Re-indented HTML.
 	 */
-	public static function format($html, $indentWith = '	', $tagsWithoutIndentation = ['html','base','col','link','img','meta','br','hr','embed','source'])
+	public static function format($html, $indentWith = '	', $tagsWithoutIndentation = ['html','base','col','input','link','img','meta','br','hr','embed','source'])
 	{
 		// replace newlines (CRLF and LF), followed by a non-whitespace character, with a space
 		$html = preg_replace('/\\r?\\n([^\s])/', ' $1', $html);
@@ -21,7 +21,7 @@ class HtmlFormatter
 		$html = str_replace(["\n", "\r", "\t"], ['', '', ' '], $html);
 		$elements = preg_split('/(<.+>)/U', $html, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
 		$dom = self::parseDom($elements);
-		
+
 		$indent = 0;
 		$output = array();
 		foreach ($dom as $index => $element)
@@ -31,7 +31,7 @@ class HtmlFormatter
 				$output[] = "\n".str_repeat($indentWith, $indent).trim($element['content']);
 
 				// make sure that only the elements who have not been blacklisted are being indented
-				if ( ! in_array($element['type'], $tagsWithoutIndentation))				
+				if ( ! in_array($element['type'], $tagsWithoutIndentation))
 				{
 					++$indent;
 				}
@@ -42,9 +42,10 @@ class HtmlFormatter
 			}
 			else if ($element['closing'])
 			{
-				--$indent;
+				//$indent cannot be less than zero
+				if ($indent>0) --$indent;
 				$lf = "\n".str_repeat($indentWith, abs($indent));
-				if (isset($dom[$index - 1]) && $dom[$index - 1]['opening'])
+				if (isset($dom[$index - 1]) && $dom[$index - 1]['type']==$element['type'] && $dom[$index - 1]['opening'])
 				{
 					$lf = '';
 				}
@@ -65,7 +66,7 @@ class HtmlFormatter
 	}
 
 	/**
-	 * Parses an array of HTML tokens and adds basic information about about the type of 
+	 * Parses an array of HTML tokens and adds basic information about about the type of
 	 * tag the token represents.
 	 *
 	 * @param Array $elements Array of HTML tokens (tags and text tokens).
@@ -76,8 +77,8 @@ class HtmlFormatter
 		$dom = array();
 		foreach ($elements as $element)
 		{
-			if (!$currentElement = trim($element)) continue;			
-			
+			if (!$currentElement = trim($element)) continue;
+
 			$isText = false;
 			$isComment = false;
 			$isClosing = false;
@@ -99,7 +100,7 @@ class HtmlFormatter
 			//~ {
 				//~ $isStandalone = true;
 			//~ }
-			
+
 			// stand-alone tag - optimisation
 			else if (substr($currentElement, -2) == '/>')
 			{
