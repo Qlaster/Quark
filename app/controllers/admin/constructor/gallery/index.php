@@ -22,10 +22,18 @@
 
 		//~ $item['head'] = $form_data['head'];
 		$item['head'] = $form_key;
-		$item['link'] = $APP->url->home().$APP->url->page().'?name='.urlencode( $form_key );
-		$item['delete_link'] = 'admin/constructor/gallery/del?name='.urlencode( $form_key );
-		$item['delete_head'] = $content['form']['collection']['button']['delete']['head'];
-		$item['delete_icon'] = $content['form']['collection']['button']['delete']['icon'];
+		$form_key = urlencode( $form_key );
+		$item['link'] = $APP->url->home().$APP->url->page().'?name='.$form_key;
+
+		$item['button']['copy']             = $content['form']['collection']['button']['copy'];
+		//~ $item['button']['copy']['link']     = 'admin/constructor/gallery/copy?name='.$form_key;
+		//~ $item['button']['copy']['onclick']  = "copy('admin/constructor/gallery/copy?name=$form_key'); return false;";
+		$item['button']['copy']['onclick']  = "copy('$form_key')";
+
+		$item['button']['delete']         = $content['form']['collection']['button']['delete'];
+		//~ $item['button']['delete']['link'] = 'admin/constructor/gallery/del?name='.$form_key;
+		$item['button']['delete']['onclick'] = "remove('$form_key')";
+
 		$item['icon'] = 'fa  fa-list-alt';
 		$content['catalog']['collection']['list'][] = $item;
 	}

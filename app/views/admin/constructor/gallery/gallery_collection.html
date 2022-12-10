@@ -18,10 +18,10 @@
 			<div id="page-wrapper" class="gray-bg">
 				<!-- Head menu -->
 				{require "../../~section/head.html"}
-				<!-- End head menu -->   
+				<!-- End head menu -->
 				<!-- Менюшка title-->
 				{require "../../~section/title.html"}
-				<!-- конец title-->   
+				<!-- конец title-->
 				<div class="wrapper wrapper-content">
 					<div class="row">
 						<div class="col-lg-4 animated fadeInDown">
@@ -37,7 +37,7 @@
 											-->
 										<div class="hr-line-dashed"></div>
 										<form action="{$form['collection']['action']}" method='get'>
-											<input name='name' placeholder="Название новой галереи" class="form-control">   
+											<input name='name' id="new-name" placeholder="Название новой галереи" class="form-control">
 											<p></p>
 											<button type="submit" class="btn btn-primary btn-block">{$form['collection']['button']['add']['head']}</button>
 										</form>
@@ -54,9 +54,13 @@
 												<!--
 													<a onclick="menu_repaint('{$_value['head']}')"><i class="{$_value['icon']}"></i>{$_value['head']}</a>
 													-->
-												<a href="{$_value['delete_link']}">
-												<button type="button" class="btn btn-warning btn-xs pull-right"><span class="fa {$_value['delete_icon']}"></span> {$_value['delete_head']}</button>
-												</a>
+												<div class="pull-right">
+													{foreach $_value['button'] as $_button}
+													<a {if $_button['link']} href="{$_button['link']}" {end} {if $_button['onclick']} onclick="{$_button['onclick']}" {end}>
+														<button type="button" class="btn btn-{$_button['style']} btn-xs"><span class="fa {$_button['icon']}"></span> {$_button['head']}</button>
+													</a>
+													{end}
+												</div>
 											</li>
 											{end}
 										</ul>
@@ -71,7 +75,12 @@
 									<div class="ibox ">
 										<div class="ibox-title">
 											<h5>Содержимое:</h5>
-											<a href="{$catalog['objects']['button']['edit']['link']}" class="btn btn-success btn-xs pull-right"> <span class="{$catalog['objects']['button']['edit']['icon']}"></span> {$catalog['objects']['button']['edit']['head']}</a>
+											<div class=" pull-right">
+												<a href="{$catalog['objects']['button']['copy']['link']}" class="btn btn-{$catalog['objects']['button']['copy']['style']} btn-xs"> <span class="{$catalog['objects']['button']['copy']['icon']}"></span> {$catalog['objects']['button']['copy']['head']}</a>
+<!--
+												<a href="{$catalog['objects']['button']['edit']['link']}" class="btn btn-{$catalog['objects']['button']['edit']['style']} btn-xs"> <span class="{$catalog['objects']['button']['edit']['icon']}"></span> {$catalog['objects']['button']['edit']['head']}</a>
+-->
+											</div>
 										</div>
 										<div class="ibox-content" id='menuname'>
 											<div class="carousel slide" id="carousel2">
@@ -150,91 +159,109 @@
 					 animationHover(this, 'pulse');
 				 });
 			 });
-			 
-			 
+
+
 			 function menu_repaint(name)
 			 {
 				 //Запрашиваем все необходимые данные
 				 var urlbase = document.getElementById('urlbase').href;
-				 var html_div_id = document.getElementById('nestable');			
+				 var html_div_id = document.getElementById('nestable');
 				 var menu = url_get(urlbase+'admin/constructor/gallery/get?name='+encodeURIComponent(name));
-				 
-				 
+
+
 				 //~ alert(menu);
 				 //Очищаем поле вывода
-				 objects_tree_clear(html_div_id);			
+				 objects_tree_clear(html_div_id);
 				 //JSON в объект
-				 menu = JSON.parse(  menu   );	
-				 
-				 
-				 
+				 menu = JSON.parse(  menu   );
+
+
+
 				 //Рисуем дерево меню и вешаем ссылку на редактирование
-				 objects_tree_paint(html_div_id, menu, urlbase+'admin/constructor/gallery/edit?name='+encodeURIComponent(name));	
+				 objects_tree_paint(html_div_id, menu, urlbase+'admin/constructor/gallery/edit?name='+encodeURIComponent(name));
 				 //Рисуем заголовок меню
 				 document.getElementById('menuname').innerHTML = name;
-				 
+
 			 }
-			 
+
 			 function menu_edit(name)
 			 {
 				 //Запрашиваем все необходимые данные
 				 var urlbase = document.getElementById('urlbase').href;
 				 var menuname = document.getElementById('menuname').innerHTML;
-				 
+
 				 location.href = 'admin/constructor/gallery/edit?name='+encodeURIComponent(menuname);
 			 }
-			 
-			 
+
+			 function copy(name)
+			 {
+				var newname = $('#new-name').val();
+				if (!newname)
+				{
+					alert('Укажите название новой галереи!');
+					return false;
+				}
+				 location.href = 'admin/constructor/gallery/copy?name='+encodeURIComponent(name)+'&new-name='+encodeURIComponent(newname);
+			 }
+
+			 function remove(name)
+			 {
+				if (confirm('Удалить галлерею "'+name+'"?'))
+				{
+					 location.href = 'admin/constructor/gallery/del?name='+name;
+				}
+			 }
+
 			 function test()
 			 {
-				 
+
 				 //Запрашиваем все необходимые данные
 				 var urlbase = document.getElementById('urlbase').href;
 				 var html_div_id = document.getElementById('nestable');
 				 var menuname = document.getElementById('menuname').innerHTML;
-				 
+
 				 //Находим меню
-				 var test = document.getElementById('nestable');		
+				 var test = document.getElementById('nestable');
 				 //Забираем данные из тела документа
 				 var res = object_tree_compilation(test);
 				 //Ценнейшая функция от парня с запада=)
 				 res = jsObj2phpObj(res);
-				 
+
 				 //~ alert(res);
 				 //~ res = $.makeArray(res);
 				 //~ res = JSON.stringify(res);
 				 //~ console.log(res.serializeArray());
 				 //~ console.log(res);
-				 
+
 				 var data = encodeURIComponent(res);
 				 var name = encodeURIComponent('menuname');
-				 
-				 
-				 
+
+
+
 				 //~ $.ajax
 				 //~ ({
 				 //~ type: "POST",
 				 //~ url: urlbase+'admin/constructor/menu/set',
 				 //~ data: name+'='+data,
 				 //~ });
-				 
-				 
-				 
+
+
+
 				 //~ $.post(urlbase+'admin/constructor/menu/set', { name: '"'+res+'"' } );
-				 
+
 				 //Отправляем инфу на сервер
 				 $.post(urlbase+'admin/constructor/gallery/set', { name: menuname, data: (res) });
-				 
+
 				 //~ url_post(urlbase+'admin/constructor/menu/save', 'menu', );
-				 
-				 
-			 
+
+
+
 			 }
-			 
-			 
-			 
-			 
-			 
+
+
+
+
+
 		</script>
    </body>
 </html>
