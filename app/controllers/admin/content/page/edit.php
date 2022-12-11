@@ -31,7 +31,7 @@
 	$content = array_merge($content, $config['ru']);
 
 	//Получаем текущий адрес
-	$content['form']['edit']['url']['info'] = $APP->url->home();
+	$content['form']['edit']['url']['prefix'] = $APP->url->home();
 
 	//Получим директорию с шаблонами
 	$templateDir = $APP->template->config['templates']['folder']; //.DIRECTORY_SEPARATOR

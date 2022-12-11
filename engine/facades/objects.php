@@ -300,7 +300,7 @@
 		{
 			$table = $this->Table;
 
-			$STH = $this->PDO_INTERFACE->prepare("SELECT (name) FROM '$table' WHERE (collection = :collection and name IS NOT NULL);");
+			$STH = $this->PDO_INTERFACE->prepare("SELECT (name) FROM '$table' WHERE (collection = :collection and name IS NOT NULL) ORDER BY name;");
 
 			//Заполняем выражение данными
 			$STH->bindParam(':collection',	$this->current_collection);
@@ -327,7 +327,7 @@
 		{
 			$table = $this->Table;
 
-			$STH = $this->PDO_INTERFACE->prepare("SELECT name, value FROM '$table' WHERE (collection = :collection and name IS NOT NULL);");
+			$STH = $this->PDO_INTERFACE->prepare("SELECT name, value FROM '$table' WHERE (collection = :collection and name IS NOT NULL) ORDER BY name;");
 
 			//Заполняем выражение данными
 			$STH->bindParam(':collection',	$this->current_collection);
