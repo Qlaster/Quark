@@ -71,6 +71,15 @@
 			return $path;
 		}
 
+		public function exists($controller)
+		{
+			//Запросим реальный путь до контроллера
+			$filename = $this->realpath($controller);
+
+			//Проверим, есть ли файл и доступен ли он
+			return is_file($filename) && is_readable($filename);
+		}
+
 		//Запуск контроллера
 		public function run($controller='', array $_VARS=[])
 		{
@@ -78,7 +87,7 @@
 			foreach ($_VARS as $_enviroment_var_name => $_enviroment_var_value) $$_enviroment_var_name = $_enviroment_var_value;
 			unset($_enviroment_var_name, $_enviroment_var_value);
 
-			if (! is_readable($ctrl = $this->realpath($controller))) return null;
+			if (!is_readable($ctrl = $this->realpath($controller)) or !is_file($ctrl)) return null;
 
 			$result = include $ctrl;
 			return ($result === null) ? true : $result;

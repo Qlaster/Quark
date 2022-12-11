@@ -1,7 +1,7 @@
 <?php
 
 /*
- * QEXT
+ * QyberTech
  *
  * Copyright 2015 Владимир <vladimir@ASUS>
  *
@@ -56,7 +56,6 @@
 		//============================================================================================================================
 		if ($APP->user->denied( $APP->controller->realpath( $APP->url->page() ) ))
 		{
-			//~ echo $APP->url->page(); die;
 			header('Location: '.$APP->url->home().'admin/options/users/deny');
 			exit();
 		}
@@ -83,7 +82,9 @@
 		{
 			//Если структура меню очевидна из ключей
 			$content['nav']['main']['list'][$page[1]]['active'] = true;
-			if (count($page) == 3) $content['nav']['main']['list'][$page[1]]['list'][$page[2]]['active'] = true;
+			//Если дочерний элемент существует - то тоже выделим
+			if (isset($content['nav']['main']['list'][$page[1]]['list'][$page[2]]))
+				$content['nav']['main']['list'][$page[1]]['list'][$page[2]]['active'] = true;
 		}
 		else
 		{
@@ -99,7 +100,6 @@
 		}
 
 
-
 		//============================================================================================================================
 		//			ПУТЕВОЕ ВСПОМОГАТЕЛЬНОЕ МЕНЮ
 		//============================================================================================================================
@@ -108,8 +108,12 @@
 		$path = explode('/', $APP->url->page());
 		$path = array_filter($path);
 		//Создаем их представление
-		foreach ($path as $key => &$value) $tmp['list'][]['head'] = $value;
-
+		foreach ($path as $key => &$value)
+		{
+			$tmppathelem .= "$value/";
+			$tmp['list'][$key]['head'] = $value;
+			if ($APP->controller->exists($tmppathelem)) $tmp['list'][$key]['link'] = $tmppathelem;
+		}
 
 		switch (count($page))
 		{
@@ -125,7 +129,7 @@
 		//Прикрепляем этот путь к контенту ввиде побочного меню
 		$content['nav']['path'] = $tmp;
 
-
+		//~ print_r($content['nav']['path']); die;
 
 
 		//============================================================================================================================

@@ -1,26 +1,28 @@
-	
+
 		{if $nav['path']}
             <div class="row wrapper border-bottom white-bg page-heading">
                 <div class="col-lg-10">
 
-                    <h2>{$$nav['path']['head']}</h2> 
-					
+                    <h2>{$$nav['path']['head']}</h2>
+
 					{//Получаем ключ последнего элемента. нужен для выделения}
                     {( $end_key = key( array_slice( $nav['path']['list'], -1, 1, TRUE ) ) )}
-   
+
                     <ol class="breadcrumb">
 						{foreach $nav['path']['list'] as $key => $value}
-							{if $end_key == $key }
-								<li class="active">
-									<strong>{$value['head']}</strong>
-								</li>
-							{else}
 								<li>
-									<a>{$value['head']}</a>
-								</li>                        
-							{end}	 
+									{if $end_key == $key}<strong>{end}
+
+									{if $value['link']}
+										<a href="{$value['link']}"> {$value['head']}</a>
+									{else}
+										<span>{$value['head']}</span>
+									{end}
+
+									{if $end_key == $key}</strong>{end}
+								</li>
                         {end}
-                        
+
 <!--
                         <li class="active">
                             <strong>Text Editor</strong>
@@ -32,5 +34,5 @@
 
                 </div>
             </div>
-        {end} 
-    
+        {end}
+
