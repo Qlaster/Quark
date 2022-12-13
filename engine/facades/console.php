@@ -193,6 +193,95 @@
 			//Мержим проект
 			$this->merge(["/tmp/quark/Quark-main/", getcwd()]);
 		}
+
+		function objects(...$args)
+		{
+			$args = $args[0];
+			//Определяем команду
+			$command = array_shift($args);
+
+			if ('import' == mb_strtolower($command))
+			{
+				if (!$args) return $this->tools->print("Enter filename: objects import <filename.ini>");
+				$result = [];
+				//Пройдемся по всем переданным путям
+				foreach ($args as $filename)
+					if (is_file($filename) and is_readable($filename))
+					{
+						//Если это файл с json строкой
+						$source = file_get_contents($filename);
+						if (is_json($source) and $this->app->objects->import($source))
+						{
+							$collections = json_decode($source);
+						}
+						elseif ($collections = $this->app->config->get($filename) and is_array($collections))
+						{
+							$this->app->objects->import(json_encode($collections));
+						}
+						else
+						{
+							$this->tools->errorPrint("Error parse file: '$filename'");
+						}
+
+						$result = array_merge_recursive($result, $collections);
+					}
+					else
+					{
+						$this->tools->errorPrint("File '$filename' not found");
+					}
+
+
+					$this->tools->print("Import objects:");
+					//Выведем список импортируемых объектов
+					foreach ($result as $section => $objects)
+					{
+						$this->tools->print("\r\n[$section]");
+						foreach ($objects as $name => $object)
+							$this->tools->print("	| $name");
+					}
+
+					return true;
+			}
+
+
+			if ('export' == mb_strtolower($command))
+			{
+				if (!$args) return $this->tools->print("Enter filename: objects export <filename.ini>");
+				//Получим все объекты системы
+				$collectionsJSON = $this->app->objects->export();
+
+				//Пройдемся по всем переданным путям
+				foreach ($args as $filename)
+				{
+					//Если попросили импортировать в ini файл
+					if (pathinfo($filename, PATHINFO_EXTENSION) == 'ini')
+					{
+						$this->app->config->set(json_decode($collectionsJSON, true), $filename);
+					}
+					else
+					{
+						file_put_contents($filename, $collectionsJSON);
+					}
+
+					if (!is_readable($filename))
+					{
+						return $this->tools->errorPrint("Error export file '$filename'. Is the file system writable?");
+					}
+				}
+
+
+
+				$this->tools->print("Export objects:");
+				//Выведем список импортируемых объектов
+				foreach ($result = json_decode($collectionsJSON, true) as $section => $objects)
+				{
+					$this->tools->print("\r\n[$section]");
+					foreach ($objects as $name => $object)
+						$this->tools->print("	| $name");
+				}
+				return true;
+			}
+		}
 	}
 
 
