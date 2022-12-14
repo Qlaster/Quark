@@ -47,7 +47,9 @@
 		//============================================================================================================================
 		if (! $APP->user->logged() and (!in_array($APP->url->page(), ['admin/login', 'admin/options/users/lock'])))
 		{
-			header('Location: '.$APP->url->home().'admin/login');
+			//Если пользователь выходил не добровольно, то его нужно вернуть на страницу, с которой выкинули после авторизации
+			if ($APP->url->page() != 'admin/options/users/logout') $referer = '?referer='.$APP->url->page();
+			header('Location: '.$APP->url->home()."admin/login$referer");
 			exit();
 		}
 
