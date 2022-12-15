@@ -535,10 +535,10 @@
 			//Приклеиваем двоеточие ко всем ключам массива
 			foreach ($record as $key => &$value) $values[] = ":$key";
 			$values  = implode(', ', $values);
-					
-			//Формируем запрос возврата данных			
+
+			//Формируем запрос возврата данных
 			$this->lastQuery = "REPLACE INTO $table (\"$columns\") values ($values);";
-			
+
 			//Формируем запрос
 			$stmt = $this->PDO_INTERFACE->prepare($this->lastQuery);
 
@@ -781,11 +781,16 @@
 					return $this;
 				}
 
-				//Если нам передали 1 параметр и это строка
-				if ( ($args[0]) and (is_string($args[0])) )
+				//Если нам передали 1 параметр и это строка, то мы осуществим поиск ее во всех полях данной таблички
+				if ($args[0] and is_string($args[0]))
 				{
-					$this->qinfo['where']['sql'][] = $args[0];
-					//~ $this->qinfo['where']['params']	= array();
+					$likestr = '%'.$args[0].'%';
+					//Пройдемся по всем полям таблички и соберем запрос
+					//TODO: Ужасно не оптимальная история. Есть идея собрать все поля таблицы в одну строку и выполнить запрос по ней
+					foreach ($this->columns() as $key => $name) $request[$key] = "CAST(\"$key\" AS TEXT) iLIKE ?";
+
+					$this->qinfo['where']['sql'][]  = implode(' OR ', (array) $request);
+					$this->qinfo['where']['params'] = array_merge( (array) $this->qinfo['where']['params'], (array) array_fill(0, count($request), $likestr) );
 					return $this;
 				}
 
@@ -799,7 +804,7 @@
 						if (is_array($value))
 						{
 							//Рассчитаем и сгенерируем нужное количество вопросов в запросе
-							$this->qinfo['where']['sql'][] = rtrim(str_repeat("\"$key\" LIKE ? OR ", count($value)), ' OR ');
+							$this->qinfo['where']['sql'][] = rtrim(str_repeat("CAST(\"$key\" AS TEXT) LIKE ? OR ", count($value)), ' OR ');
 							$values = array_merge((array)$values, $value);
 						}
 						elseif (($value === 'NULL') or ($value === NULL))
@@ -809,16 +814,17 @@
 						}
 						else
 						{
-							$this->qinfo['where']['sql'][] = "\"$key\" LIKE ?";
+							$this->qinfo['where']['sql'][] = "CAST(\"$key\" AS TEXT) LIKE ?";
 							$values[] = $value;
 						}
 					}
 
 					//Добавим %% к сроке, что бы отрабатывал like
 					if (isset($values))
+					{
 						foreach	($values as &$_par) $_par = "%$_par%";
-
-					$this->qinfo['where']['params'] = array_merge( (array) $this->qinfo['where']['params'], (array) $values );
+						$this->qinfo['where']['params'] = array_merge( (array) $this->qinfo['where']['params'], (array) $values );
+					}
 				}
 			}
 			return $this;
