@@ -9,6 +9,8 @@
 	$pages = $APP->utils->files->listing($controllersDir, '*.php');
 	$result = [];
 
+	$content['title'] = 'Контроллеры приложения';
+
 	//Построим дерево
 	foreach ($pages as &$_page)
 	{

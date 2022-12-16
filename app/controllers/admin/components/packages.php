@@ -6,6 +6,8 @@
 	//Получаем список модулей (фасадов и моделей)
 	//~ $units_path = $APP->__facades();
 
+	$content['title'] = 'Установленные пакеты composer';
+
 	$vendorDir = $APP->core_config['path_vendor']['path'];
 	$vendors  = $APP->utils->files->dirListing($vendorDir);
 

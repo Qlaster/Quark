@@ -27,7 +27,7 @@
 
 	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
-
+	$content['title'] = 'Панель состояния';
 
 
 	$content['widgets']['list']['page']['head'] = 'Страниц';

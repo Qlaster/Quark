@@ -76,7 +76,7 @@
 
 	//~ print_r($content['units']['list']); die;
 
-	$content['title'] = 'Модули системы';
+	$content['title'] = 'Провайдеры (поставщики) данных';
 	$content['button']['analize']['head'] = 'Анализ провайдеров';
 	$content['button']['analize']['link'] = $APP->url->page()."?analize=1";
 

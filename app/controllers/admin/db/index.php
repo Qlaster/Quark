@@ -23,6 +23,7 @@
 
 	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
+	$content['title'] = 'Подключения к базам данных';
 
 
 	$APP->template->file('admin/dbmanager/db_construct.html')->display($content);

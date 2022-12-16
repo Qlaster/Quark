@@ -39,6 +39,7 @@
 		$result = array_merge_recursive($result, $buffer);
 	}
 
+	$content['title'] = 'Управление заголовками страниц';
 	$content['tree']['head'] = "Структура страниц сайта:";
 	//~ $content['tree']['info'] = "Карта сайта позволяет нагляднее видеть структуру страниц";
 	$content['tree']['host'] = $APP->url->host().'/';

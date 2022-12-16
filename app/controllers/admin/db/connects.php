@@ -4,6 +4,7 @@
 
 	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
+	$content['title'] = 'Подключения к базам данных';
 	$content['table']['db'] = $APP->db->config['connect'];
 
 	foreach ($content['table']['db'] as $db => &$value)

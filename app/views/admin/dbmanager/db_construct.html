@@ -3,7 +3,7 @@
    <head>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>INSPINIA | Dashboard v.4</title>
+      <title>{$title}</title>
       <link href="../css/bootstrap.min.css" rel="stylesheet">
       <link href="../font-awesome/css/font-awesome.css" rel="stylesheet">
       <!-- Morris -->
@@ -21,15 +21,15 @@
          {section "../~section/mainmenu.html"}
          <!--Конец меню-->
          <div id="page-wrapper" class="gray-bg">
-			
+
 			<!-- Head menu -->
 			{section "../~section/head.html"}
-			<!-- End head menu --> 
-			
+			<!-- End head menu -->
+
 			<!-- Title menu-->
 			{section "../~section/title.html"}
-			<!-- End title menu -->   
-			
+			<!-- End title menu -->
+
             <!--Начало контента страницы-->
             <div class="wrapper wrapper-content">
                <!-- <div class="row">
@@ -59,7 +59,7 @@
                           </div>
                       </div>
                   </div>
-                  
+
                   <div class="col-md-4">
                       <div class="ibox float-e-margins">
                           <div class="ibox-title">
@@ -67,7 +67,7 @@
                               <h5>Vistits</h5>
                           </div>
                           <div class="ibox-content">
-                  
+
                               <div class="row">
                                   <div class="col-md-6">
                                       <h1 class="no-margins">$ 406,420</h1>
@@ -78,8 +78,8 @@
                                       <div class="font-bold text-navy">22% <i class="fa fa-level-up"></i> <small>Slow pace</small></div>
                                   </div>
                               </div>
-                  
-                  
+
+
                           </div>
                       </div>
                   </div>
@@ -96,10 +96,10 @@
                                   <div class="flot-chart-content" id="flot-chart1"></div>
                               </div>
                           </div>
-                  
+
                       </div>
                   </div>
-                  
+
                   </div>-->
                <div class="row">
                   <div class="col-lg-12">
@@ -129,12 +129,12 @@
                               <div class="row">
                                  <div class="col-sm-8 m-b-xs">
                                     <a class="btn btn-sm btn-primary" onclick='add_row()'>
-                                    <span class="fa fa-plus"> </span> 
+                                    <span class="fa fa-plus"> </span>
                                     Добавить поле
                                     </a>
                                     <a class="btn btn-sm btn-success btn-outline" title='Добавить ключ' >
                                     <i class="fa fa-plus"> </i>
-                                    <i class="fa fa-key"> </i> 
+                                    <i class="fa fa-key"> </i>
                                     </a>
                                     <!--
                                        <div data-toggle="buttons" class="btn-group">
@@ -147,12 +147,12 @@
                                  </div>
                                  <div class="col-sm-4">
                                     <div class="input-group">
-                                       <input type="text" name='tablename' placeholder="Название таблицы (A-z_)" class="input-sm form-control" required> 
+                                       <input type="text" name='tablename' placeholder="Название таблицы (A-z_)" class="input-sm form-control" required>
                                        <span class="input-group-btn">
                                           <!--
-                                             <button type="button" class="btn btn-sm btn-primary"> Сохранить</button> 
+                                             <button type="button" class="btn btn-sm btn-primary"> Сохранить</button>
                                              -->
-                                          <input type="submit" class="btn btn-sm btn-primary" value='Сохранить'> 
+                                          <input type="submit" class="btn btn-sm btn-primary" value='Сохранить'>
                                        </span>
                                     </div>
                                  </div>
@@ -177,7 +177,7 @@
                                        {for $i = 1; $i <= 0; $i++}
                                        <tr >
                                           <td>
-                                             <a type="button" class="btn btn-outline btn-danger btn-xs" title="Delete" onclick='$(this).parent().parent().remove()' ><i class="fa fa-times"> </i></a> 
+                                             <a type="button" class="btn btn-outline btn-danger btn-xs" title="Delete" onclick='$(this).parent().parent().remove()' ><i class="fa fa-times"> </i></a>
                                           </td>
                                           <td> <input type="text" placeholder="(только A-z_)" class="input-sm form-control" required> </td>
                                           <!--
@@ -189,7 +189,7 @@
                                              			<option>REAL</option>
                                              			<option>BLOB</option>
                                              	</select>
-                                             </td>                            
+                                             </td>
                                              -->
                                           <td> <input type="text" placeholder="(Заголовок)" class="input-sm form-control"> </td>
                                           <td>
@@ -222,27 +222,27 @@
                            <!--
                               <div class="hr-line-dashed"></div>
                               -->
-                           </form>	
+                           </form>
                         </div>
                         <script>
                            //Добавляем новое поле
                            function add_row()
                            {
-                           	if ( typeof add_row.counter == 'undefined' ) add_row.counter = 0; 				
-                           	add_row.counter++; 
-                           	
+                           	if ( typeof add_row.counter == 'undefined' ) add_row.counter = 0;
+                           	add_row.counter++;
+
                            	//Добавляем к таблице
                            	$( "#new_name" ).attr('name', 'name_'+add_row.counter);
                            	$( "#new_head" ).attr('name', 'head_'+add_row.counter);
                            	$( "#new_type" ).attr('name', 'type_'+add_row.counter);
-                           	
+
                            	$( "#table" ).append( $( "#table-tr" ).html() );
-                           	
+
                            	$( "#new_name" ).removeAttr('id');
                            	$( "#new_head" ).removeAttr('id');
                            	$( "#new_type" ).removeAttr('id');
                            }
-                            
+
                         </script>
                      </div>
                   </div>
@@ -257,7 +257,7 @@
          <tbody id='table-tr'>
             <tr >
                <td>
-                  <a type="button" class="btn btn-outline btn-danger btn-xs" title="Delete" onclick='$(this).parent().parent().remove()' ><i class="fa fa-times"> </i></a> 
+                  <a type="button" class="btn btn-outline btn-danger btn-xs" title="Delete" onclick='$(this).parent().parent().remove()' ><i class="fa fa-times"> </i></a>
                </td>
                <td> <input type="text" placeholder="(только A-z_)" class="input-sm form-control" id='new_name' required> </td>
                <td> <input type="text" placeholder="(Заголовок)" class="input-sm form-control" id='new_head'> </td>
@@ -321,7 +321,7 @@
       <!-- ChartJS-->
       <script src="../js/plugins/chartJs/Chart.min.js"></script>
       <!-- iCheck -->
-      <script src="../js/plugins/iCheck/icheck.min.js"></script>  
+      <script src="../js/plugins/iCheck/icheck.min.js"></script>
       <script>
          $(document).ready(function () {
                 $('.i-checks').iCheck({
@@ -332,11 +332,11 @@
       </script>
       <script>
          $(document).ready(function() {
-         
-         
+
+
              var d1 = [[1262304000000, 6], [1264982400000, 3057], [1267401600000, 20434], [1270080000000, 31982], [1272672000000, 26602], [1275350400000, 27826], [1277942400000, 24302], [1280620800000, 24237], [1283299200000, 21004], [1285891200000, 12144], [1288569600000, 10577], [1291161600000, 10295]];
              var d2 = [[1262304000000, 5], [1264982400000, 200], [1267401600000, 1605], [1270080000000, 6129], [1272672000000, 11643], [1275350400000, 19055], [1277942400000, 30062], [1280620800000, 39197], [1283299200000, 37000], [1285891200000, 27000], [1288569600000, 21000], [1291161600000, 17000]];
-         
+
              //~ var data1 = [
                  //~ { label: "Data 1", data: d1, color: '#17a084'},
                  //~ { label: "Data 2", data: d2, color: '#127e68' }
@@ -370,7 +370,7 @@
                      //~ show: false,
                  //~ }
              //~ });
-         
+
              var lineData = {
                  labels: ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"],
                  datasets: [
@@ -396,7 +396,7 @@
                      }
                  ]
              };
-         
+
              var lineOptions = {
                  scaleShowGridLines: true,
                  scaleGridLineColor: "rgba(0,0,0,.05)",
@@ -412,11 +412,11 @@
                  datasetFill: true,
                  responsive: true,
              };
-         
-         
+
+
              var ctx = document.getElementById("lineChart").getContext("2d");
              var myNewChart = new Chart(ctx).Line(lineData, lineOptions);
-         
+
          });
       </script>
    </body>

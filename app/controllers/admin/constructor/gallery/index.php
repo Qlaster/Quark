@@ -11,6 +11,9 @@
 	//Получаем все галереи
 	$form_list = $APP->object->collection('gallery')->all();
 
+
+	$content['title'] = 'Конструктор галерей';
+
 	//~ print_r($form_list); die;
 
 	//Клеим кнопочки и информацию

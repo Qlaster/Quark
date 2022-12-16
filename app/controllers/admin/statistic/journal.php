@@ -3,7 +3,7 @@
 	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
 
-	$content['title'] = "Журнал";
+	$content['title'] = "Журнал запросов";
 	$content['journal']['head'] = "Журнал запросов";
 
 	//Если не передали даты - установим сегодняшний день

@@ -23,7 +23,7 @@
 							</span> <span class="text-muted text-xs block">{$profile['login']}<b class="caret"></b></span> </span> </a>
 							<ul class="dropdown-menu animated fadeInRight m-t-xs">
 								{foreach $nav['profile']['list'] as $_item}
-									<li><a href="{$_item['link']}">{$_item['head']}</a></li>
+									<li><a href="{$_item['link']}"><i class="{$_item['icon']}"></i> {$_item['head']}</a></li>
 								{end}
 								<!--
 									<li><a href="contacts.html">Contacts</a></li>
@@ -34,7 +34,14 @@
 							</ul>
 						</div>
 						<div class="logo-element">
+							{if $profile['logo'] != ''}
+								<img alt="image" class="img-circle" width="50px" src="{$profile['logo']}" />
+							{else}
+								<div alt="image" class="img-circle" width="50px"/><i class="fa fa-twitch" style="color:#E5E5E5; font-size:50px"></i></div>
+							{end}
+<!--
 							IN+
+-->
 						</div>
 					</li>
 					{if $nav['main']}

@@ -12,7 +12,7 @@
 	//Запрашиваем содержимое
 	$glob = glob("$path/*");
 
-
+	$content['title'] = 'Файловый менеджер';
 
 
 	foreach ($glob as $filename)
