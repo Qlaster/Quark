@@ -101,15 +101,18 @@
 							<div class="row">
 								<div class="col-lg-12">
 									<div class="ibox ">
-										<div class="ibox-title">
-											<h5>Содержимое: <b class="text-success">{$objectName}</b></h5>
-											<a id="btn-save" !href="{$catalog['objects']['button']['save']['link']}" class="btn btn-primary btn-xs pull-right m-l-sm"> <span class="{$catalog['objects']['button']['save']['icon']}"></span> {$catalog['objects']['button']['save']['head']}</a>
-<!--
-											<a href="{$catalog['objects']['button']['edit']['link']}" class="btn btn-success btn-xs pull-right"> <span class="{$catalog['objects']['button']['edit']['icon']}"></span> {$catalog['objects']['button']['edit']['head']}</a>
--->
-										</div>
 										<form id="form-code" method="POST">
+											<div class="ibox-title">
+												<h5>Содержимое: <b class="text-success">{$objectName}</b></h5>
+												<a id="btn-save" !href="{$catalog['objects']['button']['save']['link']}" class="btn btn-primary btn-xs pull-right m-l-sm"> <span class="{$catalog['objects']['button']['save']['icon']}"></span> {$catalog['objects']['button']['save']['head']}</a>
+	<!--
+												<a href="{$catalog['objects']['button']['edit']['link']}" class="btn btn-success btn-xs pull-right"> <span class="{$catalog['objects']['button']['edit']['icon']}"></span> {$catalog['objects']['button']['edit']['head']}</a>
+	-->
+											</div>
+
 											<div class="ibox-content" id='menuname'>
+												<div class="form-group"><label>Название формы</label> <input type="text" placeholder="Название формы" name="name" value="{$objectName}" class="form-control"></div>
+
 												<div class="input-group m-b"><span class="input-group-addon">Внешние js: </span> <input class="form-control" type="text" name="action" value="{$$catalog['object']['action']}" placeholder="Action form" ></div>
 												<div class="input-group m-b"><span class="input-group-addon">Внешние css: </span> <input class="form-control" type="text" name="method" value="{$$catalog['object']['method']}" placeholder="Method" ></div>
 											</div>
@@ -131,8 +134,8 @@
 									</div>
 									<div class="ibox">
 										<div class="ibox-content">
-											<section id="display-form">													
-													{$$catalog['object']['html']}													
+											<section id="display-form">
+													{$$catalog['object']['html']}
 											</section>
 										</div>
 									</div>
