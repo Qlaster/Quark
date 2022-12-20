@@ -36,9 +36,10 @@
 	//Генерируем ссылки
 	foreach ($content['catalog']['page'] as $key => &$value)
 	{
-		$value['link_view'] = $APP->url->home().$value['url'];
-		$value['link_edit'] = 'admin/content/page/edit?url='.$value['url'];
-		$value['link_del'] 	= 'admin/content/page/del?url='.$value['url'].'&lang='.$value['lang'];
+		$value['link_view']		= $APP->url->home().$value['url'];
+		$value['link_edit']		= 'admin/content/page/edit?url='.$value['url'];
+		$value['link_del']		= 'admin/content/page/del?url='.$value['url'].'&lang='.$value['lang'];
+		$value['link_timeline'] = 'admin/content/page/timeline?url='.$value['url'].'&lang='.$value['lang'];
 	}
 
 

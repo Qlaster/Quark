@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{$title}</title>
+
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="../css/animate.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+    <div id="wrapper">
+
+		<!--Главное меню слева-->
+		{section "../~section/mainmenu.html"}
+		<!--Конец меню-->
+
+
+        <div id="page-wrapper" class="gray-bg">
+
+       	<!-- Head menu -->
+		{section "../~section/head.html"}
+		<!-- End head menu -->
+
+        <!-- Менюшка title-->
+		{section "../~section/title.html"}
+        <!-- конец title-->
+
+        <div class="wrapper wrapper-content p-xxs">
+            <div class="row animated fadeInRight">
+                <div class="col-lg-12">
+                <div class="ibox float-e-margins">
+                    <div class="text-center !float-e-margins p-xs">
+                    <span>Настройки отображения: </span>
+                    <a href="#" class="btn btn-xs btn-primary" id="lightVersion">Легкая версия</a>
+                    <a href="#" class="btn btn-xs btn-primary" id="darkVersion">Стандартная версия</a>
+                    <a href="#" class="btn btn-xs btn-primary" id="leftVersion">Изменить ориентацию</a>
+                    </div>
+
+
+                    <div class="ibox-content" id="ibox-content">
+
+                        <div id="vertical-timeline" class="vertical-container dark-timeline center-orientation">
+
+                            {foreach $history['list'] as $_timestamp => $_record}
+                            <div class="vertical-timeline-block">
+								{if $_record['active']}
+									<div class="vertical-timeline-icon navy-bg">
+										<i class="fa fa-check"></i>
+									</div>
+                                {else}
+									<div class="vertical-timeline-icon blue-bg">
+										<i class="fa fa-briefcase"></i>
+									</div>
+                                {end}
+
+                                <div class="vertical-timeline-content">
+									{if $_record['insert']}
+                                    <h3>Добавлено:</h3>
+                                    <ul class="category-list" style="padding: 0">
+										{foreach $_record['insert'] as $_elem}
+											<li><a href="#" style="word-wrap: break-word;"> <i class="fa fa-circle text-navy"></i> <i class="text-navy">({$_elem['type']}) {$_elem['name']} </i> {$_elem['data']} </a></li>
+										{end}
+									</ul>
+                                    <p></p>
+                                    {end}
+
+									{if $_record['update']}
+                                    <h3>Изменено:</h3>
+                                    <ul class="category-list" style="padding: 0">
+										{foreach $_record['update'] as $_elem}
+											<li><a href="#" style="word-wrap: break-word;"> <i class="fa fa-circle text-warning"></i> <i class="text-navy">({$_elem['type']})  {$_elem['name']} </i> {$_elem['data']} </a></li>
+										{end}
+<!--
+										<li><a href="#"> <i class="fa fa-circle text-danger"></i> Documents</a></li>
+										<li><a href="#"> <i class="fa fa-circle text-primary"></i> Social</a></li>
+										<li><a href="#"> <i class="fa fa-circle text-info"></i> Advertising</a></li>
+										<li><a href="#"> <i class="fa fa-circle text-warning"></i> Clients</a></li>
+-->
+									</ul>
+                                    <p></p>
+                                    {end}
+
+									{if $_record['delete']}
+                                    <h3>Удалено:</h3>
+                                    <ul class="category-list" style="padding: 0">
+										{foreach $_record['delete'] as $_elem}
+											<li><a href="#" style="word-wrap: break-word;"> <i class="fa fa-circle text-danger"></i> <i class="text-navy">({$_elem['type']}) {$_elem['name']}</i> {$_elem['data']} </a></li>
+										{end}
+									</ul>
+									<p></p>
+                                    {end}
+
+                                    <a href="#" class="btn btn-sm btn-default"> Просмотреть эту версию </a>
+
+                                    {if !$_record['active']}
+										<a href="#" class="btn btn-sm btn-primary m-l-sm m-r-sm m-l m-r"> Сделать актуальной </a>
+                                    {end}
+<!--
+                                    <a href="#" class="btn btn-sm btn-danger"> Удалить версию из истории </a>
+-->
+                                    <span class="vertical-date">
+                                        {$_record['head']} <br/>
+                                        <small>{$_record['page']['version']} </small>
+                                    </span>
+                                </div>
+                            </div>
+							{end}
+
+<!--
+
+                            <div class="vertical-timeline-block">
+                                <div class="vertical-timeline-icon blue-bg">
+                                    <i class="fa fa-file-text"></i>
+                                </div>
+
+                                <div class="vertical-timeline-content">
+                                    <h2>Send documents to Mike</h2>
+                                    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since.</p>
+                                    <a href="#" class="btn btn-sm btn-success"> Download document </a>
+                                    <span class="vertical-date">
+                                        Today <br/>
+                                        <small>Dec 24</small>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="vertical-timeline-block">
+                                <div class="vertical-timeline-icon lazur-bg">
+                                    <i class="fa fa-coffee"></i>
+                                </div>
+
+                                <div class="vertical-timeline-content">
+                                    <h2>Coffee Break</h2>
+                                    <p>Go to shop and find some products. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's. </p>
+                                    <a href="#" class="btn btn-sm btn-info">Read more</a>
+                                    <span class="vertical-date"> Yesterday <br/><small>Dec 23</small></span>
+                                </div>
+                            </div>
+
+                            <div class="vertical-timeline-block">
+                                <div class="vertical-timeline-icon yellow-bg">
+                                    <i class="fa fa-phone"></i>
+                                </div>
+
+                                <div class="vertical-timeline-content">
+                                    <h2>Phone with Jeronimo</h2>
+                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iusto, optio, dolorum provident rerum aut hic quasi placeat iure tempora laudantium ipsa ad debitis unde? Iste voluptatibus minus veritatis qui ut.</p>
+                                    <span class="vertical-date">Yesterday <br/><small>Dec 23</small></span>
+                                </div>
+                            </div>
+
+                            <div class="vertical-timeline-block">
+                                <div class="vertical-timeline-icon lazur-bg">
+                                    <i class="fa fa-user-md"></i>
+                                </div>
+
+                                <div class="vertical-timeline-content">
+                                    <h2>Go to the doctor dr Smith</h2>
+                                    <p>Find some issue and go to doctor. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s. </p>
+                                    <span class="vertical-date">Yesterday <br/><small>Dec 23</small></span>
+                                </div>
+                            </div>
+
+                            <div class="vertical-timeline-block">
+                                <div class="vertical-timeline-icon navy-bg">
+                                    <i class="fa fa-comments"></i>
+                                </div>
+
+                                <div class="vertical-timeline-content">
+                                    <h2>Chat with Monica and Sandra</h2>
+                                    <p>Web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like). </p>
+                                    <span class="vertical-date">Yesterday <br/><small>Dec 23</small></span>
+                                </div>
+                            </div>
+-->
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <!-- Footer block -->
+        {section "../~section/footer.html"}
+        <!-- End Footer block -->
+
+        </div>
+        </div>
+
+
+
+    <!-- Mainly scripts -->
+    <script src="../js/jquery-2.1.1.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="../js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+    <!-- Peity -->
+    <script src="../js/plugins/peity/jquery.peity.min.js"></script>
+
+    <!-- Custom and plugin javascript -->
+    <script src="../js/inspinia.js"></script>
+    <script src="../js/plugins/pace/pace.min.js"></script>
+
+    <!-- Peity -->
+    <script src="../js/demo/peity-demo.js"></script>
+
+
+    <script>
+        $(document).ready(function(){
+
+            // Local script for demo purpose only
+            $('#lightVersion').click(function(event) {
+                event.preventDefault()
+                $('#ibox-content').removeClass('ibox-content');
+                $('#vertical-timeline').removeClass('dark-timeline');
+                $('#vertical-timeline').addClass('light-timeline');
+            });
+
+            $('#darkVersion').click(function(event) {
+                event.preventDefault()
+                $('#ibox-content').addClass('ibox-content');
+                $('#vertical-timeline').removeClass('light-timeline');
+                $('#vertical-timeline').addClass('dark-timeline');
+            });
+
+            $('#leftVersion').click(function(event) {
+                event.preventDefault()
+                $('#vertical-timeline').toggleClass('center-orientation');
+            });
+
+
+        });
+    </script>
+
+</body>
+
+</html>
