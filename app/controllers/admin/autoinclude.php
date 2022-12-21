@@ -36,7 +36,7 @@
 		//			LOCK PAGE
 		//============================================================================================================================
 		//Если сессия залочена - маршрутим на другую страницу
-		if (isset($_SESSION['lock']))
+		if (isset($_SESSION['lock']) and !($APP->url->home().'admin/options/users/lock'))
 		{
 			header('Location: '.$APP->url->home().'admin/options/users/lock');
 			exit();

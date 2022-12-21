@@ -1,23 +1,28 @@
 <?php
 
 
-	$URL = trim($_POST['URL']);
+	//~ $_POST['pageServiceField']['url'] = $URL = trim($_POST['pageServiceField']['url']);
 
 	//Забираем служебные теги и Формируем страницу
-	$page['url']	= trim($_POST['URL']);
-	$page['html']	= $_POST['template_file'];
-	$page['public'] = $_POST['check_public'];
-	$page['sitemap']= $_POST['check_sitemap'];
-	$page['index']	= $_POST['check_index'];
-	$page['lang']	= $_POST['LANG'];
-
+	$page = $_POST['pageServiceField'];
+	$page['url'] = trim($page['url']);
 	//Удаляем, что бы не мешались
-	unset($_POST['URL']);
-	unset($_POST['template_file']);
-	unset($_POST['check_public']);
-	unset($_POST['check_sitemap']);
-	unset($_POST['check_index']);
-	unset($_POST['INDEX']);
+	unset($_POST['pageServiceField']);
+
+
+	//~ $page['url']	= trim($_POST['URL']);
+	//~ $page['html']	= $_POST['template_file'];
+	//~ $page['public'] = $_POST['check_public'];
+	//~ $page['sitemap']= $_POST['check_sitemap'];
+	//~ $page['index']	= $_POST['check_index'];
+	//~ $page['lang']	= $_POST['LANG'];
+
+	//~ unset($_POST['URL']);
+	//~ unset($_POST['template_file']);
+	//~ unset($_POST['check_public']);
+	//~ unset($_POST['check_sitemap']);
+	//~ unset($_POST['check_index']);
+	//~ unset($_POST['INDEX']);
 
 	//Компилируем содержимое страницы
 	foreach ($_POST as $tag => $value)
@@ -56,7 +61,7 @@
 
 	$page['content'] = $content;
 
-	if (!$APP->page->set($URL, $page))
+	if (!$APP->page->set($page['url'], $page))
 		trigger_error ( "Не удается сохранить страницу" , E_USER_WARNING );
 
 	$APP->page->sitemap('controllers/sitemap.xml.php');

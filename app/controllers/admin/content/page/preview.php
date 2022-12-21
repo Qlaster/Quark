@@ -1,32 +1,9 @@
 <?php
 
-	//error_reporting(E_ALL & ~E_NOTICE);
-
-
-
-	//Формируем страницу
-	//$page['url'] = $URL;
-	//$page['url'] = $URL;
-
-	$URL = trim($_POST['URL']);
-
-	//Забираем служебные теги и Формируем страницу
-	$page['url']	= trim($_POST['URL']);
-	$page['html']	= $_POST['template_file'];
-	$page['public'] = $_POST['check_public'];
-	$page['sitemap']= $_POST['check_sitemap'];
-	$page['index']	= $_POST['check_index'];
-	$page['lang']	= $_POST['LANG'];
-
+	$page = $_POST['pageServiceField'];
+	$page['url'] = trim($page['url']);
 	//Удаляем, что бы не мешались
-	unset($_POST['URL']);
-	unset($_POST['template_file']);
-	unset($_POST['check_public']);
-	unset($_POST['check_sitemap']);
-	unset($_POST['check_index']);
-	unset($_POST['INDEX']);
-
-	//~ print_r($_POST); die;
+	unset($_POST['pageServiceField']);
 
 
 	//Компилируем содержимое страницы

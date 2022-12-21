@@ -33,6 +33,17 @@
 	//Получаем текущий адрес
 	$content['form']['edit']['url']['prefix'] = $APP->url->home();
 
+	//Кнопочка просмотра истории
+	if ($_GET['url'])
+	{
+		$content['form']['edit']['button']['timeline']['action'] .= '?url='.urlencode($_GET['url']);
+	}
+	else
+	{
+		//Удаляем, елси это новая страница
+		unset($content['form']['edit']['button']['timeline']);
+	}
+
 	//Получим директорию с шаблонами
 	$templateDir = $APP->template->config['templates']['folder']; //.DIRECTORY_SEPARATOR
 
@@ -146,87 +157,12 @@
 
 
 	//~ $themelink = $APP->url->home()."views/admin/";
-	$APP->template->file('admin/content/page_add.html')->display($content);
+	$APP->template->file('admin/content/page.add.html')->display($content);
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-	//Список переменных, поддерживаемых шаблоном
-	//$vars = $APP->template->file('akono/index.html')->vars();
-
-
-
-
-
-
-
-	//print_r($content['section']['frames']); die;
-
-
-
-	//print_r($content['section']['html'] ); die;
-
-
-
-	//print_r($content['section']['single'] ); die;
-
-
-
-
-
-
-
-
-	//Загружаем настройки тегов
-	//$frames		= PageTools::SectionConstruct($vars,  $config['ru']['tags'], $config['config']['var_filter']);
-
-
-
-	//print_r($frames); die;
-
-	//$content['section']['frames'] = PageTools::FrameConstruct($obj, $vars,  $config['ru']['tags'], $config['config']['var_filter']);
-	//~ $select =
-	//~
-	//~ //Каталог объектов
-	//~ $content['section']['objects']['collection']['head'] = $config['ru']['objects']['collection'];
-	//~ $content['section']['objects']['collection']['disabled'] = 'disabled';
-	//~
-	//~
-	//~ $collection_buf = $APP->object->collection_list();
-
-
-
-
-
-
-	//print_r($content['section']); die;
-
-
-	//$content['section']['objects'] = array_merge($collection, $content['section']['objects']);
-
-	//$content['section']['objects'] = array_merge($APP->object->collection_list(), $content['section']['objects']);
-
-
-	//print_r($content['section']); die;
-
-//~
-	//~ print_r($content['form']['file']['list']);
-//~
-	//~ die;
 
 
 
