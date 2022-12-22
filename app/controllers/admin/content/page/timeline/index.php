@@ -1,7 +1,5 @@
 <?php
 
-	//~ error_reporting(E_ALL & ~E_NOTICE);
-
 	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
 
@@ -22,10 +20,6 @@
 		$currentPage = $APP->page->get($_GET['url'], $_GET['lang'], $record['version']);
 		//Если такой страницы уже не существует
 		if ($currentPage === null) continue;
-
-		//Если текущая версия актуальна - пометим ее
-		if ($record['version'] == $actualPage['version'])
-			$history[$record['version']]['active'] = true;
 
 		//Скопируем страницу для детализации вывода
 		$history[$record['version']]['page'] = $currentPage;
@@ -55,6 +49,24 @@
 
 			unset($previousPage['content'][$varname]);
 		}
+
+		//Добавим кнопочки
+		$history[$record['version']]['button']['view']['head'] = 'Посмотреть эту версию';
+		$history[$record['version']]['button']['view']['style'] = 'default';
+		$history[$record['version']]['button']['view']['target'] = '_blank';
+		$history[$record['version']]['button']['view']['link'] = 'admin/content/page/timeline/version?url='.$_GET['url'].'&lang='.$_GET['lang'].'&version='.$record['version'];
+
+		$history[$record['version']]['button']['rollback']['head'] = 'Восстановить эту версию';
+		$history[$record['version']]['button']['rollback']['style'] = 'primary';
+		$history[$record['version']]['button']['rollback']['link'] = 'admin/content/page/timeline/rollback?url='.$_GET['url'].'&lang='.$_GET['lang'].'&version='.$record['version'];
+
+		//Если текущая версия актуальна - пометим ее и уберем кнопку
+		if ($record['version'] == $actualPage['version'])
+		{
+			$history[$record['version']]['active'] = true;
+			unset($history[$record['version']]['button']['rollback']);
+		}
+
 
 		//Оставшиеся переменные запишем в удаленные - их нет в текущей версии страницы
 		if ($previousPage['content'])

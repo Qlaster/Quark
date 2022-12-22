@@ -30,4 +30,5 @@
 
 	//~ $themelink = $APP->url->home()."views/admin/";
 	//~ $APP->template->file('admin/login.html')->themelink($themelink)->display($content);
+	//~ $APP->template->base_html = $APP->url->home();
 	$APP->template->file('admin/login.html')->display($content);

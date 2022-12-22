@@ -12,7 +12,6 @@
 	$page = $APP->page->get($_GET['url'], $_GET['lang'], $_GET['version']);
 
 
-	//~ $themelink = $APP->url->home()."views/admin/";
-	$APP->template->file('admin/content/page.timeline.html')->display($content);
 
-
+	//Запустим контроллер рендеринга страницы
+	$APP->controller->run('index', ['APP'=>$APP, 'page'=>$page]);

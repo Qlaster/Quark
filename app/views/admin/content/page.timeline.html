@@ -59,7 +59,7 @@
 									</div>
                                 {else}
 									<div class="vertical-timeline-icon blue-bg">
-										<i class="fa fa-briefcase"></i>
+										<i class="fa fa-history"></i>
 									</div>
                                 {end}
 
@@ -100,10 +100,14 @@
 									<p></p>
                                     {end}
 
-                                    <a href="#" class="btn btn-sm btn-default"> Просмотреть эту версию </a>
+									{foreach $_record['button'] as $_button}
+										<a href="{$_button['link']}" target="{$_button['target']}" class="btn btn-sm btn-{$_button['style']} m-l-sm m-r-sm">{$_button['head']}</a>
+                                    {end}
 
                                     {if !$_record['active']}
+<!--
 										<a href="#" class="btn btn-sm btn-primary m-l-sm m-r-sm m-l m-r"> Сделать актуальной </a>
+-->
                                     {end}
 <!--
                                     <a href="#" class="btn btn-sm btn-danger"> Удалить версию из истории </a>
