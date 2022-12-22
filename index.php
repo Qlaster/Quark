@@ -23,58 +23,55 @@
 	$APP = new APP($_ENV['core']['path'], $_ENV['facades'], $_ENV['vendor']);
 	//Загрузим переменные окружения
 	$APP->config->loadENV('.env', 'app/.env');
-	//Симлинк на новый модуль
-	$APP->object = $APP->objects;
-	//Записываем визит (регистрируется вызов после завершения скрипта)
+	//Записываем визит (регистрируется вызов после завершения работы app)
 	$APP->visits->push($APP->user->logged()['login']);
 
 
 	# ---------------------------------------------------------------- #
 	#            Обработка псевдонимов адресов страниц                 #
 	# ---------------------------------------------------------------- #
-	$alias = $APP->route->alias( $APP->url->page() );
-	if ($alias !== false)
-	{
-		$APP->url->redirect = $APP->url->page;
-		$APP->url->page     = $alias;
-	}
+	if ($alias = $APP->route->match($APP->url->page(), ['alias']))
+		$APP->url->page = $alias[0];
+
 
 	# ---------------------------------------------------------------- #
 	#            Обработка правил маршрутеризации (роутинг)            #
 	# ---------------------------------------------------------------- #
-	//Проверим, есть ли правила для данного адреса...
-	$rout = $APP->route->rule( $APP->url->page() );
-	//Если маршрут не описан, просто закинем адрес страницы как есть
-	if ($rout === false) $rout = $APP->url->page();
-
-
-	# ---------------------------------------------------------------- #
-	#                Обработка хуков и callback высовов                #
-	# ---------------------------------------------------------------- #
-	//Проверим, есть ли хуки и обработчики для данной страницы
-	$hook = $APP->route->hook( $APP->url->page() );
-	//Если есть обработчик - вызываем его
-	//~ if ($hook !== false) $APP->controller->run($hook, $APP);
-	if ($hook !== false) include("app/$hook");
+	$controllers = $APP->route->match($APP->url->page());
 
 
 	# ---------------------------------------------------------------- #
 	#        Передача управления контроллеру (на основе правил)        #
 	# ---------------------------------------------------------------- #
-	//Правила есть. Будем исполнять тот контроллер, который указан в правилах
 	try
 	{
+		//Последовательно исполняем контроллеры, указанные в правилах
+		foreach ($controllers as $action)
+		{
+			if ($ctrlResponse = $APP->controller->run($action, ['APP'=>$APP]) === null)
+			{
+				//Контроллера нет? Что ж... Попробуем запустить и передать управление стандартному index контроллеру
+				if ($ctrlResponse = $APP->controller->run($APP->controller->config['handler'], ['APP'=>$APP]) === null )
+				{
+					throw new ErrorException('Default controller '.$APP->controller->config['handler'].' not found', 500);
+				}
+			}
+		}
+
+
+		/*
 		if ($ctrlResponse = $APP->controller->run($rout, ['APP'=>$APP]) === null)
 		{
 			//Контроллера нет? Что ж... Попробуем запустить и передать управление стандартному index контроллеру
 			if ($ctrlResponse = $APP->controller->run($APP->controller->config['handler'], ['APP'=>$APP]) === null )
 			{
 				throw new ErrorException('Default controller '.$APP->controller->config['handler'].' not found', 500);
-				//~ http_response_code(500);
-				//~ $page = $APP->page->get('error:500');
-				//~ $APP->template->file($page['html'])->display($page['content']);
+				// http_response_code(500);
+				// $page = $APP->page->get('error:500');
+				// $APP->template->file($page['html'])->display($page['content']);
 			}
 		}
+		*/
 	}
 	catch (Error $e)
 	{
