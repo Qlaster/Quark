@@ -307,7 +307,7 @@
 		}
 
 
-		function FrameConstruct()
+		function FrameConstruct($framesLink=[])
 		{
 
 			$tags = $this->config['tags'];
@@ -315,10 +315,10 @@
 			//Загружаем настройки тегов
 			$frames		= self::SectionConstruct($this->vars,  $tags, $this->invisible_mask);
 
-
 			//Построим фреймы
 			foreach ($frames as $f_name => &$f_frame)
 			{
+
 
 				//Все одиночные теги объединяем в пустую коллекцию
 				if (($f_frame['type'] == 'string'))
@@ -367,6 +367,8 @@
 						$item['head'] = $name;
 						$item['name'] = $name;
 						$item['disabled'] = 'disabled';
+
+
 
 						$collection_list[] = $item;
 						$html_tag_name = base64_encode($f_name).':'.base64_encode($f_tagname);

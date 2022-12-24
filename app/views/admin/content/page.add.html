@@ -493,11 +493,7 @@
 														{if $_object['disabled']}
 															<option disabled class="group-result" value="{$_object['value']}">{$_object['head']}</option>
 														{else}
-															{if $_object['active']}
-																<option class="active-result group-option" value="{$_object['value']}" selected>{$_object['head']}</option>
-															{else}
-																<option class="active-result group-option" value="{$_object['value']}">{$_object['head']}</option>
-															{end}
+															<option class="active-result group-option" data-collection="{$_block['name']}" data-name="{$_object['name']}" value="{$_object['value']}" {if $_object['active']} selected {end}>{$_object['head']}</option>
 														{end}
 													{end}
 
@@ -532,7 +528,22 @@
 												</select>
 										</div>
 
-										<div class="col-sm-6">
+										<div class="col-sm-1 row p-0 m-0">
+
+											<div class="btn-group">
+												<button data-toggle="dropdown" title="Редактировать объекты" class="btn btn-white !btn-sm dropdown-toggle"><i class="fa fa-search"></i> <span class="caret"></span></button>
+
+												<ul class="dropdown-menu">
+													<label class="!label label-success !text-center !btn btn-block ibox-content p-2 m-2">&nbsp;Редактировать как:</label>
+													<li><a href="#">Галлерею</a></li>
+													<li><a href="#">INI Текст</a></li>
+													<li class="divider"></li>
+													<li><a href="#">Абстрактный объект</a></li>
+												</ul>
+											</div>
+										</div>
+
+										<div class="col-sm-5">
 											<input name="{$_block['edit']['name']}" list="data-providers" type="text" placeholder="Введите путь поставщика данных или ссылку на ресурс" value="{$_block['edit']['value']}" class="form-control">
 										</div>
 									</div>
