@@ -345,7 +345,9 @@
 				{
 					$f_tag = array('head'=>$f_tag);
 					//Организуем уникальное название элемента на форме в формате frame_tagname
-					$f_tag['name'] = '~'.base64_encode($f_name).':'.base64_encode($f_tagname);
+					//~ $f_tag['name'] = '~'.base64_encode($f_name).':'.base64_encode($f_tagname);
+					//~ $f_tag['name'] = 'object['.urlencode($f_name).']['.urlencode($f_tagname).']';
+					$f_tag['name'] = 'object['.urlencode($f_name).']['.urlencode($f_tagname).']';
 
 
 					//=========================================
@@ -369,17 +371,17 @@
 						$item['disabled'] = 'disabled';
 
 						$collection_list[] = $item;
-						$html_tag_name = base64_encode($f_name).':'.base64_encode($f_tagname);
+						//~ $html_tag_name = base64_encode($f_name).':'.base64_encode($f_tagname);
+						$html_tag_name = '['.urlencode($f_name).']['.urlencode($f_tagname).']';
 
 						foreach ($collection as $_item)
 						{
 							unset($item);
-							$html_object_name = base64_encode($name).':'.base64_encode($_item);
+							//~ $html_object_name = base64_encode($name).':'.base64_encode($_item);
+							$html_object_name = urlencode($name).'['.urlencode($_item).']';
 							$item['head'] = $_item;
-							$item['value'] = 'object:'.$html_object_name;
-							$item['collection'] = $name;
-							$item['objectname'] = $_item;
-
+							//~ $item['value'] = 'object'.$html_object_name;
+							$item['value'] = $html_object_name;
 
 							if (($this->page['content'][$html_tag_name]['type'] == 'object') and
 								($this->page['content'][$html_tag_name]['data'] == $html_object_name)
@@ -421,25 +423,11 @@
 					$f_tag['select'] = $collection_list;
 
 					//$f_tag['edit']['head'] = ' or ';
-					$f_tag['edit']['name'] = '='.$html_tag_name;
+					//~ $f_tag['edit']['name'] = '='.$html_tag_name;
+					$f_tag['edit']['name'] = 'source'.$html_tag_name;
 					if ($this->page['content'][$html_tag_name]['type'] == 'source')
 							$f_tag['edit']['value'] = $this->page['content'][$html_tag_name]['data'];
 					//$result[$f_name] = $f_frame;
-
-
-
-					//=========================================
-					//		ОТКРЫТЬ КАК ... (СПИСОК)
-					//=========================================
-					$f_tag['openas']['name'] = $f_tag['name'];
-					$f_tag['openas']['head'] = 'Редактировать как:';
-					$f_tag['openas']['list']['gallery']['head'] = 'Галерею';
-					$f_tag['openas']['list']['gallery']['link'] = '';
-					$f_tag['openas']['list']['objectini']['head'] = 'В текстовом виде';
-					$f_tag['openas']['list']['objectini']['link'] = '';
-					$f_tag['openas']['list']['-']['class'] = 'divider';
-					$f_tag['openas']['list']['object']['head'] = 'Абстрактный объект';
-					$f_tag['openas']['list']['object']['link'] = '';
 				}
 			}
 
