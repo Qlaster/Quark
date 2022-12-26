@@ -87,8 +87,6 @@
 			foreach ($_VARS as $_enviroment_var_name => $_enviroment_var_value) $$_enviroment_var_name = $_enviroment_var_value;
 			unset($_enviroment_var_name, $_enviroment_var_value);
 
-			$ctrl = $this->realpath($controller);
-
 			if (!is_readable($ctrl = $this->realpath($controller)) or !is_file($ctrl)) return null;
 
 			$result = include $ctrl;

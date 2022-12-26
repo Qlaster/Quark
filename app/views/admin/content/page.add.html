@@ -1137,10 +1137,16 @@
             $('.click2edit').destroy();
         };
 
-		var openas = function(objectname, handler) {
+		var openas = function(tagname, handler) {
+			var collection = $("[name='"+tagname+"']").find(':selected').data('collection');
+			var object     = $("[name='"+tagname+"']").find(':selected').data('name');
 
+			if (typeof collection == "undefined") {collection == ''; }
+			if (typeof object == "undefined") {object == ''; }
 
-			alert(handler);
+			if (!object) return true;
+
+			window.open(`admin/content/page/openas?collection=${collection}&object=${object}&handler=${handler}`);
 		};
 
 
