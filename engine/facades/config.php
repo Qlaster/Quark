@@ -113,6 +113,23 @@
 			}
 		}
 
+		public function fromString(string $sting)
+		{
+			static $ini;
+			if (!isset($ini)) $ini = new Core_Ini_Reader;
+
+			return $ini->fromFile($filename);
+		}
+
+		public function toString($config)
+		{
+			static $ini;
+			if (!isset($ini)) $ini = new Core_Ini_Writer;
+
+			return $ini->processConfig($config);
+		}
+
+
 		//Ты ей файл модуля, она тебе путь к файлу конфигурации, который лежит в той е папке
 		private function CompIniFile($filename, $ext='ini')
 		{
