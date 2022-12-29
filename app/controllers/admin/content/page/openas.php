@@ -28,7 +28,8 @@
 	$home       = $APP->url->home();
 
 	//Получили запрос на открытие. Просмотрем handle и опредеимся с приложением
-	if ('object'  == $_GET['handler']) header("Location: $home"."admin/constructor/object/edit?collection=$collection&object=$object");
-	if ('gallery' == $_GET['handler']) header("Location: $home"."admin/constructor/gallery/edit?collection=$collection&name=$object");
-	if ('form'    == $_GET['handler']) header("Location: $home"."admin/constructor/form/edit?collection=$collection&name=$object");
+	if ('object'    == $_GET['handler']) header("Location: $home"."admin/constructor/object/edit?collection=$collection&object=$object");
+	if ('objectini' == $_GET['handler']) header("Location: $home"."admin/constructor/object/plaintext/edit?collection=$collection&object=$object");
+	if ('gallery'   == $_GET['handler']) header("Location: $home"."admin/constructor/gallery/edit?collection=$collection&name=$object");
+	if ('form'      == $_GET['handler']) header("Location: $home"."admin/constructor/form/edit?collection=$collection&name=$object");
 

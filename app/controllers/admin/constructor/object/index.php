@@ -37,8 +37,22 @@
 
 		$item['head'] = $_object_name;
 		$item['link'] = "";
-		$item['delete'] = $APP->url->home()."admin/constructor/object/del?collection=".urlencode($d_collection)."&object=".urlencode($d_object);
-		$item['edit'] = $APP->url->home()."admin/constructor/object/edit?collection=".urlencode($d_collection)."&object=".urlencode($d_object);
+
+		$item['button']['editastext']['head'] = 'Редактор';
+		$item['button']['editastext']['link'] = $APP->url->home()."admin/constructor/object/plaintext/edit?collection=".urlencode($d_collection)."&object=".urlencode($d_object);;
+		$item['button']['editastext']['icon'] = 'fa-th-list';
+
+		$item['button']['edit']['head'] = 'Конструктор';
+		$item['button']['edit']['link'] = $APP->url->home()."admin/constructor/object/edit?collection=".urlencode($d_collection)."&object=".urlencode($d_object);
+		$item['button']['edit']['icon'] = 'fa-puzzle-piece';
+
+		$item['button']['delete']['head'] = 'Удалить';
+		$item['button']['delete']['link'] = $APP->url->home()."admin/constructor/object/del?collection=".urlencode($d_collection)."&object=".urlencode($d_object);;
+		$item['button']['delete']['icon'] = 'fa-trash';
+
+		//Обработчик по умолчанию
+		$item['link'] = $item['button']['editastext']['link'];
+
 		$content['catalog']['objects']['list'][] = $item;
 	}
 

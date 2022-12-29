@@ -17,25 +17,25 @@
          <!--Главное меню слева-->
          {require "../../~section/mainmenu.html"}
          <!--Конец меню-->
-         
+
          <div id="page-wrapper" class="gray-bg">
-			
+
 			<!-- Head menu -->
 			{require "../../~section/head.html"}
-			<!-- End head menu -->   
-			
+			<!-- End head menu -->
+
 			<!-- Менюшка title-->
 			{require "../../~section/title.html"}
-			<!-- конец title-->   
-        
+			<!-- конец title-->
+
             <div class="wrapper wrapper-content">
                <div class="row">
                   <div class="col-lg-4 animated fadeInDown">
-					  
 
-					  
-					  
-					  
+
+
+
+
                      <div class="ibox float-e-margins">
 						<div class="ibox-title">
                             <h5>{$catalog['collection']['head']}</h5>
@@ -59,8 +59,8 @@
 -->
                             </div>
                         </div>
-						 
-						 
+
+
                         <div class="ibox-content">
                            <div class="file-manager">
 <!--
@@ -76,7 +76,7 @@
                               <div class="hr-line-dashed"></div>
 -->
                               <form action="{$form['collection']['action']}" method='get'>
-                                 <input name='collection' placeholder="Имя новой коллекции" class="form-control">   
+                                 <input name='collection' placeholder="Имя новой коллекции" class="form-control">
                                  <p></p>
                                  <button type="submit" class="btn btn-primary !btn-sm btn-outline btn-block">{$form['collection']['button']['add']['head']}</button>
                               </form>
@@ -123,8 +123,8 @@
                            </div>
                         </div>
                      </div>
-                  
-                  
+
+
 <!--
                   	<div class="ibox float-e-margins">
 						<div class="ibox-content">
@@ -132,22 +132,22 @@
 								<h5>{$catalog['tools']['head']}</h5>
 								<div class="hr-line-dashed"></div>
 								<form action="{$form['collection']['action']}" method='get'>
-									<input name='collection' placeholder="Имя новой коллекции" class="form-control">   
+									<input name='collection' placeholder="Имя новой коллекции" class="form-control">
 									<p></p>
 									<button type="submit" class="btn btn-primary btn-block">{$form['collection']['button']['add']['head']}</button>
 								</form>
 								<div class="hr-line-dashed"></div>
 								<button type="submit" class="btn btn-primary !btn-block">{$form['tools']['button']['export']['head']}</button>
 								<button type="submit" class="btn btn-primary !btn-block">{$form['tools']['button']['import']['head']}</button>
-								
+
 								<div class="clearfix"></div>
 							</div>
 						</div>
 					</div>
 -->
-                  
-                  
-                  
+
+
+
                   </div>
 
                   <div class="col-lg-8 animated fadeInRight"  style="z-index:1">
@@ -169,7 +169,7 @@
                                     		<li><a href="#">Создать новый элемент</a>
                                     		</li>
                                     		<li><a href="#">Удалить коллекцию</a>
-                                    		</li>													
+                                    		</li>
                                     	</ul>
                                     	<a class="close-link">
                                     		<i class="fa fa-times"></i>
@@ -182,16 +182,21 @@
                                     <thead>
                                        <tr>
                                           <th>Название объекта</th>
-                                          <th class="col-lg-3"></th>
+                                          <th class="col-lg-5"></th>
                                        </tr>
                                     </thead>
                                     <tbody>
                                        {foreach $catalog['objects']['list'] as $_value}
                                        <tr class="gradeA">
-                                          <td><a class='text-primary btn-block'>{$_value['head']}</a></td>
-                                          <td class='center'> 
-                                             <a class="btn btn-white btn-xs" href="{$_value['edit']}">{$catalog['objects']['button']['edit']['head']}</a>  
-                                             <a class="btn btn-warning btn-xs" href="{$_value['delete']}">{$catalog['objects']['button']['delete']['head']}</a>  
+                                          <td><a class='text-primary !btn-block' {if $_value['link']} href="{$_value['link']}" {end}>{$_value['head']}</a></td>
+                                          <td class='center'>
+												{foreach ($_value['button']) as $_button}
+													<a class="!btn btn-white btn-xs" href="{$_button['link']}"><i class="fa {$_button['icon']}"></i> {$_button['head']}</a>
+												{end}
+<!--
+											<a class="btn btn-white btn-xs" href="{$_value['edit']}">{$catalog['objects']['button']['edit']['head']}</a>
+                                            <a class="btn btn-warning btn-xs" href="{$_value['delete']}">{$catalog['objects']['button']['delete']['head']}</a>
+-->
                                           </td>
                                        </tr>
                                        {end}
@@ -349,7 +354,7 @@
                                           <tr class="gradeA">
                                           	<td>Presto</td>
                                           	<td>Opera 9.0</td>
-                                          
+
                                           </tr>
                                           <tr class="gradeA">
                                           	<td>Presto</td>
@@ -467,42 +472,42 @@
                  animationHover(this, 'pulse');
              });
         });
-         
+
         function importObjects()
         {
 			var input = document.createElement('input');
 			input.type = 'file';
 			input.name = 'objects';
-			
-			input.onchange = e => 
-			{ 
+
+			input.onchange = e =>
+			{
 
 			    // getting a hold of the file reference
-			    var file = e.target.files[0]; 
+			    var file = e.target.files[0];
 
 			    // setting up the reader
 			    var reader = new FileReader();
 			    reader.readAsDataURL(file); // this is reading as data url
 
-				//~ reader.onload = function () 
+				//~ reader.onload = function ()
 				//~ {
 					//~ strEncoded = reader.result;
 					//~ console.log( window.atob( strEncoded ));
 				//~ };
-				 
-				 
+
+
 			   //~ // here we tell the reader what to do when it done reading...
-			   reader.onload = readerEvent => 
+			   reader.onload = readerEvent =>
 			   {
 					var content = readerEvent.target.result; // this is the content!
 					content = atob(content.substring(29));
 					toastr.info("Импортирую...");
-					
+
 					$.ajax({
 						url: "admin/constructor/object/import",
 						method: "POST",
 						data: { jsonData: content }
-					}).done(function(data) 
+					}).done(function(data)
 					{
 						if (data == "OK")
 						{
@@ -510,7 +515,7 @@
 							location.reload(); // window.location.reload()
 						}
 						else
-						{					
+						{
 							toastr.warning(data);
 						}
 						console.log(data);
@@ -518,7 +523,7 @@
 			   }
 
 			}
-			
+
 			input.click();
 		}
       </script>

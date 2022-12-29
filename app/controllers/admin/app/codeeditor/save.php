@@ -1,23 +1,13 @@
 <?php
 
 
-	$file = $_POST['filename'];
-	$code = $_POST['code'];
-
-
-	//~ print_r($_POST);
-
-	//~ print_r($_REQUEST);
-	
-	if (file_put_contents($file, $code))
+	if ($_POST['code'])
 	{
-		echo 'Сохранение успешно';
-		return true;
-	}
-	else
-	{
-		echo 'Не удалось сохранить файл';
-		return true;
+		echo file_put_contents($_POST['code']['filename'], $_POST['code']['body']) ? 'Сохранение успешно' : 'Не удалось сохранить файл';
 	}
 
-	
+
+	if ($_POST['config'])
+	{
+		echo file_put_contents($_POST['config']['filename'], $_POST['config']['body']) ? 'Сохранение успешно' : 'Не удалось сохранить файл';
+	}

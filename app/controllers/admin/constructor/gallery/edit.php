@@ -5,9 +5,10 @@
 	$name = $_GET['name'];
 	$content['nav']['path']['head'] = "Галерея: <b>$name</b>";
 
+	$collection = $_GET['collection'] ?? 'gallery';
 
 	//Загрузим галлерею
-	$gallery = $APP->object->collection('gallery')->get($name);
+	$gallery = $APP->object->collection($collection)->get($name);
 
 
 

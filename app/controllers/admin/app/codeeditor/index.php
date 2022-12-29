@@ -8,14 +8,16 @@
 	//Файлы, который нужно открыть
 	if (file_exists($_GET['file']))
 	{
-		$content['code'] 				= file_get_contents($_GET['file']);
-		$content['filename']['code']	= $_GET['file'];
+		$content['code']['body'] 		= file_get_contents($_GET['file']);
+		$content['code']['action'] 		= "admin/app/codeeditor/save.php";
+		$content['code']['filename']	= $_GET['file'];
 		$content['title'] 				= $_GET['file'];
 	}
 	if (file_exists($_GET['config']))
 	{
-		$content['config'] 				= file_get_contents($_GET['config']);
-		$content['filename']['config']	= $_GET['config'];
+		$content['config']['body'] 		= file_get_contents($_GET['config']);
+		$content['config']['action'] 	= "admin/app/codeeditor/save.php";
+		$content['config']['filename']	= $_GET['config'];
 		$content['title'] 				= $_GET['config'];
 	}
 

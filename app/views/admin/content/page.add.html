@@ -20,6 +20,8 @@
     <link href="../css/plugins/simpleTree/simpleTree.css" rel="stylesheet">
 	<!--Выпадающий список-->
 	<link href="../css/plugins/chosen/chosen.css" rel="stylesheet">
+	<!-- Toastr style -->
+    <link href="../css/plugins/toastr/toastr.min.css" rel="stylesheet">
     <!-- Сложное и дорогое для процессора дерево -->
 <!--
     <link href="css/plugins/jsTree/style.min.css" rel="stylesheet">
@@ -1005,10 +1007,16 @@
     <!-- Chosen -->
     <script src="../js/plugins/chosen/chosen.jquery.js"></script>
 
+    <!-- Toastr -->
+    <script src="../js/plugins/toastr/toastr.min.js"></script>
+
     <!-- CKEditor -->
     <script src="../js/plugins/ckeditor/ckeditor.js"></script>
     <script src="../js/plugins/ckeditor/ckeditor_run.js"></script>
     <script src="../js/plugins/ckeditor/style.js"></script>
+
+
+
 
     <!-- Сложное и дорогое для процессора дерево -->
 <!--
@@ -1144,7 +1152,11 @@
 			if (typeof collection == "undefined") {collection == ''; }
 			if (typeof object == "undefined") {object == ''; }
 
-			if (!object) return true;
+			if (!object)
+			{
+				toastr.info('', 'Не выбран объект');
+				return true;
+			}
 
 			window.open(`admin/content/page/openas?collection=${collection}&object=${object}&handler=${handler}`);
 		};
