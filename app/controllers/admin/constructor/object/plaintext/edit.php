@@ -12,6 +12,6 @@
 	$content['config']['action']	= "admin/constructor/object/plaintext/save?collection=$collection&object=$objectname";
 
 	//~ $content['title'] = "Редактор объекта ".$_GET['object'];
-	//~ $content['head'] = "Редактор объекта ".$_GET['object'];
+	$content['nav']['path']['head'] = "Редактор объекта [".$_GET['object']."]";
 
 	$APP->template->file('admin/app/code_editor/code_editor.html')->display($content);

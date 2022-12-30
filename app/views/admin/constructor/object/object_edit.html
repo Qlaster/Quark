@@ -15,16 +15,16 @@
          <!--Главное меню слева-->
          {require "../../~section/mainmenu.html"}
          <!--Конец меню-->
-         
+
          <div id="page-wrapper" class="gray-bg">
 			<!-- Head menu -->
 			{require "../../~section/head.html"}
-			<!-- End head menu -->   
-			
+			<!-- End head menu -->
+
 			<!-- Менюшка title-->
 			{require "../../~section/title.html"}
-			<!-- конец title-->   
-        
+			<!-- конец title-->
+
             <div class="wrapper wrapper-content  animated fadeInRight">
                <div class="row">
                   <div class="col-md-4">
@@ -46,8 +46,9 @@
                         </div>
                         <div class="ibox-content">
                            <p  class="m-b-lg">
-                              <strong>Nestable</strong> is an interactive hierarchical list. You can drag and drop to rearrange the order. It works well on touch-screens.
-                              <button type="button" class="btn btn-block btn-white" onclick='objects_tree_add_item_blank()'>Добавить элемент</button>
+								<button type="button" class="btn btn-block btn-white" onclick='objects_tree_add_item_blank()'>Добавить элемент</button>
+								<strong>Описание:</strong> Для изменения порядка, элементы можно перетаскивать.
+								<hr>
                            </p>
                            <div class="dd" id="nestable" >
                               <ol class="dd-list" id='nestable-ol'>
@@ -97,7 +98,7 @@
                      <div class="ibox ">
                         <div class="ibox-title">
                            <h5>Свойства элемента</h5>
-                           <a onclick="save_object('admin/constructor/object/set?collection='+encodeURIComponent(collection)+'&objectname='+encodeURIComponent(objectname) )" class="btn btn-primary btn-xs pull-right">Сохранить</a>                           
+                           <a onclick="save_object('admin/constructor/object/set?collection='+encodeURIComponent(collection)+'&objectname='+encodeURIComponent(objectname) )" class="btn btn-primary btn-xs pull-right">Сохранить</a>
                         </div>
                         <div class="ibox-content">
                            <!--
@@ -109,14 +110,14 @@
                               <strong>Nestable</strong> is an interactive hierarchical list. You can drag and drop to rearrange the order. It works well on touch-screens.
                               -->
                            <!--
-                              <button type="button" class="btn btn-block btn-white" onclick="object_table_additem('object_info')">Добавить свойство</button>								
+                              <button type="button" class="btn btn-block btn-white" onclick="object_table_additem('object_info')">Добавить свойство</button>
                               -->
                            <div class="m-b-sm">
-                              <button type="button" class="btn btn-success btn-sm" onclick="object_table_additem('object_info')">Добавить свойство</button>	
-                              <div class="pull-right">							
+                              <button type="button" class="btn btn-success btn-sm" onclick="object_table_additem('object_info')">Добавить свойство</button>
+                              <div class="pull-right">
                                  <button type="button" class="btn btn-success btn-sm btn-outline" onclick="object_table_additem('object_info', 'head')">Заголовок</button>
                                  <button type="button" class="btn btn-success btn-sm btn-outline" onclick="object_table_additem('object_info', 'link')">Ссылка</button>
-                                 <button type="button" class="btn btn-success btn-sm btn-outline" onclick="object_table_additem('object_info', 'icon')">Иконка</button>										
+                                 <button type="button" class="btn btn-success btn-sm btn-outline" onclick="object_table_additem('object_info', 'icon')">Иконка</button>
                                  <button type="button" class="btn btn-success btn-sm btn-outline" onclick="object_table_additem('object_info', 'info')">Описание</button>
                                  <button type="button" class="btn btn-success btn-sm btn-outline" onclick="object_table_additem('object_info', 'text')">Текст</button>
                                  <button type="button" class="btn btn-success btn-sm btn-outline" onclick="object_table_additem('object_info', 'image')">Картинка</button>
@@ -191,7 +192,7 @@
       <script>
          function tree_inicial()
          {
-         	var updateOutput = function (e) 
+         	var updateOutput = function (e)
          	{
                         var list = e.length ? e : $(e.target),
                                 output = list.data('output');
@@ -206,17 +207,17 @@
          		{
          			group: 1
          		}).on('change', updateOutput);
-         
+
                     // activate Nestable for list 2
                     //~ $('#nestable2').nestable({
                         //~ group: 1
                     //~ }).on('change', updateOutput);
-         
+
                     // output initial serialised data
                     updateOutput($('#nestable').data('output', $('#nestable-output')));
                     //~ updateOutput($('#nestable2').data('output', $('#nestable2-output')));
-         
-                   $('#nestable-menu').on('click', function (e) 
+
+                   $('#nestable-menu').on('click', function (e)
          	{
                         var target = $(e.target),
                                 action = target.data('action');
@@ -228,107 +229,107 @@
                         }
          	});
          }
-         
+
                $(document).ready(tree_inicial());
-                    
-                    
+
+
                    //~ $('#object_info').on('click', function(e)
          	//~ {
          		//~ var object = [];
          		//~ object.push(object_test_tree_create());
-         		
+
          		//~ var html_div_id = document.getElementById('nestable');
          		//~ objects_tree_clear(html_div_id);
          		//~ objects_tree_paint(html_div_id, object);
-         		
+
          		//~ var object = object_test_create();
          		//~ objects_table_paint('object_info', object);
          		//~ objects_table_getting('object_info');
          		//~ tree_inicial();
          	//~ });
-           
-           
-           
+
+
+
          //Получаем и десериализуем параметры адресной строки
          var get = parseGetParams();
          var collection;
          var objectname;
          if ( get['collection'] != '')	collection	= decodeURIComponent(get['collection']);
          if ( get['object'] != '') 		objectname	= decodeURIComponent(get['object']);
-         
+
          //Получаем текущий url
          var url = document.getElementById('urlbase').innerHTML;
-         
+
          //Запрашиваем объектик с сервера
          var jsonobj = url_get(window.location.pathname+'/../get?collection='+encodeURIComponent(get['collection'])+'&object='+encodeURIComponent(get['object']));
-         
-         
-         
-         
+
+
+
+
          //Распарсим его
          var object = [];
-         object['root'] = JSON.parse(jsonobj);		
-         //~ object['root'] = JSON.stringify(jsonobj);		
+         object['root'] = JSON.parse(jsonobj);
+         //~ object['root'] = JSON.stringify(jsonobj);
          //~ object['root'] = JSON.parse(jsonobj);
-         
-         
-         
+
+
+
          console.log(object);
          //Получаем выбираем место отрисовки
          var html_div_id = document.getElementById('nestable');
          objects_tree_clear(html_div_id);
          objects_tree_paint(html_div_id, object);
-         
-         
-         
+
+
+
          function save_object(actionurl)
          {
          	//Запросим список
          	var html_div_id = document.getElementById('nestable');
          	//Соберем отредактированное дерево
-         	//~ var object = object_tree_compilation(html_div_id);			
-         	
+         	//~ var object = object_tree_compilation(html_div_id);
+
          	//Соберем  дерево в json
-         	var objson = json_tree_compilation(html_div_id);			
-         	
+         	var objson = json_tree_compilation(html_div_id);
+
          	//~ console.log(objson);
-         	
+
          	//~ console.log(JSON.parse(objson));
          	 //~ return;
-         	
+
          	//Сериализуем
          	//~ var serialize = jsObj2phpObj(object['root']);
-         	
+
          	//Удалим корневую структуру ROOT
          	var serialize = objson.slice(8, -1);
-         				
+
          	console.log(serialize);
          	//~ return;
-         				
+
          	//~ alert(actionurl);
          	actionurl = encodeURI(actionurl);
          	//Отправим на сервер
          	$.ajax({
          			url: actionurl,
-         			type: 'post',													
+         			type: 'post',
          			data: {object: serialize},
-         			success: function(data) 
-         			{					
+         			success: function(data)
+         			{
          				console.log(data);
-         				//~ location.reload();	
+         				//~ location.reload();
          			},
          			error:  function(xhr, str)
          			{
          				alert('Возникла ошибка: ' + xhr.responseCode);
          			}
-         	});		
-         	
-         	
+         	});
+
+
          }
-         
-         
+
+
          //~ alert(get['object']);
-           
+
       </script>
    </body>
 </html>
