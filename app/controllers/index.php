@@ -7,10 +7,12 @@
 		$page = $APP->page->get($url);
 
 	//Если не нашли такой страницы - подгрузим заглушку
-	if ($page === null)
+	if (($page === null) or (!$page['public']))
 	{
-		http_response_code(404);
-		$page = $APP->page->get('error:404');
+		$errorController = $APP->route->match('404', ['error'])[0];
+		if (!isset($errorController))
+			throw new ErrorException("Quark: Error controller '$errorController' not found", 500);
+		$APP->controller->run($errorController, ['APP'=>$APP]);
 	}
 
 	//Страница существует?
@@ -61,12 +63,5 @@
 		//выводим используя встроенный шаблонизатор
 		$APP->template->file($page['html'])->display($content);
 	}
-	else
-	{
-		//Нет, страницы не нашли
-		$content = array();
-		http_response_code(404);
-	}
-
 
 
