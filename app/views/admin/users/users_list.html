@@ -12,7 +12,7 @@
 
     <link href="../css/animate.css" rel="stylesheet">
     <link href="../css/style.css" rel="stylesheet">
-	<base href="{$$base}">	
+	<base href="{$$base}">
 </head>
 
 <body>
@@ -22,17 +22,17 @@
 		<!--Главное меню слева-->
 		{require "../~section/mainmenu.html"}
 		<!--Конец меню-->
-        
+
 
         <div id="page-wrapper" class="gray-bg">
-			
+
 		<!-- Head menu -->
 		{section "../~section/head.html"}
-		<!-- End head menu --> 
-		
+		<!-- End head menu -->
+
 <!--
-        
-        
+
+
             <div class="row wrapper border-bottom white-bg page-heading">
                 <div class="col-lg-9">
                     <h2>Пользователи</h2>
@@ -50,22 +50,22 @@
                 </div>
             </div>
 -->
-            
+
 		<!-- Title menu-->
 		{require "../~section/title.html"}
-		<!-- End title menu -->   
-            
-            
-            
+		<!-- End title menu -->
+
+
+
         <div class="wrapper wrapper-content animated fadeInRight">
-			
+
 		<div class="row">
             <div class="col-lg-12">
-                <div class="ibox float-e-margins">					
+                <div class="ibox float-e-margins">
                     <div class="ibox-content text-center">
 						<h2></h2>
 						<a href='admin/options/users/edit'>
-							<button type="button" class="btn btn-outline btn-success" >Add new user</button>						
+							<button type="button" class="btn btn-outline btn-success" >Add new user</button>
 						</a>
 <!--
 						<button type="button" class="btn btn-block btn-outline btn-success">Add user</button>
@@ -82,50 +82,55 @@
                 </div>
             </div>
         </div>
-            	
-			
-        <div class="row">			
+
+
+        <div class="row">
 			{foreach $catalog['users']['list'] as $_login => $_user}
-            <div class="col-lg-4">				
+            <div class="col-lg-4">
                 <div class="contact-box">
                     <a href="{$_user['link']}">
 						<div class="col-sm-4">
 							<div class="text-center">
-								{if $_user['logo']}									
+								{if $_user['logo']}
 									<img width="100px" class="img-circle m-t-xs img-responsive" src="{$_user['logo']}">
-								{else}   
+								{else}
 									<img width="100px" class="img-circle m-t-xs img-responsive" src="~/../img/avatars/profile1.png">
 								{end}
 								<div class="m-t-xs font-bold">{$_user['login']}</div>
-								<div class="m-t-xs"> 
+								<div class="m-t-xs">
 									{if $_user['disable']}
-										<span class="label">Disable</span>								
+										<span class="label">Disable</span>
 									{else}
 										<span class="label label-primary">Active</span>
 									{end}
-								</div>	
+								</div>
 							</div>
 						</div>
 						<div class="col-sm-8">
 							<h3><strong>{$_user['name']}</strong>&nbsp;</h3>
-							<p><i class="fa fa-map-marker"></i> Riviera State 32/106</p>
 							<p>
-	<!--
+								<i class="fa fa-edit"></i> <strong>Описание:</strong>
+							</p>
+							<p>{$_user['info']}</p>
+<!--
+							<p>
 								<span class="badge">Plain</span>
 								<span class="label label-primary">Primary</span>
 								<span class="badge badge-primary">Primary</span>
 								<span class="label">Plain</span>
 								<span class="label label-success">Success</span>
 								<span class="badge badge-success">Success</span>
-	-->
 							</p>
-							
+-->
+
+<!--
 							<address>
 								<strong>Опция </strong> Значение<br>
 								<strong>Опция </strong> Значение<br>
 								<strong>Опция </strong> Значение<br>
 								<abbr title="Phone">P:</abbr> (123) 456-7890
 							</address>
+-->
 						</div>
 
 						<div class="clearfix"></div>
@@ -133,7 +138,7 @@
                 </div>
             </div>
             {end}
-            
+
 <!--
             <div class="col-lg-4">
                 <div class="contact-box">
