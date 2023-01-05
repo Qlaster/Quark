@@ -44,19 +44,25 @@
 	class CMSUser implements QAdminUserInterface
 	{
 		private $dba_interface;
+		private $config_interface;
 		public $config;
 
-		public function __construct($dba_interface, $config=null)
+		public function __construct($dba_interface, $config_interface=null)
 		{
 			//Берем интерейс nosql базы данных
-			$this->dba_interface = $dba_interface;
+			$this->dba_interface    = $dba_interface;
+			$this->config_interface = $config_interface;
+
+
 			//Устанавливаем дефолтный конфиг
 			$this->config['database'] = 'users.dba';
 			$this->config['default_user']['name'] = 'Root user';
 			$this->config['default_user']['login'] = 'admin';
 			$this->config['default_user']['password'] = 'admin';
 
-			if ($config) $this->config = $config;
+			if ($config) $this->config = $this->config_interface->get(__file__);
+			$this->presets = new CmsUserPreset($this->config_interface);
+
 
 			if (!$this->exists($config['default_user']['login']))
 				$this->create_default();
@@ -357,9 +363,33 @@
 
 	}
 
+	class CmsUserPreset
+	{
+		private $config_interface;
+
+		public function __construct($config_interface=null)
+		{
+			$this->config_interface = $config_interface;
+		}
+
+		function get()
+		{
+			return $this->config_interface->get()['presets'];
+		}
+
+		function set($presets)
+		{
+			//Загрузим конфиг
+			$config = $this->config_interface->get();
+			$config['presets'] = $presets;
+			$this->config_interface->set($config);
+		}
+	}
+
+
 
 	# ---------------------------------------------------------------- #
 	# --------------[ СОЗДАЕМ И ПОДКЛЮЧАЕМ ИНТЕРФЕЙС ]---------------- #
 	# ---------------------------------------------------------------- #
 
-	return new CMSUser($this->dba, $this->config->get(__file__));
+	return new CMSUser($this->dba, $this->config);
