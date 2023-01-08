@@ -53,18 +53,17 @@
 			$this->dba_interface    = $dba_interface;
 			$this->config_interface = $config_interface;
 
-
 			//Устанавливаем дефолтный конфиг
 			$this->config['database'] = 'users.dba';
 			$this->config['default_user']['name'] = 'Root user';
 			$this->config['default_user']['login'] = 'admin';
 			$this->config['default_user']['password'] = 'admin';
 
-			if ($config) $this->config = $this->config_interface->get(__file__);
+			$this->config = array_replace_recursive($this->config, $this->config_interface->get(__file__));
 			$this->presets = new CmsUserPreset($this->config_interface);
 
 
-			if (!$this->exists($config['default_user']['login']))
+			if (!$this->exists($this->config['default_user']['login']))
 				$this->create_default();
 			if (! session_id()) session_start();
 		}
@@ -372,17 +371,25 @@
 			$this->config_interface = $config_interface;
 		}
 
-		function get()
+		function get($name=null)
 		{
-			return $this->config_interface->get()['presets'];
+			$presets = $this->config_interface->get()['presets'];
+			foreach ($presets as &$value)
+				$value = json_decode($value, true);
+
+			return $presets;
+			//~ return $name ? $this->config_interface->get()['presets'][$name] : $this->config_interface->get()['presets'];
 		}
 
 		function set($presets)
 		{
 			//Загрузим конфиг
 			$config = $this->config_interface->get();
-			$config['presets'] = $presets;
-			$this->config_interface->set($config);
+			foreach ($presets as $key => $value)
+				$config['presets'][$key] = json_encode($value);
+
+
+			return $this->config_interface->set($config);
 		}
 	}
 

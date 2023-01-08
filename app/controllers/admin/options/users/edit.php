@@ -45,6 +45,13 @@
 	//~ $content['user']['denied'] = $result;
 	$content['denied'] = $result;
 
+
+	//Пресеты настроек
+	foreach ((array) $APP->user->presets->get() as $name => $rules)
+	{
+		$content['presets'][$name] = ['head'=>$name, 'rules'=>$rules];
+	}
+
 	$APP->template->file('admin/users/users_edit.html')->display($content);
 
 

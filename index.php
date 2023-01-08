@@ -58,10 +58,10 @@
 			}
 		}
 	}
-	catch (Error $e)
+	catch (Error $error)
 	{
-		$errorController = $APP->route->match('500', ['error']);
-		$APP->controller->run($errorController[0], ['APP'=>$APP]);
+		$errorController = $APP->route->match('500', ['error'])[0];
+		$APP->controller->run($errorController, ['APP'=>$APP, 'error'=>$error]);
 	}
 
 	//~ echo "<!---".$APP->utils->runtime()."-->";

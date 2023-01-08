@@ -12,15 +12,18 @@
     <link href="../font-awesome/css/font-awesome.css" rel="stylesheet">
     <link href="../css/animate.css" rel="stylesheet">
     <link href="../css/style.css" rel="stylesheet">
-    
+    <!-- Toastr style -->
+	<link href="../css/plugins/toastr/toastr.min.css" rel="stylesheet">
     <link href="../css/plugins/iCheck/custom.css" rel="stylesheet">
     <link href="../css/plugins/input-file/component.css" rel="stylesheet">
+<!--
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
-	
+-->
+
 <!--
 	<script>(function(e,t,n){var r=e.querySelectorAll("html")[0];r.className=r.className.replace(/(^|\s)no-js(\s|$)/,"$1js$2")})(document,window,0);</script>
 -->
-	<base href="{$$base}">	
+	<base href="{$$base}">
 </head>
 
 <body>
@@ -31,17 +34,17 @@
 		<!--Конец меню-->
 
         <div id="page-wrapper" class="gray-bg">
-		
+
 		<!-- Head menu -->
 		{section "../~section/head.html"}
-		<!-- End head menu --> 
-			
+		<!-- End head menu -->
+
 		<!-- Title menu-->
 		{require "../~section/title.html"}
-		<!-- End title menu -->   
-            
-            
-        <form enctype="multipart/form-data" method='post' action='admin/options/users/save'>    
+		<!-- End title menu -->
+
+
+        <form enctype="multipart/form-data" id="form-edit" method='post' action='admin/options/users/save'>
         <div class="wrapper wrapper-content">
             <div class="row animated fadeInRight">
                 <div class="col-md-3">
@@ -49,9 +52,9 @@
                         <div class="ibox-title">
                             <h5>Профиль пользователя</h5>
                         </div>
-                        
+
 								<!--LOGO--->
-								<div class="ibox-content no-padding border-left-right">  
+								<div class="ibox-content no-padding border-left-right">
 <!--
                                 <img alt="image" class="img-responsive" src="../img/profile_big.jpg">
 -->
@@ -78,44 +81,44 @@
 												<input type="file" name="file-1[]" id="file-1" class="inputfile1" data-multiple-caption="{count} files selected" multiple />
 -->
 												<label for="file-1" class="btn btn-blockbtn btn-outline btn-default"> <span>Load new avatar&hellip;</span></label>
-												
+
 <!--
 												<input type="file" name="f" id='file' class="inputfile">
 												<svg xmlns="http://www.w3.org/2000/svg" width="20" height="17" viewBox="0 0 20 17"><path d="M10 0l-5.2 4.9h3.3v5.1h3.8v-5.1h3.3l-5.2-4.9zm9.3 11.5l-3.2-2.1h-2l3.4 2.6h-3.5c-.1 0-.2.1-.2.1l-.8 2.3h-6l-.8-2.2c-.1-.1-.1-.2-.2-.2h-3.6l3.4-2.6h-2l-3.2 2.1c-.4.3-.7 1-.6 1.5l.6 3.1c.1.5.7.9 1.2.9h16.3c.6 0 1.1-.4 1.3-.9l.6-3.1c.1-.5-.2-1.2-.7-1.5z"/></svg>
 -->
 											</div>
 										</div>
-										<!--END LOGO-->  
-										
-										
-										
-										
-										
-										
-										
+										<!--END LOGO-->
+
+
+
+
+
+
+
 										<div class="ibox-content profile-content">
 											<h4 class="media-heading">Описание</h4>
 											<textarea style="width:100%;" class="form-control" name="info" placeholder="Введите описание для этого пользователя">{$user['info']}</textarea>
 										</div>
-               
+
                             </div>
-                            
-                            
+
+
                             <div class="widget-text-box">
                                 <h4><strong>Информация</strong></h4>
-                             
+
 								<div class="form-horizontal">
 <!--
 									<p>Sign in today for more expirience.</p>
 -->
 
-		
+
 									<div class="form-group">
 										<div class="col-lg-12">
-											{if $user['login'] == ''}					
+											{if $user['login'] == ''}
 											<div class="has-success">
 												<span class="help-block m-b-none">Enter login new user</span>
-												<input type="text" placeholder="Login" class="form-control" name="login" required> 
+												<input type="text" placeholder="Login" class="form-control" name="login" required>
 												<p></p>
 											</div>
 											{end}
@@ -129,11 +132,11 @@
 											<p></p>
 											<p>Advansed information</p>
 											<span class="help-block m-b-none"></span>
-											<input type="text" placeholder="name" class="form-control" name="name" value="{$user['name']}"> 
-											
+											<input type="text" placeholder="name" class="form-control" name="name" value="{$user['name']}">
+
 											<span class="help-block m-b-none"></span>
-											<input type="email" placeholder="Email" class="form-control" name="mail" value="{$user['email']}"> 
-											
+											<input type="email" placeholder="Email" class="form-control" name="mail" value="{$user['email']}">
+
 											<span class="help-block m-b-none"></span>
 
 <!--
@@ -141,7 +144,7 @@
 -->
 										</div>
 									</div>
-									
+
 									<div class="form-group">
 										<div class="col-lg-12">
 											<h4><strong>Group</strong></h4>
@@ -159,15 +162,15 @@
 											</p>
 										</div>
 									</div>
-									
-									
+
+
 									<div class="form-group">
 										<div class="col-lg-offset-2 col-lg-10">
 											<div class="checkbox i-checks">
 												{if $user['disable']}
 													<label> <input type="checkbox" name="disable" checked value="true"><i></i> Disable profile </label>
 												{else}
-													<label> <input type="checkbox" name="disable" ><i></i> Disable profile </label>													
+													<label> <input type="checkbox" name="disable" ><i></i> Disable profile </label>
 												{end}
 												<label></label>
 											</div>
@@ -182,9 +185,9 @@
 									</div>
 -->
 								</div>
-								
-                                
-                                
+
+
+
 <!--
                                 <p><i class="fa fa-map-marker"></i> Riviera State 32/106</p>
                                 <h5>
@@ -195,7 +198,7 @@
                                 </p>
 -->
 <!--
-                                
+
                                 <div class="row m-t-lg">
                                     <div class="col-md-4">
                                         <span class="bar">5,3,9,6,5,9,7,3,5,2</span>
@@ -211,7 +214,7 @@
                                     </div>
                                 </div>
 -->
-                                
+
                                 <div class="user-button">
                                     <div class="row">
 										{if $user['login'] != ''}
@@ -220,11 +223,11 @@
 										</div>
 										<div class="col-md-7">
 											<button type="submit" class="btn btn-primary  btn-block"><i class="fa fa-file-text"></i> Save </button>
-										</div>	
+										</div>
 										{else}
 											<button type="submit" class="btn btn-primary  btn-block"><i class="fa fa-file-text"></i> Create profile </button>
 										{end}
-		
+
 										<!--Modal window-->
 										<div class="modal inmodal" id="DelModalWindow" tabindex="-1" role="dialog" aria-hidden="true">
 						                    <div class="modal-dialog">
@@ -257,7 +260,7 @@
                                     </div>
                                 </div>
                             </div>
-						
+
 					</div>
                </div>
 
@@ -265,19 +268,24 @@
                     <div class="ibox float-e-margins">
                         <div class="ibox-title">
                             <h5>Список запрещенных методов</h5>
-                            <div class="ibox-tools">
+                            <div class="ibox-tools mr-2">
+
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                    <i class="fa fa-list"></i> Пресеты
+                                </a>
+                                <ul class="dropdown-menu dropdown-user">
+									<li><a onclick="presetSave()"><b>Сохранить текущий</b></a></li>
+									<li><hr style="margin:0"></li>
+
+									{foreach $presets as $_preset}
+										<li><a onclick="presetApply('{$_preset['head']}')">{$_preset['head']}</a></li>
+                                    {end}
+                                </ul>
+
                                 <a class="collapse-link">
                                     <i class="fa fa-chevron-up"></i>
                                 </a>
-                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                                    <i class="fa fa-wrench"></i>
-                                </a>
-                                <ul class="dropdown-menu dropdown-user">
-                                    <li><a href="#">Config option 1</a>
-                                    </li>
-                                    <li><a href="#">Config option 2</a>
-                                    </li>
-                                </ul>
+
                                 <a class="close-link">
                                     <i class="fa fa-times"></i>
                                 </a>
@@ -285,16 +293,16 @@
                         </div>
                         <div class="ibox-content">
 						<!--ACCESS LIST-->
-						<div>						
+						<div>
 <!--
 									<div class="feed-element">
 										<div class="form-group">
-											<label class="col-sm-4 control-label"> 
+											<label class="col-sm-4 control-label">
 												 admin / options / page
 											</label>
-											<div class="col-sm-7">												
+											<div class="col-sm-7">
 												<label class="checkbox-inline i-checks"><div class="icheckbox_square-green" style="position: relative;"><input type="checkbox" value="option1" style="position: absolute; opacity: 0;"></div> edit </label>
-												<label class="checkbox-inline i-checks"><div class="icheckbox_square-green" style="position: relative;"><input type="checkbox" value="option2" style="position: absolute; opacity: 0;"></div> page </label> 
+												<label class="checkbox-inline i-checks"><div class="icheckbox_square-green" style="position: relative;"><input type="checkbox" value="option2" style="position: absolute; opacity: 0;"></div> page </label>
 												<label class="checkbox-inline i-checks"><div class="icheckbox_square-green" style="position: relative;"><input type="checkbox" value="option3" style="position: absolute; opacity: 0;"></div> list </label>
 												<label class="checkbox-inline i-checks"><div class="icheckbox_square-green" style="position: relative;"><input type="checkbox" value="option3" style="position: absolute; opacity: 0;"></div> index </label>
 											</div>
@@ -302,13 +310,13 @@
 									</div>
 -->
 									<!-- {= print_r($user['denied'])} -->
-									
+
 									{foreach $denied as $_gname => $_group}
 										<div class="feed-element">
 											<div class="form-group">
-												<label class="col-sm-4 control-label"> 
+												<label class="col-sm-4 control-label">
 													 <i class="fa fa-circle text-navy"></i> <label class="text-navy">{echo end(explode('/', $_gname))}</label>
-													 <div class="pull-right"> 
+													 <div class="pull-right">
 														<a class="btn btn-white btn-xs" onclick='$(".{= md5($_gname)}").prop("checked", false)'> <i class="fa fa-check-circle" ></i> </a>
 														<a class="btn btn-white btn-xs" onclick='$(".{= md5($_gname)}").prop("checked", true)'> <i class="fa fa-times-circle" ></i> </a>
 													 </div>
@@ -317,28 +325,28 @@
 <!--
 													 {$$_gname_decor = substr_replace($_gname, '/ <span class="label label-default">', strrpos($_gname, '/'), 1)."</span>" }
 -->
-				
+
 <!--
 													 {$$_gname_decor = substr_replace($_gname, '/<label class="btn btn-white btn-sm"> ', strrpos($_gname, '/'), 1)."</label>" }
 -->
-													 <br>		
+													 <br>
 
 <!--
 													 <a class="btn btn-white btn-xs" data-toggle="tooltip" data-placement="top" title="" data-original-title="Reply"><i class="fa fa-check-square-o"></i> Все</a>
 													 <a class="btn btn-white btn-xs" data-toggle="tooltip" data-placement="top" title="" data-original-title="Reply"><i class="fa fa-square-o"></i> Очистить</a>
 -->
 												</label>
-												<div class="col-sm-8 p-0">		
+												<div class="col-sm-8 p-0">
 													{foreach $_group as $_cntr}
 <!--
 														<div class="col-md-4">
 -->
 															<div class="col-md-4">
 																<div class="checkbox" >
-																	<input id="checkInfo-{= ++$_i}" type="checkbox" name="denied[{$_cntr['fullname']}]" {if $_cntr['denied']} checked {end}  data-info="{$_cntr['fullname']}" value="action" class="{= md5($_gname)} !input-mini" />
+																	<input id="checkInfo-{= ++$_i}" type="checkbox" name="denied[{$_cntr['fullname']}]" {if $_cntr['denied']} checked {end}  data-info="{$_cntr['fullname']}" value="action" class="{= md5($_gname)} denied-checkbox !input-mini" />
 																	<label for="checkInfo-{$_i}"><span style="font-size:15px">{$_cntr['filename']}</span></label>
 																</div>
-							  
+
 <!--
 																<div class="checkbox" >
 																	<label class="checkbox" for="checkInfo-{= ++$_i}">
@@ -347,8 +355,8 @@
 																</div>
 -->
 															</div>
-															
-															
+
+
 <!--
 															<label class="!checkbox-inline !i-checks"><div class="!icheckbox_square-green" style="position: relative;"><input type="checkbox" class="{= md5($_gname)} checkbox_square-green" name="{$_cntr['fullname']}" value="action" style="position: absolute; !opacity: 0;"></div>  {$_cntr['filename']} </label>
 -->
@@ -357,18 +365,18 @@
 -->
 													{end}
 <!--
-													<label class="checkbox-inline i-checks"><div class="icheckbox_square-green" style="position: relative;"><input type="checkbox" value="option2" style="position: absolute; opacity: 0;"></div> page </label> 
+													<label class="checkbox-inline i-checks"><div class="icheckbox_square-green" style="position: relative;"><input type="checkbox" value="option2" style="position: absolute; opacity: 0;"></div> page </label>
 													<label class="checkbox-inline i-checks"><div class="icheckbox_square-green" style="position: relative;"><input type="checkbox" value="option3" style="position: absolute; opacity: 0;"></div> list </label>
 													<label class="checkbox-inline i-checks"><div class="icheckbox_square-green" style="position: relative;"><input type="checkbox" value="option3" style="position: absolute; opacity: 0;"></div> index </label>
 -->
 												</div>
 											</div>
 										</div>
-																				
-										<div class="hr-line-dashed"></div>										
+
+										<div class="hr-line-dashed"></div>
 									{end}
-									
-									
+
+
 						</div>
 
                         </div>
@@ -378,7 +386,7 @@
             </div>
         </div>
         </form>
-        
+
             <!-- Footer block -->
             {require "../~section/footer.html"}
             <!-- End Footer block -->
@@ -388,42 +396,42 @@
         </div>
 
 
-				
+
 	<style>
 		/*** custom checkboxes ***/
 
 		input[type=checkbox] { display:none; } /* to hide the checkbox itself */
-		input[type=checkbox] + label:before 
+		input[type=checkbox] + label:before
 		{
 		  font-family: FontAwesome;
 		  font-size:1.5em;
 		  display: inline-block;
 		}
-		
+
 		/* unchecked icon */
-		input[type=checkbox] + label:before 
+		input[type=checkbox] + label:before
 		{
 			content: "\f058";
 			color:#18a689;
-			letter-spacing: 5px; 
-		} 
-		
+			letter-spacing: 5px;
+		}
+
 		/* checked icon */
-		input[type=checkbox]:checked + label:before 
+		input[type=checkbox]:checked + label:before
 		{
-			content: "\f057"; 
-			letter-spacing: 5px;  
+			content: "\f057";
+			letter-spacing: 5px;
 			color:#ed5565;
-		} 
-		
-		
-		input[type=checkbox] + label:before >  span:before 
+		}
+
+
+		input[type=checkbox] + label:before >  span:before
 		{
 			content: "\f058";
 			color:#0000FF;
-			letter-spacing: 5px; 
-		} 
-		
+			letter-spacing: 5px;
+		}
+
 
 	</style>
 
@@ -442,8 +450,10 @@
 
     <!-- Peity -->
     <script src="../js/demo/peity-demo.js"></script>
-    
-    
+
+    <!-- Toastr script -->
+    <script src="../js/plugins/toastr/toastr.min.js"></script>
+
     <!-- iCheck -->
     <script src="../js/plugins/iCheck/icheck.min.js"></script>
         <script>
@@ -453,10 +463,53 @@
                     radioClass: 'iradio_square-green',
                 });
             });
+
+            function presetSave()
+			{
+				var newname = prompt('Введите название пресета', '');
+				if (newname == null) return false;
+				$.ajax({
+					type: 'POST',
+						url: "admin/options/users/presets/set?name="+newname, // Обработчик
+						data: $("#form-edit").serialize(),
+						success: function(data)
+						{
+							toastr.success(data);
+						},
+						error:  function(data)
+						{
+							toastr.warning(data);
+						}
+				});
+
+			}
+
+			function presetApply(name)
+			{
+				$.ajax({
+					type: 'POST',
+						url: "admin/options/users/presets/get?name="+name, // Обработчик
+						success: function(data)
+						{
+							$('.denied-checkbox').prop("checked", false);
+							for (var key in data)
+							{
+								$('[data-info="'+key+'"]').prop("checked", true);
+							}
+
+							toastr.success('Готово');
+						},
+						error:  function(data)
+						{
+							toastr.warning('Возникла ошибка применения пресета');
+						}
+				});
+			}
+
         </script>
-        
-        
-    <!--Input file-->    
+
+
+    <!--Input file-->
     <script src="../js/plugins/input-file/custom-file-input.js"></script>
 
 </body>
