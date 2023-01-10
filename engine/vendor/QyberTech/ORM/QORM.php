@@ -476,9 +476,23 @@
 			//Приклеиваем двоеточие ко всем ключам массива
 			foreach ($record as $key => &$value)
 			{
-				//Прописываем колонки
-				$columns[] = "\"$key\" = ?";
-				if ($value == 'NULL') $value = null;
+				if (is_array($value))
+				{
+					foreach ($value as $_arrkey => &$_arrvalue)
+					{
+						if (is_string($_arrvalue) and ($_arrvalue != 'NULL'))  $_arrvalue = "'".str_replace("'", "''", $_arrvalue)."'";
+						$arrelements[] = $_arrvalue;
+					}
+					$arrelements = implode(',', $arrelements);
+					$columns[] = "\"$key\" = '{{$arrelements}}'";
+					unset($record[$key]);
+				}
+				else
+				{
+					//Прописываем колонки
+					$columns[] = "\"$key\" = ?";
+					if ($value == 'NULL') $value = null;
+				}
 			}
 			$columns = implode(', ', $columns);
 
