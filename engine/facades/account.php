@@ -303,7 +303,7 @@
 		public function get($login)
 		{
 			if ($login)
-				return $this->db()->where('login = ?', mb_strtolower($login))->select('login')[0];
+				return $this->db()->where('login = ?', mb_strtolower($login))->select()[0];
 		}
 
 
