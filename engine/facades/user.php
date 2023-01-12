@@ -65,7 +65,7 @@
 
 			if (!$this->exists($this->config['default_user']['login']))
 				$this->create_default();
-			if (! session_id()) session_start();
+			//~ if (! session_id()) session_start();
 		}
 
 		// Возвращает указатель на интерфейс упрвления базой данных
@@ -295,6 +295,14 @@
 		 */
 		public function	logged()
 		{
+			//альтернативный метод получения user id через сессию
+			//Суть кода - если сессия активна - берем её id. А если нет - то генерируем с помощью неё id и уничтождаем, как и было до этого.
+			if (! $session = session_id())
+			{
+				session_start();
+				session_destroy();
+			}
+
 			if (!isset($_SESSION['cms_login']) or (!isset($_SESSION['cms_password']))) return false;
 
 			$user = $this->get($_SESSION['cms_login']);
@@ -373,7 +381,7 @@
 
 		function get($name=null)
 		{
-			$presets = $this->config_interface->get()['presets'];
+			$presets = (array) $this->config_interface->get()['presets'];
 			foreach ($presets as &$value)
 				$value = json_decode($value, true);
 
@@ -384,7 +392,7 @@
 		function set($presets)
 		{
 			//Загрузим конфиг
-			$config = $this->config_interface->get();
+			$config = (array) $this->config_interface->get();
 			foreach ($presets as $key => $value)
 				$config['presets'][$key] = json_encode($value);
 
