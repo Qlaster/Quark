@@ -57,7 +57,7 @@
 			//Переменные
 			$this->config['variable']['$$']		['open']	= '<?php echo ($';
 			$this->config['variable']['$$']		['close']	= ');?>';
-			$this->config['variable']['$']		['open']	= '<?php echo (htmlspecialchars($';
+			$this->config['variable']['$']		['open']	= '<?php echo (htmlspecialchars((string) $';
 			$this->config['variable']['$']		['close']	= '));?>';
 
 

@@ -5,7 +5,7 @@
 	#               Инициализация переменных окружения                 #
 	# ---------------------------------------------------------------- #
     $_ENV = array_merge($_ENV, parse_ini_file(".env", true));
-
+	$_SESSION[1] = 1;
 
 	# ---------------------------------------------------------------- #
 	#             Объявление автозагрузки (стандарт PSR4)              #
@@ -22,11 +22,13 @@
 	//~ $APP = new APP('engine/core', ['app'=>'engine/facades', 'models'=>'app/models'], 'engine/vendor');
 	$APP = new APP($_ENV['core']['path'], $_ENV['facades'], $_ENV['vendor']);
 	//Загрузим переменные окружения
-	$APP->config->loadENV('.env', 'app/.env');
+	$APP->config->loadENV(['.env', 'app/.env']);
 	//Записываем визит (регистрируется вызов после завершения работы app)
-	$APP->visits->push($APP->user->logged()['login']);
 
-
+	//~ $APP->visits->push($APP->user->logged()['login']);
+	//~ $APP->visits->push();
+	$APP->user->logged()['login'];
+	var_dump($_SESSION);
 	# ---------------------------------------------------------------- #
 	#            Обработка псевдонимов адресов страниц                 #
 	# ---------------------------------------------------------------- #
