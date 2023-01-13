@@ -39,6 +39,7 @@
 
 		public function match($url, array $sections=['hook', 'route'])
 		{
+			$result = [];
 			foreach ($sections as $section)
 				foreach ((array) $this->config[$section] as $pattern => $record)
 					if (fnmatch($pattern, $url))
@@ -50,7 +51,7 @@
 						}
 						$result[] = $record[0]=='>' ? ltrim($record, '> ').$url : $record;
 					}
-			return (array) $result;
+			return $result;
 		}
 	}
 
