@@ -277,7 +277,7 @@
 									<li><a onclick="presetSave()"><b>Сохранить текущий</b></a></li>
 									<li><hr style="margin:0"></li>
 
-									{foreach $presets as $_preset}
+									{foreach (array) $presets as $_preset}
 										<li><a onclick="presetApply('{$_preset['head']}')">{$_preset['head']}</a></li>
                                     {end}
                                 </ul>
