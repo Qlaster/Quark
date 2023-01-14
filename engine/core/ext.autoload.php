@@ -35,7 +35,8 @@
 	{
 		//Добавляем относительные пути к библиотеке
 		//~ $lib_path = 'engine/lib/'.$lib_path;
-		$lib_path = 'engine/vendor/'.$lib_path;
+		//~ $lib_path = 'engine/vendor/'.$lib_path;
+		$lib_path = $_ENV['vendor']['path']."/$lib_path";
 
 		//Если библиотека найдена, подключаем
 		if (is_readable($lib_path))
@@ -72,7 +73,7 @@
 		//spl_autoload_extensions(".php,.inc");
 		// Заменить префикс пространства имен на базовую директорию.
 		$prefix = '';
-		$baseDir = 'engine/vendor/';
+		$baseDir = $_ENV['vendor']['path'].'/';
 
 		if (substr($className, 0, strlen($prefix)) == $prefix)
 		{
