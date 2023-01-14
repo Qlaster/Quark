@@ -41,7 +41,7 @@
 
 		function __construct($config)
 		{
-			//Устанавливаем конфиг по дефолту
+			//Корректируем конфиг. Если опции нет, то устанавливаем по дефолту.
 			$this->config = $this->CorrectConfig($config);
 		}
 
@@ -51,11 +51,20 @@
 			//Корректируем конфиг. Если опции нет, то устанавливаем по дефолту.
 			$this->config = $this->CorrectConfig($this->config);
 
-			//раскрывает все символические ссылки, переходы типа '/./', '/../' и лишние символы '/' в пути path, возвращая канонизированный путь к файлу.
-			$path = $this->filtering($controller);
-
-			//Строим полный путь
-			$path = $this->config['folder'] .DIRECTORY_SEPARATOR. $path;
+			if ($this->config['runlock'])
+			{
+				//раскрывает все символические ссылки, переходы типа '/./', '/../' и лишние символы '/' в пути path, возвращая канонизированный путь к файлу.
+				$path = $this->filtering($controller);
+				//Строим полный путь
+				$path = $this->config['folder'] .DIRECTORY_SEPARATOR. $path;
+			}
+			else
+			{
+				//Строим полный путь
+				$path = $this->config['folder'] .DIRECTORY_SEPARATOR. $controller;
+				//раскрывает все символические ссылки, переходы типа '/./', '/../' и лишние символы '/' в пути path, возвращая канонизированный путь к файлу.
+				$path = $this->filtering($path);
+			}
 
 			//Вызываем с php.
 			if ( is_file($path.'.php')	) return $path.'.php';
@@ -122,9 +131,10 @@
 			$result = $config;
 
 			if ( !isset($config['folder']) 	) 	$result['folder'] 	= './controllers';
-			if ( !isset($config['runlock'])	)	$result['runlock'] 	= true;
 			if ( !isset($config['handler'])	)	$result['handler'] 	= 'index.php';
-			if ( !isset($config['cascade'])	)	$result['cascade'] 	= true;
+
+			$result['runlock'] = (isset($config['runlock'])) ? filter_var($config['runlock'], FILTER_VALIDATE_BOOLEAN) : true;
+			$result['cascade'] = (isset($config['cascade'])) ? filter_var($config['cascade'], FILTER_VALIDATE_BOOLEAN) : true;
 
 			return $result;
 		}
@@ -140,26 +150,23 @@
 		//Механизм проверки пути на валидность.
 		private function filtering($path)
 		{
-			//Пока глупо уберем двойную и одинарную точки. Хах! Метод с кучей багов, который даже обсуждать не стоит.
-			//while ( strpos("/$path/", '/../') !== false ) $path = str_replace('..', '', $path);
-
-
 			//Удалим возможность возврата за корневую директорию.
 			//Для этого, разберем путь на составные части:
 			$dir = explode(DIRECTORY_SEPARATOR, $path);
 
 			//Чистанем от вторичных директорий
-			$dir = array_diff($dir, ['', '.', '..']);
+			$dir = array_diff($dir, ['', '.']);
+
+			//Раскрываем ..
+			foreach ($dir as $key => $value)
+				if ($value=='..') unset($dir[$key-1], $dir[$key]);
+
 
 			//Собираем готовый путь
 			$res_path = implode(DIRECTORY_SEPARATOR, $dir);
 
 			//Если первоначальный вариант пути заканчивался на /, то мы должны поправить эту ситуацию, вернув его на место.
 			if ( substr($path, -1) == DIRECTORY_SEPARATOR ) $res_path .= DIRECTORY_SEPARATOR;
-
-			//до тех пор, пока в строке есть хоть один двойной повтор слешей - заменять их на одинарный.
-			while ( strpos($res_path, '//') !== false )
-				$res_path = str_replace('//', '/', $res_path);
 
 			//Вернем готовый путь
 			return $res_path;
