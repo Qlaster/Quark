@@ -16,7 +16,7 @@
 	 *
 	*/
 
-	namespace unit\config;
+	//~ namespace unit\config;
 
 	# ---------------------------------------------------------------- #
 	#                  ОПИСАНИЕ     ИНТЕРФЕЙСА                         #
@@ -101,9 +101,9 @@
 		 * @return (bool) result operation?
 		 *
 		 */
-		public function loadENV()
+		public function loadENV($files, $options=null)
 		{
-			foreach (func_get_args() as $envfile)
+			foreach ((array) $files as $envfile)
 			{
 				if ($ENV = $this->readFile($envfile))
 				{
@@ -113,12 +113,12 @@
 			}
 		}
 
-		public function fromString(string $sting)
+		public function fromString(string $string)
 		{
 			static $ini;
 			if (!isset($ini)) $ini = new Core_Ini_Reader;
 
-			return $ini->fromFile($filename);
+			return $ini->fromString($string);
 		}
 
 		public function toString($config)
