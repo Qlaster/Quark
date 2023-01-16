@@ -73,12 +73,12 @@
 		//spl_autoload_extensions(".php,.inc");
 		// Заменить префикс пространства имен на базовую директорию.
 		$prefix = '';
-		$baseDir = $_ENV['vendor']['path'].'/';
+		$baseDir = $_ENV['vendor']['path'];
 
 		if (substr($className, 0, strlen($prefix)) == $prefix)
 		{
 			$className = substr($className, strlen($prefix));
-			$className = $baseDir . $className;
+			$className = "$baseDir/$className";
 		}
 
 		// Заменить разделители пространства имен на разделители директорий.
