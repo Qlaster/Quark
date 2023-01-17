@@ -11,7 +11,7 @@
 	 * $APP->config->get();
 	 *
 	 * - Сохранить конфигурацию модуля
-	 * $APP->config->get($config);
+	 * $APP->config->set($config);
 	 *
 	 *
 	*/
