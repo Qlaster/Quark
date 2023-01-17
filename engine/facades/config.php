@@ -101,14 +101,18 @@
 		 * @return (bool) result operation?
 		 *
 		 */
-		public function loadENV($files, $options=null)
+		public function loadENV($files, $options=[])
 		{
+			//Default options
+			if (!isset($options['replace'])) $options['replace'] = false;
+
+			//Merge
 			foreach ((array) $files as $envfile)
 			{
-				if ($ENV = $this->readFile($envfile))
+				if ($ENV = (array) $this->readFile($envfile))
 				{
 					//Дополняем переменные окружения
-					$_ENV = array_replace($_ENV, (array) $ENV);
+					$_ENV = $options['replace'] ? array_replace($_ENV, $ENV) : array_replace($ENV, $_ENV);
 				}
 			}
 		}
