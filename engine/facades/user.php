@@ -300,7 +300,7 @@
 			if (! $session = session_id())
 			{
 				session_start();
-				session_destroy();
+				//~ session_destroy();
 			}
 
 			if (!isset($_SESSION['cms_login']) or (!isset($_SESSION['cms_password']))) return false;
