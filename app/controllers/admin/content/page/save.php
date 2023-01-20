@@ -10,7 +10,7 @@
 	unset($_POST['pageServiceField']);
 
 
-	print_r($_POST); die;
+	//~ print_r($_POST); die;
 
 	//~ $page['url']	= trim($_POST['URL']);
 	//~ $page['html']	= $_POST['template_file'];
