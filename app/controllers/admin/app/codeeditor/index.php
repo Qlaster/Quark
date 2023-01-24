@@ -1,10 +1,12 @@
 <?php
 
-
+	
 	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
-	$content['title'] = 'Редактор кода';
-
+	//~ $content['title'] = 'Редактор кода';	
+	//~ print_r($content); die;
+	
+	
 	//Файлы, который нужно открыть
 	if (file_exists($_GET['file']))
 	{
@@ -21,6 +23,8 @@
 		$content['title'] 				= $_GET['config'];
 	}
 
+	if ($content['title']) 
+		$content['nav']['path']['head'] = $content['title'];
 
 
 
