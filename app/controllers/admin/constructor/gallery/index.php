@@ -51,7 +51,7 @@
 	}
 
 	$content['catalog']['objects']['list'] = (array) $content['catalog']['objects']['list'];
-	$content['catalog']['objects']['button']['edit']['link'] = 'admin/constructor/gallery/edit?name='.urlencode($_GET['name']);
+	$content['catalog']['objects']['button']['edit']['link'] = 'admin/constructor/gallery/edit?name='.urlencode((string)$_GET['name']);
 	//~ print_r($content['catalog']['objects']); die;
 
 	//~ $themelink = $APP->url->home()."views/admin/";

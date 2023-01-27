@@ -23,11 +23,8 @@
  *
  */
 
-	// Добавлять сообщения обо всех ошибках, кроме E_NOTICE
-	error_reporting(E_ALL & ~E_NOTICE);
-
 	//Если функция уже доступна - вызовем ее
-	if ($autoconstruct) return $autoconstruct($APP);
+	if (isset($autoconstruct)) return $autoconstruct($APP);
 
 
 	$autoconstruct = function ($APP)
@@ -79,19 +76,19 @@
 		$page = array_filter($page);
 
 		//Выделение элемента меню
-		if ($content['nav']['main']['list'][$page[1]])
+		if ($content['nav']['main']['list'][$page[1]] ?? null)
 		{
 			//Если структура меню очевидна из ключей
 			$content['nav']['main']['list'][$page[1]]['active'] = true;
 			//Если дочерний элемент существует - то тоже выделим
-			if (isset($content['nav']['main']['list'][$page[1]]['list'][$page[2]]))
+			if (@ isset($content['nav']['main']['list'][$page[1]]['list'][$page[2]]))
 				$content['nav']['main']['list'][$page[1]]['list'][$page[2]]['active'] = true;
 		}
 		else
 		{
 			//Если нужно пробежаться по меню и найти страницу по ссылке
 			foreach ($content['nav']['main']['list'] as $key => &$mainSection)
-				if ($mainSection['list'])
+				if (isset($mainSection['list']))
 					foreach ($mainSection['list'] as $subkey => &$item)
 						if ($item['link'] == $APP->url->page())
 						{
@@ -104,7 +101,7 @@
 		//			Удалим из главного меню запрещенные контроллеры
 		//============================================================================================================================
 		foreach ($content['nav']['main']['list'] as $key => &$mainSection)
-			foreach ((array)$mainSection['list'] as $subkey => &$item)
+			foreach (@ (array)$mainSection['list'] as $subkey => &$item)
 				if ($APP->user->denied( $APP->controller->realpath($item['link']) ))
 				{
 					unset($mainSection['list'][$subkey]);
@@ -118,6 +115,7 @@
 		//Получаем список веток пути
 		$path = explode('/', $APP->url->page());
 		$path = array_filter($path);
+		$tmppathelem = '';
 		//Создаем их представление
 		foreach ($path as $key => &$value)
 		{
@@ -129,14 +127,13 @@
 		switch (count($page))
 		{
 			case 2:
-				$tmp['head'] = $content['nav']['main']['list'][$page[1]]['head'];
+				$tmp['head'] = $content['nav']['main']['list'][$page[1]]['head'] ?? '';
 				break;
 			case 3:
-				$tmp['head'] = $content['nav']['main']['list'][$page[1]]['list'][$page[2]]['head'];
+				$tmp['head'] = $content['nav']['main']['list'][$page[1]]['list'][$page[2]]['head'] ?? '';
 				break;
 		}
 
-		//$tmp['head'] = $content['nav']['main']['list'][$page[1]]['list'][$page[2]]['head'];
 		//Прикрепляем этот путь к контенту ввиде побочного меню
 		$content['nav']['path'] = $tmp;
 

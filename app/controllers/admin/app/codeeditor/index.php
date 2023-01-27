@@ -1,21 +1,21 @@
 <?php
 
-	
+
 	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
-	//~ $content['title'] = 'Редактор кода';	
+	//~ $content['title'] = 'Редактор кода';
 	//~ print_r($content); die;
-	
-	
+
+
 	//Файлы, который нужно открыть
-	if (file_exists($_GET['file']))
+	if (file_exists($_GET['file'] ?? ''))
 	{
 		$content['code']['body'] 		= file_get_contents($_GET['file']);
 		$content['code']['action'] 		= "admin/app/codeeditor/save.php";
 		$content['code']['filename']	= $_GET['file'];
 		$content['title'] 				= $_GET['file'];
 	}
-	if (file_exists($_GET['config']))
+	if (file_exists($_GET['config'] ?? ''))
 	{
 		$content['config']['body'] 		= file_get_contents($_GET['config']);
 		$content['config']['action'] 	= "admin/app/codeeditor/save.php";
@@ -23,7 +23,7 @@
 		$content['title'] 				= $_GET['config'];
 	}
 
-	if ($content['title']) 
+	if ($content['title'])
 		$content['nav']['path']['head'] = $content['title'];
 
 

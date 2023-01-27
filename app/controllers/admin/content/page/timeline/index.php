@@ -24,7 +24,7 @@
 		//Скопируем страницу для детализации вывода
 		$history[$record['version']]['page'] = $currentPage;
 		//Возьмем заголовок той версии в качестве заголовка записи
-		$history[$record['version']]['head'] = $currentPage['content']['title']['data'];
+		$history[$record['version']]['head'] = $currentPage['content']['title']['data'] ?? '';
 		//Удалим контент, для экономии озу
 		unset($history[$record['version']]['page']['content']);
 

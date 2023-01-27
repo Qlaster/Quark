@@ -28,7 +28,7 @@
 
 
 
-	$objects = (array) $APP->object->collection((urldecode($_GET['collection'])))->all();
+	$objects = (array) $APP->object->collection((urldecode((string)$_GET['collection'])))->all();
 
 	foreach ($objects as $_object_name => $_object)
 	{

@@ -29,7 +29,7 @@
 	//
 	$sign = array(' Б', ' Кб', ' Мб', ' Гб', ' Тб');
 
-
+	$i = 0;
 	while ($info['size'] > 1024)
 	{
 		$info['size'] = $info['size'] / 1024;

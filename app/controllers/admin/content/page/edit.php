@@ -228,6 +228,7 @@
 
 		static function SectionConstruct($vars, $tags, $invisible_mask)
 		{
+			$result = [];
 			foreach ($vars as $key => $var)
 			{
 				//Получим имя переменной без лишних символов
@@ -303,7 +304,7 @@
 				}
 			}
 
-			return (array)$result;
+			return $result;
 		}
 
 

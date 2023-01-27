@@ -14,7 +14,7 @@
 
 	$content['title'] = 'Файловый менеджер';
 
-
+	list($dir, $file) = [[],[]];
 	foreach ($glob as $filename)
 	{
 		$info = stat($filename);
@@ -26,7 +26,6 @@
 		$element['ctime'] 	= date('d.m.Y H:i:s', $info['ctime']);
 		$element['isdir'] 	= is_dir ($filename);
 		$element['isfile'] 	= is_file($filename);
-
 
 
 		if ($element['isdir'])

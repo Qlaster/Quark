@@ -22,7 +22,7 @@
 	//Вычитаем историю посещения
 	while ($record = $APP->visits->next())
 	{
-		$record['date'] = date("d.m.Y H:i:s", $record['time']);
+		$record['date'] = date("d.m.Y H:i:s", (int) $record['time']);
 		$record['uri']  = urldecode($record['uri']);
 		$record['uri']  = str_replace('&', '<br>&', $record['uri']);
 		$record['uri']  = strpos($record['uri'], '?') ? '<b>'.mb_str_replace_once('?', '</b>?', $record['uri']) : '<b>'.$record['uri'].'</b>';
