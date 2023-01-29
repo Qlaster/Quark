@@ -13,8 +13,8 @@
 
     <link href="../../css/animate.css" rel="stylesheet">
     <link href="../../css/style.css" rel="stylesheet">
-	
-	<base id='urlbase' href="{$$base}">	
+
+	<base id='urlbase' href="{$$base}">
 </head>
 
 <body>
@@ -47,14 +47,14 @@
                         IN+
                     </div>
                 </li>
-                
+
                 {if $nav['main']}
-					{foreach $nav['main']['list'] as $_item}  
-					
+					{foreach $nav['main']['list'] as $_item}
+
 						{if $_item['active']} <li class="active"> {else} <li> {end}
 							<a href="{$_item['link']}">
-								<i class="{$_item['image']}"></i> <span class="nav-label">{$_item['head']}</span> 
-								{if $_item['info']} 
+								<i class="{$_item['image']}"></i> <span class="nav-label">{$_item['head']}</span>
+								{if $_item['info']}
 									<span class="pull-right label label-primary">{$_item['info']}</span>
 								{end}
 								{if ($_item['list']) and (!$_item['info'])}
@@ -63,13 +63,13 @@
 							</a>
 							{if $_item['list']}
 								<ul class="nav nav-second-level">
-									{foreach $_item['list'] as $node} 
+									{foreach $_item['list'] as $node}
 										{if $node['active']}
 											<li class="active">
 										{else}
 											<li>
 										{end}
-												<a href="{$node['link']}">{$node['head']}  
+												<a href="{$node['link']}">{$node['head']}
 												{if $node['info']} <span class="pull-right label label-primary"> {$node['info']} </span> {end}
 												</a>
 											</li>
@@ -77,16 +77,16 @@
 								</ul>
 							{end}
 						</li>
-						
+
 					{end}
 				{end}
-				
+
             </ul>
 
         </div>
     </nav>
     <!--Конец меню-->
-    
+
 
         <div id="page-wrapper" class="gray-bg">
         <div class="row border-bottom">
@@ -99,7 +99,7 @@
                     <input type="text" placeholder="{$form['searche']['head']}" class="form-control" name="top-search" id="top-search">
                 </div>
             </form>
-            {end}   
+            {end}
         </div>
             <ul class="nav navbar-top-links navbar-right">
                 <li>
@@ -211,18 +211,18 @@
 
         </nav>
         </div>
-        
-        
+
+
 		<!--Менюшка title-->
 		{if $nav['path']}
             <div class="row wrapper border-bottom white-bg page-heading">
                 <div class="col-lg-10">
 
-                    <h2>{$nav['path']['head']}</h2> 
-					
+                    <h2>{$nav['path']['head']}</h2>
+
 					{//Получаем ключ последнего элемента. нужен для выделения}
                     {( $end_key = key( array_slice( $nav['path']['list'], -1, 1, TRUE ) ) )}
-   
+
                     <ol class="breadcrumb">
 						{foreach $nav['path']['list'] as $key => $value}
 							{if $end_key == $key }
@@ -232,8 +232,8 @@
 							{else}
 								<li>
 									<a>{$value['head']}</a>
-								</li>                        
-							{end}	 
+								</li>
+							{end}
                         {end}
                     </ol>
                 </div>
@@ -241,9 +241,9 @@
 
                 </div>
             </div>
-        {end}  
-            
-            
+        {end}
+
+
         <div class="wrapper wrapper-content">
             <div class="row">
                 <div class="col-lg-4 animated fadeInDown">
@@ -259,73 +259,73 @@
 -->
                                 <div class="hr-line-dashed"></div>
                                 <form action="{$form['collection']['action']}" method='get'>
-									<input name='collection' placeholder="Название нового меню" class="form-control">   
+									<input name='collection' placeholder="Название нового меню" class="form-control">
 									<p></p>
-									<button type="submit" class="btn btn-primary btn-block">{$form['collection']['button']['add']['head']}</button>
+									<button type="submit" class="btn btn-primary btn-outline btn-block">{$form['collection']['button']['add']['head']}</button>
 								</form>
                                 <div class="hr-line-dashed"></div>
-                                
+
                                 <h5>{$catalog['collection']['info']}</h5>
                                 <ul class="folder-list" style="padding: 0">
                                 {foreach $catalog['collection']['list'] as $_value}
-									
+
 									{if $_value['active']}
 									<li class='text-info'>
 									{else}
 									<li>
-										
+
 									{end}
-										
+
 <!--
 										<a href="{$_value['link']}"><i class="{$_value['icon']}"></i>{$_value['head']}</a>
 -->
 										<a onclick="menu_repaint('{$_value['head']}')"><i class="{$_value['icon']}"></i>{$_value['head']}</a>
-										
+
 										<a href="{$_value['delete_link']}">
 											<button type="button" class="btn btn-warning btn-xs pull-right">{$_value['delete_head']}</button>
 										</a>
-										
-										
-	
-									</li> 
+
+
+
+									</li>
 								{end}
 								</ul>
-								
+
 
                                 <div class="clearfix"></div>
-                                
+
                             </div>
                         </div>
                     </div>
                 </div>
-                
-                
+
+
                 <div class="col-lg-8 animated fadeInRight">
-					
-					
+
+
                     <div class="row">
 						<div class="col-lg-12">
 							<div class="ibox ">
 								<div class="ibox-title">
 									<h5>Nestable basic list</h5>
 								</div>
-								
+
 								<div class="ibox-content">
 									<h4 class="text-center"  id='menuname'></h4>
 									<p  class="m-b-lg">
 <!--
 										<strong>Nestable</strong> is an interactive hierarchical list. You can drag and drop to rearrange the order. It works well on touch-screens.
 -->
-										
+
 										<button type="button" class="btn btn-block btn-white" onclick="menu_edit()">Редактировать меню</button>
-										
+
 									</p>
 
 									<a class="dd" id="nestable" >
 <!--
 										<ol class="dd-list" >
 											<li class="dd-item" data-id="1">
-												<div class="dd-handle">1 - Lorem ipsum </div>               
+												<div class="dd-handle">1 - Lorem ipsum </div>
 											</li>
 											<li class="dd-item" data-id="2">
 												<div class="dd-handle">2 - Dolor sit</div>
@@ -366,18 +366,18 @@
 -->
 
 								</div>
-							
-							
+
+
 							</div>
 						</div>
-                
+
 
 					</div>
-   
-               
-               
+
+
+
                 </div>
-                    
+
                 </div>
                 </div>
         <div class="footer">
@@ -402,99 +402,99 @@
     <!-- Custom and plugin javascript -->
     <script src="../../js/inspinia.js"></script>
     <script src="../../js/plugins/pace/pace.min.js"></script>
-	
+
 	<script src="../../js/data/http-get.js"></script>
-	
+
 	<!-- Menu getter/construction tools -->
     <script src="../../js/data/menu-editor.js"></script>
     <script src="../../js/data/objects-editor.js"></script>
-    
+
     <script>
         $(document).ready(function(){
             $('.file-box').each(function() {
                 animationHover(this, 'pulse');
             });
         });
-        
-        
+
+
         function menu_repaint(name)
         {
 			//Запрашиваем все необходимые данные
 			var urlbase = document.getElementById('urlbase').href;
-			var html_div_id = document.getElementById('nestable');			
+			var html_div_id = document.getElementById('nestable');
 			var menu = url_get(urlbase+'admin/constructor/menu/get?name='+btoa(name));
-			
+
 			//Очищаем поле вывода
-			objects_tree_clear(html_div_id);			
+			objects_tree_clear(html_div_id);
 			//JSON в объект
-			menu = JSON.parse(  menu   );				
+			menu = JSON.parse(  menu   );
 			//Рисуем дерево меню и вешаем ссылку на редактирование
-			objects_tree_paint(html_div_id, menu, urlbase+'admin/constructor/menu/edit?name='+btoa(name));	
+			objects_tree_paint(html_div_id, menu, urlbase+'admin/constructor/menu/edit?name='+btoa(name));
 			//Рисуем заголовок меню
 			document.getElementById('menuname').innerHTML = name;
-			
+
 		}
-		
+
 		function menu_edit(name)
 		{
 			//Запрашиваем все необходимые данные
 			var urlbase = document.getElementById('urlbase').href;
 			var menuname = document.getElementById('menuname').innerHTML;
-			
+
 			location.href = 'admin/constructor/menu/edit?menu='+encodeURIComponent(menuname);
 		}
-		
-	
+
+
 		function test()
 		{
-			
+
 			//Запрашиваем все необходимые данные
 			var urlbase = document.getElementById('urlbase').href;
 			var html_div_id = document.getElementById('nestable');
 			var menuname = document.getElementById('menuname').innerHTML;
-			
+
 			//Находим меню
-			var test = document.getElementById('nestable');		
+			var test = document.getElementById('nestable');
 			//Забираем данные из тела документа
 			var res = object_tree_compilation(test);
 			//Ценнейшая функция от парня с запада=)
 			res = jsObj2phpObj(res);
-			
+
 			//~ alert(res);
 			//~ res = $.makeArray(res);
 			//~ res = JSON.stringify(res);
 			//~ console.log(res.serializeArray());
 			//~ console.log(res);
-			
+
 			var data = encodeURIComponent(res);
 			var name = atob('menuname');
-			
-			
-			
+
+
+
 			//~ $.ajax
 			//~ ({
 			  //~ type: "POST",
 			  //~ url: urlbase+'admin/constructor/menu/set',
 			  //~ data: name+'='+data,
 			//~ });
-			
-			
-			
+
+
+
 			//~ $.post(urlbase+'admin/constructor/menu/set', { name: '"'+res+'"' } );
-			
+
 			//Отправляем инфу на сервер
 			$.post(urlbase+'admin/constructor/menu/set', { name: menuname, data: (res) });
 
 			//~ url_post(urlbase+'admin/constructor/menu/save', 'menu', );
-			
-			
-			
+
+
+
 		}
-		
-		
 
 
-        
+
+
+
     </script>
 </body>
 
