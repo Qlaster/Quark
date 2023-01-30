@@ -264,6 +264,7 @@
 				$primaryKey = implode('", "', $this->qinfo['pkey']);
 				$primaryKey = ", PRIMARY KEY(\"$primaryKey\")";
 			}
+			$primaryKey = $primaryKey ?? '';
 
 			//Формируем запрос
 			$stmt = $this->PDO_INTERFACE->prepare(

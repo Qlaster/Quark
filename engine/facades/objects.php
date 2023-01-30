@@ -324,6 +324,7 @@
 		 */
 		public function all()
 		{
+			$result = [];
 			$table = $this->Table;
 
 			$STH = $this->PDO_INTERFACE->prepare("SELECT name, value FROM '$table' WHERE (collection = :collection and name IS NOT NULL) ORDER BY name;");
@@ -339,7 +340,7 @@
 			foreach	($raw as $record)
 				$result[$record['name']] = unserialize($record['value']);
 
-			return (array) $result;
+			return $result;
 		}
 
 

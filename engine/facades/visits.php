@@ -370,7 +370,7 @@
 		 */
 		public function statistics($daily=true)
 		{
-			$result = array();
+			$result = [];
 
 			foreach ((array) $this->shear['files'] as $filename)
 			{
@@ -379,6 +379,9 @@
 
 			//Если статистика нужна по суткам
 			if ($daily)	return $result;
+
+			$sum_stat['page'] = 0;
+			$sum_stat['unique'] = 0;
 
 			//Если нужна сумма статистических данных за все время
 			foreach ($result as $day => &$day_stat)
@@ -492,7 +495,7 @@
 			$error_reporting = error_reporting();
 			error_reporting(E_ALL & ~E_NOTICE);
 
-
+			$rec['page'] = 0;
 			while (! feof($log))
 			{
 				//~ echo $filename;

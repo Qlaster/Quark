@@ -11,7 +11,6 @@
 	#             Объявление автозагрузки (стандарт PSR4)              #
 	# ---------------------------------------------------------------- #
 	//Подключаем файл с окружением ядра
-	//~ include "engine/core/core.php";
 	include $_ENV['core']['path']."core.php";
 
 
@@ -25,6 +24,7 @@
 	$APP->config->loadENV(['.env', 'app/.env']);
 	//Записываем визит (регистрируется вызов после завершения работы app)
 	$APP->visits->push($APP->user->logged()['login'] ?? null);
+
 
 	# ---------------------------------------------------------------- #
 	#            Обработка псевдонимов адресов страниц                 #
@@ -46,16 +46,11 @@
 	{
 		//Последовательно исполняем контроллеры, указанные в правилах
 		foreach ($controllers as $action)
-		{
 			if ($ctrlResponse = $APP->controller->run($action, ['APP'=>$APP]) === null)
-			{
 				//Контроллера нет? Что ж... Попробуем запустить и передать управление стандартному index контроллеру
 				if ($ctrlResponse = $APP->controller->run($APP->controller->config['handler'], ['APP'=>$APP]) === null )
-				{
 					throw new ErrorException('Default controller '.$APP->controller->config['handler'].' not found', 500);
-				}
-			}
-		}
+
 	}
 	catch (Error $error)
 	{
