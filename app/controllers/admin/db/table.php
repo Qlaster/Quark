@@ -43,12 +43,13 @@
 
 			$record = &$content['table']['columns']['list'][$value['name']];
 
-			$record['head'] = $APP->db->config['connect'][$_GET['base']]['table'][$_GET['table']][$record['name']]['head'];
-			$record['type'] = $APP->db->config['connect'][$_GET['base']]['table'][$_GET['table']][$record['name']]['type'];
+			$record['head'] = $APP->db->config['connect'][$_GET['base']]['table'][$_GET['table']][$record['name']]['head'] ?? null;
+			$record['type'] = $APP->db->config['connect'][$_GET['base']]['table'][$_GET['table']][$record['name']]['type'] ?? null;
 
-			$type = $APP->db->config['connect'][$_GET['base']]['table'][$_GET['table']][$record['name']]['type'];
-			$record['body'] = $APP->db->config['patterns'][$type]['body'];
+			$type = $APP->db->config['connect'][$_GET['base']]['table'][$_GET['table']][$record['name']]['type'] ?? null;
+			$record['body'] = $APP->db->config['patterns'][$type]['body'] ?? null;
 		}
+
 
 		unset($record);
 

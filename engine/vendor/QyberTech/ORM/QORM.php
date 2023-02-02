@@ -674,7 +674,7 @@
 			$this->Reset();
 
 			//Возвращем результат выборки
-			return $stmt->fetchAll($fetch);
+			return @$stmt->fetchAll($fetch);
 		}
 
 		/*

@@ -45,11 +45,11 @@
 
 			$record = &$content['table']['data']['list'][$value['name']];
 
-			$record['head'] = $APP->db->config['connect'][$_GET['base']]['table'][$_GET['table']][$record['name']]['head'];
-			$record['type'] = $APP->db->config['connect'][$_GET['base']]['table'][$_GET['table']][$record['name']]['type'];
+			$record['head'] = $APP->db->config['connect'][$_GET['base']]['table'][$_GET['table']][$record['name']]['head'] ?? null;
+			$record['type'] = $APP->db->config['connect'][$_GET['base']]['table'][$_GET['table']][$record['name']]['type'] ?? null;
 
-			$type = $APP->db->config['connect'][$_GET['base']]['table'][$_GET['table']][$record['name']]['type'];
-			$record['body'] = $APP->db->config['patterns'][$type]['body'];
+			$type = $APP->db->config['connect'][$_GET['base']]['table'][$_GET['table']][$record['name']]['type'] ?? null;
+			$record['body'] = $APP->db->config['patterns'][$type]['body'] ?? null;
 		}
 
 		//unset($record);
@@ -61,7 +61,7 @@
 		{
 			$content['table']['data']['list'][$key]['name'] = $key;
 			$content['table']['data']['list'][$key]['text'] = $value;
-			$content['table']['data']['list'][$key]['head'] = $APP->db->config['connect'][$_GET['base']]['table'][$_GET['table']][$key]['head'];
+			$content['table']['data']['list'][$key]['head'] = $APP->db->config['connect'][$_GET['base']]['table'][$_GET['table']][$key]['head'] ?? null;
 		}
 	}
 	elseif (($_GET['base']) and ($_GET['table']))
@@ -80,11 +80,11 @@
 
 			$record = &$content['table']['data']['list'][$value['name']];
 
-			$record['head'] = $APP->db->config['connect'][$_GET['base']]['table'][$_GET['table']][$record['name']]['head'];
-			$record['type'] = $APP->db->config['connect'][$_GET['base']]['table'][$_GET['table']][$record['name']]['type'];
+			$record['head'] = $APP->db->config['connect'][$_GET['base']]['table'][$_GET['table']][$record['name']]['head'] ?? null;
+			$record['type'] = $APP->db->config['connect'][$_GET['base']]['table'][$_GET['table']][$record['name']]['type'] ?? null;
 
-			$type = $APP->db->config['connect'][$_GET['base']]['table'][$_GET['table']][$record['name']]['type'];
-			$record['body'] = $APP->db->config['patterns'][$type]['body'];
+			$type = $APP->db->config['connect'][$_GET['base']]['table'][$_GET['table']][$record['name']]['type'] ?? null;
+			$record['body'] = $APP->db->config['patterns'][$type]['body'] ?? null;
 		}
 
 
