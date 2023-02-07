@@ -63,6 +63,12 @@
 		}
 
 
+		public function items($catalogName=null)
+		{
+			$catalog = $this->get($catalogName);
+			return $this->dbInterface->connect($catalog['db'])->table($catalog['table']);
+		}
+
 		public function get($catalogName=null)
 		{
 			$connectRecord = $this->config()['list'][$catalogName];
@@ -70,7 +76,21 @@
 			if (!$connectRecord['db']) throw new Exception("Missing db name to connect $catalogName", 2);
 			if (!$connectRecord['table']) throw new Exception("Missing table name to connect $catalogName", 3);
 
-			return $this->dbInterface->connect($connectRecord['db'])->table($connectRecord['table']);
+			return $connectRecord;
+		}
+
+		public function fields($catalogName=null)
+		{
+			$catalog = $this->config()['list'][$catalogName];
+			if (!$catalog) return null;
+
+			$actualColumns = $this->dbInterface->connect($catalog['db'])->table($catalog['table'])->columns();
+			if (!$catalog['field']) return $actualColumns;
+
+			//Вернем только те ключи, которые существуют в таблице
+			return array_intersect_key($actualColumns, $catalog['field']);
+
+			//~ return $catalog['field'] ? array_keys($catalog['field']) : array_keys($this->dbInterface->connect($catalog['db'])->table($catalog['table'])->columns());
 		}
 
 		public function create($catalog)
