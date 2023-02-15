@@ -3018,6 +3018,9 @@ body.body-small .footer.fixed {
 .no-borders {
   border: none !important;
 }
+.no-margin {
+  margin: 0 !important;
+}
 .no-margins {
   margin: 0 !important;
 }
@@ -3212,7 +3215,7 @@ table.table-mail tr td {
   padding: 4px 10px;
   font-size: 12px;
 }
-.ibox .open > .dropdown-menu 
+.ibox .open > .dropdown-menu
 {
 /*
   не работает во многих браузерах
@@ -3911,7 +3914,7 @@ ul.notes li div {
 }
 .folder-list li {
   border-bottom: 1px solid #e7eaec;
-  padding: 6px 0; 
+  padding: 6px 0;
 /*
   display: block;
 */
