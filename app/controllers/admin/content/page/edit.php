@@ -5,24 +5,6 @@
 	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
 
-	//Загружаем меню
-	//~ $menu = $APP->object->collection('admin')->get('mainmenu');
-	//~ //Прикрепляем меню к странице
-	//~ $content['nav']['main'] = $menu['ru'];
-	//~ //Указываем пункт меню, который раскрыть
-	//~ $content['nav']['main']['list']['content']['active'] = true;
-
-
-		//~ $path = explode('/', $APP->url->page());
-//~
-	//~ foreach ($path as $key => &$value)
-	//~ {
-		//~ $tmp['list'][]['head'] = $value;
-	//~ }
-	//~
-	//~ //Прикрепляем путь к контенту
-	//~ $content['nav']['path'] = $tmp;
-
 
 	//Подгружаем конфигурацию
 	$config = $APP->config->get();
@@ -52,7 +34,7 @@
 	$content['form']['file']['list'] = PageTools::scandirs($templateDir, '*.htm*');
 
 	//Прикрепим ссылку на обработчик исходного кода
-	$content['form']['file']['htmlhandler'] = 'admin/app/codeeditor?file='.$APP->template->config['templates']['folder'];
+	$content['form']['file']['htmlhandler'] = 'admin/tools/codeeditor?file='.$APP->template->config['templates']['folder'];
 
 	//~ print_r($content['form']['file']['list']); die;
 

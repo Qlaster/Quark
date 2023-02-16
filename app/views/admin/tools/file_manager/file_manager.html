@@ -253,7 +253,7 @@
 								{
 									var result = prompt('Переименование объекта. Введите новое имя:', filename);
 									if (result == null || result == filename) return;
-									$.get( "admin/app/filemanager/file_rename.php", { old_name: path, new_name: result } )
+									$.get( "admin/tools/filemanager/file_rename.php", { old_name: path, new_name: result } )
 										.done(function( data )
 										{
 											if (data == '') return true;
@@ -266,7 +266,7 @@
 									var result = prompt('Create directory:', '');
 									if (result == null || result == '') return;
 
-									$.get( "admin/app/filemanager/create_dir.php", { path: path, filename: result } )
+									$.get( "admin/tools/filemanager/create_dir.php", { path: path, filename: result } )
 										.done(function( data )
 										{
 											if (data == '') return true;
@@ -279,7 +279,7 @@
 									var result = prompt('Enter file name:', '');
 									if (result == null || result == '') return;
 
-									$.get( "admin/app/filemanager/create_file.php", { path: path, filename: result } )
+									$.get( "admin/tools/filemanager/create_file.php", { path: path, filename: result } )
 										.done(function( data )
 										{
 											if (data == '') return true;
@@ -292,7 +292,7 @@
 									var isDel = confirm("Удалить объект \""+filename+"\"?");
 									if (isDel)
 									{
-										$.get( "admin/app/filemanager/file_delete.php", { filename: filename, path: path } )
+										$.get( "admin/tools/filemanager/file_delete.php", { filename: filename, path: path } )
 											.done(function( data )
 											{
 												if (data == '') return true;
@@ -362,7 +362,7 @@
 										form: 'uploadform',
 										formfiles: 'files',
 										uploadid: '<?php print $hash;?>',
-										uploadscript: '/admin/app/filemanager/file_upload',
+										uploadscript: '/admin/tools/filemanager/file_upload',
 										redirect_success: './step2.php?hash=<?php print $hash;?>',
 										redirect_abort: './abort.php?hash=<?php print $hash;?>',
 										portion: 1024*1024*2
@@ -413,7 +413,7 @@
 										setCookie('select_id', $(this).attr('id'));
 
 										var path = $(this).attr('path');
-										$('#ibox-content').load('admin/app/filemanager/file_info.php?version=min&path='+path);
+										$('#ibox-content').load('admin/tools/filemanager/file_info.php?version=min&path='+path);
 
 										//~ var target = event.target.parentNode; // где был клик?
 

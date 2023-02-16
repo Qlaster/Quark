@@ -22,7 +22,7 @@
 		$element['path'] 	= $filename;
 		$element['head'] 	= basename2($filename);
 		$element['icon'] 	= icon_setter($filename, $APP->config->get()['patterns']);
-		$element['load']	= 'admin/app/filemanager/file_download.php?path='.$filename;
+		$element['load']	= 'admin/tools/filemanager/file_download.php?path='.$filename;
 		$element['ctime'] 	= date('d.m.Y H:i:s', $info['ctime']);
 		$element['isdir'] 	= is_dir ($filename);
 		$element['isfile'] 	= is_file($filename);
@@ -30,12 +30,12 @@
 
 		if ($element['isdir'])
 		{
-			$element['link'] 	= 'admin/app/filemanager?path='.$path.'/'.basename($filename);
+			$element['link'] 	= 'admin/tools/filemanager?path='.$path.'/'.basename($filename);
 			$dir[] = $element;
 		}
 		if ($element['isfile'])
 		{
-			$element['link'] 	= 'admin/app/codeeditor?file='.$path.'/'.basename($filename);
+			$element['link'] 	= 'admin/tools/codeeditor?file='.$path.'/'.basename($filename);
 			$file[] = $element;
 		}
 
@@ -51,7 +51,7 @@
 	//Кнопка назад
 	$buffer = (array) explode('/', $path);
 	array_pop($buffer);
-	$content['menu']['buttons']['back']['link'] = 'admin/app/filemanager?path='.implode('/', $buffer);
+	$content['menu']['buttons']['back']['link'] = 'admin/tools/filemanager?path='.implode('/', $buffer);
 
 
 	//Возвращает иконки, соответствующие расширению и типу файла
@@ -73,4 +73,4 @@
     }
 
 	//~ $themelink = $APP->url->home()."views/admin/";
-	$APP->template->file('admin/app/file_manager/file_manager.html')->display($content);
+	$APP->template->file('admin/tools/file_manager/file_manager.html')->display($content);

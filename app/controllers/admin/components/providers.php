@@ -23,8 +23,8 @@
 		$content['units']['list'][$key]['size']		= round(filesize($unitfile)/1024, 2) . ' Kb';
 
 
-		$content['units']['list'][$key]['link']['config']	= "admin/app/codeeditor/?config=".unit_config_file($unitfile);
-		$content['units']['list'][$key]['link']['code']		= "admin/app/codeeditor/?file=$unitfile";
+		$content['units']['list'][$key]['link']['config']	= "admin/tools/codeeditor/?config=".unit_config_file($unitfile);
+		$content['units']['list'][$key]['link']['code']		= "admin/tools/codeeditor/?file=$unitfile";
 
 		$content['units']['list'][$key]['md5'] = md5($unitfile);
 		//~ $content['units']['list'][$key]['testlink'] = "admin/components/inittest?facade=".$content['units']['list'][$key]['alias'];

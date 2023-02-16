@@ -23,7 +23,7 @@
 		$_page['html']    = round(filesize($_page['path'])/1024, 2) . ' Kb';
 		$_page['sitemap'] = $_page['path'];
 		$_page['public']  = '✓';
-		$_page['edit']    = $APP->url->home()."admin/app/codeeditor/?file=".$_page['path'];
+		$_page['edit']    = $APP->url->home()."admin/tools/codeeditor/?file=".$_page['path'];
 
 
 

@@ -14,4 +14,4 @@
 	//~ $content['title'] = "Редактор объекта ".$_GET['object'];
 	$content['nav']['path']['head'] = "Редактор объекта [".$_GET['object']."]";
 
-	$APP->template->file('admin/app/code_editor/code_editor.html')->display($content);
+	$APP->template->file('admin/tools/code_editor/code_editor.html')->display($content);

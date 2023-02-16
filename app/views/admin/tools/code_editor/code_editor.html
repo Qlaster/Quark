@@ -378,7 +378,7 @@
 		<script>
 
 			//загружаем дерево из контроллера и по окончанию построить дерево
-			$('#view-tree').load( "admin/app/filemanager/file_tree", jstree_construct );
+			$('#view-tree').load( "admin/tools/filemanager/file_tree", jstree_construct );
 
 
 			//$(document).ready(jstree_construct);
@@ -439,7 +439,7 @@
 
 					var target = event.target.parentNode; // где был клик?
 					var filename = $(target).attr('placeholder');
-					location.href = 'admin/app/codeeditor/?file='+filename;
+					location.href = 'admin/tools/codeeditor/?file='+filename;
 				});
 
 				//Одинарный клик на файле (или диретории)
@@ -452,7 +452,7 @@
 					//~ var dir = $(this).attr('placeholder');
 					if (dir == undefined) return;
 
-					$('#ibox-content').load('admin/app/filemanager/file_info.php?path='+dir);
+					$('#ibox-content').load('admin/tools/filemanager/file_info.php?path='+dir);
 				});
 
 			};
@@ -466,7 +466,7 @@
 
 				$.ajax({
 					type: "POST",
-					url: "admin/app/codeeditor/save.php",  <!--путь файла обработчика  -->
+					url: "admin/tools/codeeditor/save.php",  <!--путь файла обработчика  -->
 					data: "text="+$("textarea#"+id).val(),  <!--textarea   -->
 					success: function(html)
 					{
