@@ -1,335 +1,348 @@
 <!DOCTYPE html>
 <html>
-   <head>
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>{$title}</title>
-      <link href="../../css/bootstrap.min.css" rel="stylesheet">
-      <link href="../../font-awesome/css/font-awesome.css" rel="stylesheet">
-      <link href="../../css/animate.css" rel="stylesheet">
-      <link href="../../css/style.css" rel="stylesheet">
-      <base id='urlbase' href="{$$base}">
-   </head>
-   <body>
-      <div id="wrapper">
-         <!--Главное меню слева-->
-         {require "../../~section/mainmenu.html"}
-         <!--Конец меню-->
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{$title}</title>
+        <link href="../../css/bootstrap.min.css" rel="stylesheet" />
+        <link href="../../font-awesome/css/font-awesome.css" rel="stylesheet" />
+        <link href="../../css/animate.css" rel="stylesheet" />
+        <!-- Toastr style -->
+		<link href="../../css/plugins/toastr/toastr.min.css" rel="stylesheet">
+        <link href="../../css/style.css" rel="stylesheet" />
+        <base id="urlbase" href="{$$base}" />
+    </head>
+    <body>
+        <div id="wrapper">
+            <!--Главное меню слева-->
+            {require "../../~section/mainmenu.html"}
+            <!--Конец меню-->
 
-         <div id="page-wrapper" class="gray-bg">
-			<!-- Head menu -->
-			{require "../../~section/head.html"}
-			<!-- End head menu -->
+            <div id="page-wrapper" class="gray-bg">
+                <!-- Head menu -->
+                {require "../../~section/head.html"}
+                <!-- End head menu -->
 
-			<!-- Менюшка title-->
-			{require "../../~section/title.html"}
-			<!-- конец title-->
+                <!-- Менюшка title-->
+                {require "../../~section/title.html"}
+                <!-- конец title-->
 
-            <div class="wrapper wrapper-content  animated fadeInRight">
-               <div class="row">
-                  <div class="col-md-4">
-                     <div id="nestable-menu">
-                        <button type="button" data-action="expand-all" class="btn btn-white btn-sm">Expand All</button>
-                        <button type="button" data-action="collapse-all" class="btn btn-white btn-sm">Collapse All</button>
-                     </div>
-                  </div>
-               </div>
-               <div class="row">
-                  <div class="col-lg-6">
-                     <div class="ibox ">
-                        <div class="ibox-title">
-                           <h5>Список элементов</h5>
-                           <!--
+                <div class="wrapper wrapper-content animated fadeInRight">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div id="nestable-menu">
+                                <button type="button" data-action="expand-all" class="btn btn-white btn-sm">Expand All</button>
+                                <button type="button" data-action="collapse-all" class="btn btn-white btn-sm">Collapse All</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="ibox">
+                                <div class="ibox-title">
+                                    <h5>Список элементов</h5>
+                                    <!--
                               <a href="admin/constructor/object/edit" class="btn btn-primary btn-xs pull-right">Сохранить объект</a>
                               -->
+                                    <!--
                            <a onclick="save_object('admin/constructor/object/set?collection='+encodeURIComponent(collection)+'&objectname='+encodeURIComponent(objectname) )" class="btn btn-primary btn-xs pull-right">Сохранить объект</a>
+-->
+                                    <a onclick="save_object('admin/constructor/object/set?collection='+encodeURIComponent(collection)+'&objectname='+encodeURIComponent($('#objectname').val()) )" class="btn btn-primary btn-xs pull-right">
+                                        Сохранить объект
+                                    </a>
+                                </div>
+                                <div class="ibox-content">
+                                    <div class="form-group has-success">
+                                        <!--
+                                <label for="title">Название объекта</label>
+-->
+                                        <input id="objectname" type="text" class="form-control" value="{$object}" placeholder="Название объекта" />
+                                    </div>
+                                    <p class="m-b-lg">
+                                        <button type="button" class="btn btn-block btn-white" onclick="objects_tree_add_item_blank()">Добавить элемент</button>
+                                    </p>
+                                    <div class="dd" id="nestable">
+                                        <ol class="dd-list" id="nestable-ol">
+                                            <li class="dd-item" data-id="1">
+                                                <div class="btn btn-circle btn-outline btn-danger pull-right fa fa-trash" onclick="alert('!')"></div>
+                                                <div class="btn btn-circle btn-outline btn-primary pull-right fa fa-search" onclick="alert('!')"></div>
+                                                <div class="dd-handle">1 - Lorem ipsum</div>
+                                            </li>
+                                            <li class="dd-item" data-id="2">
+                                                <div class="dd-handle">2 - Dolor sit</div>
+                                                <ol class="dd-list">
+                                                    <li class="dd-item" data-id="3">
+                                                        <div class="dd-handle">3 - Adipiscing elit</div>
+                                                    </li>
+                                                    <li class="dd-item" data-id="4">
+                                                        <div class="dd-handle">4 - Nonummy nibh</div>
+                                                    </li>
+                                                </ol>
+                                            </li>
+                                            <li class="dd-item" data-id="5">
+                                                <div class="dd-handle">5 - Consectetuer</div>
+                                                <ol class="dd-list">
+                                                    <li class="dd-item" data-id="6">
+                                                        <div class="dd-handle">6 - Aliquam erat</div>
+                                                    </li>
+                                                    <li class="dd-item" data-id="7">
+                                                        <div class="dd-handle">7 - Veniam quis</div>
+                                                    </li>
+                                                </ol>
+                                            </li>
+                                            <li class="dd-item" data-id="8">
+                                                <div class="dd-handle">8 - Tation ullamcorper</div>
+                                            </li>
+                                            <li class="dd-item" data-id="9">
+                                                <div class="dd-handle">9 - Ea commodo</div>
+                                            </li>
+                                        </ol>
+                                    </div>
+                                    <hr />
+                                    <div class="m-t-md"><strong>Описание:</strong> Для изменения порядка, элементы можно перетаскивать.</div>
+                                    <div class="m-t-md">
+                                        <h5>Serialised Output</h5>
+                                    </div>
+                                    <textarea id="nestable-output" class="form-control"></textarea>
+                                </div>
+                            </div>
                         </div>
-                        <div class="ibox-content">
-                           <p  class="m-b-lg">
-								<button type="button" class="btn btn-block btn-white" onclick='objects_tree_add_item_blank()'>Добавить элемент</button>
-								<strong>Описание:</strong> Для изменения порядка, элементы можно перетаскивать.
-								<hr>
-                           </p>
-                           <div class="dd" id="nestable" >
-                              <ol class="dd-list" id='nestable-ol'>
-                                 <li class="dd-item" data-id="1">
-                                    <div class='btn btn-circle btn-outline btn-danger pull-right fa fa-trash ' onclick="alert('!')"></div>
-                                    <div class='btn btn-circle btn-outline btn-primary pull-right fa fa-search ' onclick="alert('!')"></div>
-                                    <div class="dd-handle">1 - Lorem ipsum </div>
-                                 </li>
-                                 <li class="dd-item" data-id="2">
-                                    <div class="dd-handle">2 - Dolor sit</div>
-                                    <ol class="dd-list">
-                                       <li class="dd-item" data-id="3">
-                                          <div class="dd-handle">3 - Adipiscing elit</div>
-                                       </li>
-                                       <li class="dd-item" data-id="4">
-                                          <div class="dd-handle">4 - Nonummy nibh</div>
-                                       </li>
-                                    </ol>
-                                 </li>
-                                 <li class="dd-item" data-id="5">
-                                    <div class="dd-handle">5 - Consectetuer</div>
-                                    <ol class="dd-list">
-                                       <li class="dd-item" data-id="6">
-                                          <div class="dd-handle">6 - Aliquam erat</div>
-                                       </li>
-                                       <li class="dd-item" data-id="7">
-                                          <div class="dd-handle">7 - Veniam quis</div>
-                                       </li>
-                                    </ol>
-                                 </li>
-                                 <li class="dd-item" data-id="8">
-                                    <div class="dd-handle">8 - Tation ullamcorper</div>
-                                 </li>
-                                 <li class="dd-item" data-id="9">
-                                    <div class="dd-handle">9 - Ea commodo</div>
-                                 </li>
-                              </ol>
-                           </div>
-                           <div class="m-t-md">
-                              <h5>Serialised Output</h5>
-                           </div>
-                           <textarea id="nestable-output" class="form-control"></textarea>
-                        </div>
-                     </div>
-                  </div>
-                  <div class="col-lg-6">
-                     <div class="ibox ">
-                        <div class="ibox-title">
-                           <h5>Свойства элемента</h5>
-                           <a onclick="save_object('admin/constructor/object/set?collection='+encodeURIComponent(collection)+'&objectname='+encodeURIComponent(objectname) )" class="btn btn-primary btn-xs pull-right">Сохранить</a>
-                        </div>
-                        <div class="ibox-content">
-                           <!--
+                        <div class="col-lg-6">
+                            <div class="ibox">
+                                <div class="ibox-title">
+                                    <h5>Свойства элемента</h5>
+                                    <a onclick="save_object('admin/constructor/object/set?collection='+encodeURIComponent(collection)+'&objectname='+encodeURIComponent(objectname) )" class="btn btn-primary btn-xs pull-right">Сохранить</a>
+                                </div>
+                                <div class="ibox-content">
+                                    <!--
                               <h2>
                                   List of built-in Validation methods
                               </h2>
                               -->
-                           <!--
+                                    <!--
                               <strong>Nestable</strong> is an interactive hierarchical list. You can drag and drop to rearrange the order. It works well on touch-screens.
                               -->
-                           <!--
+                                    <!--
                               <button type="button" class="btn btn-block btn-white" onclick="object_table_additem('object_info')">Добавить свойство</button>
                               -->
-                           <div class="m-b-sm">
-                              <button type="button" class="btn btn-success btn-sm" onclick="object_table_additem('object_info')">Добавить свойство</button>
-                              <div class="pull-right">
-                                 <button type="button" class="btn btn-success btn-sm btn-outline" onclick="object_table_additem('object_info', 'head')">Заголовок</button>
-                                 <button type="button" class="btn btn-success btn-sm btn-outline" onclick="object_table_additem('object_info', 'link')">Ссылка</button>
-                                 <button type="button" class="btn btn-success btn-sm btn-outline" onclick="object_table_additem('object_info', 'icon')">Иконка</button>
-                                 <button type="button" class="btn btn-success btn-sm btn-outline" onclick="object_table_additem('object_info', 'info')">Описание</button>
-                                 <button type="button" class="btn btn-success btn-sm btn-outline" onclick="object_table_additem('object_info', 'text')">Текст</button>
-                                 <button type="button" class="btn btn-success btn-sm btn-outline" onclick="object_table_additem('object_info', 'image')">Картинка</button>
-                              </div>
-                           </div>
-                           <table class="table table-bordered">
-                              <thead>
-                                 <tr>
-                                    <th class="col-lg-3">Свойство</th>
-                                    <th>Содержание</th>
-                                 </tr>
-                              </thead>
-                              <tbody id='object_info'>
-                                 <tr class='text-center'>
-                                    <td colspan="2">
-                                       <h4>Список поддерживаемых свойств</h4>
-                                    </td>
-                                 </tr>
-                                 <tr>
-                                    <td>head</td>
-                                    <td>Заголовок элемента</td>
-                                 </tr>
-                                 <tr>
-                                    <td>link</td>
-                                    <td>Ссылка элемента</td>
-                                 </tr>
-                                 <tr>
-                                    <td>icon</td>
-                                    <td>Иконка (fa icon или иные библиотеки)</td>
-                                 </tr>
-                                 <tr>
-                                    <td>info</td>
-                                    <td>Сопроводительная информация</td>
-                                 </tr>
-                                 <tr>
-                                    <td>text</td>
-                                    <td>Текст, содержимое</td>
-                                 </tr>
-                                 <tr>
-                                    <td>image</td>
-                                    <td>Ссылка на изображение</td>
-                                 </tr>
-                                 <tr>
-                                    <td>list</td>
-                                    <td>Список дочерних элементов</td>
-                                 </tr>
-                              </tbody>
-                           </table>
+                                    <div class="m-b-sm">
+                                        <button type="button" class="btn btn-success btn-sm" onclick="object_table_additem('object_info')">Добавить свойство</button>
+                                        <div class="pull-right">
+                                            <button type="button" class="btn btn-success btn-sm btn-outline" onclick="object_table_additem('object_info', 'head')">Заголовок</button>
+                                            <button type="button" class="btn btn-success btn-sm btn-outline" onclick="object_table_additem('object_info', 'link')">Ссылка</button>
+                                            <button type="button" class="btn btn-success btn-sm btn-outline" onclick="object_table_additem('object_info', 'icon')">Иконка</button>
+                                            <button type="button" class="btn btn-success btn-sm btn-outline" onclick="object_table_additem('object_info', 'info')">Описание</button>
+                                            <button type="button" class="btn btn-success btn-sm btn-outline" onclick="object_table_additem('object_info', 'text')">Текст</button>
+                                            <button type="button" class="btn btn-success btn-sm btn-outline" onclick="object_table_additem('object_info', 'image')">Картинка</button>
+                                        </div>
+                                    </div>
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th class="col-lg-3">Свойство</th>
+                                                <th colspan="2">Содержание</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="object_info">
+                                            <tr class="text-center">
+                                                <td colspan="3">
+                                                    <h4>Список поддерживаемых свойств</h4>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>head</td>
+                                                <td colspan="2">Заголовок элемента</td>
+                                            </tr>
+                                            <tr>
+                                                <td>link</td>
+                                                <td colspan="2">Ссылка элемента</td>
+                                            </tr>
+                                            <tr>
+                                                <td>icon</td>
+                                                <td colspan="2">Иконка (fa icon или иные библиотеки)</td>
+                                            </tr>
+                                            <tr>
+                                                <td>info</td>
+                                                <td colspan="2">Сопроводительная информация</td>
+                                            </tr>
+                                            <tr>
+                                                <td>text</td>
+                                                <td colspan="2">Текст, содержимое</td>
+                                            </tr>
+                                            <tr>
+                                                <td>image</td>
+                                                <td colspan="2">Ссылка на изображение</td>
+                                            </tr>
+                                            <tr>
+                                                <td>list</td>
+                                                <td colspan="2">Список дочерних элементов</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
-                     </div>
-                  </div>
-               </div>
+                    </div>
+                </div>
+                <!-- Footer block -->
+                {require "../../~section/footer.html"}
+                <!-- End Footer block -->
             </div>
-            <!-- Footer block -->
-            {require "../../~section/footer.html"}
-            <!-- End Footer block -->
-         </div>
-      </div>
-      <!-- Mainly scripts -->
-      <script src="../../js/jquery-2.1.1.js"></script>
-      <script src="../../js/bootstrap.min.js"></script>
-      <script src="../../js/plugins/metisMenu/jquery.metisMenu.js"></script>
-      <script src="../../js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
-      <!-- Nestable List -->
-      <script src="../../js/plugins/nestable/jquery.nestable.js"></script>
-      <!-- Custom and plugin javascript -->
-      <script src="../../js/inspinia.js"></script>
-      <script src="../../js/plugins/pace/pace.min.js"></script>
-      <!--Object script constructor-->
-      <script src="../../js/data/objects-editor.js"></script>
-      <script src="../../js/data/http-get.js"></script>
-      <script>
-         function tree_inicial()
-         {
-         	var updateOutput = function (e)
-         	{
-                        var list = e.length ? e : $(e.target),
-                                output = list.data('output');
-                        if (window.JSON) {
-                            output.val(window.JSON.stringify(list.nestable('serialize')));//, null, 2));
-                        } else {
-                            output.val('JSON browser support required for this demo.');
-                        }
-                    };
-                    // activate Nestable for list 1
-                    $('#nestable').nestable(
-         		{
-         			group: 1
-         		}).on('change', updateOutput);
+        </div>
+        <!-- Mainly scripts -->
+        <script src="../../js/jquery-2.1.1.js"></script>
+        <script src="../../js/bootstrap.min.js"></script>
+        <script src="../../js/plugins/metisMenu/jquery.metisMenu.js"></script>
+        <script src="../../js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+        <!-- Nestable List -->
+        <script src="../../js/plugins/nestable/jquery.nestable.js"></script>
+        <!-- Custom and plugin javascript -->
+        <script src="../../js/inspinia.js"></script>
+        <script src="../../js/plugins/pace/pace.min.js"></script>
+        <!-- Toastr -->
+		<script src="../../js/plugins/toastr/toastr.min.js"></script>
+        <!--Object script constructor-->
+        <script src="../../js/data/objects-editor.js"></script>
+        <script src="../../js/data/http-get.js"></script>
+        <script>
+            function tree_inicial()
+            {
+                var updateOutput = function (e) {
+                    var list = e.length ? e : $(e.target),
+                        output = list.data("output");
+                    if (window.JSON) {
+                        output.val(window.JSON.stringify(list.nestable("serialize"))); //, null, 2));
+                    } else {
+                        output.val("JSON browser support required for this demo.");
+                    }
+                };
 
-                    // activate Nestable for list 2
-                    //~ $('#nestable2').nestable({
-                        //~ group: 1
-                    //~ }).on('change', updateOutput);
+                // activate Nestable for list 1
+                $("#nestable")
+                    .nestable({
+                        group: 1,
+                    })
+                    .on("change", updateOutput);
 
-                    // output initial serialised data
-                    updateOutput($('#nestable').data('output', $('#nestable-output')));
-                    //~ updateOutput($('#nestable2').data('output', $('#nestable2-output')));
+                // activate Nestable for list 2
+                //~ $('#nestable2').nestable({
+                //~ group: 1
+                //~ }).on('change', updateOutput);
 
-                   $('#nestable-menu').on('click', function (e)
-         	{
-                        var target = $(e.target),
-                                action = target.data('action');
-                        if (action === 'expand-all') {
-                            $('.dd').nestable('expandAll');
-                        }
-                        if (action === 'collapse-all') {
-                            $('.dd').nestable('collapseAll');
-                        }
-         	});
-         }
+                // output initial serialised data
+                updateOutput($("#nestable").data("output", $("#nestable-output")));
+                //~ updateOutput($('#nestable2').data('output', $('#nestable2-output')));
 
-               $(document).ready(tree_inicial());
+                $("#nestable-menu").on("click", function (e)
+                {
+                    var target = $(e.target),
+                        action = target.data("action");
+                    if (action === "expand-all") {
+                        $(".dd").nestable("expandAll");
+                    }
+                    if (action === "collapse-all") {
+                        $(".dd").nestable("collapseAll");
+                    }
+                });
+            }
 
+            $(document).ready(tree_inicial());
 
-                   //~ $('#object_info').on('click', function(e)
-         	//~ {
-         		//~ var object = [];
-         		//~ object.push(object_test_tree_create());
+            //~ $('#object_info').on('click', function(e)
+            //~ {
+            //~ var object = [];
+            //~ object.push(object_test_tree_create());
 
-         		//~ var html_div_id = document.getElementById('nestable');
-         		//~ objects_tree_clear(html_div_id);
-         		//~ objects_tree_paint(html_div_id, object);
+            //~ var html_div_id = document.getElementById('nestable');
+            //~ objects_tree_clear(html_div_id);
+            //~ objects_tree_paint(html_div_id, object);
 
-         		//~ var object = object_test_create();
-         		//~ objects_table_paint('object_info', object);
-         		//~ objects_table_getting('object_info');
-         		//~ tree_inicial();
-         	//~ });
+            //~ var object = object_test_create();
+            //~ objects_table_paint('object_info', object);
+            //~ objects_table_getting('object_info');
+            //~ tree_inicial();
+            //~ });
 
+            //Получаем и десериализуем параметры адресной строки
+            var get = parseGetParams();
+            var collection;
+            var objectname;
+            if (get["collection"] != "") collection = decodeURIComponent(get["collection"]);
+            if (get["object"] != "") objectname = decodeURIComponent(get["object"]);
+            //~ objectname = decodeURIComponent($("#objectname").val());
 
+            //Получаем текущий url
+            var url = document.getElementById("urlbase").innerHTML;
 
-         //Получаем и десериализуем параметры адресной строки
-         var get = parseGetParams();
-         var collection;
-         var objectname;
-         if ( get['collection'] != '')	collection	= decodeURIComponent(get['collection']);
-         if ( get['object'] != '') 		objectname	= decodeURIComponent(get['object']);
+            //Запрашиваем объектик с сервера
+            var jsonobj = url_get(window.location.pathname + "/../get?collection=" + encodeURIComponent(get["collection"]) + "&object=" + encodeURIComponent(get["object"]));
 
-         //Получаем текущий url
-         var url = document.getElementById('urlbase').innerHTML;
+            //Распарсим его
+            var object = [];
+            object["root"] = JSON.parse(jsonobj);
+            //~ object['root'] = JSON.stringify(jsonobj);
+            //~ object['root'] = JSON.parse(jsonobj);
 
-         //Запрашиваем объектик с сервера
-         var jsonobj = url_get(window.location.pathname+'/../get?collection='+encodeURIComponent(get['collection'])+'&object='+encodeURIComponent(get['object']));
+            console.log(object);
+            //Получаем выбираем место отрисовки
+            var html_div_id = document.getElementById("nestable");
+            objects_tree_clear(html_div_id);
+            objects_tree_paint(html_div_id, object);
 
+            function save_object(actionurl)
+            {
+                //Запросим список
+                var html_div_id = document.getElementById("nestable");
+                //Соберем отредактированное дерево
+                //~ var object = object_tree_compilation(html_div_id);
 
+                //Соберем  дерево в json
+                var objson = json_tree_compilation(html_div_id);
 
+                //~ console.log(objson);
 
-         //Распарсим его
-         var object = [];
-         object['root'] = JSON.parse(jsonobj);
-         //~ object['root'] = JSON.stringify(jsonobj);
-         //~ object['root'] = JSON.parse(jsonobj);
+                //~ console.log(JSON.parse(objson));
+                //~ return;
 
+                //Сериализуем
+                //~ var serialize = jsObj2phpObj(object['root']);
 
+                //Удалим корневую структуру ROOT
+                var serialize = objson.slice(8, -1);
 
-         console.log(object);
-         //Получаем выбираем место отрисовки
-         var html_div_id = document.getElementById('nestable');
-         objects_tree_clear(html_div_id);
-         objects_tree_paint(html_div_id, object);
+                console.log(serialize);
+                //~ return;
 
+                //~ alert(actionurl);
+                actionurl = encodeURI(actionurl);
+                //Отправим на сервер
+                $.ajax({
+                    url: actionurl,
+                    type: "post",
+                    data: { object: serialize },
+                    success: function (data)
+                    {
+                        //~ console.log(data);
+                        toastr.success('', 'Сохранено');
+                    },
+                    error: function (xhr, str)
+                    {
+						//~ console.log(xhr);
+                        //~ alert("Возникла ошибка: " + xhr.responseCode);
+                        //~ toastr.error("Возникла ошибка: " + xhr.responseCode, str);
+                        if (xhr.responseText)
+                        {
+							toastr.error(xhr.responseText, 'Ошибка');
+						}
+						else
+						{
+							toastr.error('Сетевая ошибка доступа к серверу');
+						}
+                    },
+                });
+            }
 
-
-         function save_object(actionurl)
-         {
-         	//Запросим список
-         	var html_div_id = document.getElementById('nestable');
-         	//Соберем отредактированное дерево
-         	//~ var object = object_tree_compilation(html_div_id);
-
-         	//Соберем  дерево в json
-         	var objson = json_tree_compilation(html_div_id);
-
-         	//~ console.log(objson);
-
-         	//~ console.log(JSON.parse(objson));
-         	 //~ return;
-
-         	//Сериализуем
-         	//~ var serialize = jsObj2phpObj(object['root']);
-
-         	//Удалим корневую структуру ROOT
-         	var serialize = objson.slice(8, -1);
-
-         	console.log(serialize);
-         	//~ return;
-
-         	//~ alert(actionurl);
-         	actionurl = encodeURI(actionurl);
-         	//Отправим на сервер
-         	$.ajax({
-         			url: actionurl,
-         			type: 'post',
-         			data: {object: serialize},
-         			success: function(data)
-         			{
-         				console.log(data);
-         				//~ location.reload();
-         			},
-         			error:  function(xhr, str)
-         			{
-         				alert('Возникла ошибка: ' + xhr.responseCode);
-         			}
-         	});
-
-
-         }
-
-
-         //~ alert(get['object']);
-
-      </script>
-   </body>
+            //~ alert(get['object']);
+        </script>
+    </body>
 </html>
