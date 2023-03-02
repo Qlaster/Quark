@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>{$title}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/open-iconic-bootstrap.min.css">
+    <link rel="stylesheet" href="css/animate.css">
+    
+    <link rel="stylesheet" href="css/owl.carousel.min.css">
+    <link rel="stylesheet" href="css/owl.theme.default.min.css">
+    <link rel="stylesheet" href="css/magnific-popup.css">
+
+    <link rel="stylesheet" href="css/aos.css">
+
+    <link rel="stylesheet" href="css/ionicons.min.css">
+
+    <link rel="stylesheet" href="css/bootstrap-datepicker.css">
+    <link rel="stylesheet" href="css/jquery.timepicker.css">
+
+    
+    <link rel="stylesheet" href="css/flaticon.css">
+    <link rel="stylesheet" href="css/icomoon.css">
+	<link rel="stylesheet" href="css/style.css">
+	{base}
+  </head>
+  <body>
+	{require('section/header.html')} 
+    <!-- END nav -->
+    
+    <section class="hero-wrap hero-wrap-2" style="background-image: url('{$background}');" data-stellar-background-ratio="0.5">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+          <div class="col-md-9 ftco-animate text-center">
+            <h1 class="mb-2 bread">{$head}</h1>
+            <p class="breadcrumbs"><span class="mr-2"><span>{$info} </p>
+          </div>
+        </div>
+      </div>
+    </section>
+		
+		{if trim($body)}
+		<section class="ftco-section bg-light">
+		   <div class="container">
+			  <div class="row ftco-animate fadeInUp ftco-animated">
+				  <div class="col-md-12">
+					{$$body}
+				  </div>
+			  </div>
+			  <div class="row no-gutters my-5 hidden" hidden>
+				 <div class="col text-center">
+					<div class="block-27">
+					   <ul>
+						  <li><a href="#"><i class="ion-ios-arrow-back"></i></a></li>
+						  <li class="active"><span>1</span></li>
+						  <li><a href="#">2</a></li>
+						  <li><a href="#">3</a></li>
+						  <li><a href="#">4</a></li>
+						  <li><a href="#">5</a></li>
+						  <li><a href="#"><i class="ion-ios-arrow-forward"></i></a></li>
+					   </ul>
+					</div>
+				 </div>
+			  </div>
+		   </div>
+		</section>
+		{end}
+		
+		
+
+		{if $gallery['pricebooklet']}
+		<section class="!ftco-section ftco-services bg-light">
+		   <div class="container ">
+		   <div class="col-md-12 ">
+			  <div class="row ftco-animate fadeInUp ftco-animated ">
+				  
+					{foreach $gallery['pricebooklet']['list'] as $_key => &$_slide}
+						<div class="col-md-12 col-sm-12 col-xs-12">
+							<div class="ftco-animate justify-content-center fadeInUp ftco-animated mt-3 services-border">
+								<img class="col-md-12 pt-3 pb-3" src="{$_slide['image']}">
+							</div>
+						</div>
+					{end}
+				  
+			  </div>
+		   </div>
+		   </div>		
+		</section>			
+		
+		{end}
+    
+    
+<!--
+		<section class="ftco-intro" style="background-image: url(images/bg_3.jpg);" data-stellar-background-ratio="0.5">
+			<div class="overlay"></div>
+			<div class="container">
+				<div class="row">
+					<details class="col-md-12">
+						<div class="col-md-9">
+							<h2>xxxx</h2>
+							<p class="mb-0">Your Health is Our Top Priority with Comprehensive, Affordable medical.</p>
+							<p></p>
+						</div>
+					
+						<div class="col-md-3 d-flex align-items-center">
+							<summary >Показать цены</summary>	
+							<p class="mb-0"><a href="#" class="btn btn-secondary px-4 py-3">Показать цены</a></p>
+						</div>
+						
+						{foreach $_block['list'] as $_item}
+							<div class="Price_item__-CV7G">
+								{$_item['name']}
+								<div class="Price_itemPrice__13Q00">{$_item['prefix']} {$_item['price']} ₽</div> <br>
+							</div>
+						{end}
+					</details>
+				</div>
+			</div>
+		</section>
+-->
+
+		<section class="ftco-services"> <p></p> </section>
+		{foreach (array) $catalog['price']['list'] as $_block}
+			<section class="ftco-intro" style="background-image: url('{$_block['image']}');"  data-stellar-background-ratio="0.5">
+<!--
+			<section class="ftco-intro" style=" background:  url('{$_block['image']}')  fixed center;"  data-stellar-background-ratio="0.5">
+-->
+				<div class="overlay"></div>
+			    <div class="container">
+				  <details class="col-md-12 ">
+				  <summary class="text-center" style="list-style-type: none;"> <h2 class="mb-4">{$_block['head']}</h2> </summary>
+				  
+<!--
+				  <div class="row justify-content-center mb-5 pb-2">
+					 <div class="col-md-8 text-center heading-section ftco-animate fadeInUp ftco-animated">
+						   <span class="subheading">Pricing</span>
+						
+						<p>Separated they live in. A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a paradisematic country</p>
+					 </div>
+				  </div>
+-->
+				  <div class="row">
+					  
+						<table class="table" style="font-size:16px; color:white;">
+<!--
+						  <thead>
+							<tr>
+							  <th scope="col">#</th>
+							  <th scope="col">First</th>
+							  <th scope="col">Last</th>
+							  <th scope="col">Handle</th>
+							</tr>
+						  </thead>
+-->
+						  <tbody>
+							 {foreach $_block['list'] as $_key => $_item}
+								<tr>
+								  <th scope="row">{$_key+1}</th>
+								  <td>{$_item['name']}</td>								  
+								  <td class="text-right">{$_item['prefix']}&nbsp{echo str_replace(" ", '&nbsp', $_item['price'])}&nbsp₽</td>
+								</tr>							  
+							{end} 
+							
+
+						  </tbody>
+						</table>
+
+					   
+<!--
+					  
+					 <div class="col-md-3 ftco-animate fadeInUp ftco-animated">
+						<div class="pricing-entry pb-5 text-center">
+						   <div>
+							  <h3 class="mb-4">Basic</h3>
+							  <p><span class="price">$24.50</span> <span class="per">/ session</span></p>
+						   </div>
+						   <ul>
+							  <li>Diagnostic Services</li>
+							  <li>Professional Consultation</li>
+							  <li>Tooth Implants</li>
+							  <li>Surgical Extractions</li>
+							  <li>Teeth Whitening</li>
+						   </ul>
+						   <p class="button text-center"><a href="#" class="btn btn-primary px-4 py-3">Get Offer</a></p>
+						</div>
+					 </div>
+					 <div class="col-md-3 ftco-animate fadeInUp ftco-animated">
+						<div class="pricing-entry pb-5 text-center">
+						   <div>
+							  <h3 class="mb-4">Standard</h3>
+							  <p><span class="price">$34.50</span> <span class="per">/ session</span></p>
+						   </div>
+						   <ul>
+							  <li>Diagnostic Services</li>
+							  <li>Professional Consultation</li>
+							  <li>Tooth Implants</li>
+							  <li>Surgical Extractions</li>
+							  <li>Teeth Whitening</li>
+						   </ul>
+						   <p class="button text-center"><a href="#" class="btn btn-primary px-4 py-3">Get Offer</a></p>
+						</div>
+					 </div>
+					 <div class="col-md-3 ftco-animate fadeInUp ftco-animated">
+						<div class="pricing-entry active pb-5 text-center">
+						   <div>
+							  <h3 class="mb-4">Premium</h3>
+							  <p><span class="price">$54.50</span> <span class="per">/ session</span></p>
+						   </div>
+						   <ul>
+							  <li>Diagnostic Services</li>
+							  <li>Professional Consultation</li>
+							  <li>Tooth Implants</li>
+							  <li>Surgical Extractions</li>
+							  <li>Teeth Whitening</li>
+						   </ul>
+						   <p class="button text-center"><a href="#" class="btn btn-primary px-4 py-3">Get Offer</a></p>
+						</div>
+					 </div>
+					 <div class="col-md-3 ftco-animate fadeInUp ftco-animated">
+						<div class="pricing-entry pb-5 text-center">
+						   <div>
+							  <h3 class="mb-4">Platinum</h3>
+							  <p><span class="price">$89.50</span> <span class="per">/ session</span></p>
+						   </div>
+						   <ul>
+							  <li>Diagnostic Services</li>
+							  <li>Professional Consultation</li>
+							  <li>Tooth Implants</li>
+							  <li>Surgical Extractions</li>
+							  <li>Teeth Whitening</li>
+						   </ul>
+						   <p class="button text-center"><a href="#" class="btn btn-primary px-4 py-3">Get Offer</a></p>
+						</div>
+					 </div>
+				  
+-->
+				  </div>
+				  
+				  </details>
+			   </div>
+			</section>
+			
+			<section class="ftco-services"> <p></p> </section>
+		{end}
+
+		
+		
+		
+		
+		
+		
+		
+		
+		{if $menu['service']}
+		<section class="ftco-section ftco-services">
+			<div class="container">
+				<div class="row justify-content-center mb-5 pb-2">
+			  <div class="col-md-8 text-center heading-section ftco-animate">
+				<span class="subheading">{$menu['service']['head']}</span>
+				<h2 class="mb-4">{$menu['service']['info']}</h2>
+
+			  </div>
+			</div>
+			<div class="row">
+				{foreach $menu['service']['list'] as $_item}				
+						<div class="col-md-3 d-flex services align-self-stretch p-4 ftco-animate justify-content-center">
+						   <div class="media block-6 d-block text-center !pricing-entry services-border ">
+							 
+							 <a {if $_item['link']} href="{$_item['link']}" {end}>
+								  <div class="icon d-flex justify-content-center align-items-center">
+									 <span class="{$_item['icon']}"></span>
+								  </div>
+								
+								  <div class="media-body p-2 mt-3 ">								 
+									 <h3 class="heading ">{$_item['head']}</h3>
+									 <p class="text-dark">{$_item['info']}</p>
+								  </div>
+							  </a>	
+						   </div>
+						</div>				
+				{end}
+
+		   
+				</div>
+			</div>
+		</section>
+		{end}
+		
+		
+		
+    
+    
+	{require('section/footer.html')} 
+    
+  
+
+  <!-- loader -->
+<!--
+  <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
+-->
+
+
+  <script src="js/jquery.min.js"></script>
+  <script src="js/jquery-migrate-3.0.1.min.js"></script>
+  <script src="js/popper.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/jquery.easing.1.3.js"></script>
+  <script src="js/jquery.waypoints.min.js"></script>
+  <script src="js/jquery.stellar.min.js"></script>
+  <script src="js/owl.carousel.min.js"></script>
+  <script src="js/jquery.magnific-popup.min.js"></script>
+  <script src="js/aos.js"></script>
+  <script src="js/jquery.animateNumber.min.js"></script>
+  <script src="js/bootstrap-datepicker.js"></script>
+  <script src="js/jquery.timepicker.min.js"></script>
+  <script src="js/scrollax.min.js"></script>
+
+  <script src="js/google-map.js"></script>
+  <script src="js/main.js"></script>
+  
+  
+  <!--
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&sensor=false"></script>
+-->
+    
+  </body>
+</html>

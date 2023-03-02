@@ -7,6 +7,9 @@
 		<link href="../../css/bootstrap.min.css" rel="stylesheet">
 		<link href="../../font-awesome/css/font-awesome.css" rel="stylesheet">
 		<link href="../../css/animate.css" rel="stylesheet">
+		<!-- Toastr style -->
+		<link href="../../css/plugins/toastr/toastr.min.css" rel="stylesheet">
+
 		<!--Темы редактора-->
 		<link href="../../css/plugins/codemirror/codemirror.css" 	rel="stylesheet">
 		<link href="../../css/plugins/codemirror/ambiance.css" 		rel="stylesheet">
@@ -52,7 +55,7 @@
 
 			<div class="wrapper wrapper-content  animated fadeInRight">
 				<div class="row">
-					{if ($config === null ) and ($code === null)}					
+					{if ($config === null ) and ($code === null)}
 						<div class="col-lg-6">
 							<div class="ibox float-e-margins">
 								<div class="ibox-title">
@@ -219,7 +222,7 @@
 											<button type="button" class="btn btn-primary btn-xs m-l-sm" onclick="save_textarea('config_editor_form', '{$filename['config']}')">Сохранить</button>
 											-->
 										<label id='result-label-config'></label>
-										<button type="button" class="btn btn-primary btn-xs m-l-sm" onclick="AjaxFormRequest('result-label-config', 'config_editor_form', '{$config['action']}')">Сохранить</button>
+										<button type="button" class="btn-save btn btn-primary btn-xs m-l-sm" onclick="AjaxFormRequest('result-label-config', 'config_editor_form', '{$config['action']}')">Сохранить</button>
 										<a class="collapse-link">
 										<i class="fa fa-chevron-up"></i>
 										</a>
@@ -266,7 +269,7 @@
 											<button type="button" class="btn btn-primary btn-xs m-l-sm" onclick="send_textarea('code_editor', '')" >Сохранить</button>
 											-->
 										<label class='text-success' id='result-label-code'></label>
-										<button type="button" class="btn btn-primary btn-xs m-l-sm" onclick="AjaxFormRequest('result-label-code', 'code_editor_form', '{$code['action']}')">Сохранить</button>
+										<button type="button" class="btn-save btn btn-primary btn-xs m-l-sm" onclick="AjaxFormRequest('result-label-code', 'code_editor_form', '{$code['action']}')">Сохранить</button>
 										<a class="collapse-link">
 										<i class="fa fa-chevron-up"></i>
 										</a>
@@ -313,13 +316,12 @@
 		<script src="../../js/bootstrap.min.js"></script>
 		<script src="../../js/plugins/metisMenu/jquery.metisMenu.js"></script>
 		<script src="../../js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+		<!-- Toastr -->
+		<script src="../../js/plugins/toastr/toastr.min.js"></script>
 		<!-- CodeMirror -->
 		<script src="../../js/plugins/codemirror/codemirror.js"></script>
 		<script src="../../js/plugins/codemirror/mode/javascript/javascript.js"></script>
 		<script src="../../js/plugins/codemirror/mode/php/php.js"></script>
-		<!--
-			<script src="../../js/plugins/codemirror/mode/php/test.js"></script>
-			-->
 		<script src="../../js/plugins/codemirror/mode/properties/properties.js"></script>
 		<script src="../../js/plugins/codemirror/mode/meta.js"></script>
 		<!--
@@ -437,16 +439,7 @@
 
 					var target = event.target.parentNode; // где был клик?
 					var filename = $(target).attr('placeholder');
-
-					//~ alert(target);
-
 					location.href = 'admin/app/codeeditor/?file='+filename;
-					//if (this.className=='file') alert('1111');
-					//~ console.log(this);
-					console.log(target);
-					//select(this);
-					//action();
-
 				});
 
 				//Одинарный клик на файле (или диретории)
@@ -460,15 +453,6 @@
 					if (dir == undefined) return;
 
 					$('#ibox-content').load('admin/app/filemanager/file_info.php?path='+dir);
-
-
-
-					//location.href = 'http://www.yandex.ru/';
-					//if (this.className=='file') alert('1111');
-					console.log(this);
-					//select(this);
-					//action();
-
 				});
 
 			};
@@ -494,59 +478,6 @@
 
 
 
-			function save_textarea(id, filename)
-			{
-
-				//~ alert(id);
-
-
-				//~ var msg   = $('#'+id).serialize();
-				//~ var msg   = $('#code_editor').serialize();
-				//~ alert(msg);
-
-				id = 'code_editor';
-
-				//{text: $('#'+id).val()}
-
-				//~ var msg = $('#'+id).val();
-
-				//~ $.ajax(
-				//~ {
-					//~ type: 'POST',
-					//~ url: 'admin/app/codeeditor/save.php',
-					//~ data: msg,
-					//~ success: function(data)
-					//~ {
-						//~ $('#results').html(data);
-					//~ },
-					//~ error:  function(xhr, str)
-					//~ {
-						//~ alert('Возникла ошибка: ' + xhr.responseCode);
-					//~ }
-				//~ });
-
-
-
-
-				//~ $('#'+id).bind('input', function(){
-					//~ $.ajax({
-						//~ url: 'admin/app/codeeditor/save.php',
-						//~ method: 'post',
-						//~ dataType: 'html',
-						//~ data: {text: $('#'+id).val()},
-						//~ success: function(data)
-						//~ {
-							//~ $('#result').html(data);
-							//~ alert(data);
-						//~ }
-					//~ });
-				//~ });
-
-
-
-
-			}
-
 
 			function AjaxFormRequest(result_id, formMain, url)
 			{
@@ -571,25 +502,34 @@
 						  $('#'+result_id).html('');
 						}, 2000);
 
+					toastr.options =
+					{
+						closeButton: true,
+						progressBar: true,
+						showMethod: 'slideDown',
+						timeOut: 4000
+					};
+					toastr.success('', response);
 
 				 },
 				 error: function(response)
 				 {
 					document.getElementById(result_id).innerHTML = "<i class='fa fa-circle text-alert'></i> " + "Возникла сетевая ошибка при отправке формы! Попробуйте еще раз";
+					toastr.error(response, "Возникла сетевая ошибка при отправке формы! Попробуйте еще раз");
 				 }
 				 });
-
-
-
-				 //~ $(':input','#subscribe')
-				 //~ .not(':button, :submit, :reset, :hidden')
-				 //~ .val('')
-				 //~ .removeAttr('checked')
-				 //~ .removeAttr('selected');
 			}
 
 
-
+			$(document).bind('keydown', function(e)
+			{
+			  if(e.ctrlKey && (e.which == 83))
+			  {
+				e.preventDefault();
+				$('.btn-save').trigger('click');
+				return false;
+			  }
+			});
 
 
 		</script>

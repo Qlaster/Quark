@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>{$title}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/open-iconic-bootstrap.min.css">
+    <link rel="stylesheet" href="css/animate.css">
+    
+    <link rel="stylesheet" href="css/owl.carousel.min.css">
+    <link rel="stylesheet" href="css/owl.theme.default.min.css">
+    <link rel="stylesheet" href="css/magnific-popup.css">
+
+    <link rel="stylesheet" href="css/aos.css">
+
+    <link rel="stylesheet" href="css/ionicons.min.css">
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap-datepicker.css">
+    <link rel="stylesheet" href="css/jquery.timepicker.css">
+
+    
+    <link rel="stylesheet" href="css/flaticon.css">
+    <link rel="stylesheet" href="css/icomoon.css">
+    <link rel="stylesheet" href="css/font-awesome-4.7.0/css/font-awesome.min.css">
+<!--
+    <link rel="stylesheet" href="css/css/style.min.css">
+-->
+<!--
+    <link rel="stylesheet" href="css/css/templete.min.css">    
+-->
+    <link rel="stylesheet" href="css/style.css?v=3">
+    
+  </head>
+  <body>
+	
+	{require('section/header.html')} 
+    
+    <section class="home-slider owl-carousel">
+		
+		{foreach $slider['main']['list'] as $_slide}
+		  <div class="slider-item" style="background-image:url('{$_slide['image']}');" data-stellar-background-ratio="0.5">
+			<div class="overlay"></div>
+			<div class="container">
+			  <div class="row no-gutters slider-text align-items-center justify-content-end" data-scrollax-parent="true">
+			  <div class="col-md-6 text ftco-animate  ">
+				<h1 class="mb-4 " style="color:white; background-color:#846b90; opacity:0.7; border-left: 2em solid #684777;">{$_slide['head']}</h1>
+				<h3 class="subheading">{$_slide['text']}</h3>
+				{if $_slide['link']}
+					<p><a href="{$_slide['link']}" class="btn btn-secondary px-4 py-3 mt-3">Подробнее</a></p>
+				{end}
+<!--
+					<p><a href="#content-start" class="btn btn-secondary px-4 py-3 mt-3  d-block d-sm-none" style="opacity:0.8">Далее</a></p>
+-->
+			  </div>
+			</div>
+			</div>
+		  </div>
+		{end}
+
+<!--
+      <div class="slider-item" style="background-image:url(~/images/bg_2.jpg);">
+      	<div class="overlay"></div>
+        <div class="container">
+          <div class="row no-gutters slider-text align-items-center justify-content-end" data-scrollax-parent="true">
+          <div class="col-md-6 text ftco-animate">
+            <h1 class="mb-4">Ваша улыбка <br>украшение</h1>
+            <h3 class="subheading">Мы делаем клиентов счастливыми</h3>
+            <p><a href="#" class="btn btn-secondary px-4 py-3 mt-3">Подробнее</a></p>
+          </div>
+        </div>
+        </div>
+      </div>
+-->
+    </section>
+    
+    <section class="ftco-section ftco-no-pt ftco-no-pb">
+			<div class="container-fluid px-md-0">
+				<div class="row no-gutters">
+					<div class="col-md-3 d-flex align-items-stretch">
+						<div class="consultation w-100 text-center px-4 px-md-5">
+							<a href="tel:+7481239-29-29"> <h3 class="!mb-4">+7 (4812) 39-29-29</h3> </a>
+							<p>г. Смоленск, ул. Матросова д. 16</p>
+<!--
+							<a href="#" class="btn-custom">See Services</a>
+-->
+						</div>
+					</div>
+					<div class="col-md-6 d-flex align-items-stretch">
+						<div class="consultation consul w-100 px-4 px-md-5 ">
+							<div class="text-center">
+<!--
+								<h3 class="mb-4">Free Consultation</h3>
+-->
+							</div>
+							<form action="#" class="appointment-form ">
+								
+								<!--- FORM ADV --->
+								
+								<div class="row">
+								   <div class="col-md-12 col-lg-6 col-xl-4">
+									  <div class="form-group">
+										 <input type="text" class="form-control" placeholder="Ваше имя">
+									  </div>
+								   </div>
+								   <div class="col-md-12 col-lg-6 col-xl-4">
+									  <div class="form-group">
+										 <input type="text" class="form-control" placeholder="Номер телефона">
+									  </div>
+								   </div>
+								   						  
+								   <div class="col-md-12 col-lg-6 col-xl-4">
+									  <div class="form-group">
+										 <input type="submit" value="Получить консультацию" class="btn btn-secondary py-2 px-4">
+									  </div>
+								   </div>
+								</div>
+								
+								<!--- /FORM ADV --->
+								
+								
+								
+								
+<!--
+								<div class="row">
+									<div class="col-md-12 col-lg-6 col-xl-4">
+										<div class="form-group">
+				    					<input type="text" class="form-control" placeholder="First Name">
+				    				</div>
+									</div>
+									<div class="col-md-12 col-lg-6 col-xl-4">
+										<div class="form-group">
+				    					<input type="text" class="form-control" placeholder="Last Name">
+				    				</div>
+									</div>
+									<div class="col-md-12 col-lg-6 col-xl-4">
+										<div class="form-group">
+				    					<div class="form-field">
+		          					<div class="select-wrap">
+		                      <div class="icon"><span class="ion-ios-arrow-down"></span></div>
+		                      <select name="" id="" class="form-control">
+		                      	<option value="">Department</option>
+		                        <option value="">Neurology</option>
+		                        <option value="">Cardiology</option>
+		                        <option value="">Dental</option>
+		                        <option value="">Ophthalmology</option>
+		                        <option value="">Other Services</option>
+		                      </select>
+		                    </div>
+				              </div>
+				    				</div>
+									</div>
+									<div class="col-md-12 col-lg-6 col-xl-4">
+										<div class="form-group">
+				    					<div class="input-wrap">
+				            		<div class="icon"><span class="ion-md-calendar"></span></div>
+				            		<input type="text" class="form-control appointment_date" placeholder="Date">
+			            		</div>
+				    				</div>
+									</div>
+									<div class="col-md-12 col-lg-6 col-xl-4">
+										<div class="form-group">
+				    					<div class="input-wrap">
+				            		<div class="icon"><span class="ion-ios-clock"></span></div>
+				            		<input type="text" class="form-control appointment_time" placeholder="Time">
+			            		</div>
+				    				</div>
+									</div>
+									<div class="col-md-12 col-lg-6 col-xl-4">
+										<div class="form-group">
+				              <input type="submit" value="Appointment" class="btn btn-secondary py-2 px-4">
+				            </div>
+									</div>
+								</div>
+-->
+		    			</form>
+		    	  </div>
+					</div>
+					<div class="col-md-3 d-flex align-items-stretch">
+						<div class="consultation w-100 text-center px-4 px-md-5">
+							<img src="public/images/logo.svg">
+<!--
+							<h3 class="mb-4">Find A Doctor</h3>
+							<p>Оставляя номер телефона вы соглашаетесь с политикой конфиденциальности</p>
+							<a href="#" class="btn-custom">Mee our doctor</a>
+-->
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		
+		
+		<section id="content-start">
+		<div class="section-full  bg-gray-md content-inner-1 rounded">
+			
+<!--
+            <div class="container">
+                <div class="section-content">
+                    <div class="row dzseth bg-primary">
+                        <div class="col-lg-2 col-md-3 bg-primary p-0 box-services text-white" style="height: 300px;">
+                            <div class="p-a30 box-services-content">
+								<h2 class="m-t0 m-b15 text-uppercase">Ear</h2>
+								<p>Lorem Ipsum has been the industry's standard dummy text ever since when an unknown printer took a galley.</p>
+								<div class="m-t20"> <a href="javascript:;" class="site-button white radius-xl">Read More</a> </div>
+							</div>
+                        </div>
+                        <div class="col-lg-2 col-md-3 p-0" style="height: 300px;"> 
+							<img src="http://casenet.ru/PROJECT/new.rsp67.ru/images/our-services/service-3/pic1.jpg" alt="" class="img-cover" style="height: 300px;"> 
+						</div>
+                        <div class="col-lg-2 col-md-3 bg-primary p-0 box-services text-white" style="height: 300px;">
+                            <div class="p-a30 box-services-content">
+								<h2 class="m-t0 m-b15 text-uppercase">Nose</h2>
+								<p>Lorem Ipsum has been the industry's standard dummy text ever since when an unknown printer took a galley.</p>
+								<div class="m-t20"> <a href="javascript:;" class="site-button white radius-xl">Read More</a> </div>
+							</div>
+                        </div>
+						<div class="col-lg-2 col-md-3 p-0 " style="height: 300px;"> 
+							<img src="http://casenet.ru/PROJECT/new.rsp67.ru/images/our-services/service-3/pic2.jpg" alt="" class="img-cover" style="height: 300px;">
+						</div>
+                        <div class="col-lg-2 col-md-3 bg-primary p-0 box-services text-white" style="height: 300px;">
+                            <div class="p-a30 box-services-content">
+								<h2 class="m-t0 m-b15 text-uppercase">Nose</h2>
+								<p>Lorem Ipsum has been the industry's standard dummy text ever since when an unknown printer took a galley.</p>
+								<div class="m-t20"> <a href="javascript:;" class="site-button white radius-xl">Read More</a> </div>
+							</div>
+                        </div>
+						<div class="col-lg-2 col-md-3 p-0 " style="height: 300px;"> 
+							<img src="http://casenet.ru/PROJECT/new.rsp67.ru/images/our-services/service-3/pic2.jpg" alt="" class="img-cover" style="height: 300px;">
+						</div>
+                    </div>
+					<div class="row dzseth bg-primary">
+						<div class="col-lg-2 col-md-3 p-0" style="height: 300px;"> 
+							<img src="http://casenet.ru/PROJECT/new.rsp67.ru/images/our-services/service-3/pic3.jpg" alt="" class="img-cover" style="height: 300px;">
+						</div>
+                        <div class="col-lg-2 col-md-3 bg-primary p-0 box-services text-white" style="height: 300px;">
+                            <div class="p-a30 box-services-content">
+								<h2 class="m-t0 m-b15 text-uppercase">Throat</h2>
+								<p>Lorem Ipsum has been the industry's standard dummy text ever since when an unknown printer took a galley.</p>
+								<div class="m-t20"> <a href="javascript:;" class="site-button white radius-xl">Read More</a> </div>
+							</div>
+                        </div>
+                        <div class="col-lg-2 col-md-3 p-0" style="height: 300px;"> 
+							<img src="http://casenet.ru/PROJECT/new.rsp67.ru/images/our-services/service-3/pic4.jpg" alt="" class="img-cover" style="height: 300px;">
+						</div>
+                        <div class="col-lg-2 col-md-3 bg-primary p-0 box-services text-white" style="height: 300px;">
+                            <div class="p-a30 box-services-content">
+								<h2 class="m-t0 m-b15 text-uppercase">ENT </h2>
+								<p>Lorem Ipsum has been the industry's standard dummy text ever since when an unknown printer took a galley.</p>
+								<div class="m-t20"> <a href="javascript:;" class="site-button white radius-xl">Read More</a> </div>
+							</div>
+                        </div>
+                        <div class="col-lg-2 col-md-3 p-0" style="height: 300px;"> 
+							<img src="http://casenet.ru/PROJECT/new.rsp67.ru/images/our-services/service-3/pic4.jpg" alt="" class="img-cover" style="height: 300px;">
+						</div>
+                        <div class="col-lg-2 col-md-3 bg-primary p-0 box-services text-white" style="height: 300px;">
+                            <div class="p-a30 box-services-content">
+								<h2 class="m-t0 m-b15 text-uppercase">ENT </h2>
+								<p>Lorem Ipsum has been the industry's standard dummy text ever since when an unknown printer took a galley.</p>
+								<div class="m-t20"> <a href="javascript:;" class="site-button white radius-xl">Read More</a> </div>
+							</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+-->
+       
+			
+<!--
+            <div class="container">
+                <div class="section-content">
+                    <div class="row dzseth bg-primary">
+                        <div class="col-lg-3 col-md-6 bg-primary p-0 box-services text-white" style="height: 300px;">
+                            <div class="p-a30 box-services-content">
+								<h2 class="m-t0 m-b15 text-uppercase">Ear</h2>
+								<p>Lorem Ipsum has been the industry's standard dummy text ever since when an unknown printer took a galley.</p>
+								<div class="m-t20"> <a href="javascript:;" class="site-button white radius-xl">Read More</a> </div>
+							</div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 p-0" style="height: 300px;"> 
+							<img src="http://casenet.ru/PROJECT/new.rsp67.ru/images/our-services/service-3/pic1.jpg" alt="" class="img-cover" style="height: 300px;"> 
+						</div>
+                        <div class="col-lg-3 col-md-6 bg-primary p-0 box-services text-white" style="height: 300px;">
+                            <div class="p-a30 box-services-content">
+								<h2 class="m-t0 m-b15 text-uppercase">Nose</h2>
+								<p>Lorem Ipsum has been the industry's standard dummy text ever since when an unknown printer took a galley.</p>
+								<div class="m-t20"> <a href="javascript:;" class="site-button white radius-xl">Read More</a> </div>
+							</div>
+                        </div>
+						<div class="col-lg-3 col-md-6 p-0 " style="height: 300px;"> 
+							<img src="http://casenet.ru/PROJECT/new.rsp67.ru/images/our-services/service-3/pic2.jpg" alt="" class="img-cover" style="height: 300px;">
+						</div>
+                    </div>
+					<div class="row dzseth bg-primary">
+						<div class="col-lg-3 col-md-6 p-0" style="height: 300px;"> 
+							<img src="http://casenet.ru/PROJECT/new.rsp67.ru/images/our-services/service-3/pic3.jpg" alt="" class="img-cover" style="height: 300px;">
+						</div>
+                        <div class="col-lg-3 col-md-6 bg-primary p-0 box-services text-white" style="height: 300px;">
+                            <div class="p-a30 box-services-content">
+								<h2 class="m-t0 m-b15 text-uppercase">Throat</h2>
+								<p>Lorem Ipsum has been the industry's standard dummy text ever since when an unknown printer took a galley.</p>
+								<div class="m-t20"> <a href="javascript:;" class="site-button white radius-xl">Read More</a> </div>
+							</div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 p-0" style="height: 300px;"> 
+							<img src="http://casenet.ru/PROJECT/new.rsp67.ru/images/our-services/service-3/pic4.jpg" alt="" class="img-cover" style="height: 300px;">
+						</div>
+                        <div class="col-lg-3 col-md-6 bg-primary p-0 box-services text-white" style="height: 300px;">
+                            <div class="p-a30 box-services-content">
+								<h2 class="m-t0 m-b15 text-uppercase">ENT </h2>
+								<p>Lorem Ipsum has been the industry's standard dummy text ever since when an unknown printer took a galley.</p>
+								<div class="m-t20"> <a href="javascript:;" class="site-button white radius-xl">Read More</a> </div>
+							</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+-->
+       
+        </div>
+		
+		</section>
+
+		<br>
+		<br>
+		<br>
+		<section class="ftco-section ftco-no-pt ftco-no-pb">
+			<div class="container">
+				{$$headbody}
+<!--
+				<div class="row no-gutters">
+					<div class="col-md-5 p-md-5 img img-2 mt-5 mt-md-0" style="background-image: url(~/images/image_1.jpg);">
+					</div>
+					<div class="col-md-7 wrap-about py-4 py-md-5 ftco-animate">
+	          <div class="heading-section mb-5">
+	          	<div class="pl-md-5 ml-md-5 pt-md-5">
+		          	<span class="subheading mb-2">Воронова Ольга Олеговна</span>
+		            <h2 class="mb-2" style="font-size: 32px;">Лучшие специалисты готовы сделать вашу улыбку безупречной</h2>
+	            </div>
+	          </div>
+	          <div class="pl-md-5 ml-md-5 mb-5">
+							<p>Дарить Вам безупречную улыбку - наша работа. Применяя в работе импортное оборудование, сертифицированные материалы, мы можем гарантировать пациентам эффективность лечения. В нашей клинике ведут прием исключительно квалифицированные специалисты, цель которых - дарить Вам красоту и здоровье.</p>
+							<p>Дарить Вам безупречную улыбку - наша работа. Применяя в работе импортное оборудование, сертифицированные материалы, мы можем гарантировать пациентам эффективность лечения. В нашей клинике ведут прием исключительно квалифицированные специалисты, цель которых - дарить Вам красоту и здоровье.</p>
+							<div class="founder d-flex align-items-center mt-5">
+								<div class="img" style="background-image: url(~/images/doc-1.jpg);"></div>
+								<div class="text pl-3">
+									<h3 class="mb-0">Dr. Paul Foster</h3>
+									<span class="position">CEO, Founder</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+-->
+			</div>
+		</section>
+
+
+		<section class="ftco-section ftco-no-pt ftco-no-pb" hidden>
+			<div class="section-full bg-white content-inner">
+				<div class="container">
+					<div class="section-content">
+						<div class="row">
+							<div class="col-md-12 text-center section-head">
+								<h3 class="h3">Our Awesome Services</h3>
+								<div class="dez-separator bg-primary"></div>
+								<div class="clear"></div>
+								<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry has been the industry's standard dummy text ever since the been when an unknown printer.</p>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-lg-4 col-md-6 col-sm-12">
+								<div class="icon-bx-wraper bx-style-2 m-b30 p-a20 right m-r50">
+									<div class="icon-bx-md radius bg-primary"><span class="icon-cell text-white"><i class="fa fa-user-md" aria-hidden="true"></i></span></div>
+									<div class="icon-content p-r40">
+										<h5 class="dez-tilte">Our Best Doctor</h5>
+										<div class="dez-separator-outer ">
+											<div class="dez-separator bg-primary style-liner"></div>
+										</div>
+										<p>Lorem ipsum dolor sit amet, consectetuer adipiscing  sed diam nibh euismod. </p>
+									</div>
+								</div>
+								<div class="icon-bx-wraper bx-style-2 m-b30 p-a20  right m-r50">
+									<div class="icon-bx-md radius bg-primary"> <span class="icon-cell text-white"><i class="fa fa-ambulance" aria-hidden="true"></i></span> </div>
+									<div class="icon-content p-r40">
+										<h5 class="dez-tilte">Fast Ambulance Searvice</h5>
+										<div class="dez-separator-outer ">
+											<div class="dez-separator bg-primary style-liner"></div>
+										</div>
+										<p>Lorem ipsum dolor sit amet, consectetuer adipiscing  sed diam nibh euismod. </p>
+									</div>
+								</div>
+								<div class="icon-bx-wraper bx-style-2 m-b30 p-a20 right m-r50">
+									<div class="icon-bx-md radius bg-primary"> <span class="icon-cell text-white"><i class="fa fa-users" aria-hidden="true"></i></span> </div>
+									<div class="icon-content p-r40">
+										<h5 class="dez-tilte ">Well Qualified Staff</h5>
+										<div class="dez-separator-outer ">
+											<div class="dez-separator bg-primary style-liner"></div>
+										</div>
+										<p>Lorem ipsum dolor sit amet, consectetuer adipiscing  sed diam nibh euismod. </p>
+									</div>
+								</div>
+							</div>
+							<div class="col-lg-4 col-md-6  col-sm-12 text-center d-md-none d-lg-block">
+								<div class="worker"> <img src="../new.rsp67.ru/images/service-image.png" alt=""> </div>
+							</div>
+							<div class="col-lg-4 col-md-6  col-sm-12">
+								<div class="icon-bx-wraper bx-style-2 m-b30 p-a20 left m-l50">
+									<div class="icon-bx-md radius bg-primary"> <span class="icon-cell text-white"><i class="fa fa-stethoscope" aria-hidden="true"></i></span> </div>
+									<div class="icon-content p-l40">
+										<h5 class="dez-tilte ">24X7 Service</h5>
+										<div class="dez-separator-outer ">
+											<div class="dez-separator bg-primary style-liner"></div>
+										</div>
+										<p>Lorem ipsum dolor sit amet, consectetuer adipiscing  sed diam nibh euismod. </p>
+									</div>
+								</div>
+								<div class="icon-bx-wraper bx-style-2 m-b30 p-a20 left m-l50">
+									<div class="icon-bx-md radius bg-primary"> <span class="icon-cell text-white"><i class="fa fa-wheelchair" aria-hidden="true"></i></span> </div>
+									<div class="icon-content p-l40">
+										<h5 class="dez-tilte ">Health Care</h5>
+										<div class="dez-separator-outer ">
+											<div class="dez-separator bg-primary style-liner"></div>
+										</div>
+										<p>Lorem ipsum dolor sit amet, consectetuer adipiscing  sed diam nibh euismod. </p>
+									</div>
+								</div>
+								<div class="icon-bx-wraper bx-style-2 m-b10 p-a20 left m-l50">
+									<div class="icon-bx-md radius bg-primary"> <span class="icon-cell text-white"><i class="fa fa-medkit" aria-hidden="true"></i></span> </div>
+									<div class="icon-content p-l40">
+										<h5 class="dez-tilte ">Emergency Service</h5>
+										<div class="dez-separator-outer ">
+											<div class="dez-separator bg-primary style-liner"></div>
+										</div>
+										<p>Lorem ipsum dolor sit amet, consectetuer adipiscing  sed diam nibh euismod. </p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+
+    <section class="ftco-section ftco-services">
+    	<div class="container">
+    		<div class="row justify-content-center mb-5 pb-2">
+          <div class="col-md-8 text-center heading-section ftco-animate">
+          	<span class="subheading">{$menu['service']['head']}</span>
+            <h2 class="mb-4">{$menu['service']['info']}</h2>
+<!--
+            <p>Separated they live in. A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a paradisematic country</p>
+-->
+          </div>
+        </div>
+        <div class="row">
+        	{foreach $menu['service']['list'] as $_item}				
+					<div class="col-md-3 d-flex services align-self-stretch p-4 ftco-animate justify-content-center">
+					   <div class="media block-6 d-block text-center !pricing-entry services-border ">
+						 
+						 <a {if $_item['link']} href="{$_item['link']}" {end}>
+							  <div class="icon d-flex justify-content-center align-items-center">
+								 <span class="{$_item['icon']}"></span>
+							  </div>
+							
+							  <div class="media-body p-2 mt-3 ">								 
+								 <h3 class="heading ">{$_item['head']}</h3>
+								 <p class="text-dark">{$_item['info']}</p>
+							  </div>
+						  </a>	
+					   </div>
+					</div>				
+			{end}
+          
+<!--
+          <div class="col-md-3 d-flex services align-self-stretch p-4 ftco-animate">
+            <div class="media block-6 d-block text-center">
+              <div class="icon d-flex justify-content-center align-items-center">
+            		<span class="flaticon-tooth"></span>
+              </div>
+              <div class="media-body p-2 mt-3">
+                <h3 class="heading">Имплантация</h3>
+                <p>Even the all-powerful Pointing has no control about the blind texts it is an almost unorthographic.</p>
+              </div>
+            </div>      
+          </div>
+          <div class="col-md-3 d-flex services align-self-stretch p-4 ftco-animate">
+            <div class="media block-6 d-block text-center">
+              <div class="icon d-flex justify-content-center align-items-center">
+            		<span class="flaticon-dental-floss"></span>
+              </div>
+              <div class="media-body p-2 mt-3">
+                <h3 class="heading">Исправление прикуса</h3>
+                <p>Even the all-powerful Pointing has no control about the blind texts it is an almost unorthographic.</p>
+              </div>
+            </div>      
+          </div>
+					
+					<div class="col-md-3 d-flex services align-self-stretch p-4 ftco-animate">
+            <div class="media block-6 d-block text-center">
+              <div class="icon d-flex justify-content-center align-items-center">
+            		<span class="flaticon-shiny-tooth"></span>
+              </div>
+              <div class="media-body p-2 mt-3">
+                <h3 class="heading">Виниры</h3>
+                <p>Even the all-powerful Pointing has no control about the blind texts it is an almost unorthographic.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3 d-flex services align-self-stretch p-4 ftco-animate">
+            <div class="media block-6 d-block text-center">
+              <div class="icon d-flex justify-content-center align-items-center">
+            		<span class="flaticon-dentist-chair"></span>
+              </div>
+              <div class="media-body p-2 mt-3">
+                <h3 class="heading">Лечение зубов</h3>
+                <p>Even the all-powerful Pointing has no control about the blind texts it is an almost unorthographic.</p>
+              </div>
+            </div>      
+          </div>
+          <div class="col-md-3 d-flex services align-self-stretch p-4 ftco-animate">
+            <div class="media block-6 d-block text-center">
+              <div class="icon d-flex justify-content-center align-items-center">
+            		<span class="flaticon-tooth-1"></span>
+              </div>
+              <div class="media-body p-2 mt-3">
+                <h3 class="heading">Чистка и отбеливание</h3>
+                <p>Even the all-powerful Pointing has no control about the blind texts it is an almost unorthographic.</p>
+              </div>
+            </div>      
+          </div>
+          <div class="col-md-3 d-flex services align-self-stretch p-4 ftco-animate">
+            <div class="media block-6 d-block text-center">
+              <div class="icon d-flex justify-content-center align-items-center">
+            		<span class="flaticon-tooth-with-braces"></span>
+              </div>
+              <div class="media-body p-2 mt-3">
+                <h3 class="heading">Лечение десен</h3>
+                <p>Even the all-powerful Pointing has no control about the blind texts it is an almost unorthographic.</p>
+              </div>
+            </div>      
+          </div>
+          <div class="col-md-3 d-flex services align-self-stretch p-4 ftco-animate">
+            <div class="media block-6 d-block text-center">
+              <div class="icon d-flex justify-content-center align-items-center">
+            		<span class="flaticon-decayed-tooth"></span>
+              </div>
+              <div class="media-body p-2 mt-3">
+                <h3 class="heading">Костная пластика</h3>
+                <p>Even the all-powerful Pointing has no control about the blind texts it is an almost unorthographic.</p>
+              </div>
+            </div>      
+          </div>
+       
+-->
+
+			{if $menu['service']['text']}			
+			<div class="ftco-animate justify-content-center text-center col-md-12 px-4 ">
+				<div>
+					{$$menu['service']['text']}					
+				</div>
+			</div>
+			{end}
+        </div>
+			
+    	</div>
+    </section>
+    
+    
+    
+    
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    <section class="ftco-section intro " style="background-image: url(public/images/db_3.jpg);" data-stellar-background-ratio="0.5">
+<!--
+    <section class="ftco-intro intro" style="background-image: url(public/images/db_3.jpg);" data-stellar-background-ratio="0.5">
+-->
+		<div class="overlay"></div>
+    	<div class="container">
+    		<div class="row">
+    			<div class="col-md-6">
+    				<h2 class="mb-4 " style="color:#46b7de"> </h2>
+<!--
+    				<h2 class="mb-4 " style="background-color:#46b7de; color:white; opacity:0.6">У нас дружный коллектив, заинтересованный в здоровье Ваших зубов!</h2>
+-->
+<!--
+    				<p>A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a paradisematic country</p>
+-->
+    			</div>
+    		</div>
+    	</div>
+    </section>
+		
+		<section class="ftco-section-pt4">
+			<div class="container">
+				<div class="row justify-content-center mb-5 pb-2">
+          <div class="col-md-8 text-center heading-section ftco-animate">
+          	<span class="subheading">{$gallery['doctors']['head']}</span>
+            <h2 class="mb-4">{$gallery['doctors']['text']}</h2>
+<!--
+            <p>Separated they live in. A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a paradisematic country</p>
+-->
+          </div>
+        </div>	
+				<div class="row justify-content-center ">
+					{foreach $gallery['doctors']['list'] as $_item}
+					<div class="col-md-6 col-lg-3 ftco-animate">
+						<div class="staff">
+							<div class="img-wrap d-flex align-items-stretch">
+								<div class="img align-self-stretch" style="background-image: url({$_item['image']});"></div>
+							</div>
+							<div class="text pt-3 text-center">
+								<h3>{$_item['head']}</h3>
+								<span class="position mb-2">{$_item['text']}</span>
+								<div class="faded">
+<!--
+									<p>I am an ambitious workaholic, but apart from that, pretty simple person.</p>
+-->
+
+<!--
+									<ul class="ftco-social text-center">
+		                <li class="ftco-animate"><a href="#" class="d-flex align-items-center justify-content-center"><span class="icon-twitter"></span></a></li>
+		                <li class="ftco-animate"><a href="#" class="d-flex align-items-center justify-content-center"><span class="icon-facebook"></span></a></li>
+		                <li class="ftco-animate"><a href="#" class="d-flex align-items-center justify-content-center"><span class="icon-google-plus"></span></a></li>
+		                <li class="ftco-animate"><a href="#" class="d-flex align-items-center justify-content-center"><span class="icon-instagram"></span></a></li>
+		              </ul>
+-->
+								</div>
+							</div>
+						</div>
+					</div>
+					{end}
+
+				</div>
+			</div>
+		</section>
+		
+	
+	
+	<section id="comments" class="ftco-section testimony-section bg-light " >
+      <div class="container">
+        <div class="row justify-content-center mb-5 pb-2">
+          <div class="col-md-8 text-center heading-section ftco-animate">
+          	<span class="subheading">{$article['comments']['info']}</span>
+            <h2 class="mb-4">{$article['comments']['head']}</h2>
+          </div>
+        </div>
+        <div class="row ftco-animate justify-content-center">
+          <div class="col-md-12">
+            <div class="carousel-testimony owl-carousel">
+				
+				{foreach $article['comments']['list'] as $_item}
+					  <div class="item">
+						<div class="testimony-wrap d-flex">
+						  <div class="user-img" style="background-image: url('{$_item['image']}')">
+						  </div>
+						  <div class="text pl-5 bg-light">
+							<span class="quote d-flex align-items-center justify-content-center">
+							  <i class="icon-quote-left"></i>
+							</span>
+								
+								<p>{$_item['text']}</p>
+							
+							<div>
+								<p class="name">{$_item['head']}</p>							
+								{if $_item['link']}
+									<a href="{$_item['link']}" class="position">Оригинал</a>
+								{end}
+							</div>
+						  </div>
+						</div>
+					  </div>
+				{end}
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+		
+
+<!--
+    <section class="ftco-section testimony-section bg-light " >
+      <div class="container">
+        <div class="row justify-content-center mb-5 pb-2">
+          <div class="col-md-8 text-center heading-section ftco-animate">
+          	<span class="subheading">Отзывы</span>
+            <h2 class="mb-4">Наши довольные клиенты</h2>
+          </div>
+        </div>
+        <div class="row ftco-animate justify-content-center">
+          <div class="col-md-12">
+            <div class="carousel-testimony owl-carousel">
+              <div class="item">
+                <div class="testimony-wrap d-flex">
+                  <div class="user-img" style="background-image: url(~/images/person_1.jpg)">
+                  </div>
+                  <div class="text pl-4 bg-light">
+                  	<span class="quote d-flex align-items-center justify-content-center">
+                      <i class="icon-quote-left"></i>
+                    </span>
+                    <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
+                    <p class="name">Racky Henderson</p>
+                    <span class="position">Farmer</span>
+                  </div>
+                </div>
+              </div>
+              <div class="item">
+                <div class="testimony-wrap d-flex">
+                  <div class="user-img" style="background-image: url(~/images/person_2.jpg)">
+                  </div>
+                  <div class="text pl-4 bg-light">
+                  	<span class="quote d-flex align-items-center justify-content-center">
+                      <i class="icon-quote-left"></i>
+                    </span>
+                    <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
+                    <p class="name">Henry Dee</p>
+                    <span class="position">Businessman</span>
+                  </div>
+                </div>
+              </div>
+              <div class="item">
+                <div class="testimony-wrap d-flex">
+                  <div class="user-img" style="background-image: url(~/images/person_3.jpg)">
+                  </div>
+                  <div class="text pl-4 bg-light">
+                  	<span class="quote d-flex align-items-center justify-content-center">
+                      <i class="icon-quote-left"></i>
+                    </span>
+                    <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
+                    <p class="name">Mark Huff</p>
+                    <span class="position">Students</span>
+                  </div>
+                </div>
+              </div>
+              <div class="item">
+                <div class="testimony-wrap d-flex">
+                  <div class="user-img" style="background-image: url(~/images/person_4.jpg)">
+                  </div>
+                  <div class="text pl-4 bg-light">
+                  	<span class="quote d-flex align-items-center justify-content-center">
+                      <i class="icon-quote-left"></i>
+                    </span>
+                    <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
+                    <p class="name">Rodel Golez</p>
+                    <span class="position">Striper</span>
+                  </div>
+                </div>
+              </div>
+              <div class="item">
+                <div class="testimony-wrap d-flex">
+                  <div class="user-img" style="background-image: url(~/images/person_1.jpg)">
+                  </div>
+                  <div class="text pl-4 bg-light">
+                  	<span class="quote d-flex align-items-center justify-content-center">
+                      <i class="icon-quote-left"></i>
+                    </span>
+                    <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
+                    <p class="name">Ken Bosh</p>
+                    <span class="position">Manager</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+-->
+    
+    
+    
+    
+<!--
+        <section class="ftco-section">
+    	<div class="container">
+    		<div class="row justify-content-center mb-5 pb-2">
+          <div class="col-md-8 text-center heading-section ftco-animate">
+          	<span class="subheading">Спецпредложения</span>
+            <h2 class="mb-4">Акции</h2>
+            <p>Выгодные услуги специально для Вас</p>
+          </div>
+        </div>
+    		<div class="row">
+        	<div class="col-md-3 ftco-animate">
+        		<div class="pricing-entry pb-5 text-center">
+        			<div>
+	        			<h3 class="mb-4">Basic</h3>
+	        			<p><span class="price">$24.50</span> <span class="per">/ session</span></p>
+	        		</div>
+        			<ul>
+        				<li>Diagnostic Services</li>
+								<li>Professional Consultation</li>
+								<li>Tooth Implants</li>
+								<li>Surgical Extractions</li>
+								<li>Teeth Whitening</li>
+        			</ul>
+        			<p class="button text-center"><a href="#" class="btn btn-primary px-4 py-3">Get Offer</a></p>
+        		</div>
+        	</div>
+        	<div class="col-md-3 ftco-animate">
+        		<div class="pricing-entry pb-5 text-center">
+        			<div>
+	        			<h3 class="mb-4">Standard</h3>
+	        			<p><span class="price">$34.50</span> <span class="per">/ session</span></p>
+	        		</div>
+        			<ul>
+        				<li>Diagnostic Services</li>
+								<li>Professional Consultation</li>
+								<li>Tooth Implants</li>
+								<li>Surgical Extractions</li>
+								<li>Teeth Whitening</li>
+        			</ul>
+        			<p class="button text-center"><a href="#" class="btn btn-primary px-4 py-3">Get Offer</a></p>
+        		</div>
+        	</div>
+        	<div class="col-md-3 ftco-animate">
+        		<div class="pricing-entry active pb-5 text-center">
+        			<div>
+	        			<h3 class="mb-4">Premium</h3>
+	        			<p><span class="price">$54.50</span> <span class="per">/ session</span></p>
+	        		</div>
+        			<ul>
+        				<li>Diagnostic Services</li>
+								<li>Professional Consultation</li>
+								<li>Tooth Implants</li>
+								<li>Surgical Extractions</li>
+								<li>Teeth Whitening</li>
+        			</ul>
+        			<p class="button text-center"><a href="#" class="btn btn-primary px-4 py-3">Get Offer</a></p>
+        		</div>
+        	</div>
+        	<div class="col-md-3 ftco-animate">
+        		<div class="pricing-entry pb-5 text-center">
+        			<div>
+	        			<h3 class="mb-4">Platinum</h3>
+	        			<p><span class="price">$89.50</span> <span class="per">/ session</span></p>
+	        		</div>
+        			<ul>
+        				<li>Diagnostic Services</li>
+								<li>Professional Consultation</li>
+								<li>Tooth Implants</li>
+								<li>Surgical Extractions</li>
+								<li>Teeth Whitening</li>
+        			</ul>
+        			<p class="button text-center"><a href="#" class="btn btn-primary px-4 py-3">Get Offer</a></p>
+        		</div>
+        	</div>
+        </div>
+    	</div>
+    </section>
+-->
+
+		
+
+		<section class="ftco-intro" style="background-image: url(~/images/bg_3.jpg);" data-stellar-background-ratio="0.5">
+			<div class="overlay"></div>
+			<div class="container">
+				<div class="row">
+					<div class="col-md-9">
+						<h2>Подтверждение высокой квалификации</h2>
+						<p class="mb-0">Наша клиника заботится о своих клиентах. Мы допускаем к работе только специалистов высочайшей квалификации.</p>
+						<p></p>
+					</div>
+					<div class="col-md-3 d-flex align-items-center">
+						<p class="mb-0"><a href="licenses" class="btn btn-secondary px-4 py-3">Посмотреть лицензии</a></p>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<section class="ftco-section bg-light">
+		   <div class="container">
+			  <div class="row justify-content-center mb-5 pb-2">
+				 <div class="col-md-8 text-center heading-section ftco-animate">
+<!--
+					<span class="subheading">Полезные статьи и прочая информация</span>
+-->
+					<h2 class="mb-4">{$gallery['jobs']['head']}</h2>
+					<p>{$gallery['jobs']['text']}</p>
+				 </div>
+			  </div>
+			  <div class="row">
+					{foreach $gallery['jobs']['list'] as $_slide}
+					 <div class="col-md-4 ftco-animate">
+						<div class="blog-entry">
+						   <a  class="block-20 d-flex align-items-end justify-content-end" style="background-image: url('{$_slide['image']}');">
+							  <!--
+								 <div class="meta-date text-center p-2">
+										   <span class="day">18</span>
+										   <span class="mos">September</span>
+										   <span class="yr">2019</span>
+										 </div>
+								 -->
+						   </a>
+						   <div class="text bg-white p-4">
+							  <h3 class="heading"><a href="#">{$_slide['head']}</a></h3>
+<!--
+								 <p>{$_slide['text']}</p>
+-->
+								  <span class="text-primary">{$_slide['text']}</span>
+<!--
+								 <p class="ml-auto mb-0">
+									<a href="#" class="meta-chat text-primary"><span class="icon-chat"></span> {$_slide['text']}</a>
+								 </p>
+-->
+<!--
+							  <div class="d-flex align-items-center mt-4">
+								 <p class="mb-0"><a href="#" class="btn btn-primary">Читать<span class="ion-ios-arrow-round-forward"></span></a></p>
+								 <p class="ml-auto mb-0">
+									<a href="#" class="mr-2">Admin</a>
+									<a href="#" class="meta-chat"><span class="icon-chat"></span> 3</a>
+								 </p>
+							  </div>
+-->
+						   </div>
+						</div>
+					 </div>
+					{end}
+
+			  </div>
+		   </div>
+		</section>
+		
+
+    
+  {require('section/footer.html')} 
+
+  <!-- loader -->
+  <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
+
+
+  <script src="js/jquery.min.js"></script>
+  <script src="js/jquery-migrate-3.0.1.min.js"></script>
+  <script src="js/popper.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/jquery.easing.1.3.js"></script>
+  <script src="js/jquery.waypoints.min.js"></script>
+  <script src="js/jquery.stellar.min.js"></script>
+  <script src="js/owl.carousel.min.js"></script>
+  <script src="js/jquery.magnific-popup.min.js"></script>
+  <script src="js/aos.js"></script>
+  <script src="js/jquery.animateNumber.min.js"></script>
+  <script src="js/bootstrap-datepicker.js"></script>
+  <script src="js/jquery.timepicker.min.js"></script>
+  <script src="js/scrollax.min.js"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&sensor=false"></script>
+  <script src="js/google-map.js"></script>
+  <script src="js/main.js"></script>
+    
+  </body>
+</html>

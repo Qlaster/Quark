@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>{$title}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/open-iconic-bootstrap.min.css">
+    <link rel="stylesheet" href="css/animate.css">
+    
+    <link rel="stylesheet" href="css/owl.carousel.min.css">
+    <link rel="stylesheet" href="css/owl.theme.default.min.css">
+    <link rel="stylesheet" href="css/magnific-popup.css">
+
+    <link rel="stylesheet" href="css/aos.css">
+
+    <link rel="stylesheet" href="css/ionicons.min.css">
+
+    <link rel="stylesheet" href="css/bootstrap-datepicker.css">
+    <link rel="stylesheet" href="css/jquery.timepicker.css">
+
+    
+    <link rel="stylesheet" href="css/flaticon.css">
+    <link rel="stylesheet" href="css/icomoon.css">
+    <link rel="stylesheet" href="css/style.css">
+  </head>
+  <body>
+	{require('section/header.html')} 
+    
+		<section class="hero-wrap hero-wrap-2" style="background-image: url('{$background}');" data-stellar-background-ratio="0.5">
+		  <div class="overlay"></div>
+		  <div class="container">
+			<div class="row no-gutters slider-text align-items-center justify-content-center">
+			  <div class="col-md-9 ftco-animate text-center">
+				<h1 class="mb-2 bread">{$head}</h1>
+				<p class="breadcrumbs"><span class="mr-2"><span>{$info} </p>
+			  </div>
+			</div>
+		  </div>
+		</section>
+		
+		
+		{if $gallery['facts']}
+		<section class="ftco-section ftco-services">
+			<div class="container">
+				<div class="row">
+					{foreach $gallery['facts']['list'] as $_value}
+					<div class="col-md-4 d-flex services align-self-stretch p-4 ftco-animate fadeInUp ftco-animated">
+						<div class="media block-6 d-block">
+							<div class="img w-100" style="background-image: url('{$_value['image']}');"></div>
+							<div class="media-body p-2 mt-3">
+								<h3 class="heading">{$_value['head']}</h3>
+								<p>{$_value['text']}</p>
+							</div>
+						</div>
+					</div>
+					{end}					
+				</div>
+			</div>
+		</section>
+		{end}
+		
+		<section class="ftco-intro" style="background-image: url(~/images/bg_3.jpg);" data-stellar-background-ratio="0.5">
+			<div class="overlay"></div>
+			<div class="container">
+				<div class="row">
+					<div class="col-md-9">
+						<h2>Высокая квалификация</h2>
+						<p class="mb-0">Наша клиника заботится о своих клиентах. Мы допускаем к работе только специалистов высочайшей квалификации.</p>
+						<p></p>
+					</div>
+					<div class="col-md-3 d-flex align-items-center">
+						<p class="mb-0"><a href="licenses" class="btn btn-secondary px-4 py-3">Посмотреть лицензии</a></p>
+					</div>
+				</div>
+			</div>
+		</section>
+		
+		
+			{if $article['videoreview']}
+			<section id="comments" class="ftco-section testimony-section bg-light " >
+			  <div class="container">
+				<div class="row justify-content-center mb-5 pb-2">
+				  <div class="col-md-8 text-center heading-section ftco-animate">
+					<span class="subheading">{$article['videoreview']['info']}</span>
+					<h2 class="mb-4">{$article['videoreview']['head']}</h2>
+				  </div>
+				</div>
+				<div class="row ftco-animate justify-content-center">
+				  <div class="col-md-12">
+					<div class="carousel-testimony owl-carousel">
+						
+						{foreach $article['videoreview']['list'] as $_item}
+							  <div class="item ">
+									<div class="!testimony-wrap d-flex">  
+										<video controls  width="99%"  preload="metadata" preload="auto">
+											<source src="{$_item['video']}#t=1">
+										</video>
+									</div>
+								  
+		<!--
+								<div class="testimony-wrap d-flex">
+								  <div class="user-img" style="background-image: url('{$_item['image']}')">
+								  </div>
+								  <div class="text pl-5 bg-light">
+									<span class="quote d-flex align-items-center justify-content-center">
+									  <i class="icon-quote-left"></i>
+									</span>
+										
+										<p>{$_item['text']}</p>
+									
+									<div>
+										<p class="name">{$_item['head']}</p>							
+										{if $_item['link']}
+											<a href="{$_item['link']}" class="position">Оригинал</a>
+										{end}
+									</div>
+								  </div>
+								</div>
+		-->
+							  </div>
+						{end}
+
+					</div>
+				  </div>
+				</div>
+			  </div>
+			</section>
+			{end}
+		
+ {require('section/footer.html')} 
+    
+  
+
+  <!-- loader -->
+  <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
+
+
+  <script src="js/jquery.min.js"></script>
+  <script src="js/jquery-migrate-3.0.1.min.js"></script>
+  <script src="js/popper.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/jquery.easing.1.3.js"></script>
+  <script src="js/jquery.waypoints.min.js"></script>
+  <script src="js/jquery.stellar.min.js"></script>
+  <script src="js/owl.carousel.min.js"></script>
+  <script src="js/jquery.magnific-popup.min.js"></script>
+  <script src="js/aos.js"></script>
+  <script src="js/jquery.animateNumber.min.js"></script>
+  <script src="js/bootstrap-datepicker.js"></script>
+  <script src="js/jquery.timepicker.min.js"></script>
+  <script src="js/scrollax.min.js"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&sensor=false"></script>
+  <script src="js/google-map.js"></script>
+  <script src="js/main.js"></script>
+    
+  </body>
+</html>
