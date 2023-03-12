@@ -26,7 +26,7 @@
 		$content['units']['list'][$key]['testlink'] = "admin/components/inittest?facade=".$content['units']['list'][$key]['alias'];
 
 		$content['units']['list'][$key]['analize']['status'] = 'Без анализа';
-		if ($_GET['analize'])
+		if ($_GET['analize']?? null)
 		{
 			$starttime = microtime(true);
 			$alias = $content['units']['list'][$key]['alias'];
@@ -58,7 +58,7 @@
 	}
 
 	//Рассчитаем предполагаемое влияние на загрузку
-	if ($_GET['analize'])
+	if ($_GET['analize']?? null)
 	{
 		$min = min($times);
 		$max = max($times);
