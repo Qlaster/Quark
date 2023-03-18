@@ -69,5 +69,7 @@
 	$APP->page->sitemap('controllers/sitemap.xml.php');
 
 	//Если указано, куда нужно перенаправить, то исполняем, если нет - возвращаем на предыдущую
-	$referer = $_GET['referer'] ? $_GET['referer'] : $_SERVER['HTTP_REFERER'];
+	$referer = $_GET['referer'] ? $_GET['referer'] : $APP->url->home().'admin/content/page/edit?url='.urlencode($page['url']);
+	//~ $referer = $_GET['referer'] ? $_GET['referer'] : $_SERVER['HTTP_REFERER'];
+
 	header("Location: $referer");
