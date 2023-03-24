@@ -228,7 +228,8 @@
 				//Автризация успешна - почистим сервисные записи
 				$this->serviceInfoClear($login);
 				//Если всегда нужно генерировать новый id
-				if (boolval($this->config['session']['regenerate-id'])) session_regenerate_id();
+				if (boolval($this->config['session']['regenerate-id'])) session_regenerate_id(true);
+				//~ if (boolval($this->config['session']['regenerate-id'])) session_create_id();
 				//Вернем идентификатор сессии
 				return session_id();
 			}
@@ -266,6 +267,7 @@
 			if ($session_id) session_id($session_id);
 			session_start();
 			session_destroy();
+			session_register_shutdown();
 		}
 
 
