@@ -329,7 +329,7 @@
 		 * @return FILES structures
 		 *
 		 */
-		function uploadMove($targetDir, $uniqueName=true)
+		function uploadMove($targetDir, $uniqueName=true, $prefix="content_")
 		{
 			//Получим список загружаемых файлов
 			$filesblocks = $this->uploadList();
@@ -345,7 +345,7 @@
 					{
 						if (!is_array($_file))	continue;
 						if ($_file['error'] == UPLOAD_ERR_OK)
-							$_file = $this->uploadMoveSingleFile($_file, $targetDir);
+							$_file = $this->uploadMoveSingleFile($_file, $targetDir, $prefix);
 					}
 						//~ $_file['new_file'] = $this->uploadMoveSingleFile($_file['tmp_name'], $targetDir);
 				}
@@ -353,7 +353,7 @@
 				{
 					//~ if (($_filelist['error']) and ($_filelist['error'] == UPLOAD_ERR_OK))
 					if ($_filelist['error'] == UPLOAD_ERR_OK)
-						$this->uploadMoveSingleFile($_filelist, $targetDir);
+						$this->uploadMoveSingleFile($_filelist, $targetDir, $prefix);
 					//~ $_filelist['new_file'] = $this->uploadMoveSingleFile($_filelist['tmp_name'], $targetDir);
 				}
 			}
