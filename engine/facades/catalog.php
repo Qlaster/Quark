@@ -76,6 +76,10 @@
 			if (!$connectRecord['db']) throw new Exception("Missing db name to connect $catalogName", 2);
 			if (!$connectRecord['table']) throw new Exception("Missing table name to connect $catalogName", 3);
 
+			//Проверим наличие директорий
+			if (!$connectRecord['folder'] and $this->config()['settings']['folder'])
+				$connectRecord['folder'] = $this->config()['settings']['folder'].DIRECTORY_SEPARATOR.$catalogName;
+
 			return $connectRecord;
 		}
 

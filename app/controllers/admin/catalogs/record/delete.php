@@ -23,6 +23,9 @@
 	try
 	{
 		$APP->catalog->items($_REQUEST['catalog'])->where(['id'=>$_REQUEST['id']])->delete();
+
+		if ($catalogDIR = $APP->catalog->get($_REQUEST['catalog'])['folder'])
+			$APP->utils->files->remove($catalogDIR.DIRECTORY_SEPARATOR.$_REQUEST['id']);
 		echo "OK";
 	}
 	catch (Exception $e)

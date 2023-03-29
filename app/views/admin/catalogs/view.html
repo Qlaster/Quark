@@ -83,18 +83,34 @@
 								<button type="button" class="btn btn-success btn-outline btn-sm" ><i class="fa fa-plus-square-o"></i> Добавить запись</button>
 							</div>
 -->
-							<div class="col-sm-10 m-b-xs">
+							<div class="col-sm-8 m-b-xs">
 								<button type="button" class="btn-edit btn btn-success btn-outline btn-sm mr-4" data-toggle="modal" data-target="#ModalEdit" data-catalog="{$catalog['name']}" data-id="" ><i class="fa fa-plus-square-o"></i> Добавить запись</button>
 
 								<div data-toggle="buttons" class="btn-group">
 									<label class="btn btn-sm btn-white"> <input type="radio" id="option1" name="options"> 1 </label>
+<!--
 									<label class="btn btn-sm btn-white active"> <input type="radio" id="option2" name="options"> 2 </label>
 									<label class="btn btn-sm btn-white"> <input type="radio" id="option3" name="options"> 3 </label>
+-->
 								</div>
 							</div>
+
 							<div class="col-md-2">
-								<div class="input-group"><input type="text" placeholder="Поисковый запрос" class="input-sm form-control"> <span class="input-group-btn">
-									<button type="button" class="btn btn-sm btn-primary"> <i class="fa fa-search"></i> </button> </span></div>
+								<div class="input-group">
+									<input type="text" id="filter" placeholder="Фильтр на странице" class="input-sm form-control">
+										<span class="input-group-btn">
+											<button type="button" class="btn btn-sm btn-primary"> <i class="fa fa-filter"></i> </button>
+										</span>
+								</div>
+							</div>
+
+							<div class="col-md-2">
+								<div class="input-group">
+									<input type="text" id="search" placeholder="Поиск в каталоге" class="input-sm form-control">
+										<span class="input-group-btn">
+											<button type="button" class="btn btn-sm btn-primary"> <i class="fa fa-search"></i> </button>
+										</span>
+								</div>
 							</div>
 						</div>
 
@@ -127,6 +143,7 @@
 														<button type="button" title="Просмотр" class="btn-htmlview btn btn-default btn-xs text-primary btn-outline" data-toggle="modal" data-value="{$_record[$_name]}" data-target="#ModalHTML"> <i class="fa fa-eye"></i> </i> </button>
 														{= mb_strimwidth(strip_tags($_record[$_name]), 0, 60, '...')}
 													{end}
+													<span class="hidden" title="For worker filter">{$_record[$_name]}</span>
 												</td>
 											{elseif 'image' == $_field['type']}
 												<td class="project-people">
@@ -344,6 +361,19 @@
 
     <!-- Page-Level Scripts -->
     <script>
+
+        $(document).ready(function()
+        {
+            $("#filter").keyup(function(){
+                _this = this;
+                $.each($(".table tbody tr"), function() {
+                    if($(this).text().toLowerCase().indexOf($(_this).val().toLowerCase()) === -1)
+                       $(this).hide();
+                    else
+                       $(this).show();
+                });
+            });
+        });
         //~ $(document).ready(function()
         //~ {
             //~ $('.dataTables-example').dataTable({
