@@ -253,8 +253,6 @@
         <div class="modal inmodal fade" id="ModalEdit" tabindex="-1" role="dialog"  aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content" id='ModalEditBody'>
-
-
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
                         <h5 class="modal-title">Запись в каталоге</h5>
@@ -263,54 +261,8 @@
 -->
                     </div>
                     <div class="modal-body">
-						<div >
-<!--
- 							{foreach $catalog['field'] as $_name => $_field}
-								{if 'html' == $_field['type']}
-									<td class="project-title">{$$_record[$_name]}</td>
-								{elseif 'image' == $_field['type']}
-									<td class="project-people">
-										{if $_record[$_name]}
-										<a href="{$$_record[$_name]}"><img alt="image" loading="lazy" class="img-circle" src="{$$_record[$_name]}"></a>
-										{end}
-									</td>
-								{elseif 'check' == $_field['type']}
-									<td class="project-title">{if boolval($_record[$_name])} <i class="fa fa-lg fa-toggle-on text-navy"></i> {else} <i class="fa fa-lg fa-toggle-off text-primary"></i> {end} </td>
-								{elseif 'link' == $_field['type']}
-									<td class="project-title"><a href="{$$_record[$_name]}" title="{$_record[$_name]}">{= mb_strimwidth($_record[$_name], 0, 15, "...")}</a></td>
-
-								{elseif 'audio' == $_field['type']}
-									<td class="!project-title">
-										<a><i class="fa fa-lg fa-play text-primary"></i><audio !controls src="{$$_record[$_name]}" style="height:30px"></audio></a>
-										<a target="_blank" href="{$_record[$_name]}"><i class="fa fa-lg fa-music text-primary"></i></a>
-									</td>
-								{else}
-									<td class="project-title">{$_record[$_name]}</td>
-								{end}
-							{end}
--->
-
-<!--
-							{foreach (array) $table['columns']['list'] as $_key => $_record}
-								<div class="form-group"><label class="col-sm-12 control-label">{$_record['head']}  [{$_record['name']}]</label>
-									<div class="col-sm-12">
-										<textarea name="{$_record['name']}" placeholder="{$_record['name']}" class="form-control"></textarea>
-									</div>
-								</div>
-							{end}
--->
-<!--
-							<strong>---</strong>
--->
-						</div>
-<!--
-                        <p><strong>Lorem Ipsum is simply dummy</strong> text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown
-                            printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting,
-                            remaining essentially unchanged.</p>
--->
 
                     </div>
-
                     <div class="modal-footer">
                         <button type="button" class="btn btn-white" data-dismiss="modal">Закрыть</button>
                         <button type="button" class="btn btn-primary">Сохранить изменения</button>

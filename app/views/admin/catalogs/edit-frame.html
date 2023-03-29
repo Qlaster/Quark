@@ -15,7 +15,6 @@
 									<div class="col-sm-12">
 
 											{if 'html' == $_field['type']}
-
 													<div class="ibox float-e-margins">
 														<div class="ibox-title">
 															<h5>{= $_field['alias'] ?? $_name}</h5>
@@ -30,35 +29,12 @@
 
 														</div>
 													</div>
-
-<!--
-												<div>
-													<div class="ibox float-e-margins">
-														<div class="ibox-title">
-															<h5>{= $catalog['field'][$_name]['alias'] ?? $_name}</h5>
-														</div>
-														<div class="ibox-content no-padding">
-															<div class="summernote">{$_value}</div>
-														</div>
-													</div>
-												</div>
--->
-
-<!--
-												<label class="col-sm-12 control-label">{= $catalog['field'][$_name]['alias'] ?? $_name}</label>
-												<div class="!form-control">
-													<div name="{$_name}" class="!form-control summernote">{$_value}</div>
--->
 											{elseif 'image' == $_field['type']}
-
 												<div class="input-group m-b">
 													<span class="input-group-addon gray-bg" style="min-width:8em">{= $_field['alias'] ?? $_name}</span>
 													<span class="input-group-addon gray-bg no-padding"  style="min-width:3em">
 														<a class="project-people image-preload no-padding" target="_blank">
 															<img id="image-{$_name}" loading="lazy" class="img-circle" src="{if $_value}{$_value}{else}~/../img/noimage.png{end}">
-<!--
-															<img alt="image" loading="lazy" class="img-circle" src="https://cdn-icons-png.flaticon.com/512/196/196280.png">
--->
 														</a>
 													</span>
 													<input class="hidden file-image-upload" type="file" id="file-{$_name}" data-name="{$_name}" name="{$_name}">
@@ -68,46 +44,6 @@
 														<label type="button" class="btn btn-primary" for="file-{$_name}"> <i class="fa fa-cloud-upload"></i></label>
 													</span>
 												</div>
-
-<!--
-												<div class="input-group m-b">
-													<span class="input-group-btn"> <button type="button" class="btn btn-primary">File</button></span>
-													<input type="text" class="form-control">
-												</div>
-												<div class="input-group">
-													<input type="text" class="form-control">
-													<span class="input-group-btn">
-														<button type="button" class="btn btn-primary">Go!</button>
-													</span>
-												</div>
--->
-
-
-
-											{elseif 'check' == $_field['type']}
-												<input type="hidden" value="" name="{$_name}">
-
-												<div class="input-group m-b">
-													<span class="input-group-addon gray-bg m-r-lg" style="padding-right:2em; min-width:8em">{= $_field['alias'] ?? $_name}</span>
-													<div class="m-l-lg">
-														<input type="checkbox" class="js-switch" name="{$_name}" value="1" {if boolval($_value)} checked {end} />
-													</div>
-<!--
-													<span class="input-group-btn">
-														<button type="button" class="btn btn-primary">Выбрать файл</button>
-													</span>
--->
-												</div>
-
-<!--
-												<input type="checkbox" class="js-switch" name="{$_name}" value="1" {if boolval($_value)} checked {end} />
--->
-<!--
-												<div class="checkbox i-checks"><label> <input type="checkbox" name="{$_name}" value="1" {if boolval($_value)} checked {end}> <i></i> {= $_field['alias'] ?? $_name} </label></div>
--->
-											{elseif 'link' == $_field['type']}
-												<label class="col-sm-12 control-label">{= $_field['alias'] ?? $_name}</label>
-												<input type="text" class="form-control" name="{$_name}" value="{$_value}">
 											{elseif 'audio' == $_field['type']}
 												<div class="input-group m-b">
 													<span class="input-group-addon gray-bg" style="min-width:8em">{= $_field['alias'] ?? $_name}</span>
@@ -124,19 +60,24 @@
 														<label type="button" class="btn btn-primary" for="file-{$_name}"><i class="fa fa-cloud-upload"></i></label>
 													</span>
 												</div>
-<!--
-												<td class="project-title">
-													<a><i class="fa fa-lg fa-play text-primary"></i></a>
-													<a target="_blank" href="{$_record[$_name]}"><i class="fa fa-lg fa-download text-primary"></i></a>
-													<audio !controls src="{$$_record[$_name]}" style="height:30px"></audio>
-												</td>
--->
-											{else}
-<!--
-												<label class="col-sm-12 control-label">{= $catalog['field'][$_name]['alias'] ?? $_name}</label>
-												<input type="text" class="form-control" name="{$_name}" value="{$_value}">
--->
+											{elseif 'check' == $_field['type']}
+												<input type="hidden" value="" name="{$_name}">
 
+												<div class="input-group m-b">
+													<span class="input-group-addon gray-bg m-r-lg" style="padding-right:2em; min-width:8em">{= $_field['alias'] ?? $_name}</span>
+													<div class="m-l-lg">
+														<input type="checkbox" class="js-switch" name="{$_name}" value="1" {if boolval($_value)} checked {end} />
+													</div>
+												</div>
+											{elseif 'integer' == $_field['type']}
+												<div class="input-group m-b">
+													<span class="input-group-addon gray-bg" style="min-width:8em">{= $_field['alias'] ?? $_name}</span>
+													<input  name="{$_name}" type="number" value="{$_value}" pattern='[^0][0-9]+$' class="form-control">
+												</div>
+											{elseif 'link' == $_field['type']}
+												<label class="col-sm-12 control-label">{= $_field['alias'] ?? $_name}</label>
+												<input type="text" class="form-control" name="{$_name}" value="{$_value}">
+											{else}
 												<div class="input-group m-b">
 													{if $_name != "id"}
 													<span class="input-group-addon gray-bg" style="min-width:8em">{= $_field['alias'] ?? $_name}</span>
@@ -145,10 +86,6 @@
 												</div>
 
 											{end}
-
-<!--
-										<textarea name="{$_record['name']}" placeholder="{$_record['name']}" class="form-control"></textarea>
--->
 									</div>
 								</div>
  							{end}
@@ -168,15 +105,11 @@
 							<strong>---</strong>
 -->
 
-<!--
-                        <p><strong>Lorem Ipsum is simply dummy</strong> text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown
-                            printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting,
-                            remaining essentially unchanged.</p>
--->
 
 						</div>
 					</form>
                     <div class="modal-footer">
+						<p>{$$catalog['help']}</p>
                         <button type="button" class="btn btn-white" data-dismiss="modal">Закрыть</button>
                         <button id="btn-save" type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-refresh "></i> Сохранить изменения</button>
                     </div>

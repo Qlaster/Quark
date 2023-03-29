@@ -17,37 +17,37 @@
  *
  */
 
-	if (!$_GET['catalog']) throw new Exception("Не указан каталог", 102);
-
-
-	//Предварительная проверка целостности файлов
-	foreach	($_FILES as $field => $file)
-	{
-		if (!$file['tmp_name'])
-		{
-			unset($_FILES[$field]);
-			continue;
-		}
-		if ($file['error'] != 0) exit('Ошибка при загрузке файла');
-		$sendFiles = true;
-	}
-
-	$catalog = $APP->catalog->get($_GET['catalog']);
-
-	if ($sendFiles)
-	{
-		//Проверим наличие директорий
-		$folder = $catalog['folder'] ?? $APP->catalog->config()['settings']['folder'];
-		if (!$folder) exit('Не найдена директория для ресурсов');
-
-		if (!$catalog['folder'])
-			$folder .= DIRECTORY_SEPARATOR.$_GET['catalog'];
-		if (!file_exists($folder) and !mkdir($folder, 0777, true)) exit('Не удалось создать служебную директорию');
-	}
-
-
 	try
 	{
+		if (!$_GET['catalog']) throw new Exception("Не указан каталог", 102);
+
+		//Предварительная проверка целостности файлов
+		foreach	($_FILES as $field => $file)
+		{
+			if (!$file['tmp_name'])
+			{
+				unset($_FILES[$field]);
+				continue;
+			}
+			if ($file['error'] != 0) exit('Ошибка при загрузке файла');
+			$sendFiles = true;
+		}
+
+		$catalog = $APP->catalog->get($_GET['catalog']);
+
+		if ($sendFiles)
+		{
+			//Проверим наличие директорий
+			$folder = $catalog['folder'] ?? $APP->catalog->config()['settings']['folder'];
+			if (!$folder) exit('Не найдена директория для ресурсов');
+
+			if (!$catalog['folder'])
+				$folder .= DIRECTORY_SEPARATOR.$_GET['catalog'];
+			if (!file_exists($folder) and !mkdir($folder, 0777, true)) exit('Не удалось создать служебную директорию');
+		}
+
+
+
 		$APP->catalog->items($_GET['catalog'])->beginTransaction();
 		if ($_POST['id'])
 		{

@@ -17,11 +17,11 @@
  *
  */
 
-	if (!$_REQUEST['id']) throw new Exception("Не указан ID", 101);
-	if (!$_REQUEST['catalog']) throw new Exception("Не указан каталог", 102);
-
 	try
 	{
+		if (!$_REQUEST['id']) throw new Exception("Не указан ID", 101);
+		if (!$_REQUEST['catalog']) throw new Exception("Не указан каталог", 102);
+
 		$APP->catalog->items($_REQUEST['catalog'])->where(['id'=>$_REQUEST['id']])->delete();
 
 		if ($catalogDIR = $APP->catalog->get($_REQUEST['catalog'])['folder'])

@@ -77,7 +77,7 @@
 												<div class="forum-icon has-success ">
 													<i class="fa {$catalog['icon']}"></i>
 												</div>
-												<a href="{$catalog['link']}" class="forum-item-title ">{$catalog['head']}</a>
+												<a {if $catalog['link']} href="{$catalog['link']}" {else} disabled {end} class="forum-item-title ">{$catalog['head']}</a>
 												<div class="forum-sub-title">{$catalog['info']}
 
 	<!--
