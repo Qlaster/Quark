@@ -31,4 +31,4 @@
 		$content['journal']['list'][] = $record;
 	}
 
-	$APP->template->file('admin/statistic/journal.html')->display($content);
+	$APP->template->file('admin/tools/journal/journal.html')->display($content);

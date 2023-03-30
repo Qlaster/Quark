@@ -13,7 +13,6 @@
 								<div class="form-group">
 
 									<div class="col-sm-12">
-
 											{if 'html' == $_field['type']}
 													<div class="ibox float-e-margins">
 														<div class="ibox-title">
@@ -84,28 +83,10 @@
 													{end}
 													<input  name="{$_name}" {if $_name == "id"} type="hidden" {else} type="text" {end} value="{$_value}" class="form-control">
 												</div>
-
 											{end}
 									</div>
 								</div>
  							{end}
-
-
-
-<!--
-							{foreach (array) $table['columns']['list'] as $_key => $_record}
-								<div class="form-group"><label class="col-sm-12 control-label">{$_record['head']}  [{$_record['name']}]</label>
-									<div class="col-sm-12">
-										<textarea name="{$_record['name']}" placeholder="{$_record['name']}" class="form-control"></textarea>
-									</div>
-								</div>
-							{end}
--->
-<!--
-							<strong>---</strong>
--->
-
-
 						</div>
 					</form>
                     <div class="modal-footer">
