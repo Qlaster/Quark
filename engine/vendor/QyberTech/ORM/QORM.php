@@ -419,9 +419,8 @@
 			//Вытягиваем колонки
 			$columns = implode('","', array_keys($record));
 
-			//Приклеиваем двоеточие ко всем ключам массива
-			foreach ($record as $key => &$value) $values[] = ":$key";
-			$values  = implode(', ', $values);
+			//Приклеиваем указатели переменным
+			$values = str_pad('', count($record)*2-1, '?,');
 
 			//Формируем запрос
 			($this->PDO_INTERFACE->getAttribute(\PDO::ATTR_DRIVER_NAME) != "sqlite") ? $returning = "RETURNING *" : $returning = "";
@@ -432,11 +431,8 @@
 			//Отдаем запрос а разбор
 			$stmt = $this->PDO_INTERFACE->prepare($this->lastQuery);
 
-			//Указываем значения
-			foreach ($record as $key => &$val) $stmt->bindParam(":$key", $val);
-
 			//отправляем запрос на выполнение
-			$stmt->execute();
+			$stmt->execute(array_values($record));
 
 			//Закинем последнее состояние в интерфейс состояния PDO
 			$this->PDO->stmt = $stmt;
