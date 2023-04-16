@@ -707,6 +707,7 @@
 				//Если нам передали 1 параметр и это массив
 				if ( ($args[0]) and (is_array($args[0])) )
 				{
+					$values = [];
 					//Собираем условие запроса
 					foreach ($args[0] as $key => $value)
 					{
@@ -732,7 +733,7 @@
 						}
 					}
 
-					$this->qinfo['where']['params'] = array_merge( (array) $this->qinfo['where']['params'], (array) $values );
+					$this->qinfo['where']['params'] = array_merge( (array) $this->qinfo['where']['params'], $values);
 					//~ print_r($this->qinfo['where'][0]['sql']); die;
 					//Если все пусто - выходим
 					//~ if (count($values) == 0) return $this;
