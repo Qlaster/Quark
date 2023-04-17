@@ -181,7 +181,7 @@
 
 		public function get($login)
 		{
-			return $this->db()->select(mb_strtolower($login));
+			return $this->db()->select(mb_strtolower((string) $login));
 		}
 
 
