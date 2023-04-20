@@ -120,7 +120,7 @@
 		 */
 		public function push($advanced_info = '')
 		{
-			if (!$this->config['enable']) return false;
+			if (! boolval($this->config['enable'])) return false;
 			$info = $this->get_info();
 			//Если передеали массив/объект/класс - превратим в json
 			//~ $advanced_info = !is_string($advanced_info) ? json_encode($advanced_info) : $advanced_info;
