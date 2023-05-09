@@ -129,8 +129,7 @@
 		{
 			static $ini;
 			if (!isset($ini)) $ini = new Core_Ini_Writer;
-
-			return $ini->processConfig($config);
+			return $ini->processConfig((array) $config);
 		}
 
 
