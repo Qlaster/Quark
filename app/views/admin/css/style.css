@@ -2242,6 +2242,7 @@ label.error {
   border-right: none;
 }
 /* Toastr custom style */
+/*
 #toast-container > .toast {
   background-image: none !important;
 }
@@ -2267,6 +2268,7 @@ label.error {
 #toast-container > .toast-success:before {
   content: "\f00C";
 }
+*/
 #toast-container > div {
   -moz-box-shadow: 0 0 3px #999;
   -webkit-box-shadow: 0 0 3px #999;
