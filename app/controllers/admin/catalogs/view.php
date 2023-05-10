@@ -27,6 +27,13 @@
 	//Получим имя каталога для удобства
 	$name = $_GET['name'];
 
+	if (! $name)
+	{
+		//Название каталога не передано, сделаем редирект на список
+		header('Location: index');
+		exit;
+	}
+
 	//Загрузим каталог
 	$content['catalog'] = $APP->catalog->get($name);
 	$content['catalog']['name'] = $name;
