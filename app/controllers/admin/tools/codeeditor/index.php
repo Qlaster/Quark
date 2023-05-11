@@ -20,6 +20,7 @@
 		$content['config']['body'] 		= file_get_contents($_GET['config']);
 		$content['config']['action'] 	= "admin/tools/codeeditor/save.php";
 		$content['config']['filename']	= $_GET['config'];
+		$content['config']['title'] 	= 'Сохранить';
 		$content['title'] 				= $_GET['config'];
 	}
 
