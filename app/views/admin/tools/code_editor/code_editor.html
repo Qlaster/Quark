@@ -494,13 +494,13 @@
 				 success: function(response)
 				 {
 					 //~ console.log(jQuery("#"+formMain).serialize());
-					document.getElementById(result_id).innerHTML = "<i class='fa fa-circle text-success'></i> " + response;
+					document.getElementById(result_id).innerHTML = "<i class='fa fa-circle text-success'>Успешно</i> ";
 
 					//Удалим запись об удачном сохранении через 2 секунды
 					var timerId = setTimeout(function tick()
 						{
 						  $('#'+result_id).html('');
-						}, 2000);
+						}, 4000);
 
 					toastr.options =
 					{

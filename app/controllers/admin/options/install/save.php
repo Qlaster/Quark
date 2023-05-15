@@ -9,7 +9,7 @@
 		foreach ($config as $section => $objects)
 			foreach ($objects as $name => $object)
 			{
-				echo "<br>".$section.'→'.$name.'';
+				echo "<br>📦 ".$section.'	🔖 '.$name.''; // ➤ ❱ ↦ ➤ › 🠺 🡂 🢧 ⮞ 🡆 💾 🔰 📦 🔶 📚 🔘
 				//~ echo $section.'|'.$name.'<br>';
 				$APP->object->collection($section)->set($name, $object);
 			}
