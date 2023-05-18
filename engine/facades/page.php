@@ -7,7 +7,7 @@
 	# ---------------------------------------------------------------- #
 	interface QPageInterface
 	{
-		function __construct($PDO_interface, $tablePage='page', $tableContent='content');
+		function __construct($PDO_interface, $tables=[]);
 
 		// Получить страницу
 		public function get($url, $lang=null, $version_mask=null);
@@ -54,13 +54,13 @@
 
 
 	//Если в конфиге нет обязательных параметров, то попробуем поставить их по умолчанию
-	if ( !isset($config['table']['page']) ) 	$config['table']['page'] 	= 'page';
-	if ( !isset($config['table']['content']) ) 	$config['table']['content']	= 'content';
-	if ( !isset($config['db']['pdo']) )			$config['db']['pdo']		= 'sqlite:engine/database/page.sqlite';
+	//~ if ( !isset($config['table']['page']) ) 	$config['table']['page'] 	= 'page';
+	//~ if ( !isset($config['table']['content']) ) 	$config['table']['content']	= 'content';
+	if ( !isset($config['db']['pdo']) ) $config['db']['pdo'] = 'sqlite:engine/database/page.sqlite';
 
 
 	//Создаем подключение к базе
 	$dbh = new \PDO($config['db']['pdo'], $config['db']['user'], $config['db']['password']);
 
 	//Подключаем Page к базе
-	return new PageAdapter($dbh, $config['table']['page'], $config['table']['content']);
+	return new PageAdapter($dbh, $config['table']);

@@ -17,9 +17,9 @@
     <link href="../css/plugins/codemirror/ambiance.css" rel="stylesheet">
     <!-- Toastr style -->
     <link href="../css/plugins/toastr/toastr.min.css" rel="stylesheet">
-    
+
     <link href="../css/animate.css" rel="stylesheet">
-    <link href="../css/style.css" rel="stylesheet"> 
+    <link href="../css/style.css" rel="stylesheet">
 
 </head>
 
@@ -30,20 +30,20 @@
 		<!--Главное меню слева-->
 		{section "../~section/mainmenu.html"}
 		<!--Конец меню-->
-			
+
         <div id="page-wrapper" class="gray-bg">
-		
+
 		<!-- Head menu -->
 		{section "../~section/head.html"}
 		<!-- End head menu -->
-		
+
 		<!-- Менюшка title-->
 		{section "../~section/title.html"}
-		<!-- конец title-->    
-				
+		<!-- конец title-->
+
         <div class="wrapper wrapper-content">
         <div class="row">
-            
+
             <div hidden class="col-lg-3">
                 <div class="ibox float-e-margins">
                     <div class="ibox-content mailbox-content">
@@ -51,7 +51,7 @@
 							<img style="width:100%" src="~/../img/html_screen.png">
 							<br>
 							<img style="width:100%" src="~/../img/html_screen.jpeg">
-							
+
 <!--
                             <a class="btn btn-block btn-primary compose-mail" href="mail_compose.html">Compose Mail</a>
 -->
@@ -89,8 +89,8 @@
                     </div>
                 </div>
             </div>
-            
-            
+
+
 				<div class="col-lg-12 animated fadeInRight">
 					<div class="mail-box-header">
 						<div class="pull-right tooltip-demo">
@@ -127,13 +127,13 @@
 							<style>
 								.CodeMirror-scroll { min-height: 300px; }
 							</style>
-							<textarea id="head-code" style="min-height:200px">{$$headcode}</textarea>
+							<textarea id="head-code" style="min-height:200px">{$$code['head']}</textarea>
 							<div class="clearfix"></div>
 						</div>
 					</div>
 				</div>
 			</div>
-        
+
 			<!-- Footer block -->
 			{section "../~section/footer.html"}
 			<!-- End Footer block -->
@@ -150,17 +150,17 @@
     <!-- Custom and plugin javascript -->
     <script src="../js/inspinia.js"></script>
     <script src="../js/plugins/pace/pace.min.js"></script>
-    
+
     <!-- CodeMirror -->
     <script src="../js/plugins/codemirror/codemirror.js"></script>
     <script src="../js/plugins/codemirror/mode/javascript/javascript.js"></script>
 
     <!-- iCheck -->
     <script src="../js/plugins/iCheck/icheck.min.js"></script>
-    
+
     <!-- Toastr script -->
     <script src="../js/plugins/toastr/toastr.min.js"></script>
-    
+
     <!-- SUMMERNOTE -->
     <script src="../js/plugins/summernote/summernote.min.js"></script>
     <script>
@@ -173,7 +173,7 @@
 
 
             //~ $('.summernote').summernote();
-            
+
 
             window.editor_head = CodeMirror.fromTextArea(document.getElementById("head-code"), {
                  lineNumbers: true,
@@ -181,25 +181,18 @@
                  styleActiveLine: true,
                  theme:"ambiance"
              });
-             
-            $("#btn-save").click(function() 
-            {		
+
+            $("#btn-save").click(function()
+            {
 				$.post("admin/content/head/save", { headcode: window.editor_head.getValue() })
-					.done(function( data ) 
+					.done(function( data )
 					{
 						toastr.success(data);
-						toastr.warning(data);
+					})
+					.fail(function( data )
+					{
+						toastr.warning('Возникла ошибка');
 					});
-
-
-				//~ $.post( "admin/content/head/save", function( data ) 
-				//~ {
-					//~ // Display a success toast, with a title
-					//~ toastr.success(data);
-					//~ toastr.danger(data);
-					
-					//~ alert( "Data Loaded: " + data );
-				//~ });
 			});
 
 
@@ -207,7 +200,7 @@
 
 
         });
-        
+
         var edit = function() {
             $('.click2edit').summernote({focus: true});
         };

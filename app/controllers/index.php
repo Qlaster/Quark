@@ -60,6 +60,10 @@
 
 		//Пометим относительную директорию, что бы шаблонизатор мог указать его в шаблоне
 		$APP->template->base_html = $APP->url->home();
+
+		//Добавим заголовок страницы
+		$APP->template->head = $APP->page->meta->select(['urlmask'=>'','name'=>'headcode'])[0]['data'];
+
 		//выводим используя встроенный шаблонизатор
 		$APP->template->file($page['html'])->display($content);
 	}

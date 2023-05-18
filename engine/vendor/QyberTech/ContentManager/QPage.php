@@ -35,7 +35,7 @@
 
 
 	namespace QyberTech\ContentManager;
-
+	use QyberTech\ContentManager\QMeta;
 
 	class QPage
 	{
@@ -46,7 +46,7 @@
 		protected $Table_Content;		//Название таблицы с контентами
 		protected $Table_Service;		//Название таблицы со служебными страницами
 
-
+		public $meta;					//Интерфес работы с метаданными
 
 		/*
 		 *
@@ -55,7 +55,7 @@
 		 * @return void
 		 *
 		 */
-		function __construct($PDO_interface, $Table_Page='page', $Table_Content='content', $Table_Service='service')
+		function __construct($PDO_interface, $tables=['page'=>'page', 'content'=>'content', 'service'=>'service', 'meta'=>'meta'])
 		{
 
 			//Если переданный клас не является PDO, то показываем ошибку
@@ -66,8 +66,6 @@
 				return false;
 			}
 
-
-
 			//Устанавливаем интерфейс к базе данных
 			$this->PDO_INTERFACE 	= &$PDO_interface;
 			//Переводим в режим предупреждений
@@ -77,14 +75,17 @@
 			//NULL преобразовывать в пустые строки.
 			$this->PDO_INTERFACE->setAttribute( \PDO::ATTR_ORACLE_NULLS, \PDO::NULL_TO_STRING);
 
-
 			//Объявляем имена таблиц
-			$this->Table_Page 		= $Table_Page;
-			$this->Table_Content 	= $Table_Content;
-			$this->Table_Service 	= $Table_Service;
+			$this->Table_Page 		= $tables['page']    ?? 'page';
+			$this->Table_Content 	= $tables['content'] ?? 'content';
+			$this->Table_Service 	= $tables['service'] ?? 'service';
+			$this->Table_Meta 		= $tables['meta']    ?? 'meta';
 
 			//Построим таблицы, если их нет
 			$this->DBConstruct();
+
+			//Подключим расширение для метаданных
+			$this->meta = new QMeta($this->PDO_INTERFACE, $this->Table_Meta);
 		}
 
 
@@ -223,10 +224,8 @@
 			$content = (array) $STH->fetchAll();
 
 
-			foreach ($content as $key => &$value)
-			{
+			foreach ($content as $value)
 				$page['content'][$value['name']] = $value;
-			}
 
 
 			return $page;
@@ -573,14 +572,7 @@
 						</urlset>\n";
 
 			//Если просили записать в файл - пишем. Если нет - возвращаем тело карты сайта
-			if ($export_file)
-				{
-					file_put_contents($export_file, $text);
-				}
-				else
-				{
-					 return $text;
-				}
+			return $export_file ? file_put_contents($export_file, $text) : $text;
 		}
 
 
@@ -624,43 +616,4 @@
 
 	}
 
-
-	class QMeta
-	{
-
-		//Имя таблицы для метаданных
-		public $table = '';
-
-		function __construct($PDO_interface, $table='contentmeta')
-		{
-
-			//Если переданный клас не является PDO, то показываем ошибку
-			if ( ! ($PDO_interface instanceOf \PDO) )
-			{
-				//...выбрасываем предупреждение
-				trigger_error ( "Переданный интерфейс не является объектом PDO." , E_USER_WARNING );
-				return false;
-			}
-
-
-
-			//Устанавливаем интерфейс к базе данных
-			$this->PDO_INTERFACE 	= &$PDO_interface;
-			//Переводим в режим предупреждений
-			$this->PDO_INTERFACE->setAttribute( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_WARNING );
-			//PDO будет возвращать только ассоциативные массивы
-			$this->PDO_INTERFACE->setAttribute( \PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
-			//NULL преобразовывать в пустые строки.
-			$this->PDO_INTERFACE->setAttribute( \PDO::ATTR_ORACLE_NULLS, \PDO::NULL_TO_STRING);
-
-
-			//Объявляем имена таблиц
-			$this->table 		= $table;
-
-			//Построим таблицы, если их нет
-			$this->DBConstruct();
-		}
-
-
-	}
 
