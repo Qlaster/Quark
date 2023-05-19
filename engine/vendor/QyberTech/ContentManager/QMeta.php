@@ -44,6 +44,7 @@
 
 		protected function wherePrepare($args=[])
 		{
+			$where = '';
 			//Собираем условие запроса
 			foreach ($args as $key => $value)
 			{
@@ -100,5 +101,18 @@
 			list ($where, $values) = $this->wherePrepare($args);
 			$STH = $this->PDO_INTERFACE->prepare("DELETE * FROM '$table' $where;");
 			return $STH->execute($values);
+		}
+
+		/*
+		 *
+		 * name: Вернет данные первого мета-тега по условию
+		 * @param (array) select Where
+		 * @return (string) Data
+		 *
+		 */
+		public function get($args=[])
+		{
+			$list = $this->select($args);
+			return $list ? $list[0]['data'] : '';
 		}
 	}

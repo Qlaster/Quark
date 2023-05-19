@@ -62,7 +62,7 @@
 		$APP->template->base_html = $APP->url->home();
 
 		//Добавим заголовок страницы
-		$APP->template->head = $APP->page->meta->select(['urlmask'=>'','name'=>'headcode'])[0]['data'];
+		$APP->template->head = $APP->page->meta->get(['urlmask'=>'','name'=>'headcode']);
 
 		//выводим используя встроенный шаблонизатор
 		$APP->template->file($page['html'])->display($content);
