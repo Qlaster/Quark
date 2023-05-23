@@ -309,6 +309,20 @@
 				return $result;
 			}
 
+			if ($this->PDO_INTERFACE->getAttribute(\PDO::ATTR_DRIVER_NAME) == "pgsql")
+			{
+				$table = trim($table, '"');
+				$stmt = $this->PDO_INTERFACE->prepare("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '$table';");
+				$stmt->execute();
+				$columns = $stmt->fetchAll();
+
+				foreach ($columns as $recordCol)
+					$result[$recordCol['column_name']] = $recordCol['column_name'];
+
+				//Возвращем результат выборки
+				return $result;
+
+			}
 		}
 
 
@@ -733,7 +747,7 @@
 						}
 					}
 
-					$this->qinfo['where']['params'] = array_merge( (array) $this->qinfo['where']['params'], $values);
+					$this->qinfo['where']['params'] = array_merge( (array) $this->qinfo['where']['params'], (array) $values );
 					//~ print_r($this->qinfo['where'][0]['sql']); die;
 					//Если все пусто - выходим
 					//~ if (count($values) == 0) return $this;
