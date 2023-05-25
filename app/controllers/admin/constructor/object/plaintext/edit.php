@@ -10,6 +10,7 @@
 
 	$content['config']['body']		= $APP->config->toString($object);
 	$content['config']['action']	= "admin/constructor/object/plaintext/save?collection=$collection&object=$objectname";
+	$content['config']['title'] 	= 'Сохранить';
 
 	//~ $content['title'] = "Редактор объекта ".$_GET['object'];
 	$content['nav']['path']['head'] = "Редактор объекта [".$_GET['object']."]";
