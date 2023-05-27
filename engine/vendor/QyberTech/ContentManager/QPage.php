@@ -172,12 +172,12 @@
 
 		public function get($url, $lang=null, $version_mask=null)
 		{
-
+			$url = strtolower($url);
 			$table_page 	= $this->Table_Page;
 			$table_content 	= $this->Table_Content;
 
 			//Составим запрос к базе, основываясь на переданных параметрах
-			$where = ' ( url = :url ) ';
+			$where = ' ( LOWER(url) = :url ) ';
 
 			if ($lang !== null)
 			{
@@ -188,7 +188,7 @@
 
 			//Первое, что нам предстоит сделать, это найти страницу в базе. Составляем запрос
 			$STH = $this->PDO_INTERFACE->prepare("SELECT * FROM '$table_page' WHERE ($where);");
-			$STH->bindParam(':url', 	$url);
+			$STH->bindParam(':url', $url);
 			if ($lang !== null) $STH->bindParam(':lang', 		$lang);
 
 			$STH->execute();
