@@ -35,7 +35,7 @@
 
 		$catalog = $APP->catalog->get($_GET['catalog']);
 
-		if ($sendFiles)
+		if ($sendFiles ?? false)
 		{
 			//Проверим наличие директорий
 			$folder = $catalog['folder'] ?? $APP->catalog->config()['settings']['folder'];
