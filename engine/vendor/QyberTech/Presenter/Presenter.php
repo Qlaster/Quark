@@ -415,11 +415,6 @@
 		private function compile_tag($tag)
 		{
 
-			//Очистим делимитеры тега.
-			//~ $tag = substr($tag, strlen($this->config['left_delimiter']));
-			//~ $tag = substr($tag, 0, strlen($tag)-strlen($this->config['right_delimiter']));
-			//~ $tag = trim($tag);
-
 			//Очистим делимитеры тега (более оптимизированная версия кода)
 			$tag = ltrim($tag, $this->config['left_delimiter']);
 			$tag = rtrim($tag, $this->config['right_delimiter']);
@@ -591,16 +586,6 @@
 
 			//если все хорошо - возвращаем ссылку на скомпилированный шаблон
 			return file_exists($cache_file) ? $cache_file : false;
-
-			//~ if (file_exists($cache_file))
-			//~ {
-				//~ return $cache_file;
-			//~ }
-			//~ else
-			//~ {
-				//~ return false;
-			//~ }
-
 		}
 
 
@@ -659,35 +644,6 @@
 
 			//Получем список всех тегов
 			return $this->get_tags($tpl_string);
-
-			//TODO: DEPRICATED
-			/*
-			//Прежняя версия кода. Устарело
-			//Получем список всех тегов
-			$all_tags = $this->get_tags($tpl_string);
-
-			//Двигаемся от тега к тегу, по телу документа
-			foreach ($all_tags as $key => &$tag)
-			{
-				//Обработка литерального тега
-				$literal_tag = $this->literal_count($tag);
-
-				//Это тег шаблонизатора???
-				if ( $this->is_tag($tag) )
-				{
-					//Если тег меняет литеральное состояние - это литеральный тег шаблонизатора. Его выводить не нужно.
-					if ($literal_tag) continue;
-
-					//Если нет открытых литеральных тегов - добавляем в выдачу
-					if (! $this->literal_count() )
-					{
-						$result[] = $tag;
-					}
-				}
-			}
-
-			return (array) $result;
-			*/
 		}
 
 
@@ -761,18 +717,6 @@
 			return	( substr($tag, 0, strlen($this->config['left_delimiter']) ) == $this->config['left_delimiter']  )
 					and
 					( substr($tag,  -strlen($this->config['right_delimiter']) ) == $this->config['right_delimiter'] );
-			//~ if  (
-					//~ ( substr($tag, 0, strlen($this->config['left_delimiter']) ) == $this->config['left_delimiter']  )
-						//~ and
-					//~ ( substr($tag,  -strlen($this->config['right_delimiter']) ) == $this->config['right_delimiter'] )
-			    //~ )
-			//~ {
-				//~ return true;
-			//~ }
-			//~ else
-			//~ {
-				//~ return false;
-			//~ }
 		}
 
 
@@ -803,11 +747,6 @@
 
 				//Если попросили указать полный путь до файла - вернем с директорией. Иначе просто имя файла
 				return $full_path ? $this->config['compilation']['folder'].DIRECTORY_SEPARATOR.$filename : $filename;
-
-				//~ if ($full_path)
-					//~ $filename = $this->config['compilation']['folder'].'/'. $filename;
-
-				//~ return $filename;
 			}
 
 		}
