@@ -333,7 +333,7 @@
 		 */
 		public function add($user)
 		{
-			user_correct($user);
+			$this->user_correct($user);
 			return $this->db()->Insert($user);
 		}
 
@@ -347,7 +347,7 @@
 		 */
 		public function edit($user)
 		{
-			user_correct($user);
+			$this->user_correct($user);
 			return $this->db()->where('login = ?', $user['login'])->Update($user);
 		}
 
