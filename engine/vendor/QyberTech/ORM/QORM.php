@@ -728,6 +728,7 @@
 						//Если указан целый набор значений, то объдиним их в "in ()"
 						if (is_array($value))
 						{
+							if (!$value) continue;
 							//Рассчитаем и сгенерируем нужное количество вопросов в запросе
 							$inQuests = trim(str_repeat("?,", count($value)), ',');
 							$this->qinfo['where']['sql'][] = "\"$key\" in ($inQuests)";
