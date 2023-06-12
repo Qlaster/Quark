@@ -323,6 +323,7 @@
 					continue;
 				}
 
+				$f_frame['list'] = (array) $f_frame['list'];
 				//Проходимся по содержимому фрейма
 				foreach ($f_frame['list'] as $f_tagname => &$f_tag)
 				{
