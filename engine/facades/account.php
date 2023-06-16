@@ -212,7 +212,8 @@
 				return false;
 			}
 
-			$user = $this->get($login);
+			if (! $user = $this->get($login) ) return false;
+
 
 			//Если пользователь отключен
 			if ($user['disable']) return false;
