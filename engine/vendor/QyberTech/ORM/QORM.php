@@ -533,7 +533,6 @@
 				$this->PDO->stmt = $stmt;
 			}
 
-
 			//Очистим условия для дальнейших запросов
 			$this->Reset();
 
@@ -814,10 +813,10 @@
 					$likestr = '%'.$args[0].'%';
 					//Пройдемся по всем полям таблички и соберем запрос
 					//TODO: Ужасно не оптимальная история. Есть идея собрать все поля таблицы в одну строку и выполнить запрос по ней
-					foreach ($this->columns() as $key => $name) $request[$key] = "CAST(\"$key\" AS TEXT) iLIKE ?";
+					foreach ((array) $this->columns() as $key => $name) $request[$key] = "CAST(\"$key\" AS TEXT) iLIKE ?";
 
 					$this->qinfo['where']['sql'][]  = implode(' OR ', (array) $request);
-					$this->qinfo['where']['params'] = array_merge( (array) $this->qinfo['where']['params'], (array) array_fill(0, count($request), $likestr) );
+					$this->qinfo['where']['params'] = array_merge( (array) $this->qinfo['where']['params'], (array) array_fill(0, count((array)$request), $likestr) );
 					return $this;
 				}
 
