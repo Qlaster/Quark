@@ -57,10 +57,10 @@
 	//Если передали на сохранение
 	if ($_POST)
 	{
-		$APP->object->collection('gallery')->set($name, $_POST);
+		$APP->object->collection($collection)->set($name, $_POST);
 
 		//Перезагрузим галлерею еще раз, что бы убедиться, что все сохранилось
-		$gallery = $APP->object->collection('gallery')->get($name);
+		$gallery = $APP->object->collection($collection)->get($name);
 	}
 
 
