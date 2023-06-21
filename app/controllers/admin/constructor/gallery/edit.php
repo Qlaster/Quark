@@ -6,10 +6,10 @@
 	$content['nav']['path']['head'] = "Галерея: <b>$name</b>";
 
 	$collection = $_GET['collection'] ?? 'gallery';
+	
 
 	//Загрузим галлерею
 	$gallery = $APP->object->collection($collection)->get($name);
-
 
 
 	//Если нам передали несколько файликов на добавление
@@ -18,18 +18,8 @@
 		//переформатирование структуры файлов в более пригодный вид
 		$_FILES['files'] = reArrayFiles($_FILES['files']);
 
-		//~ print_r($_FILES); die;
-
 		//Что бы создать директорию под галлерею, надо заменить служебные символы
-		$name = str_replace('/', '_', $name);
-		$name = str_replace('*', '_', $name);
-		$name = str_replace('<', '_', $name);
-		$name = str_replace('>', '_', $name);
-		$name = str_replace('#', '_', $name);
-		$name = str_replace('&', '_', $name);
-		$name = str_replace('%', '_', $name);
-		$name = str_replace('?', '_', $name);
-
+		$name = str_replace(['/','*','<','>','#','&','%','?'], '_', $name);
 
 		foreach	($_FILES['files'] as $_key => $_file)
 		{
@@ -41,8 +31,7 @@
 				chmod($path, 0777);
 			}
 
-			$new_filename = $path.$_file['name'];
-
+			$new_filename = $path.uniqid().'.'.pathinfo($_file['name'])['extension'];
 
 			move_uploaded_file($_file['tmp_name'], $new_filename); //$_SERVER['CONTEXT_DOCUMENT_ROOT']
 			chmod($new_filename, 0776);
@@ -97,5 +86,5 @@
 			}
 		}
 
-		return $file_ary;
+		return (array) $file_ary;
 	}
