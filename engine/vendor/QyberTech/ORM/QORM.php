@@ -645,9 +645,12 @@
 			$where 	= $this->WhereComposition($this->qinfo['concat']); //В concat хранится способ сцепления выражений. По умолчанию and
 			$params = $this->WhereParams();
 
+			//Если это массив и он не пустой
+			if (is_array($columns) and $columns) $columns = '"'.implode('", "', $columns).'"';
+			
 			//Если вдруг NULL прилетел или пустая строка, то это нарушит запрос. Подставим по умолчангию
 			if	(!$columns) $columns = '*';
-
+		
 			//Сортировка
 			//if ($order) $order = ' ORDER BY "'.str_replace('"', '\"', $order).'"';
 			if ($order) $order = " ORDER BY $order";
