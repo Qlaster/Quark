@@ -76,6 +76,44 @@
 											{elseif 'link' == $_field['type']}
 												<label class="col-sm-12 control-label">{= $_field['alias'] ?? $_name}</label>
 												<input type="text" class="form-control" name="{$_name}" value="{$_value}">
+											{elseif 'select' == $_field['type']}
+												<div class="input-group m-b">
+													<span class="input-group-addon gray-bg m-r-lg" style="padding-right:2em; min-width:8em">{= $_field['alias'] ?? $_name}</span>
+													<div class="m-l-0">
+														<select name="{$_name}" class="form-control" value="{$_value}">
+															<option value=""></option>
+															
+															{foreach $_field['source'] as $_sel}
+																<option {if $_value == $_sel} selected {end} value="{$_sel}">{$_sel}</option>
+															{end}
+<!--
+															<option value="saab">Saab</option>
+															<option value="mercedes">Mercedes</option>
+															<option value="audi">Audi</option>
+-->
+															
+<!--
+															  <optgroup label="Swedish Cars">
+																<option value="volvo">Volvo</option>
+																<option value="saab">Saab</option>
+															  </optgroup>
+															  <optgroup label="German Cars">
+																<option value="mercedes">Mercedes</option>
+																<option value="audi">Audi</option>
+															  </optgroup>
+-->
+														</select>
+													</div>
+												</div>
+												
+<!--
+												<label class="col-sm-12 control-label">{= $_field['alias'] ?? $_name}</label>
+-->
+
+
+<!--
+												<input type="text" class="form-control" name="{$_name}" value="{$_value}">
+-->
 											{else}
 												<div class="input-group m-b">
 													{if $_name != "id"}

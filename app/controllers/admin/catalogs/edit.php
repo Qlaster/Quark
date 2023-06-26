@@ -7,7 +7,9 @@
 	$content['record'] = current((array)$record);
 	$content['catalog'] = $APP->catalog->get($_GET['catalog']);
 
-	//~ print_r($content); die;
+
+	$content['catalog']['field'] = $APP->catalog->fields($_GET['catalog']);
+
 
 	//Отрисуем
 	$APP->template->file('admin/catalogs/edit-frame.html')->display($content);

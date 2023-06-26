@@ -1,6 +1,6 @@
 <?php
 /*
- * Catalog recoed replace.php
+ * Catalog record replace.php
  *
  * Copyright 2022 vladimir <vladimir@MacBookAir>
  *

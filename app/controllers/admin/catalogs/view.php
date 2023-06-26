@@ -23,11 +23,8 @@
  */
 
 	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
-
-	//Получим имя каталога для удобства
-	$name = $_GET['name'];
-
-	if (! $name)
+	
+	if (!$name = $_GET['name'])
 	{
 		//Название каталога не передано, сделаем редирект на список
 		header('Location: index');
@@ -41,7 +38,15 @@
 	$content['catalog']['field'] = $content['catalog']['field'] ?? $APP->catalog->fields($name);
 
 	//Выгрузим данные (для оптимизации памяти, получим только те поля, которые требуются для каталога)
-	$content['catalog']['list']  = $APP->catalog->items($name)->select( implode(',', array_keys($content['catalog']['field'])) );
+	//~ $content['catalog']['list']  = $APP->catalog->items($name)->select( array_keys($content['catalog']['field']) );
+	$content['catalog']['list']  = $APP->catalog->view($name);
+	
+	
+	//Отфильтруем по фактическим полям
+	if ($content['catalog']['list'])
+		$content['catalog']['field'] = array_intersect_key($content['catalog']['field'], current($content['catalog']['list']));
+	
+	
 	//Напишем заголовок
 	$content['title'] = $content['catalog']['head'];
 
