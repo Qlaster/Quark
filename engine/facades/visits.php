@@ -132,7 +132,7 @@
 			if (! $this->config['folder'] == '')
 			{
 				//Если директории нет - создаем
-				if (! is_dir($this->config['folder'])) mkdir($this->config['folder'], $this->config['umask'] ?? 0777, true);
+				if (! is_dir($this->config['folder'])) mkdir($this->config['folder'], $this->config['umask'] ?? 0755, true);
 				$filename =  $this->config['folder'] .'/'. $filename;
 			}
 
