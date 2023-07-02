@@ -1,11 +1,12 @@
 <?php
-/*
- *
- * TODO: Filtered . is name fields
- *
- *
- */
 
+	/*
+	 *
+	 * TODO: Filtered . is name fields
+	 *
+	 *
+	 */
+	namespace unit\catalog;
 
 	# ---------------------------------------------------------------- #
 	#                 ЭКСПОРТИРУЕМ 	ИНТЕРФЕЙС                          #
