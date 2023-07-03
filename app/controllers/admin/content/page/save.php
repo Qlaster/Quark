@@ -66,7 +66,8 @@
 	if (!$APP->page->set($page['url'], $page))
 		trigger_error ( "Не удается сохранить страницу" , E_USER_WARNING );
 
-	$APP->page->sitemap('controllers/sitemap.xml.php');
+	$controllersDir = $APP->controller->config['folder'];
+	$APP->page->sitemap("$controllersDir/sitemap.xml.php");
 
 	//Если указано, куда нужно перенаправить, то исполняем, если нет - возвращаем на предыдущую
 	$referer = $_GET['referer'] ? $_GET['referer'] : $APP->url->home().'admin/content/page/edit?url='.urlencode($page['url']);
