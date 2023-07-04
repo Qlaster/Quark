@@ -391,7 +391,7 @@
 			}
 
 			//Завершаем транзакцию.
-			$this->PDO_INTERFACE->Commit();
+			return $this->PDO_INTERFACE->Commit();
 		}
 
 
