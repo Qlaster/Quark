@@ -365,7 +365,9 @@
 							$item['objectname'] = $_item;
 
 
-							if (($this->page['content'][$html_tag_name]['type'] == 'object') and
+
+							if  ($this->page['content'][$html_tag_name] and
+								($this->page['content'][$html_tag_name]['type'] == 'object') and
 								($this->page['content'][$html_tag_name]['data'] == $html_object_name)
 								)
 									$item['active'] = true;
@@ -406,7 +408,7 @@
 
 					//$f_tag['edit']['head'] = ' or ';
 					$f_tag['edit']['name'] = '='.$html_tag_name;
-					if ($this->page['content'][$html_tag_name]['type'] == 'source')
+					if ($this->page['content'][$html_tag_name] and $this->page['content'][$html_tag_name]['type'] == 'source')
 							$f_tag['edit']['value'] = $this->page['content'][$html_tag_name]['data'];
 					//$result[$f_name] = $f_frame;
 
