@@ -451,8 +451,8 @@
 
 
 			//Этап 2. Это управляющее выражение?
-			$expression = substr( $tag, 0, strpos($tag, ' ') );
-			if ($expression == '') $expression = substr( $tag, 0, strpos($tag, '(') ); //Спорный участок кокда
+			$expression = substr( $tag, 0, stripos($tag, ' ') );
+			if ($expression == '') $expression = substr( $tag, 0, strpos($tag, '(') ); //Спорный участок кода
 			//~ $expression = strstr($tag, ' ', true);
 			//~ if ($expression == '') $expression = strstr($tag, '(', true);  //Спорный участок кокда
 
