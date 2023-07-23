@@ -316,25 +316,32 @@
 		 */
 		protected function processKey($key, $value, array &$config)
 		{
-			if (mb_strpos($key, $this->nestSeparator) !== false) {
+			if (mb_strpos($key, $this->nestSeparator) !== false) 
+			{
 				$pieces = explode($this->nestSeparator, $key, 2);
 
-				if (!mb_strlen($pieces[0]) || !mb_strlen($pieces[1])) {
+				if (!mb_strlen($pieces[0]) || !mb_strlen($pieces[1])) 
+				{
 					throw new Exception (sprintf('Invalid key "%s"', $key));
-				} elseif (!isset($config[$pieces[0]])) {
-					if ($pieces[0] === '0' && !empty($config)) {
-						$config = array($pieces[0] => $config);
-					} else {
+				} elseif (!isset($config[$pieces[0]])) 
+				{
+					//~ if ($pieces[0] === '0' && !empty($config)) 
+					//~ {
+						//~ $config = array($pieces[0] => $config);
+					//~ } else {
 						$config[$pieces[0]] = array();
-					}
-				} elseif (!is_array($config[$pieces[0]])) {
+					//~ }
+				} elseif (!is_array($config[$pieces[0]])) 
+				{
 					throw new Exception (
 						sprintf('Cannot create sub-key for "%s", as key already exists', $pieces[0])
 					);
 				}
 
 				$this->processKey($pieces[1], $value, $config[$pieces[0]]);
-			} else {
+			} 
+			else 
+			{
 				if ($key === '@include') {
 					if ($this->directory === null) {
 						throw new Exception ('Cannot process @include statement for a string config');
