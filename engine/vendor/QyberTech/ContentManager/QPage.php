@@ -492,6 +492,36 @@
 
 		}
 
+
+		/*
+		 *
+		 * name: Очистка историй изменения и всех неиспользуемых записей
+		 * @param
+		 * @return
+		 *
+		 */
+		public function clearing()
+		{
+			$table_page = $this->Table_Page;
+			$table_content = $this->Table_Content;
+
+			$STH = $this->PDO_INTERFACE->prepare("SELECT url, version FROM '$table_page';");
+			$STH->execute();
+			$pages = (array) $STH->fetchAll();
+
+			if (!$pages) return true;
+			foreach ($pages as $page)
+			{
+				$url = $page['url'];
+				$version = $page['version'];
+				$where[] = "not (url = '$url' and version == '$version')";
+			}
+			$where = implode(' and ', (array) $where);
+			$STH = $this->PDO_INTERFACE->prepare("DELETE FROM '$table_content' WHERE $where");
+			return $STH->execute();
+		}
+
+
 		/*
 		 *
 		 * name: Откат на предыдущую версию документа
