@@ -12,6 +12,7 @@
 		$errorController = $APP->route->match('404', ['error'])[0];
 		if (!isset($errorController))
 			throw new ErrorException("Quark: Error controller '$errorController' not found", 500);
+
 		$APP->controller->run($errorController, ['APP'=>$APP]);
 	}
 
