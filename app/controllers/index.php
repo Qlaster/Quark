@@ -10,9 +10,9 @@
 	if (($page === null) or (!$page['public']))
 	{
 		$errorController = $APP->route->match('404', ['error'])[0];
-		if (!isset($errorController))
+		http_response_code(404);
+		if (! (isset($errorController) or is_readable($errorController)))
 			throw new ErrorException("Quark: Error controller '$errorController' not found", 500);
-
 		$APP->controller->run($errorController, ['APP'=>$APP]);
 	}
 
