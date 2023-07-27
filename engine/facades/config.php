@@ -298,9 +298,8 @@
 		{
 			$config = array();
 
-			foreach ($section as $key => $value) {
+			foreach ($section as $key => $value) 
 				$this->processKey($key, $value, $config);
-			}
 
 			return $config;
 		}
@@ -320,10 +319,11 @@
 			{
 				$pieces = explode($this->nestSeparator, $key, 2);
 
-				if (!mb_strlen($pieces[0]) || !mb_strlen($pieces[1])) 
-				{
-					throw new Exception (sprintf('Invalid key "%s"', $key));
-				} elseif (!isset($config[$pieces[0]])) 
+				//~ if (!mb_strlen($pieces[0]) || !mb_strlen($pieces[1])) 
+				//~ {
+					//~ throw new Exception (sprintf('Invalid key "%s"', $key));
+				//~ } else
+				if (!isset($config[$pieces[0]])) 
 				{
 					//~ if ($pieces[0] === '0' && !empty($config)) 
 					//~ {
@@ -339,9 +339,7 @@
 				}
 
 				$this->processKey($pieces[1], $value, $config[$pieces[0]]);
-			} 
-			else 
-			{
+			} else {
 				if ($key === '@include') {
 					if ($this->directory === null) {
 						throw new Exception ('Cannot process @include statement for a string config');
