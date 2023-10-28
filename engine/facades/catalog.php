@@ -92,7 +92,7 @@
 			$groupby = $params['groupby'] ? $params['groupby'] : $catalog['events']['view']['groupby'] ?? '';
 			$orderby = $params['orderby'] ? $params['orderby'] : $catalog['events']['view']['orderby'] ?? '';
 			$where   = $params['where']   ? $params['where']   : $catalog['events']['view']['where'] ?? '';
-
+			
 			is_array($where)   ? $orm->where  (... $where)   : $orm->where($where);
 			is_array($orderby) ? $orm->orderby(... $orderby) : $orm->orderby($orderby);
 			is_array($groupby) ? $orm->groupby(... $where)   : $orm->groupby($groupby);
@@ -108,6 +108,7 @@
 			if (!$connectRecord['table']) throw new Exception("Missing table name to connect $catalogName", 3);
 
 			$connectRecord['name'] = $catalogName;
+			
 			//Проверим наличие директорий
 			if (!$connectRecord['folder'] and $this->config()['settings']['folder'])
 				$connectRecord['folder'] = $this->config()['settings']['folder'].DIRECTORY_SEPARATOR.$catalogName;
