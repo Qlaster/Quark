@@ -88,10 +88,10 @@
 			$catalog = $this->get($catalogName);
 			$orm = $this->dbInterface->connect($catalog['db'])->table($catalog['table']);
 			
-			$column  = $params['column']  ? $params['column']  : $catalog['events']['view']['column'];
-			$groupby = $params['groupby'] ? $params['groupby'] : $catalog['events']['view']['groupby'];
-			$orderby = $params['orderby'] ? $params['orderby'] : $catalog['events']['view']['orderby'];
-			$where   = $params['where']   ? $params['where']   : $catalog['events']['view']['where'];
+			$column  = $params['column']  ? $params['column']  : $catalog['events']['view']['column'] ?? '';
+			$groupby = $params['groupby'] ? $params['groupby'] : $catalog['events']['view']['groupby'] ?? '';
+			$orderby = $params['orderby'] ? $params['orderby'] : $catalog['events']['view']['orderby'] ?? '';
+			$where   = $params['where']   ? $params['where']   : $catalog['events']['view']['where'] ?? '';
 
 			is_array($where)   ? $orm->where  (... $where)   : $orm->where($where);
 			is_array($orderby) ? $orm->orderby(... $orderby) : $orm->orderby($orderby);
