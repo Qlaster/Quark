@@ -34,7 +34,8 @@
 	$content['form']['file']['list'] = PageTools::scandirs($templateDir, '*.htm*');
 
 	//Прикрепим ссылку на обработчик исходного кода
-	$content['form']['file']['htmlhandler'] = 'admin/tools/codeeditor?file='.$APP->template->config['templates']['folder'];
+	$content['form']['file']['htmlhandler']     = 'admin/tools/codeeditor?file='.$APP->template->config['templates']['folder'].'/';
+	$content['form']['file']['providerhandler'] = 'admin/tools/codeeditor?file='.$APP->provider->config['folder'].'/';
 
 	//~ print_r($content['form']['file']['list']); die;
 
