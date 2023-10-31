@@ -1,6 +1,5 @@
 <?php
 
-	//~ print_r($_GET); die;
 
 	if ($_GET['id'])
 		$record = $APP->catalog->items($_GET['catalog'])->where(['id'=>$_GET['id']])->select();
