@@ -1,5 +1,5 @@
 <?php
-	error_reporting(E_ALL);
+	error_reporting(E_ALL & ~E_NOTICE);
 
 	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
@@ -52,9 +52,9 @@
 			$content['units']['list'][$key]['analize']['runtime'] = round(microtime(true) - $starttime, 4);
 			$times[] = $content['units']['list'][$key]['analize']['runtime'];
 
-			$content['units']['list'][$key]['analize']['check'] = $content['units']['list'][$key]['analize']['syntax'] && $content['units']['list'][$key]['analize']['init'];
+			$content['units']['list'][$key]['analize']['check']  = $content['units']['list'][$key]['analize']['syntax'] && $content['units']['list'][$key]['analize']['init'];
 			$content['units']['list'][$key]['analize']['status'] = 'Готов';
-			$content['units']['list'][$key]['analize']['init'] ?: $content['units']['list'][$key]['analize']['status'] = 'Инициализация';
+			$content['units']['list'][$key]['analize']['init']   ?: $content['units']['list'][$key]['analize']['status'] = 'Инициализация';
 			$content['units']['list'][$key]['analize']['syntax'] ?: $content['units']['list'][$key]['analize']['status'] = 'Синтаксис';
 
 

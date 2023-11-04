@@ -10,4 +10,4 @@
 		$APP->object->collection('gallery')->set($_GET['name'], null);
 	
 
-	header('Location: ../gallery');
+	header('Location: ../gallery?name='.urlencode($_GET['name']));

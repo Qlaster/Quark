@@ -27,14 +27,14 @@
 			$path = "public/gallery/$name/";
 			if (!file_exists($path))
 			{
-				mkdir($path, 0755, true);
-				//~ chmod($path, 0777);
+				mkdir($path, 0777, true);
+				chmod($path, 0777);
 			}
 
 			$new_filename = $path.uniqid().'.'.pathinfo($_file['name'])['extension'];
 
 			move_uploaded_file($_file['tmp_name'], $new_filename); //$_SERVER['CONTEXT_DOCUMENT_ROOT']
-			//~ chmod($new_filename, 0776);
+			chmod($new_filename, 0776);
 
 			$record['image']    = $new_filename;
 			$record['selected'] = 'panel-primary has-success';

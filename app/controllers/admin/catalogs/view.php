@@ -37,7 +37,6 @@
 	//Получим актуальные поля
 	$content['catalog']['field'] = $content['catalog']['field'] ?? $APP->catalog->fields($name);
 
-
 	//Выгрузим данные (для оптимизации памяти, получим только те поля, которые требуются для каталога)
 	//~ $content['catalog']['list']  = $APP->catalog->items($name)->select( array_keys($content['catalog']['field']) );
 	$content['catalog']['list']  = $APP->catalog->view($name);
