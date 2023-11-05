@@ -1,5 +1,4 @@
 <?php
-	error_reporting(E_ALL);
 
 	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
