@@ -43,7 +43,7 @@ include $_ENV['core']['path']."core.php";
 //~ $APP = new APP('engine/core', ['app'=>'engine/facades', 'models'=>'app/models'], 'engine/vendor');
 $APP = new APP($_ENV['core']['path'], $_ENV['facades'], $_ENV['vendor']);
 //Загрузим переменные окружения
-$APP->config->loadENV('.env', 'app/.env');
+$APP->config->loadENV(['.env', 'app/.env']);
 
 
 $method = isset($argv[1]) ? $argv[1] : 'help';
