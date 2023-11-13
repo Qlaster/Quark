@@ -58,21 +58,6 @@
 			return $result;
 		}
 
-		//TODO: DEPRICATED
-		public function __includeUnits($dir)
-		{
-			//Подключаем модули расширений
-			foreach (glob($dir."/*.php") as $filename)
-			{
-				//Получаем название модуля из имени файла
-				$unit = basename($filename, '.php');
-
-				//Подключем интерфейс, который модуль предлагает использовать и регистрируем его в качестве метода приложения
-				//Данный подход позволяет обращаться к функциональности модуля вызвав метод приложения.
-				$this->$unit = include($filename);
-			}
-		}
-
 		private function __includeExtension($dir=__DIR__)
 		{
 			//Подключаем расширения ядра
