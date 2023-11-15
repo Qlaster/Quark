@@ -7,7 +7,8 @@
 
 	$content['title'] = 'Установленные пакеты composer';
 
-	$vendorDir = $APP->core_config['path_vendor']['path'];
+	//~ $vendorDir = $APP->core_config['path_vendor']['path'];
+	$vendorDir = $_ENV['vendor']['path'];
 	$vendors  = $APP->utils->files->dirListing($vendorDir);
 
 	//Проходимся по доступным вендорам, заглядывая в пакеты
@@ -23,9 +24,9 @@
 			$packages[$_vendor][$_packege] = $_packegeHead;
 		}
 
-	$content['packages']['head'] = 'Установленые пакеты composer';
+	$content['packages']['head'] = 'Установленые пакеты';
 	$content['packages']['list'] = $packages;
-	$content['packages']['info'] = 'Установить дополнительные пакеты можно через <b> composer </b> в директорию <b> engine/vendor </b>';
+	$content['packages']['info'] = "Установить дополнительные пакеты можно через <b> composer </b> в директорию <b> $vendorDir </b> или добавить их туда явно";
 
 
 	$APP->template->file('admin/components/packages.html')->display($content);
