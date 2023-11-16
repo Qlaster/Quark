@@ -65,18 +65,20 @@
 						<div class="col-sm-9 m-b-xs">
 							<div data-toggle="buttons" class="btn-group">
 								<label class="btn btn-sm btn-white active"> <input type="radio" id="option1" name="options"> Все </label>
-								<label class="btn btn-sm btn-white "> <input type="radio" id="option2" name="options"> engine / vendor </label>
+								<label class="btn btn-sm btn-white "> <input type="radio" id="option2" name="options"> Composer </label>
 		<!--
 								<label class="btn btn-sm btn-white"> <input type="radio" id="option3" name="options"> Month </label>
 		-->
 							</div>
+							<span class="m-l">
 							{$$packages['info']}
+							</span>
 						</div>
 						<div class="col-sm-3">
 							<div class="input-group">
-								<input type="text" placeholder="Search" class="input-sm form-control" onkeyup="tableSearch(document.getElementById('table-packages'), this)">
+								<input type="text" placeholder="Поиск" class="input-sm form-control" onkeyup="tableSearch(document.getElementById('table-packages'), this)">
 								<span class="input-group-btn">
-									<button type="button" class="btn btn-sm btn-primary"> Go!</button>
+									<button type="button" class="btn btn-sm btn-primary"> <i class="fa fa-search"></i> </button>
 								</span>
 							</div>
 						</div>
