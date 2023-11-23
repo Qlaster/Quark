@@ -650,7 +650,7 @@
 			
 			//Если вдруг NULL прилетел или пустая строка, то это нарушит запрос. Подставим по умолчангию
 			if	(!$columns) $columns = '*';
-		
+
 			//Сортировка
 			//if ($order) $order = ' ORDER BY "'.str_replace('"', '\"', $order).'"';
 			if ($order) $order = " ORDER BY $order";
@@ -834,7 +834,7 @@
 						{
 							//Рассчитаем и сгенерируем нужное количество вопросов в запросе
 							$this->qinfo['where']['sql'][] = rtrim(str_repeat("CAST(\"$key\" AS TEXT) LIKE ? OR ", count($value)), ' OR ');
-							$values = array_merge((array)$values, $value);
+							$values = array_merge($values ?? [], $value);
 						}
 						elseif (($value === 'NULL') or ($value === NULL))
 						{
