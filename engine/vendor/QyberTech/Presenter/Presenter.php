@@ -381,7 +381,7 @@
 					//Заменяем
 					foreach ($require_pattern as $index => $pattern)
 					{
-						$tpl_content = null;
+						$tpl_content = '';
 
 						if (is_file($this->file_path.$require_file[$index]))
 						{
