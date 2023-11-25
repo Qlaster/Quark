@@ -118,24 +118,23 @@
 											{if $user['login'] == ''}
 											<div class="has-success">
 												<span class="help-block m-b-none">Enter login new user</span>
-												<input type="text" placeholder="Login" class="form-control" name="login" required>
+												<input type="text" placeholder="Login" class="form-control" name="login" required autocomplete="new-login">
 												<p></p>
 											</div>
-											{end}
-											{if $user['login'] == ''}
+
 												<div class="has-success">
-													<input type="password" placeholder="Password" class="form-control" name="password" required>
+													<input type="password" placeholder="Password" class="form-control" name="password" required autocomplete="new-password">
 												</div>
 											{else}
-												<input type="password" placeholder="New password" class="form-control" name="password">
+												<input type="password" placeholder="New password" class="form-control" name="password" autocomplete="new-password">
 											{end}
 											<p></p>
 											<p>Advansed information</p>
 											<span class="help-block m-b-none"></span>
-											<input type="text" placeholder="name" class="form-control" name="name" value="{$user['name']}">
+											<input type="text" placeholder="name" class="form-control" name="name" value="{$user['name']}" autocomplete="off">
 
 											<span class="help-block m-b-none"></span>
-											<input type="email" placeholder="Email" class="form-control" name="mail" value="{$user['email']}">
+											<input type="email" placeholder="Email" class="form-control" name="mail" value="{$user['email']}" autocomplete="off">
 
 											<span class="help-block m-b-none"></span>
 
