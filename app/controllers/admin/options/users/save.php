@@ -18,7 +18,7 @@
 
 	$user['login'] 	= $_POST['login'];	unset($_POST['login']);
 	$user['name'] 	= $_POST['name'];	unset($_POST['name']);
-	$user['mail'] 	= $_POST['mail'];	unset($_POST['mail']);
+	$user['email'] 	= $_POST['email'];	unset($_POST['email']);
 	//$user['hash'] 	= $_POST['hash'];
 	$user['info'] 	= $_POST['info'];	unset($_POST['info']);
 	$user['disable']= $_POST['disable'];	unset($_POST['disable']);
