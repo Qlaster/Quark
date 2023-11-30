@@ -78,6 +78,11 @@
 			return $this->ORMConnections[$name];
 		}
 
+		public function disconnect($name)
+		{
+			unset($this->ORMConnections[$name]);
+		}
+
 		public function connections()
 		{
 			return $this->ORMConnections;
