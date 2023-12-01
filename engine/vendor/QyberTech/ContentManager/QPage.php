@@ -189,7 +189,7 @@
 			//Первое, что нам предстоит сделать, это найти страницу в базе. Составляем запрос
 			$STH = $this->PDO_INTERFACE->prepare("SELECT * FROM '$table_page' WHERE ($where);");
 			$STH->bindParam(':url', $url);
-			if ($lang !== null) $STH->bindParam(':lang', 		$lang);
+			if ($lang !== null) $STH->bindParam(':lang', $lang);
 
 			$STH->execute();
 

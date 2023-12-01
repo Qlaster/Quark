@@ -25,11 +25,6 @@
 		foreach	($_FILES as $field => $_filerec)
 			foreach ($_filerec['error'] as $error)
 			{
-				//~ if (!$file['tmp_name'])
-				//~ {
-					//~ unset($_FILES[$field]);
-					//~ continue;
-				//~ }
 				if ($error != 0) exit('Ошибка при загрузке файла');
 				$sendFiles = true;
 			}
@@ -80,15 +75,6 @@
 				if (! move_uploaded_file($file['tmp_name'], $filename) )
 					exit("Не удалось обработать файлы (ошибка записи): $filename");
 			}
-
-
-			//~ $filename .= DIRECTORY_SEPARATOR."$field-".uniqid().'.'.pathinfo($file['name'], PATHINFO_EXTENSION);
-
-			//~ //Переместим файл в целевой каталог
-			//~ if (! move_uploaded_file($file['tmp_name'], $filename) )
-				//~ exit("Не удалось обработать файлы (ошибка записи): $filename");
-
-			//~ print_r([$field=>implode("\r", $filelist)]);
 
 			//Обновим свежеиспеченную запись полями загруженых файлов
 			$APP->catalog->items($_GET['catalog'])->where(['id'=>$_POST['id']])->update([$field=>implode("\r", $filelist)]);
