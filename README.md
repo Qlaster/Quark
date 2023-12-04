@@ -59,22 +59,67 @@ Foreach:
 {end}
 ```
 
+## Files structure
 
 
+```md
+.
+├── 📁app
+│   ├── 📁controllers
+│   ├── 📁models
+│   ├── 📁views
+│   ├── 📁providers
+│   ├── 📁services
+│   ├── 📁logs
+│   ├── 🗎install.ini
+│   └── 🗎.env
+│
+├── 📁engine
+│   ├── 📁core
+│   │   ├── 🗎core.php
+│   │   ├── 🗎ext.array.php
+│   │   ├── 🗎ext.autoload.php
+│   │   ├── 🗎ext.error-hidden.php
+│   │   └── 🗎ext.string.php
+│   │
+│   ├── 📁database
+│   │   ├── 🗎account.sqlite
+│   │   ├── 🗎objects.sqlite
+│   │   ├── 🗎page.sqlite
+│   │   ├── 🗎review.sqlite
+│   │   └── 🗎users.dba
+│   │
+│   ├── 📁vendor
+│   └── 📁facades
+│       ├── 🗎account.php
+│       ├── 🗎cache.php
+│       ├── 🗎catalog.php
+│       ├── 🗎config.php
+│       ├── 🗎console.php
+│       ├── 🗎controller.php
+│       ├── 🗎db.php
+│       ├── 🗎dba.php
+│       ├── 🗎log.php
+│       ├── 🗎objects.php
+│       ├── 🗎page.php
+│       ├── 🗎provider.php
+│       ├── 🗎review.php
+│       ├── 🗎route.php
+│       ├── 🗎sms.php
+│       ├── 🗎template.php
+│       ├── 🗎url.php
+│       ├── 🗎user.php
+│       ├── 🗎useragent.php
+│       ├── 🗎utils.php
+│       └── 🗎visits.php
+│
+├── 📁public
+│   └── 🗎.htaccess
+│
+├── 🗎index.php
+├── 🗎console
+├── 🗎.env
+└── 🗎.htaccess
 
 
-
-
-
-
-
-
-├── public
-│     ├── domain_1
-│     │     └── hash
-│     │           └── filename.png
-│     └── domain_2
-└── protected
-      ├── domain_1
-      └── domain_2
 
