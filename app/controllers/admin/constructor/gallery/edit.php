@@ -48,7 +48,7 @@
 	{
 		//Код ниже нужен для того, что сохранить те поля, которые были указаны вне галлереи
 		foreach ($_POST['list'] as $_key => &$_item) 
-			$_item = array_replace($gallery['list'][$_key], $_item);
+			$_item = array_replace((array)$gallery['list'][$_key], $_item);
 		
 		//Сохраним галлерею
 		$APP->object->collection($collection)->set($name, $_POST);
