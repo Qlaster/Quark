@@ -93,25 +93,6 @@
 			return $this->config['connect'];
 		}
 
-		public function connects_save()
-		{
-			$this->APP->config->set($this->config);
-		}
-
-		public function config_save()
-		{
-			$this->connects_save();
-		}
-
-		public function connects_add()
-		{
-
-		}
-
-		public function connects_del($name)
-		{
-			unset($this->config[$name]);
-		}
 	}
 
 

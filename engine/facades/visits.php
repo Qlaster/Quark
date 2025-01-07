@@ -106,8 +106,9 @@
 		{
 			if (!$this->turn) return;
 			//Добавим время исполнения
-			$this->turn['data']['runtime'] = $this->runtime();
-			$this->turn['data']['mempeak'] = $this->mempeak();
+			$this->turn['data']['runtime']	= $this->runtime();
+			$this->turn['data']['mempeak']	= $this->mempeak();
+			$this->turn['data']['code']		= http_response_code();
 			//Запишем в лог
 			$this->save_file($this->turn['file'], $this->turn['data']);
 		}
@@ -158,6 +159,7 @@
 			//~ if (!$this->userAgent) return trigger_error ( "Unit UserAgent not found!" , E_USER_ERROR );
 
 			$return['time'] 			= $_SERVER['REQUEST_TIME_FLOAT'];
+			$return['code']				= http_response_code();
 			$return['runtime'] 			= $this->runtime();
 			$return['mempeak'] 			= $this->mempeak();
 			$return['ip'] 				= $this->client_ip();
@@ -417,19 +419,20 @@
 			$buffer = explode($this->config['delimiter'], rtrim($string));
 
 			$return['time'] 			= $buffer[0];
-			$return['runtime'] 			= $buffer[1];
-			$return['mempeak'] 			= $buffer[2];
-			$return['ip'] 				= $buffer[3];
-			$return['uri'] 				= $buffer[4];
-			$return['type'] 			= $buffer[5];
-			$return['osname'] 			= $buffer[6];
-			$return['browsername']			= $buffer[7];
-			$return['browserversion']		= $buffer[8];
+			$return['code'] 			= $buffer[1];
+			$return['runtime'] 			= $buffer[2];
+			$return['mempeak'] 			= $buffer[3];
+			$return['ip'] 				= $buffer[4];
+			$return['uri'] 				= $buffer[5];
+			$return['type'] 			= $buffer[6];
+			$return['osname'] 			= $buffer[7];
+			$return['browsername']		= $buffer[8];
+			$return['browserversion']	= $buffer[9];
 
-			$return['page'] 			= $buffer[9];
-			$return['unique'] 			= $buffer[10];
-			$return['userid'] 			= $buffer[11];
-			$return['info'] 			= $buffer[12];
+			$return['page'] 			= $buffer[10];
+			$return['unique'] 			= $buffer[11];
+			$return['userid'] 			= $buffer[12];
+			$return['info'] 			= $buffer[13];
 
 			return $return;
 		}
@@ -459,6 +462,7 @@
 		{
 			return round(memory_get_peak_usage()/1024, $precision);
 		}
+
 
 		/*
 		 *

@@ -98,10 +98,11 @@
 						<thead>
 						<tr>
 							<th>Дата</th>
-							<th>CPU</th>
-							<th>Mem</th>
+							<th title="Код ответа">Код</th>
+							<th title="Затраченное процессорное время">CPU</th>
+							<th title="Занятое ОЗУ">Mem</th>
 							<th>Запрос</th>
-							<th>IP адрес</th>
+							<th title="Сетевой адрес клиента">IP адрес</th>
 							<th>Клиент</th>
 							<th>Маркер</th>
 						</tr>
@@ -110,6 +111,7 @@
 							{foreach (array) $journal['list'] as $_record}
 							<tr class="gradeX">
 								<td class="center">{$_record['date']}</td>
+								<td class="center">{$_record['code']} {if $_record['code'] > 400} <i class="fa fa-warning text-warning"></i> {end}</td>
 								<td >{$_record['runtime']}</td>
 								<td >{$_record['mempeak']}</td>
 								<td style="word-wrap: break-word" title="{$fullUri}">{= mb_strimwidth($_record['uri'], 0, 100, "...")}</td>
@@ -122,10 +124,11 @@
 						<tfoot>
 						<tr>
 							<th>Дата</th>
-							<th>CPU</th>
-							<th>Mem</th>
+							<th title="Код ответа">Код</th>
+							<th title="Затраченное процессорное время">CPU</th>
+							<th title="Занятое ОЗУ">Mem</th>
 							<th>Запрос</th>
-							<th>IP адрес</th>
+							<th title="Сетевой адрес клиента">IP адрес</th>
 							<th>Клиент</th>
 							<th>Маркер</th>
 						</tr>
