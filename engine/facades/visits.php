@@ -88,12 +88,18 @@
 
 		public function __construct($userAgent, $url, $config=[])
 		{
-			$this->userAgent = $userAgent;
-			$this->url = $url;
-			$this->config['folder'] = sys_get_temp_dir();
+			$this->userAgent           = $userAgent;
+			$this->url                 = $url;
+
+			$this->config['folder']    = sys_get_temp_dir();
+			$this->config['marker']    = 'qmark';
+			$this->config['unique']    = 'quid';
 			$this->config['delimiter'] = '		';
-			$this->config['marker'] = 'user_visit_marker';
-			$this->config['unique'] = 'user_unique_marker';
+
+			$config['folder']    = $config['folder']    ? $config['folder']    : sys_get_temp_dir();
+			$config['marker']    = $config['marker']    ? $config['marker']    : 'qmark';
+			$config['unique']    = $config['unique']    ? $config['unique']    : 'quid';
+			$config['delimiter'] = $config['delimiter'] ? $config['delimiter'] : '		';
 
 			//Перезапишем стандартные параметры переданными значениями
 			$this->config = array_replace_recursive($this->config, $config);
@@ -109,6 +115,14 @@
 			$this->turn['data']['runtime']	= $this->runtime();
 			$this->turn['data']['mempeak']	= $this->mempeak();
 			$this->turn['data']['code']		= http_response_code();
+
+			//Секция с параметрами дампа суперглобальных пременных
+			foreach ((array) $this->config['dump'] as $var => $_enable)
+				if ($_enable && $GLOBALS[$var]) $this->turn['data']['dump'][$var] = $GLOBALS[$var];
+
+			//Если что-то прилетело в dump - упковываем и фиксируем, если нет - просто указываем пустую строку
+			$this->turn['data']['dump'] = $this->turn['data']['dump'] ? json_encode($this->turn['data']['dump']) : '';
+
 			//Запишем в лог
 			$this->save_file($this->turn['file'], $this->turn['data']);
 		}
@@ -122,19 +136,18 @@
 		public function push($advanced_info = '')
 		{
 			if (! boolval($this->config['enable'])) return false;
+
 			$info = $this->get_info();
 			//Если передеали массив/объект/класс - превратим в json
-			//~ $advanced_info = !is_string($advanced_info) ? json_encode($advanced_info) : $advanced_info;
-			$info['info'] = (string) $advanced_info;
+			$info['info'] = !is_string($advanced_info) ? json_encode($advanced_info) : $this->filterString($advanced_info);
 
-			//~ $filename = date('Y-m-d', $_SERVER['REQUEST_TIME']).'.log';
 			$filename = $this->date().'.log';
 
 			if (! $this->config['folder'] == '')
 			{
 				//Если директории нет - создаем
 				if (! is_dir($this->config['folder'])) mkdir($this->config['folder'], $this->config['umask'] ?? 0755, true);
-				$filename =  $this->config['folder'] .'/'. $filename;
+				$filename =  $this->config['folder'] .DIRECTORY_SEPARATOR. $filename;
 			}
 
 			//Добавим в очередь на запись (мы это запишем при разрушении класса, в самом конце)
@@ -193,35 +206,27 @@
 		 */
 		public function mark_user()
 		{
-			//Если пользователь уже промаркирован
-			$mark = $this->is_marked();
-			//Ставим актуальную дату посещения
-			setcookie($this->config['unique'], $this->date(), $_SERVER['REQUEST_TIME']+31536000, $this->url->home());
+			//Если пользователь не промаркирован в рамках дня - ставим куку до конца этого дня
+			if ($this->is_unique())
+			{
+				//~ $date = getdate();
+				//~ $date = array_combine(['year', 'mon', 'mday'], explode('-', $this->date())); //Так получается быстрее, чем строка выше
+				//~ $lifetime = mktime(0,0,0, $date['mon'], $date['mday']+1, $date['year']);
+				//Ставим актуальную дату посещения (порядковый номер дня в году) и ставим куку до конца этого дня
+				setcookie($this->config['unique'], $this->date(), $_SERVER['REQUEST_TIME']+86400, $this->url->home());
+			}
+
 			//Если маркер есть, возврщаем
-			if ($mark) return $mark;
+			if ($mark = $this->is_marked()) return $mark;
 
-			$session = session_id();
-
-			//альтернативный метод получения user id через сессию
-			//Суть кода - если сессия активна - берем её id. А если нет - то генерируем с помощью неё id и уничтождаем, как и было до этого.
-			if (! $session)
-			{
-				session_start();
-				$id = session_id();
-				session_destroy();
-			}
-			else
-			{
-				$id = session_id();
-			}
-
+			//Сгенерируем довольно надежный uid
+			$uid = md5(uniqid(random_bytes(16)));
 
 			//Если пользователь не имеет метки - ставим куку, в надежде, что он сохранит её
-			//$id = $_SERVER['REQUEST_TIME_FLOAT'];
-
-			setcookie($this->config['marker'], $id, $_SERVER['REQUEST_TIME']+31536000, $this->url->home());
+			setcookie($this->config['marker'], $uid, $_SERVER['REQUEST_TIME']+31536000, $this->url->home());
 			//~ setcookie($this->config['marker'], $id, strtotime( '+365 days' ), '/'); //Решение красивое, но  долгое
-			return $id;
+
+			return $uid;
 		}
 
 		/*
@@ -234,7 +239,6 @@
 		public function is_marked()
 		{
 			if (isset($_COOKIE[$this->config['marker']])) return $_COOKIE[$this->config['marker']];
-			return null;
 		}
 
 		/*
@@ -246,8 +250,11 @@
 		 */
 		public function is_unique()
 		{
-			if (isset($_COOKIE[$this->config['unique']]) and ($_COOKIE[$this->config['unique']] == $this->date())) return false;
-			return true;
+			return ! (isset($_COOKIE[$this->config['unique']]) and ($_COOKIE[$this->config['unique']] == $this->date()));
+			//~ return ! (isset($_COOKIE[$this->config['unique']]));
+
+			//~ if (isset($_COOKIE[$this->config['unique']]) and ($_COOKIE[$this->config['unique']] == $this->date())) return false;
+			//~ return true;
 		}
 
 
@@ -394,12 +401,8 @@
 				$sum_stat['unique'] += $day_stat['unique'];	unset($day_stat['unique']);
 
 				foreach ($day_stat as $block => &$block_value)
-				{
 					foreach ($block_value as $key => &$record)
-					{
 						$sum_stat[$block][$key] += $record;
-					}
-				}
 			}
 
 			return $sum_stat;
@@ -433,6 +436,8 @@
 			$return['unique'] 			= $buffer[11];
 			$return['userid'] 			= $buffer[12];
 			$return['info'] 			= $buffer[13];
+			$return['dump'] 			= $buffer[14];
+			//~ $return['dump'] 			= $buffer[14] ? json_decode($buffer[14], true) : [];
 
 			return $return;
 		}
@@ -448,7 +453,6 @@
 		public function runtime()
 		{
 			return round(microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'], 5);
-			//~ echo 'Время выполнения скрипта: '.round(microtime(true) - $start, 4).' сек.';
 		}
 
 		/*
@@ -462,7 +466,6 @@
 		{
 			return round(memory_get_peak_usage()/1024, $precision);
 		}
-
 
 		/*
 		 *
@@ -503,8 +506,7 @@
 			$rec['page'] = 0;
 			while (! feof($log))
 			{
-				//~ echo $filename;
-				$buffer = fgets($log, 4096);
+				$buffer = fgets($log, $this->config['bufsize']);
 				if ($buffer == '') continue;
 				//Распарсим информацию
 				$info = $this->string_log_parse($buffer);

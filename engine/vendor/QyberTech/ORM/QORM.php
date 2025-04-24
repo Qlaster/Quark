@@ -698,7 +698,7 @@
 		 */
 		function where()
 		{
-			//Получаем аргументы функции
+			//Получаем аргументы функции (совместимость со старыми версиями php)
 			$args = func_get_args();
 
 			//Если нам передали 1 параметр
@@ -784,6 +784,22 @@
 			$this->qinfo['where']['params']		= array_merge( (array) $this->qinfo['where']['params'], (array) $values );
 
 			return $this;
+		}
+
+
+		/*
+		 *
+		 * name: Группа условий выборки.
+		 * @param ...
+		 * @return ORM instance
+		 *
+		 */
+
+		function wheres()
+		{
+			//Получаем аргументы функции (совместимость со старыми версиями php)
+			foreach ((array) func_get_args() as $_wheres)
+				$this->where(... $_wheres);
 		}
 
 

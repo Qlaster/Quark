@@ -299,7 +299,7 @@
 		 * @return FILES structures
 		 *
 		 */
-		function uploadMoveSingleFile(&$tmpFileRecord, $targetDir, $prefix="content_")
+		function uploadMoveSingleFile(&$tmpFileRecord, $targetDir, $prefix="content_", $filename=null)
 		{
 			//Получим расширение файла
 			$ext = pathinfo($tmpFileRecord['name'], PATHINFO_EXTENSION);
@@ -308,10 +308,19 @@
 
 			//Сгенерируем новое имя файла в целевой директории
 			//~ $new_filename = tempnam($targetDir, $prefix); 	// алгоритм 1
-			do
+			if (!$filename)
 			{
-				$new_filename = "$targetDir/$prefix".uniqid().".$ext";
-			} while (file_exists($new_filename));
+				do
+				{
+					$new_filename = "$targetDir/$prefix".uniqid().".$ext";	//алгоритм 2
+				} while (file_exists($new_filename));
+			}
+			else
+			{
+				//~ $new_filename = "$targetDir/$filename.$ext";
+				$new_filename = "$targetDir/$filename";
+			}
+
 
 			//Переместим свежий файл в целевую директорию
 			move_uploaded_file($tmpFileRecord['tmp_name'], $new_filename); //$_SERVER['CONTEXT_DOCUMENT_ROOT']

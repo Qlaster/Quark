@@ -59,7 +59,10 @@ Foreach:
 {end}
 ```
 
-## Files structure
+
+
+
+
 
 
 ```md
@@ -120,6 +123,4 @@ Foreach:
 ├── 🗎console
 ├── 🗎.env
 └── 🗎.htaccess
-
-
-
+```

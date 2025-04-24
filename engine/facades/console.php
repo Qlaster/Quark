@@ -299,6 +299,21 @@
 			if (!$servicefile or !is_readable($servicefile = $_ENV['service']['path'].DIRECTORY_SEPARATOR.$servicefile)) throw new \Exception("Service file not found or no access to file $servicefile");
 			return require $servicefile;
 		}
+
+
+		function run(...$args)
+		{
+			$args = current($args);
+
+			$APP = $this->app;
+
+			$runfile = getcwd() . DIRECTORY_SEPARATOR .$args[0];
+
+			//Дополняем расширение
+			$runfile  = is_file($runfile.'.php') ? $runfile.'.php' : $runfile;
+
+			return include($runfile);
+		}
 	}
 
 

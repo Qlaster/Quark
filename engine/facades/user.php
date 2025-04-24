@@ -297,11 +297,9 @@
 		{
 			//альтернативный метод получения user id через сессию
 			//Суть кода - если сессия активна - берем её id. А если нет - то генерируем с помощью неё id и уничтождаем, как и было до этого.
-			//~ if (! $session = session_id())
-			//~ {
-				//~ session_start();
-				//~ session_destroy();
-			//~ }
+			//if (! $session = session_id()) session_start();
+
+			if(session_status() === PHP_SESSION_NONE) session_start();
 
 			if (!isset($_SESSION['cms_login']) or (!isset($_SESSION['cms_password']))) return false;
 

@@ -66,4 +66,5 @@ echo "
 　＼二つ
 ";
 	$APP->console->tools->errorPrint( $e->getMessage() );
+	exit((!$errorCode = $e->getCode()) ? 12 : $errorCode);
 }

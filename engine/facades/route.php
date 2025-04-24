@@ -46,11 +46,18 @@
 					{
 						if ($record[0]=='=')
 						{
+							if ($record[1]=='>')
+							{
+								$result[] = ltrim($record, '=> ').$url;
+								return $result;
+							}
+
 							$result[] = ltrim($record, '= ');
 							return $result;
 						}
 						$result[] = $record[0]=='>' ? ltrim($record, '> ').$url : $record;
 					}
+
 			return $result;
 		}
 	}
