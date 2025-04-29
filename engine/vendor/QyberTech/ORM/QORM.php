@@ -1014,6 +1014,19 @@
 
 		/*
 		 *
+		 * name: Возвращает количество записей в таблице
+		 * @param (string) $column
+		 * @return (integer)
+		 *
+		 */
+		function count($columns='*')
+		{
+			if (!$columns) $columns = '*';
+			return current( $this->select("count($columns)")[0] );
+		}
+
+		/*
+		 *
 		 * name: Последний добавленый id
 		 * @param
 		 * @return (integer)
