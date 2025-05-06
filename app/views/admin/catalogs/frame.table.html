@@ -1,0 +1,311 @@
+			<div class="ibox !float-e-margins">
+				<div class="ibox-title">
+					<h5>{$catalog['head']}</h5>
+					<div class="ibox-tools">
+<!--
+						<a class="collapse-link">
+							<i class="fa fa-chevron-up"></i>
+						</a>
+						<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+							<i class="fa fa-wrench"></i>
+						</a>
+						<ul class="dropdown-menu dropdown-user">
+							<li><a href="#">Config option 1</a>
+							</li>
+							<li><a href="#">Config option 2</a>
+							</li>
+						</ul>
+						<a class="close-link">
+							<i class="fa fa-times"></i>
+						</a>
+-->
+					</div>
+				</div>
+				<div class="ibox-content">
+					<div class="row">
+						<div class="m-b-sm m-t-sm">
+<!--
+							<div class="col-md-2">
+								<button type="button" class="btn btn-success btn-outline btn-sm" ><i class="fa fa-plus-square-o"></i> Добавить запись</button>
+							</div>
+-->
+							<div class="col-sm-8 m-b-xs">
+								<button type="button" class="btn-edit btn btn-success btn-outline btn-sm mr-4" data-toggle="modal" data-target="#ModalEdit" data-catalog="{$catalog['name']}" data-id=""  data-action="{$catalog['action']['edit']['link']}" ><i class="fa fa-plus-square-o"></i> Добавить запись</button>
+
+								<div data-toggle="buttons" class="btn-group">
+									{foreach $menu['pages']['list'] as $_page}
+									<label class="btn-pagination btn btn-sm btn-white {if $_page['active']} active {end}" href="{$_page['link']}">{$_page['head']}</label>
+									{end}
+<!--
+									<label class="btn btn-sm btn-white active"> <input type="radio" id="option2" name="options"> 2 </label>
+									<label class="btn btn-sm btn-white"> <input type="radio" id="option3" name="options"> 3 </label>
+-->
+								</div>
+							</div>
+
+							<div class="col-md-4 ">
+								<form class="form-filter" action="{$form['filter']['action']}" method="GET">
+									<div class="input-group">
+
+<!--
+										<input type="text" id="filter" placeholder="Фильтр на странице" class="input-sm form-control">
+										<span class="input-group-btn">
+											<button type="button" class="btn btn-sm btn-primary"> <i class="fa fa-filter"></i> </button>
+										</span>
+-->
+										<input type="hidden" name="orderby" value="{$$form['filter']['orderby']['value']}">
+
+										<input type="text" class="input-sm form-control input-search" action="{$form['filter']['action']}" !id="search" name="like" value="{$form['filter']['like']['value']}" placeholder="Поиск в каталоге" >
+										<span class="input-group-btn">
+											{if $form['filter']['like']['value']}
+											<button type="button" class="btn btn-sm btn-outline btn-white btn-clear"> <i class="fa fa-times"></i> </button>
+											{end}
+											<button type="button" class="btn btn-sm btn-primary btn-search"> <i class="fa fa-search"></i> </button>
+										</span>
+									</div>
+								</form>
+							</div>
+						</div>
+
+
+<!--
+						<div class="col-sm-3">
+							<div class="input-group"><input type="text" placeholder="Search" class="input-sm form-control"> <span class="input-group-btn">
+												<button type="button" class="btn btn-sm btn-primary"> Go!</button> </span></div>
+						</div>
+-->
+					</div>
+					<div class="table-responsive">
+						<table class="table table-striped table-hover">
+							<thead>
+							<tr>
+								{foreach $catalog['field'] as $_name => $_field}
+									<th><a class="btn-sort text-primary" data-column="{$_name}" data-action="{$_field['link']}" >{= $_field['alias'] ?? $_name} <i class="{$_field['icon']}"></i></a></th>
+ 								{end}
+ 								<th></th>
+							</tr>
+							</thead>
+							<tbody>
+								<audio !controls id="audio-player"></audio>
+								{foreach $catalog['list'] as $_record}
+									<tr>
+										{foreach $catalog['field'] as $_name => $_field}
+											{if 'html' == $_field['type']}
+												<td class="project-title">
+													{if $_record[$_name]}
+														<button type="button" title="Просмотр" class="btn-htmlview btn btn-default btn-xs text-primary btn-outline" data-toggle="modal" data-value="{$_record[$_name]}" data-target="#ModalHTML"> <i class="fa fa-eye"></i> </i> </button>
+														{= mb_strimwidth(strip_tags($_record[$_name]), 0, 60, '...')}
+													{end}
+													<span class="hidden" title="For worker filter">{$_record[$_name]}</span>
+												</td>
+											{elseif 'image' == $_field['type']}
+												<td class="project-people">
+													{if $_record[$_name]}
+													<a href="{$$_record[$_name]}" target="_blank"><img alt="image" loading="lazy" class="img-circle" src="{$$_record[$_name]}"></a>
+													{end}
+												</td>
+											{elseif 'check' == $_field['type']}
+												<td class="project-title">{if boolval($_record[$_name])} <i class="fa fa-lg fa-toggle-on text-navy"></i> {else} <i class="fa fa-lg fa-toggle-off text-primary"></i> {end} </td>
+											{elseif 'link' == $_field['type']}
+												<td class="project-title"><a href="{$$_record[$_name]}" title="{$_record[$_name]}">{= mb_strimwidth($_record[$_name], 0, 15, "...")}</a></td>
+
+											{elseif 'audio' == $_field['type']}
+												<td class="!project-title">
+													{if $_record[$_name]}
+													<a class="btn-play text-primary" src="{$_record[$_name]}">
+														<i class="fa fa-lg fa-play "></i>
+													</a>
+													<a target="_blank" class="text-primary" href="{$_record[$_name]}"><i class="fa fa-lg fa-music text-primary"></i></a>
+													{end}
+												</td>
+											{else}
+												<td class="project-title">{= mb_strimwidth(strip_tags($_record[$_name]), 0, 120, '...')}</td>
+											{end}
+										{end}
+										<td class="!project-actions no-padding text-center" style="white-space:nowrap;">
+											<a class="btn-edit   btn btn-outline            btn-primary btn-sm" data-catalog="{$catalog['name']}" data-id="{$_record['id']}" data-action="{$catalog['action']['edit']['link']}" data-toggle="modal" data-target="#ModalEdit"><i class="{$catalog['action']['edit']['icon']}"></i> </a>
+											<a class="btn-delete btn btn-outline btn-circle btn-warning btn-sm" data-catalog="{$catalog['name']}" data-id="{$_record['id']}" data-action="{$catalog['action']['delete']['link']}"><i class="{$catalog['action']['delete']['icon']}"></i> </a>
+										</td>
+									</tr>
+								{end}
+<!--
+								<tr>
+									<td>1</td>
+									<td>Project <small>This is example of project</small></td>
+									<td>Patrick Smith</td>
+									<td>0800 051213</td>
+									<td>Inceptos Hymenaeos Ltd</td>
+									<td><span class="pie">0.52/1.561</span></td>
+									<td>20%</td>
+									<td>Jul 14, 2013</td>
+									<td><a href="#"><i class="fa fa-check text-navy"></i></a></td>
+								</tr>
+-->
+<!--
+										<td class="project-people">
+
+                                            <a href=""><img alt="image" class="!img-circle" src="~/../img/a3.jpg"></a>
+                                            <a href=""><img alt="image" class="!img-circle" src="~/../img/a1.jpg"></a>
+                                            <a href=""><img alt="image" class="img-circle" src="~/../img/a2.jpg"></a>
+                                            <a href=""><img alt="image" class="img-circle" src="~/../img/a4.jpg"></a>
+                                        </td>
+-->
+							</tbody>
+						</table>
+
+
+						<div class="col-md-12 text-center">
+							<div data-toggle="buttons" class="btn-group">
+								{foreach $menu['pages']['list'] as $_page}
+									<label class="btn-pagination btn btn-sm btn-white {if $_page['active']} active {end}" href="{$_page['link']}">{$_page['head']}</label>
+								{end}
+							</div>
+						</div>
+					</div>
+
+				</div>
+
+
+			</div>
+
+
+
+
+			<script>
+				//~ $(document).ready(function()
+				//~ {
+					//~ tableInit();
+				//~ });
+
+
+				function tableInit(tableViewSection)
+				{
+					//Подкешируем родительский элемент, что бы сослаться на него при необходимости
+					window.tableViewSection = tableViewSection;
+
+
+					$('.form-filter').on( "submit", function( event )
+					{
+						$.ajax(
+						{
+							type: 'GET',
+							url: $(this).attr("action"), // Обработчик
+							data: $(this).serialize(),
+							success: function(data)
+							{
+								$(window.tableViewSection).html(data);
+								tableInit(window.tableViewSection);
+							},
+							error:  function()
+							{
+								alert('Ошибка');
+							}
+						});
+
+						event.preventDefault();
+					});
+
+					$('.btn-search').on( "click", function()
+					{
+						$(this).closest('form').submit();
+					});
+
+					$('.btn-clear').on( "click", function()
+					{
+						$(this).closest('form').find('.input-search').val('');
+						$(this).closest('form').submit();
+					});
+
+					$('.btn-sort').on( "click", function()
+					{
+						var column = $(this).data('column');
+						var elem   = '.form-filter input[name="orderby"]';
+						var order  = $(elem).val();
+						order = order.split(' ').pop() == 'desc' ? `${column} asc` : `${column} desc`;
+
+						$(elem).val(order);
+						$('.form-filter').submit();
+					});
+
+					$('.btn-pagination').click(function()
+					{
+						//~ $('audio').trigger('pause');
+						var action = $(this).attr('href');
+						$(window.tableViewSection).load(action, function() { tableInit(window.tableViewSection) });
+					});
+
+					$('.btn-edit').click(function()
+					{
+						var recordID = $(this).data('id');
+						var catalog  = $(this).data('catalog');
+						var action   = $(this).data('action');
+						$('audio').trigger('pause');
+
+						$('#ModalEditBody').load(`${action}?id=${recordID}&catalog=`+encodeURI(catalog));
+					});
+
+					$('.btn-play').click(function()
+					{
+						var src = $(this).attr('src');
+
+						$('.btn-play').removeClass('text-danger');
+
+						if (!$('#audio-player').prop("paused") && $('#audio-player').attr('src')==src)
+						{
+							//Если это текущий плеер
+							$('#audio-player').trigger('pause');
+						}
+						else
+						{
+							$('#audio-player').attr('src', src);
+							$('#audio-player').trigger('play');
+							$(this).addClass('text-danger');
+						}
+					});
+
+
+					$('.btn-htmlview').click(function()
+					{
+						var html = $(this).data('value');
+						$("#modal-body").html(html);
+					});
+
+					$('.btn-delete').click(function()
+					{
+						if (!confirm("Удалить запись?")) return false;
+
+						var recordID = $(this).data('id');
+						var catalog  = $(this).data('catalog');
+						var action   = $(this).data('action');
+						var line     = $(this).closest('tr');
+
+						$.ajax({
+								url: action,
+								type: 'post',
+								//~ dataType: 'application/json',
+								dataType: 'text',
+								data: {id: recordID, catalog: catalog},
+								success: function(data)
+								{
+									if (data=='OK')
+									{
+										line.remove();
+										return true;
+									}
+
+									alert(data);
+								},
+								error: function(data, errorThrown)
+								{
+									alert('Ошибка:'+errorThrown);
+								}
+						});
+					});
+
+					$('#ModalEdit').on('hidden.bs.modal', function (e)
+					{
+						$('audio').trigger('pause');
+					});
+
+				}
+			</script>

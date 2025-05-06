@@ -42,8 +42,9 @@
 	# ---------------------------------------------------------------- #
 	class SimpleCatalog implements QCatalogInterface
 	{
-		private $dbInterface;
-		private $configInterface;
+		private $dbInterface;		//ИНтерфейс ORM к базе данных
+		private $configInterface;	//Интерфейс к конфигу
+		public  $lastQuery;			//Последние заправшиваемые параметры
 
 		function __construct($dbInterface, $configInterface)
 		{
@@ -70,10 +71,31 @@
 		}
 
 
-		public function items($catalogName=null)
+		public function items($catalogName=null, $params=[])
 		{
 			$catalog = $this->get($catalogName);
-			return $this->dbInterface->connect($catalog['db'])->table($catalog['table']);
+			$orm = $this->dbInterface->connect($catalog['db'])->table($catalog['table']);
+
+			$groupby = $params['groupby'] ? $params['groupby'] : $catalog['events']['view']['groupby'] ?? null;
+			$orderby = $params['orderby'] ? $params['orderby'] : $catalog['events']['view']['orderby'] ?? null;
+			$where   = $params['where']   ? $params['where']   : $catalog['events']['view']['where']   ?? null;
+
+			$limit   = $params['limit']   ? $params['limit']   : $this->config()['view']['limit'] ?? null;
+			$offset  = $params['offset']  ? $params['offset']  : null;
+			$like    = $params['like']    ? $params['like']    : null;
+
+			is_array($where)   ? $orm->where  (... $where)   : $orm->where($where);
+			is_array($orderby) ? $orm->orderby(... $orderby) : $orm->orderby($orderby);
+			is_array($groupby) ? $orm->groupby(... $where)   : $orm->groupby($groupby);
+			        ($like)    ? $orm->like   (    $like)    : null;
+
+			if ($limit or $offset) $orm->limit($limit, $offset);
+
+			//Закешем последние параметры запроса, т.к. фасад в одностороннем парядке может поправить входные параметры
+			//на свое усмотрение (например, если они некоректны или противоречат ограничениям в конфиге)
+			$this->lastQuery = ['catalog'=>$catalogName, 'groupby'=>$groupby, 'orderby'=>$orderby, 'where'=>$where, 'like'=>$like, 'limit'=>$limit, 'offset'=>$offset];
+
+			return $orm;
 		}
 
 		/*
@@ -87,25 +109,34 @@
 		public function view($catalogName=null, $params=[])
 		{
 			$catalog = $this->get($catalogName);
-			$orm = $this->dbInterface->connect($catalog['db'])->table($catalog['table']);
 
-			$column  = $params['column']  ? $params['column']  : $catalog['events']['view']['column']  ?? '';
-			$groupby = $params['groupby'] ? $params['groupby'] : $catalog['events']['view']['groupby'] ?? '';
-			$orderby = $params['orderby'] ? $params['orderby'] : $catalog['events']['view']['orderby'] ?? '';
-			$where   = $params['where']   ? $params['where']   : $catalog['events']['view']['where']   ?? '';
+			//Укажем актуальные поля (если указали - возмем те что указали, если нет - из конфига. Иначе - все что есть)
+			//TODO: тут бы тестами нормально покрыть
+			$column  = $params['column'] ? is_string($column) ? explode(',', $column) : (array)$column  : $catalog['events']['view']['column']  ?? '';
 
-			is_array($where)   ? $orm->where  (... $where)   : $orm->where($where);
-			is_array($orderby) ? $orm->orderby(... $orderby) : $orm->orderby($orderby);
-			is_array($groupby) ? $orm->groupby(... $where)   : $orm->groupby($groupby);
+			//Название каталога
+			$catalog['name']   = $catalogName;
+			//Получим актуальные поля
+			$catalog['field']  = $catalog['field'] ?? $this->fields($catalogName);
+			//Запросим содержимое
+			$catalog['list']   = $this->items($catalogName, $params)->select($column);
+			//количество актуальных записей
+			$catalog['count']  = $this->items($catalogName, $params)->count();
+			$catalog['limit']  = $this->lastQuery['limit'];
+			$catalog['offset'] = $this->lastQuery['offset'];
 
-			return $orm->select($column);
+			//TODO: тут бы тестами нормально покрыть: Отфильтруем заявленные поля каталога, до фактически запрошенных
+			if ($column)
+				$catalog['field'] = array_intersect_key($column, $catalog['field']);
+
+			return $catalog;
 		}
 
 		public function get($catalogName=null)
 		{
 			$connectRecord = $this->config()['list'][$catalogName];
-			if (!$connectRecord) throw new Exception("Not connection name", 1);
-			if (!$connectRecord['db']) throw new Exception("Missing db name to connect $catalogName", 2);
+			if (!$connectRecord)          throw new Exception("Not connection name", 1);
+			if (!$connectRecord['db'])    throw new Exception("Missing db name to connect $catalogName", 2);
 			if (!$connectRecord['table']) throw new Exception("Missing table name to connect $catalogName", 3);
 
 			$connectRecord['name'] = $catalogName;

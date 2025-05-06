@@ -11,5 +11,5 @@
 
 
 	//Отрисуем
-	$APP->template->file('admin/catalogs/edit-frame.html')->display($content);
+	$APP->template->file('admin/catalogs/frame.edit.html')->display($content);
 

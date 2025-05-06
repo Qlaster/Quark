@@ -832,7 +832,7 @@
 					$likestr = '%'.$args[0].'%';
 					//Пройдемся по всем полям таблички и соберем запрос
 					//TODO: Ужасно не оптимальная история. Есть идея собрать все поля таблицы в одну строку и выполнить запрос по ней
-					foreach ((array) $this->columns() as $key => $name) $request[$key] = "CAST(\"$key\" AS TEXT) iLIKE ?";
+					foreach ((array) $this->columns() as $key => $name) $request[$key] = "CAST(\"$key\" AS TEXT) LIKE ?";
 
 					$this->qinfo['where']['sql'][]  = implode(' OR ', (array) $request);
 					$this->qinfo['where']['params'] = array_merge( (array) $this->qinfo['where']['params'], (array) array_fill(0, count((array)$request), $likestr) );
@@ -1022,6 +1022,7 @@
 		function count($columns='*')
 		{
 			if (!$columns) $columns = '*';
+			$this->qinfo['limit'] = '';
 			return current( $this->select("count($columns)")[0] );
 		}
 
