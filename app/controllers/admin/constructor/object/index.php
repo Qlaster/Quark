@@ -18,8 +18,10 @@
 		if ($_GET['collection'] == $_collection_name) $item['active'] = true;
 		$item['head'] = $_collection_name;
 		$item['link'] = $APP->url->home().$APP->url->page().'?collection='.urlencode(($_collection_name));
-		$item['delete_link'] = 'admin/constructor/object/drop?collection='.urlencode(($_collection_name));
-		$item['delete_head'] = $content['form']['collection']['button']['delete']['head'];
+
+		$item['button']['delete']['link'] = 'admin/constructor/object/drop?collection='.urlencode(($_collection_name));
+		$item['button']['delete']['head'] = $content['form']['collection']['button']['delete']['head'];
+
 		$item['icon'] = 'fa fa-database';
 		$content['catalog']['collection']['list'][] = $item;
 	}
