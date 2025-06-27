@@ -5,8 +5,8 @@
 
 	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
-	//Собираем статистику (посещения) по страницам
-	$APP->visits->shear('2022-1-1', date('Y-m-d'));
+	//Собираем статистику (посещения) по страницам (за поседние 4 месяца)
+	$APP->visits->shear(date("Y-m-d", strtotime("-4 month")), date('Y-m-d'));
 	$statistic = $APP->visits->statistics(false);
 	$statistic['uri'][$APP->url->home().'index'] += $statistic['uri'][$APP->url->home()];
 

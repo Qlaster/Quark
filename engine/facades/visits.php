@@ -526,7 +526,7 @@
 					$rec['osname'][$info['osname']]++;
 					$rec['browsername'][$info['browsername']]++;
 					$rec['type'][$info['type']]++;
-					$rec['uri'][$info['uri']]++;
+					$rec['uri'][explode('?', $info['uri'])[0]]++;
 				}
 
 
