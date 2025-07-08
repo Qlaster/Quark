@@ -1028,6 +1028,20 @@
 
 		/*
 		 *
+		 * name: Возвращает максимальное значение поля
+		 * @param (string) $column
+		 * @return (mix)
+		 *
+		 */
+		function max($column)
+		{
+			//~ $column = '"'.addslashes($column).'"';
+			$column = '"'.str_replace('"', '""', $column).'"';
+			return current($this->select("MAX($column)")[0]);
+		}
+
+		/*
+		 *
 		 * name: Последний добавленый id
 		 * @param
 		 * @return (integer)
