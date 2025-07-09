@@ -1042,6 +1042,19 @@
 
 		/*
 		 *
+		 * name: Возвращает минимальное значение поля
+		 * @param (string) $column
+		 * @return (mix)
+		 *
+		 */
+		function min($column)
+		{
+			$column = '"'.str_replace('"', '""', $column).'"';
+			return current($this->select("MIN($column)")[0]);
+		}
+
+		/*
+		 *
 		 * name: Последний добавленый id
 		 * @param
 		 * @return (integer)
