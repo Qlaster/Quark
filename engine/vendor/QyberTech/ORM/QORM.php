@@ -1068,6 +1068,20 @@
 		}
 
 
+		/*
+		 *
+		 * name: Возвращает сумму значений поля
+		 * @param (string) $column
+		 * @return (mix)
+		 *
+		 */
+		function sum($column)
+		{
+			$column = '"'.str_replace('"', '""', $column).'"';
+			return current($this->select("SUM($column)")[0]);
+		}
+
+
 
 		/*
 		 *
