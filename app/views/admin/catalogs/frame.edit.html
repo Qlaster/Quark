@@ -13,115 +13,18 @@
 								<div class="form-group">
 
 									<div class="col-sm-12">
-											{if 'html' == $_field['type']}
-													<div class="ibox float-e-margins">
-														<div class="ibox-title">
-															<h5>{= $_field['alias'] ?? $_name}</h5>
-															<button class="btn btn-primary btn-xs m-l-sm" onclick="edit('htmledit-{$_name}')" type="button">Править</button>
-															<button class="btn btn-primary  btn-xs" onclick="save('htmledit-{$_name}')" type="button">Сохранить</button>
-														</div>
-														<div class="ibox-content no-padding">
-															<input id="inputedit-{$_name}" type="hidden" name="{$_name}" value="{$_value}" class="form-control">
-															<div id="htmledit-{$_name}" data-input="inputedit-{$_name}" class="htmledit wrapper p-md">
-																{$$_value}
-															</div>
 
-														</div>
-													</div>
-											{elseif 'image' == $_field['type']}
-												<div class="input-group m-b">
-													<span class="input-group-addon gray-bg" style="min-width:8em">{= $_field['alias'] ?? $_name}</span>
-													<span class="input-group-addon gray-bg no-padding"  style="min-width:3em">
-														<a class="project-people image-preload no-padding" target="_blank">
-															<img id="image-{$_name}" loading="lazy" class="img-circle" src="{if $_value}{$_value}{else}~/../img/noimage.png{end}">
-														</a>
-													</span>
-													<input class="hidden file-image-upload" type="file" id="file-{$_name}" data-name="{$_name}" name="{$_name}">
-													<input type="text" name="{$_name}" value="{$_value}" class="form-control">
-													<span class="input-group-btn">
-														<label type="button" class="btn btn-warning btn-outline btn-clear" data-name="{$_name}"><i class="fa fa-times"></i></label>
-														<label type="button" class="btn btn-primary" for="file-{$_name}"> <i class="fa fa-cloud-upload"></i></label>
-													</span>
-												</div>
-											{elseif 'audio' == $_field['type']}
-												<div class="input-group m-b">
-													<span class="input-group-addon gray-bg" style="min-width:8em">{= $_field['alias'] ?? $_name}</span>
+										{? 'html'    == $_field['type']} {section "frame.types/html.html"}    {;$df=1} {end}
+										{? 'link'    == $_field['type']} {section "frame.types/link.html"}    {;$df=1} {end}
+										{? 'files'   == $_field['type']} {section "frame.types/files.html"}   {;$df=1} {end}
+										{? 'image'   == $_field['type']} {section "frame.types/image.html"}   {;$df=1} {end}
+										{? 'audio'   == $_field['type']} {section "frame.types/audio.html"}   {;$df=1} {end}
+										{? 'check'   == $_field['type']} {section "frame.types/check.html"}   {;$df=1} {end}
+										{? 'select'  == $_field['type']} {section "frame.types/select.html"}  {;$df=1} {end}
+										{? 'integer' == $_field['type']} {section "frame.types/integer.html"} {;$df=1} {end}
+										{? !$df}                         {section "frame.types/default.html"} {;$df=0} {end}
 
-													<span class="input-group-addon gray-bg no-padding " style="min-width:3em">
-														<audio class="FULLSCREEN d-none d-md-block " controls style="height:2em; outline: none;" id="audio-{$_name}" src="{$_value}"></audio>
-														<i class="MOBILESCREEN fa fa-music !m-l-sm  d-md-none "></i>
-													</span>
-
-													<input class="hidden file-audio-upload" type="file" id="file-{$_name}" data-name="{$_name}" name="{$_name}">
-													<input type="text" name="{$_name}" value="{$_value}" class="form-control">
-													<span class="input-group-btn">
-														<label type="button" class="btn btn-warning btn-outline btn-clear" data-name="{$_name}"><i class="fa fa-times"></i></label>
-														<label type="button" class="btn btn-primary" for="file-{$_name}"><i class="fa fa-cloud-upload"></i></label>
-													</span>
-												</div>
-											{elseif 'check' == $_field['type']}
-												<input type="hidden" value="" name="{$_name}">
-
-												<div class="input-group m-b">
-													<span class="input-group-addon gray-bg m-r-lg" style="padding-right:2em; min-width:8em">{= $_field['alias'] ?? $_name}</span>
-													<div class="m-l-lg">
-														<input type="checkbox" class="js-switch" name="{$_name}" value="1" {if boolval($_value)} checked {end} />
-													</div>
-												</div>
-											{elseif 'integer' == $_field['type']}
-												<div class="input-group m-b">
-													<span class="input-group-addon gray-bg" style="min-width:8em">{= $_field['alias'] ?? $_name}</span>
-													<input  name="{$_name}" type="number" value="{$_value}" pattern='[^0][0-9]+$' class="form-control">
-												</div>
-											{elseif 'link' == $_field['type']}
-												<label class="col-sm-12 control-label">{= $_field['alias'] ?? $_name}</label>
-												<input type="text" class="form-control" name="{$_name}" value="{$_value}">
-											{elseif 'select' == $_field['type']}
-												<div class="input-group m-b">
-													<span class="input-group-addon gray-bg m-r-lg" style="padding-right:2em; min-width:8em">{= $_field['alias'] ?? $_name}</span>
-													<div class="m-l-0">
-														<select name="{$_name}" class="form-control" value="{$_value}">
-															<option value=""></option>
-
-															{foreach $_field['source'] as $_sel}
-																<option {if $_value == $_sel} selected {end} value="{$_sel}">{$_sel}</option>
-															{end}
-<!--
-															<option value="saab">Saab</option>
-															<option value="mercedes">Mercedes</option>
-															<option value="audi">Audi</option>
--->
-
-<!--
-															  <optgroup label="Swedish Cars">
-																<option value="volvo">Volvo</option>
-																<option value="saab">Saab</option>
-															  </optgroup>
-															  <optgroup label="German Cars">
-																<option value="mercedes">Mercedes</option>
-																<option value="audi">Audi</option>
-															  </optgroup>
--->
-														</select>
-													</div>
-												</div>
-
-<!--
-												<label class="col-sm-12 control-label">{= $_field['alias'] ?? $_name}</label>
--->
-
-
-<!--
-												<input type="text" class="form-control" name="{$_name}" value="{$_value}">
--->
-											{else}
-												<div class="input-group m-b">
-													{if $_name != "id"}
-													<span class="input-group-addon gray-bg" style="min-width:8em">{= $_field['alias'] ?? $_name}</span>
-													{end}
-													<input  name="{$_name}" {if $_name == "id"} type="hidden" {else} type="text" {end} value="{$_value}" class="form-control">
-												</div>
-											{end}
+										{;$df = 0}
 									</div>
 								</div>
  							{end}
@@ -137,73 +40,6 @@
 
 						$("#btn-save").children().removeClass('fa-spin');
 
-						$('.i-checks').iCheck(
-						{
-							checkboxClass: 'icheckbox_square-green',
-							radioClass: 'iradio_square-green',
-						});
-
-						$(".js-switch").each(function()
-						{
-							var switchery = new Switchery(this, { color: '#1AB394' });
-						});
-
-						  <!-- SUMMERNOTE -->
-						$('.summernote').summernote();
-
-						$('.file-image-upload').change(function()
-						{
-							var inputName = $(this).data('name');
-							$(`input[type=text][name=${inputName}]`).val($(this).val().match(/\\([^\\]+)$/)[1]);
-
-							var input = $(this)[0];
-								if (input.files && input.files[0]) {
-									if (input.files[0].type.match('image.*')) {
-										var reader = new FileReader();
-										reader.onload = function (e) {
-											$(`#image-${inputName}`).attr('src', e.target.result);
-										}
-										reader.readAsDataURL(input.files[0]);
-									} else {
-										alert("ПРЕДУПРЕЖДЕНИЕ! Возможно выбранный файл не является изображением");
-									}
-								}
-
-						});
-
-						$('.file-audio-upload').change(function()
-						{
-							var inputName = $(this).data('name');
-							$(`input[type=text][name="${inputName}"]`).val($(this).val().match(/\\([^\\]+)$/)[1]);
-
-							var input = $(this)[0];
-								if (input.files && input.files[0]) {
-									if (input.files[0].type.match('audio.*')) {
-										var reader = new FileReader();
-										reader.onload = function (e) {
-											$(`#audio-${inputName}`).attr('src', e.target.result);
-										}
-										reader.readAsDataURL(input.files[0]);
-									} else {
-										alert("ПРЕДУПРЕЖДЕНИЕ! Возможно выбран не аудиофайл");
-									}
-								}
-
-						});
-
-						$('.image-preload').click(function()
-						{
-							$(this).attr('href', $(this).children().attr('src') );
-							return true;
-						});
-
-
-						$('.btn-clear').click(function()
-						{
-							var name = $(this).data('name');
-							$(`input[type=text][name="${name}"]`).val('');
-							$(`#file-${name}`).val('');
-						});
 
 
 						$('#btn-save').click(function()
@@ -250,19 +86,5 @@
 							return false;
 						});
 
-						var edit = function(elemID)
-						{
-							$('#'+elemID).summernote({focus: true});
-						};
-						var save = function(elemID)
-						{
-							//Get code
-							var aHTML = $('#'+elemID).code(); //save HTML If you need(aHTML: array).
-							//Get input ID
-							var inputID = $('#'+elemID).data('input');
-							//Set input code
-							$('#'+inputID).val(aHTML);
 
-							$('#'+elemID).destroy();
-						};
 					</script>

@@ -118,6 +118,40 @@
 													<a target="_blank" class="text-primary" href="{$_record[$_name]}"><i class="fa fa-lg fa-music text-primary"></i></a>
 													{end}
 												</td>
+											{elseif 'files' == $_field['type']}
+												<td class="!project-title">
+													{foreach $_record[$_name] as $_fileitem}
+
+														{;$ftype = explode('/', $_fileitem['type'])}
+														{;$ftype = ($ftype[0] == 'application') ? $ftype[1] : $ftype[0]}
+
+														{? 'image'   == $ftype} {;$_fileicon = "fa-picture-o";     $dft=1} {end}
+														{? 'audio'   == $ftype} {;$_fileicon = "fa-music";         $dft=1} {end}
+														{? 'video'   == $ftype} {;$_fileicon = "fa-film";          $dft=1} {end}
+														{? 'text'    == $ftype} {;$_fileicon = "fa-file-text-o";   $dft=1} {end}
+														{? 'rtf'     == $ftype} {;$_fileicon = "fa-file-text-o";   $dft=1} {end}
+														{? 'pdf'     == $ftype} {;$_fileicon = "fa fa-file-pdf-o"; $dft=1} {end}
+														{? 'zip'     == $ftype} {;$_fileicon = "fa-file-zip-o";    $dft=1} {end}
+														{? 'vnd.rar' == $ftype} {;$_fileicon = "fa-file-zip-o";    $dft=1} {end}
+														{? 'msword'  == $ftype} {;$_fileicon = "fa-file-word-o";   $dft=1} {end}
+														{? 'pkcs10'  == $ftype} {;$_fileicon = "fa-cc";            $dft=1} {end}
+														{? 'json'    == $ftype} {;$_fileicon = "fa-codepen";       $dft=1} {end}
+														{? 'x-php'   == $ftype} {;$_fileicon = "fa-code";          $dft=1} {end}
+
+														{? 'vnd.ms-excel'                == $ftype} {;$_fileicon = "fa-file-excel-o";  $dft=1} {end}
+														{? 'x-iwork-keynote-sffkey'      == $ftype} {;$_fileicon = "fa-cc";            $dft=1} {end}
+														{? 'vnd.oasis.opendocument.text' == $ftype} {;$_fileicon = "fa-file-word-o";   $dft=1} {end}
+														{? 'vnd.debian.binary-package'   == $ftype} {;$_fileicon = "fa-linux";         $dft=1} {end}
+														{? 'x-ms-dos-executable'         == $ftype} {;$_fileicon = "fa-windows";       $dft=1} {end}
+														{? 'x-java-jnlp-file'            == $ftype} {;$_fileicon = "fa-code";          $dft=1} {end}
+														{? 'x-shellscript'               == $ftype} {;$_fileicon = "fa-slack";         $dft=1} {end}
+														{? 'x-extension-sqlite'          == $ftype} {;$_fileicon = "fa-database";      $dft=1} {end}
+
+														{? !$dft} {;$_fileicon = "fa-file"; $dft=1} {end}
+														{;$dft = 0}
+														<a class="fa {$_fileicon} text-primary" target="_blank" href="{$_fileitem['filename']}" title="{$_fileitem['name']}"></a>
+													{end}
+												</td>
 											{else}
 												<td class="project-title">{= mb_strimwidth(strip_tags($_record[$_name]), 0, 120, '...')}</td>
 											{end}

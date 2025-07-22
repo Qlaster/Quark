@@ -91,6 +91,11 @@
 
 			if ($limit or $offset) $orm->limit($limit, $offset);
 
+			//Поля, требующие представления в виде массива (распаковки json)
+			foreach ((array) $catalog['field'] as $fieldName => $field)
+				if (in_array($field['type'], ['files'])) $files[] = $fieldName;
+			$orm->json($files??[]);
+
 			//Закешем последние параметры запроса, т.к. фасад в одностороннем парядке может поправить входные параметры
 			//на свое усмотрение (например, если они некоректны или противоречат ограничениям в конфиге)
 			$this->lastQuery = ['catalog'=>$catalogName, 'groupby'=>$groupby, 'orderby'=>$orderby, 'where'=>$where, 'like'=>$like, 'limit'=>$limit, 'offset'=>$offset];
