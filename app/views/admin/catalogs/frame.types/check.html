@@ -1,0 +1,20 @@
+												<input type="hidden" value="" name="{$_name}">
+
+												<div class="input-group m-b">
+													<span class="input-group-addon gray-bg m-r-lg" style="padding-right:2em; min-width:8em">{= $_field['alias'] ?? $_name}</span>
+													<div class="m-l-lg">
+														<input type="checkbox" class="js-switch" name="{$_name}" value="1" {if boolval($_value)} checked {end} />
+													</div>
+												</div>
+												<script>
+													$('.i-checks').iCheck(
+													{
+														checkboxClass: 'icheckbox_square-green',
+														radioClass: 'iradio_square-green',
+													});
+
+													$(".js-switch").each(function()
+													{
+														var switchery = new Switchery(this, { color: '#1AB394' });
+													});
+												</script>

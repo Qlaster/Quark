@@ -1,0 +1,37 @@
+												<div class="input-group m-b">
+													<span class="input-group-addon gray-bg" style="min-width:8em">{= $_field['alias'] ?? $_name}</span>
+
+													<span class="input-group-addon gray-bg no-padding " style="min-width:3em">
+														<audio class="FULLSCREEN d-none d-md-block " controls style="height:2em; outline: none;" id="audio-{$_name}" src="{$_value}"></audio>
+														<i class="MOBILESCREEN fa fa-music !m-l-sm  d-md-none "></i>
+													</span>
+
+													<input class="hidden file-audio-upload" type="file" id="file-{$_name}" data-name="{$_name}" name="{$_name}">
+													<input type="text" name="{$_name}" value="{$_value}" class="form-control">
+													<span class="input-group-btn">
+														<label type="button" class="btn btn-warning btn-outline btn-clear" data-name="{$_name}"><i class="fa fa-times"></i></label>
+														<label type="button" class="btn btn-primary" for="file-{$_name}"><i class="fa fa-cloud-upload"></i></label>
+													</span>
+												</div>
+
+												<script>
+													$('.file-audio-upload').change(function()
+													{
+														var inputName = $(this).data('name');
+														$(`input[type=text][name="${inputName}"]`).val($(this).val().match(/\\([^\\]+)$/)[1]);
+
+														var input = $(this)[0];
+															if (input.files && input.files[0]) {
+																if (input.files[0].type.match('audio.*')) {
+																	var reader = new FileReader();
+																	reader.onload = function (e) {
+																		$(`#audio-${inputName}`).attr('src', e.target.result);
+																	}
+																	reader.readAsDataURL(input.files[0]);
+																} else {
+																	alert("ПРЕДУПРЕЖДЕНИЕ! Возможно выбран не аудиофайл");
+																}
+															}
+
+													});
+												</script>

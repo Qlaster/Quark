@@ -1,0 +1,36 @@
+													<div class="ibox float-e-margins">
+														<div class="ibox-title">
+															<h5>{= $_field['alias'] ?? $_name}</h5>
+															<button class="btn btn-primary btn-xs m-l-sm" onclick="edit('htmledit-{$_name}')" type="button">Править</button>
+															<button class="btn btn-primary  btn-xs" onclick="save('htmledit-{$_name}')" type="button">Сохранить</button>
+														</div>
+														<div class="ibox-content no-padding">
+															<input id="inputedit-{$_name}" type="hidden" name="{$_name}" value="{$_value}" class="form-control">
+															<div id="htmledit-{$_name}" data-input="inputedit-{$_name}" class="htmledit wrapper p-md ">
+																{$$_value}
+															</div>
+
+														</div>
+													</div>
+
+													<script>
+														var edit = function(elemID)
+														{
+															$('#'+elemID).summernote({focus: true});
+														};
+														var save = function(elemID)
+														{
+															//Get code
+															var aHTML = $('#'+elemID).code(); //save HTML If you need(aHTML: array).
+															//Get input ID
+															var inputID = $('#'+elemID).data('input');
+															//Set input code
+															$('#'+inputID).val(aHTML);
+
+															$('#'+elemID).destroy();
+														};
+
+														<!-- SUMMERNOTE -->
+														$('.summernote').summernote();
+
+													</script>

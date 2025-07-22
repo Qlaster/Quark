@@ -1,0 +1,49 @@
+												<div class="input-group m-b">
+													<span class="input-group-addon gray-bg" style="min-width:8em">{= $_field['alias'] ?? $_name}</span>
+													<span class="input-group-addon gray-bg no-padding"  style="min-width:3em">
+														<a class="project-people image-preload no-padding" target="_blank">
+															<img id="image-{$_name}" loading="lazy" class="img-circle" src="{if $_value}{$_value}{else}~/../img/noimage.png{end}">
+														</a>
+													</span>
+													<input class="hidden file-image-upload" type="file" id="file-{$_name}" data-name="{$_name}" name="{$_name}">
+													<input type="text" name="{$_name}" value="{$_value}" class="form-control">
+													<span class="input-group-btn">
+														<label type="button" class="btn btn-warning btn-outline btn-image-clear" data-name="{$_name}"><i class="fa fa-times"></i></label>
+														<label type="button" class="btn btn-primary" for="file-{$_name}"> <i class="fa fa-cloud-upload"></i></label>
+													</span>
+												</div>
+
+												<script>
+													$('.file-image-upload').change(function()
+													{
+														var inputName = $(this).data('name');
+														$(`input[type=text][name=${inputName}]`).val($(this).val().match(/\\([^\\]+)$/)[1]);
+
+														var input = $(this)[0];
+															if (input.files && input.files[0]) {
+																if (input.files[0].type.match('image.*')) {
+																	var reader = new FileReader();
+																	reader.onload = function (e) {
+																		$(`#image-${inputName}`).attr('src', e.target.result);
+																	}
+																	reader.readAsDataURL(input.files[0]);
+																} else {
+																	alert("ПРЕДУПРЕЖДЕНИЕ! Возможно выбранный файл не является изображением");
+																}
+															}
+
+													});
+
+													$('.btn-image-clear').click(function()
+													{
+														var name = $(this).data('name');
+														$(`input[type=text][name="${name}"]`).val('');
+														$(`#file-${name}`).val('');
+													});
+
+													$('.image-preload').click(function()
+													{
+														$(this).attr('href', $(this).children().attr('src') );
+														return true;
+													});
+												</script>

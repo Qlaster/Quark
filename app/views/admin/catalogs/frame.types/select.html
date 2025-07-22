@@ -1,0 +1,12 @@
+												<div class="input-group m-b">
+													<span class="input-group-addon gray-bg m-r-lg" style="padding-right:2em; min-width:8em">{= $_field['alias'] ?? $_name}</span>
+													<div class="m-l-0">
+														<select name="{$_name}" class="form-control" value="{$_value}">
+															<option value=""></option>
+
+															{foreach $_field['source'] as $_sel}
+																<option {if $_value == $_sel} selected {end} value="{$_sel}">{$_sel}</option>
+															{end}
+														</select>
+													</div>
+												</div>

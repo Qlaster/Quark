@@ -1,0 +1,6 @@
+												<div class="input-group m-b">
+													{if $_name != "id"}
+													<span class="input-group-addon gray-bg" style="min-width:8em">{= $_field['alias'] ?? $_name}</span>
+													{end}
+													<input  name="{$_name}" {if $_name == "id"} type="hidden" {else} type="text" {end} value="{$_value}" class="form-control">
+												</div>
