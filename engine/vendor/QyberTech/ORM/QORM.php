@@ -127,6 +127,7 @@
 			$this->qinfo['concat']          = 'and';
 			$this->qinfo['pkey']            = [];
 			$this->qinfo['group']           = '';
+			$this->qinfo['json']            = [];
 		}
 
 		/*
@@ -445,6 +446,10 @@
 			//Отдаем запрос а разбор
 			$stmt = $this->PDO_INTERFACE->prepare($this->lastQuery);
 
+			//Обработка json
+			foreach ((array) $this->qinfo['json'] as $jsonColumn)
+				if (isset($record[$jsonColumn])) $record[$jsonColumn] = json_encode($record[$jsonColumn]);
+
 			//отправляем запрос на выполнение
 			$stmt->execute(array_values($record));
 
@@ -480,9 +485,9 @@
 			//Если нам подсунули в качестве параметра неизвестно что
 			if ((!is_array($record)) or (count($record) == 0)) return $this;
 
-
-			//Вытягиваем колонки
-			//~ $columns = implode('`,`', array_keys($record));
+			//Обработка json
+			foreach ((array) $this->qinfo['json'] as $jsonColumn)
+				if (isset($record[$jsonColumn])) $record[$jsonColumn] = json_encode($record[$jsonColumn]);
 
 			//Приклеиваем двоеточие ко всем ключам массива
 			foreach ($record as $key => &$value)
@@ -566,6 +571,10 @@
 			//Формируем запрос
 			$stmt = $this->PDO_INTERFACE->prepare($this->lastQuery);
 
+			//Обработка json
+			foreach ((array) $this->qinfo['json'] as $jsonColumn)
+				if (isset($record[$jsonColumn])) $record[$jsonColumn] = json_encode($record[$jsonColumn]);
+
 			//Указываем значения
 			foreach ($record as $key => &$val) $stmt->bindParam(":$key", $val);
 
@@ -640,6 +649,7 @@
 			$order = $this->qinfo['order'];
 			$group = $this->qinfo['group'];
 			$limit = $this->qinfo['limit'];
+			$json  = $this->qinfo['json'];
 
 			//Выбираем условие
 			$where 	= $this->WhereComposition($this->qinfo['concat']); //В concat хранится способ сцепления выражений. По умолчанию and
@@ -686,7 +696,14 @@
 			$this->Reset();
 
 			//Возвращем результат выборки
-			return @$stmt->fetchAll($fetch);
+			$result = @$stmt->fetchAll($fetch);
+
+			//Обработка json
+			foreach ((array) $json as $jsonColumn)
+				foreach ($result as &$record)
+					if ($record[$jsonColumn]) $record[$jsonColumn] = json_decode($record[$jsonColumn], true);
+
+			return $result;
 		}
 
 		/*
@@ -1025,6 +1042,25 @@
 			$this->qinfo['limit'] = '';
 			return current( $this->select("count($columns)")[0] );
 		}
+
+		/*
+		 *
+		 * name: Указывает ORM, что укаазанные поля нужно интерпретировать как json.
+		 * Метод Select будет разворачивать их, а update и insert упаковывать
+		 * @param (string) $column
+		 * @return (integer)
+		 *
+		 */
+		function json($columns=[])
+		{
+			if ($columns and is_array($columns))
+				foreach ($columns as $column)
+					$this->qinfo['json'][$column] = $column;
+			return $this;
+		}
+
+
+
 
 		/*
 		 *
