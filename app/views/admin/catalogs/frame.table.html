@@ -152,13 +152,17 @@
 														<a class="fa {$_fileicon} text-primary" target="_blank" href="{$_fileitem['filename']}" title="{$_fileitem['name']}"></a>
 													{end}
 												</td>
+											{elseif 'id' == $_field['type']}
+												<td class="!project-title">
+													<label class="label" for="catalog-btn-edit-{$_record['id']}" style="cursor:pointer">{$_record[$_name]}</label>
+												</td>
 											{else}
 												<td class="project-title">{= mb_strimwidth(strip_tags($_record[$_name]), 0, 120, '...')}</td>
 											{end}
 										{end}
 										<td class="!project-actions no-padding text-center" style="white-space:nowrap;">
-											<a class="btn-edit   btn btn-outline            btn-primary btn-sm" data-catalog="{$catalog['name']}" data-id="{$_record['id']}" data-action="{$catalog['action']['edit']['link']}" data-toggle="modal" data-target="#ModalEdit"><i class="{$catalog['action']['edit']['icon']}"></i> </a>
-											<a class="btn-delete btn btn-outline btn-circle btn-warning btn-sm" data-catalog="{$catalog['name']}" data-id="{$_record['id']}" data-action="{$catalog['action']['delete']['link']}"><i class="{$catalog['action']['delete']['icon']}"></i> </a>
+											<button class="btn-edit   btn btn-outline            btn-primary btn-sm" data-catalog="{$catalog['name']}" data-id="{$_record['id']}" data-action="{$catalog['action']['edit']['link']}" data-toggle="modal" data-target="#ModalEdit" id="catalog-btn-edit-{$_record['id']}"><i class="{$catalog['action']['edit']['icon']}"></i> </button>
+											<button class="btn-delete btn btn-outline btn-circle btn-warning btn-sm" data-catalog="{$catalog['name']}" data-id="{$_record['id']}" data-action="{$catalog['action']['delete']['link']}"><i class="{$catalog['action']['delete']['icon']}"></i> </a>
 										</td>
 									</tr>
 								{end}
