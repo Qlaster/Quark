@@ -1,0 +1,123 @@
+					{foreach $section['frames'] as $_frame}
+					<div class="col-lg-12">
+						<div class="ibox float-e-margins">
+							<div class="ibox-title">
+								<h5>{$_frame['head']}</h5>  <!-- Menu <small>Навигационные компоненты, основные и побочные</small>  -->
+								<div class="ibox-tools">
+									<a class="collapse-link">
+										<i class="fa fa-chevron-up"></i>
+									</a>
+									<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+										<i class="fa fa-wrench"></i>
+									</a>
+									<ul class="dropdown-menu dropdown-user">
+										<li><a href="#">Config option 1</a>
+										</li>
+										<li><a href="#">Config option 2</a>
+										</li>
+									</ul>
+									<a class="close-link">
+										<i class="fa fa-times"></i>
+									</a>
+								</div>
+							</div>
+							<div class="ibox-content">
+
+									<!--Пример блока данных с заполнением-->
+									{foreach $_frame['list'] as $_block}
+									<div class="form-group"><label class="col-sm-2 control-label">{$_block['head']}</label>
+										<div class="col-sm-4">
+												<select name="{$_block['name']}" data-placeholder="Select group object..." class="chosen-select chosen-single-with-deselect" style="width:100%"  tabindex="2">
+													<option value=""></option>
+
+													{foreach $_block['select'] as $_object}
+														{if $_object['disabled']}
+															<option disabled class="group-result" value="{$_object['value']}">{$_object['head']}</option>
+														{else}
+															<option class="active-result group-option" data-collection="{$_object['collection']}" data-name="{$_object['objectname']}" value="{$_object['value']}" {if $_object['active']} selected {end}>{$_object['head']}</option>
+														{end}
+													{end}
+
+<!--
+													<option class="active-result group-option" value="United States">galllery</option>
+													<option class="active-result group-option" value="United Kingdom">admin</option>
+													<option class="active-result group-option" value="Afghanistan">forms</option>
+													<option class="active-result group-option" value="Aland Islands">banners</option>
+													<option class="active-result group-option" value="Albania">Albania</option>
+													{for $x=0; $x++<320;}
+													<option class="active-result group-option" value="Algeria">{$x}temp{$x}</option>
+													{end}
+-->
+
+
+<!--
+
+													<option disabled class="group-result">Коллекции объектов</option>
+													<option disabled class="group-result">Другие источники</option>
+													<option class="active-result group-option" value="">Объект без коллекции</option>
+													<option class="active-result group-option" value="American Samoa">Выполнить php:</option>
+													<option class="active-result group-option" value="American Samoa">Указать значение явно:</option>
+-->
+
+
+
+<!--
+													<option class="active-result group-option" value="Andorra">Не использовать</option>
+													<option disabled class="group-result">Коллекции объектов</option>
+-->
+
+												</select>
+										</div>
+
+										<div class="col-sm-1 row p-0 m-0">
+
+											<div class="btn-group">
+												<button data-toggle="dropdown" title="Редактировать объекты" class="btn btn-white !btn-sm dropdown-toggle"><i class="fa fa-search"></i> <span class="caret"></span></button>
+
+												<ul class="dropdown-menu" >
+													<label class="!label label-success !text-center !btn btn-block ibox-content p-2 m-2">&nbsp;{$_block['openas']['head']}</label>
+													{foreach $_block['openas']['list'] as $_handler => $_menuelem}
+														<li class="{$_menuelem['class']}"><a !href="" onclick="openas('{$_block['openas']['name']}', '{$_handler}')">{$_menuelem['head']}</a></li>
+													{end}
+<!--
+													<li class="divider"></li>
+-->
+												</ul>
+											</div>
+										</div>
+
+										<div class="col-sm-5">
+												<div class="input-group">
+													<input name="{$_block['edit']['name']}" list="data-providers" type="text" placeholder="Введите путь поставщика данных или ссылку на ресурс" value="{$_block['edit']['value']}" class="form-control">
+                                                    <span class="input-group-btn">
+                                                        <a class="btn btn-white btn-bitbucket ml-2 view-provider-button" data-providerhandler="{$form['file']['providerhandler']}" #id="view-provider-button" title="Открыть файл">
+															<i class="fa fa-code"></i>
+														</a>
+                                                    </span>
+                                                </div>
+										</div>
+									</div>
+<!--
+									<div class="hr-line-dashed"></div>
+-->
+									{end}
+									<!--Конец примера блока данных-->
+
+
+
+
+
+
+
+
+							</div>
+						</div>
+					</div>
+					{end}
+
+
+					<datalist id="data-providers">
+						{foreach $providers as $_dataproviders}
+							<option value="{$_dataproviders}" />
+						{end}
+					</datalist>
