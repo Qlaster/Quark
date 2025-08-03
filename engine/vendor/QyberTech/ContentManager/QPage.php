@@ -136,6 +136,7 @@
 						'data',
 						'lang',
 						'search',
+						'hidden',
 						'version'
 					);
 				")->execute();

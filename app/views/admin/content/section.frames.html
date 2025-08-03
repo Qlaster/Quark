@@ -1,3 +1,9 @@
+					<style>
+						[role=button] {
+						  cursor: pointer;
+						}
+					</style>
+
 					{foreach $section['frames'] as $_frame}
 					<div class="col-lg-12">
 						<div class="ibox float-e-margins">
@@ -25,7 +31,32 @@
 
 									<!--Пример блока данных с заполнением-->
 									{foreach $_frame['list'] as $_block}
-									<div class="form-group"><label class="col-sm-2 control-label">{$_block['head']}</label>
+
+									<div class="form-group ">
+
+										<div class="col-sm-2 !alert-danger !m-r-1">
+<!--
+											<div class="checkbox i-checks">
+												<label> <input class="js-switch" type="checkbox" value="" checked=""> <i></i> Option </label>
+
+											</div>
+
+-->
+<!--
+											<input class="js-switch2" name='pageServiceField[public]' type="checkbox" title="Отключить" value='checked'/>
+-->
+<!--
+											<button class="btn btn-white btn-bitbucket !ml-2 !btn-rounded button-trash-frame pull-right" type="button" data-provider="{$_block['edit']['name']}" data-block="{$_block['name']}"><i class="fa fa-trash"></i></button>
+-->
+
+											<label role="button" class="pull-right control-label well !alert-info" style="padding: 7px 10px">{$_block['head']}</label>
+<!--
+											<div class=" pull-right well p-none">
+												<input class="js-switch2" name='pageServiceField[public]' type="checkbox" title="Отключить" value='checked'/>
+											</div>
+-->
+										</div>
+
 										<div class="col-sm-4">
 												<select name="{$_block['name']}" data-placeholder="Select group object..." class="chosen-select chosen-single-with-deselect" style="width:100%"  tabindex="2">
 													<option value=""></option>
@@ -67,6 +98,8 @@
 -->
 
 												</select>
+
+
 										</div>
 
 										<div class="col-sm-1 row p-0 m-0">
@@ -83,6 +116,7 @@
 													<li class="divider"></li>
 -->
 												</ul>
+												<button class="btn btn-white btn-bitbucket !ml-2 !btn-rounded button-trash-frame" type="button" data-provider="{$_block['edit']['name']}" data-block="{$_block['name']}"><i class="fa fa-trash"></i></button>
 											</div>
 										</div>
 
@@ -96,7 +130,9 @@
                                                     </span>
                                                 </div>
 										</div>
+
 									</div>
+
 <!--
 									<div class="hr-line-dashed"></div>
 -->
@@ -121,3 +157,40 @@
 							<option value="{$_dataproviders}" />
 						{end}
 					</datalist>
+
+
+					<script>
+						//~ $(document).ready(function () {
+						window.onload = () => {
+
+							$(".js-switch2").each(function() {
+								var switchery = new Switchery(this, { color: '#E5E5E5', size: 'small' });
+
+								this.onchange = function() {
+								  $(this).parent().innerHTML = this.checked;
+								  console.log(this.checked);
+								};
+							});
+
+							$(".button-trash-frame").click(function(){
+								var providerName = $(this).data('provider');
+								var objectName   = $(this).data('block');
+
+								$(`input[name="${providerName}"]`).val('');
+								$(`select[name="${objectName}"]`).val('').trigger('chosen:updated');
+								//~ $(`select[name="${objectName}"]`).children("option:selected").removeAttr("selected").trigger('chosen:updated');
+								//~ $('select').val('').trigger('chosen:updated');
+
+
+								//~ $('.chosen-select').each(function()
+								//~ {
+									//~ var resetValue = this.multiple ? [] : '';
+									//~ $(this).trigger('chosen:updated');
+									//~ $(this).val('').trigger('chosen:updated');
+								//~ });
+
+								//~ $(".chosen-select").trigger('chosen:updated');
+							});
+
+						};
+					</script>

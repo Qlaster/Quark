@@ -382,7 +382,6 @@
 
 
 
-
 				{if $section}
 							<div class="col-lg-12">
 								<div class="ibox float-e-margins">
@@ -1091,10 +1090,21 @@
         //~ autoclose: true
     //~ });
 
-    var elem = document.querySelector('.js-switch');
-    var switchery = new Switchery(elem, {
-        color: '#1AB394'
-    });
+    //~ var elem = document.querySelector('.js-switch');
+    //~ var switchery = new Switchery(elem, {
+        //~ color: '#1AB394'
+    //~ });
+
+
+
+	//~ $('.js-switch').Switchery(elem, {
+        //~ color: '#1AB394'
+    //~ });
+
+    //~ $('.i-checks').iCheck({
+        //~ checkboxClass: 'icheckbox_square-green',
+        //~ radioClass: 'iradio_square-green',
+    //~ });
 
     //~ var elem_2 = document.querySelector('.js-switch_2');
     //~ var switchery_2 = new Switchery(elem_2, {
@@ -1105,6 +1115,11 @@
     //~ var switchery_3 = new Switchery(elem_3, {
         //~ color: '#1AB394'
     //~ });
+
+    $(".js-switch").each(function() {
+	    var switchery = new Switchery(this, { color: '#1AB394' });
+	});
+
 
     $('.i-checks').iCheck({
         checkboxClass: 'icheckbox_square-green',
