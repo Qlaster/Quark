@@ -25,7 +25,7 @@
 									<!--Пример блока данных с заполнением-->
 									{foreach $section['single']['list'] as $_block}
 									<div class="form-group"><label class="col-sm-2 control-label">{$_block['head']}</label>
-										<div class="col-sm-10"><input name="{$_block['name']}" type="text" placeholder="" class="form-control" value="{$_block['text']}"></div>
+										<div class="col-sm-10"><input name="content[{$_block['name']}][data]" type="text" placeholder="" class="form-control" value="{$_block['text']}"></div>
 									</div>
 <!--
 									<div class="hr-line-dashed"></div>

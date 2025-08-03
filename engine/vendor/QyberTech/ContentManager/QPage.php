@@ -363,7 +363,7 @@
 			if ((isset($page['content'])) and (is_array($page['content'])))
 			{
 				//Подготавливам выражение для записи тегов с данными
-				$STH = $this->PDO_INTERFACE->prepare("INSERT INTO '$table_content' (url, name, type, data, lang, search, version) values (:url, :name, :type, :data, :lang, :search, :version);");
+				$STH = $this->PDO_INTERFACE->prepare("INSERT INTO '$table_content' (url, name, type, data, lang, search, hidden, version) values (:url, :name, :type, :data, :lang, :search, :hidden, :version);");
 
 				foreach ($page['content'] as $tag_name => &$tag)
 				{
@@ -384,6 +384,7 @@
 					$STH->bindParam(':data',	$tag['data']);
 					$STH->bindParam(':lang',	$tag['lang']);
 					$STH->bindParam(':search',	$tag['search']);
+					$STH->bindParam(':hidden',	$tag['hidden']);
 					$STH->bindParam(':version',	$new_version);
 
 					//Выполняем изменения

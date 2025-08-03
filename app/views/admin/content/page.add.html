@@ -27,7 +27,7 @@
     <link href="css/plugins/jsTree/style.min.css" rel="stylesheet">
 -->
 
-
+    <script src="../js/jquery-2.1.1.js"></script>
 
 <!--
     Вообще не имею понятия - зачем эти скрипты тут
@@ -124,7 +124,7 @@
                                             <div class="col-sm-10">
                                                 <div class="input-group m-b">
                                                     <span class="input-group-addon">{$form['edit']['url']['prefix']}</span>
-                                                    <input class="form-control" placeholder="" name="pageServiceField[url]" type="text" value="{$form['edit']['url']['text']}">
+                                                    <input class="form-control" placeholder="" name="url" type="text" value="{$form['edit']['url']['text']}">
                                                 </div>
                                                 <span class="help-block m-b-none">{$form['edit']['url']['info']}</span>
                                              </div>
@@ -152,7 +152,7 @@
 
 
                                                 <div class="input-group">
-													<input class="form-control" type="text" id="template_file" name="pageServiceField[html]" value="{$form['edit']['html']['text']}">
+													<input class="form-control" type="text" id="template_file" name="html" value="{$form['edit']['html']['text']}">
                                                     <span class="input-group-btn">
 <!--
                                                         <button class="btn btn-primary" type="button">file
@@ -187,10 +187,10 @@
                                             <label class="col-sm-2 control-label">{$form['edit']['public']['head']}</label>
                                             <div class="col-sm-10">
 
-												<input {$form['edit']['public']['text']} class="js-switch" name='pageServiceField[public]' type="checkbox" value='checked'/>
+												<input {$form['edit']['public']['text']} class="js-switch" name='public' type="checkbox" value='checked'/>
 
 												<label class="checkbox-inline i-checks">
-													<input {$form['edit']['sitemap']['text']} type="checkbox" name="pageServiceField[sitemap]" value="checked">
+													<input {$form['edit']['sitemap']['text']} type="checkbox" name="sitemap" value="checked">
 													{$form['edit']['sitemap']['head']}
 												</label>
 
@@ -203,7 +203,7 @@
 													</div>
 
 													<label class="checkbox-inline i-checks pull-right">
-														<input {$form['edit']['delay']['text']} type="checkbox" name="pageServiceField[index]" value="checked">
+														<input {$form['edit']['delay']['text']} type="checkbox" name="index" value="checked">
 														{$form['edit']['delay']['head']}
 													</label>
 												{end}
@@ -928,7 +928,7 @@
         $(document).ready(function()
         {
 
-            $('.summernote').summernote();
+            //~ $('.summernote').summernote();
 
         });
 

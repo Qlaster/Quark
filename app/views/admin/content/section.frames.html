@@ -2,6 +2,112 @@
 						[role=button] {
 						  cursor: pointer;
 						}
+
+						.checkbox-time {
+						  width: 1em;
+						  height: 1em;
+						  background-color: red;
+						  clip-path: polygon(20% 0%, 0% 20%, 30% 50%, 0% 80%, 20% 100%, 50% 70%, 80% 100%, 100% 80%, 70% 50%, 100% 20%, 80% 0%, 50% 30%);
+						}
+
+
+						.checkbox-google {
+							display: inline-block;
+							height: 28px;
+							line-height: 28px;
+							margin-right: 10px;
+							position: relative;
+							vertical-align: middle;
+							font-size: 14px;
+							user-select: none;
+						}
+
+						.checkbox-google .checkbox-google-switch {
+							display: inline-block;
+							width: 36px;
+							height: 20px;
+							border-radius: 20px;
+							position: relative;
+							top: 6px;
+							vertical-align: top;
+							background: #E0EDFF; /* Теперь фон включенного состояния по умолчанию */
+							transition: .2s;
+						}
+
+						.checkbox-google .checkbox-google-switch:before {
+							content: '';
+							display: inline-block;
+							width: 24px;
+							height: 24px;
+							position: absolute;
+							top: -3px;
+							left: 16px; /* Положение кнопки переключателя по умолчанию (выключено) */
+							background: #FAFCFF; /* Цвет кнопки в выключенном состоянии */
+							border-radius: 50%;
+							box-shadow: 0 3px 1px -2px rgba(0,0,0,0.2), 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12);
+							transition: .15s;
+						}
+
+						.checkbox-google input[type=checkbox] {
+							display: block;
+							width: 0;
+							height: 0;
+							position: absolute;
+							z-index: -1;
+							opacity: 0;
+						}
+
+						.checkbox-google input[type=checkbox]:checked + .checkbox-google-switch {
+							background: #9f9f9f; /* Цвет фона для включенного состояния */
+						}
+
+						.checkbox-google input[type=checkbox]:checked + .checkbox-google-switch:before {
+							background: #E5E5E5; /* Цвет кнопки для включенного состояния */
+							transform:translateX(-18px); /* Перемещение кнопки для включенного состояния */
+						}
+
+						/* Hover */
+						.checkbox-google input[type="checkbox"]:not(:disabled) + .checkbox-google-switch {
+							cursor: pointer;
+							border-color: rgba(0, 0, 0, .3);
+						}
+
+						/* Active/Focus */
+						.checkbox-google input[type="checkbox"]:not(:disabled):active + .checkbox-google-switch:before,
+						.checkbox-google input[type="checkbox"]:not(:disabled):focus + .checkbox-google-switch:before {
+							animation: checkbox-active-on 0.5s forwards linear;
+						}
+						@keyframes checkbox-active-on {
+							0% {
+								box-shadow: 0 0 0 0 rgba(212,212,212, 0);
+							}
+							99% {
+								box-shadow: 0 0 0 10px rgba(212,212,212, 0.5);
+							}
+						}
+
+						.checkbox-google input[type="checkbox"]:not(:disabled):checked:active + .checkbox-google-switch:before,
+						.checkbox-google input[type="checkbox"]:not(:disabled):checked:focus + .checkbox-google-switch:before {
+							animation: checkbox-active-off 0.5s forwards linear;
+						}
+						@keyframes checkbox-active-off {
+							0% {
+								box-shadow: 0 0 0 0 rgba(154,190,247, 0);
+							}
+							99% {
+								box-shadow: 0 0 0 10px rgba(154,190,247, 0.5);
+							}
+						}
+
+						/* Disabled */
+						.checkbox-google input[type=checkbox]:disabled + .checkbox-google-switch {
+							filter: grayscale(60%);
+							border-color: rgba(0, 0, 0, .1);
+						}
+						.checkbox-google input[type=checkbox]:disabled + .checkbox-google-switch:before {
+							background: #eee;
+						}
+
 					</style>
 
 					{foreach $section['frames'] as $_frame}
@@ -35,30 +141,31 @@
 									<div class="form-group ">
 
 										<div class="col-sm-2 !alert-danger !m-r-1">
+
+
+											<label class="checkbox-google" title="Отображать элемент на странице">
+												<input type="checkbox" name="content[{$_block['name']}][hidden]" {$_block['hidden']} value="checked">
+												<span class="checkbox-google-switch"></span>
+											</label>
+
 <!--
-											<div class="checkbox i-checks">
+											<label class=" checkbox-time"></label>
+											<div class="!checkbox !i-checks checkbox-time">
+												 <input class="!js-switch checkbox-time" type="checkbox" value="" checked="">
 												<label> <input class="js-switch" type="checkbox" value="" checked=""> <i></i> Option </label>
-
 											</div>
+-->
+<!--
 
--->
-<!--
 											<input class="js-switch2" name='pageServiceField[public]' type="checkbox" title="Отключить" value='checked'/>
--->
-<!--
 											<button class="btn btn-white btn-bitbucket !ml-2 !btn-rounded button-trash-frame pull-right" type="button" data-provider="{$_block['edit']['name']}" data-block="{$_block['name']}"><i class="fa fa-trash"></i></button>
 -->
 
 											<label role="button" class="pull-right control-label well !alert-info" style="padding: 7px 10px">{$_block['head']}</label>
-<!--
-											<div class=" pull-right well p-none">
-												<input class="js-switch2" name='pageServiceField[public]' type="checkbox" title="Отключить" value='checked'/>
-											</div>
--->
 										</div>
 
 										<div class="col-sm-4">
-												<select name="{$_block['name']}" data-placeholder="Select group object..." class="chosen-select chosen-single-with-deselect" style="width:100%"  tabindex="2">
+												<select name="content[{$_block['name']}][data]" data-placeholder="Select group object..." class="chosen-select chosen-single-with-deselect" style="width:100%"  tabindex="2">
 													<option value=""></option>
 
 													{foreach $_block['select'] as $_object}
@@ -122,7 +229,7 @@
 
 										<div class="col-sm-5">
 												<div class="input-group">
-													<input name="{$_block['edit']['name']}" list="data-providers" type="text" placeholder="Введите путь поставщика данных или ссылку на ресурс" value="{$_block['edit']['value']}" class="form-control">
+													<input name="content[{$_block['edit']['name']}][data]" list="data-providers" type="text" placeholder="Введите путь поставщика данных или ссылку на ресурс" value="{$_block['edit']['value']}" class="form-control">
                                                     <span class="input-group-btn">
                                                         <a class="btn btn-white btn-bitbucket ml-2 view-provider-button" data-providerhandler="{$form['file']['providerhandler']}" #id="view-provider-button" title="Открыть файл">
 															<i class="fa fa-code"></i>

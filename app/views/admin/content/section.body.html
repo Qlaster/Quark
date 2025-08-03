@@ -24,7 +24,7 @@
 									</div>
 									<div class="ibox-content no-padding">
 												{;$_i++}
-											<textarea class="summernote0000 html-editor" id="editor-{$_i}" name="{$_html['name']}">
+											<textarea class="summernote0000 !html-editor" id="editor-{$_i}" name="content[{$_html['name']}][data]">
 												{$_html['text']}
 											</textarea>
 
@@ -33,3 +33,12 @@
 							</div>
 						</div>
 					{end}
+
+
+					<script>
+						$(document).ready(function () {
+							//~ $('.summernote').summernote();
+						});
+					</script>
+
+
