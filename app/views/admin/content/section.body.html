@@ -1,13 +1,17 @@
+
 				<!--РЕДАКТОР КОНТЕНТА сТРАНИЦЫ--->
 					{foreach (array) $section['html'] as $_html}
 						<div class="col-lg-12">
 							<div class="ibox float-e-margins">
 									<div class="ibox-title">
 										<h5>{$_html['head']}</h5>
+
 										<div class="ibox-tools">
+
 											<a class="collapse-link">
 												<i class="fa fa-chevron-up"></i>
 											</a>
+<!--
 											<a class="dropdown-toggle" data-toggle="dropdown" href="#">
 												<i class="fa fa-wrench"></i>
 											</a>
@@ -17,11 +21,22 @@
 												<li><a href="#">Config option 2</a>
 												</li>
 											</ul>
+-->
 											<a class="close-link">
 												<i class="fa fa-times"></i>
 											</a>
 										</div>
+
+										<div class="ibox-tools" style="padding-right:1em; margin-top: -0.7rem">
+											<label class="checkbox-google m-none" title="Отображать элемент на странице">
+												<input type="checkbox" name="content[{$_html['name']}][hidden]" {$_html['hidden']} value="checked">
+												<span class="checkbox-google-switch"></span>
+											</label>
+										</div>
+
 									</div>
+
+
 									<div class="ibox-content no-padding">
 												{;$_i++}
 											<textarea class="summernote0000 !html-editor" id="editor-{$_i}" name="content[{$_html['name']}][data]">

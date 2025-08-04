@@ -64,9 +64,9 @@
 			$content['form']['edit']['url']['text'] = $page['url'];
 
 			//Флажки
-			$content['form']['edit']['public']['text'] = $page['public'];
+			$content['form']['edit']['public']['text']  = $page['public'];
+			$content['form']['edit']['index']['text']   = $page['index'];
 			$content['form']['edit']['sitemap']['text'] = $page['sitemap'];
-			$content['form']['edit']['index']['text'] = $page['index'];
 
 			//Посмотрим, какой контент поддерживает страница
 			if (file_exists($templateDir.$page['html']))
@@ -131,8 +131,8 @@
 	}
 	else
 	{
-		//
-		//$content = array_merge($content, $APP->config->get()['ru']);
+			$content['form']['edit']['sitemap']['text'] = 'checked';
+			$content['form']['edit']['public']['text']  = 'checked';
 	}
 
 
@@ -502,8 +502,9 @@
 				}
 				else
 				{
-					$f_frame['name'] = $f_name;
-					$f_frame['text'] = $this->page['content'][$f_name]['data'];
+					$f_frame['name']   = $f_name;
+					$f_frame['text']   = $this->page['content'][$f_name]['data'];
+					$f_frame['hidden'] = $this->page['content'][$f_name]['hidden'];
 				}
 			}
 

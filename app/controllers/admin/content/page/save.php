@@ -33,12 +33,8 @@
 	//Компилируем содержимое страницы
 	foreach ($_POST['content'] as $tag => $value)
 	{
-		//~ print_r($value);
 		switch ($tag[0])
 		{
-			//~ case "!":
-				//~ $tag_name = substr($tag, 1);
-				//~ $content[$tag_name]['hidden'] = $value ? 'checked' : null;
 			case "~":
 				$tag_name = substr($tag, 1);
 				$buffer = explode(':', $value['data']);
@@ -77,13 +73,14 @@
 
 	$page['content'] = $content;
 
-	//~ print_r($page); die;
 
 	if (!$APP->page->set($page['url'], $page))
 		trigger_error ( "Не удается сохранить страницу" , E_USER_WARNING );
 
+
 	$controllersDir = $APP->controller->config['folder'];
 	$APP->page->sitemap("$controllersDir/sitemap.xml.php");
+
 
 	//Если указано, куда нужно перенаправить, то исполняем, если нет - возвращаем на предыдущую
 	$referer = $_GET['referer'] ? $_GET['referer'] : $APP->url->home().'admin/content/page/edit?url='.urlencode($page['url']);

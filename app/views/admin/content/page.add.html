@@ -22,6 +22,9 @@
 	<link href="../css/plugins/chosen/chosen.css" rel="stylesheet">
 	<!-- Toastr style -->
     <link href="../css/plugins/toastr/toastr.min.css" rel="stylesheet">
+    <!-- Gcheck style -->
+    <link href="../css/plugins/gcheck/gcheck-invert.css" rel="stylesheet">
+
     <!-- Сложное и дорогое для процессора дерево -->
 <!--
     <link href="css/plugins/jsTree/style.min.css" rel="stylesheet">
@@ -951,21 +954,6 @@
             $('.click2edit').destroy();
         };
 
-		var openas = function(tagname, handler) {
-			var collection = $("[name='"+tagname+"']").find(':selected').data('collection');
-			var object     = $("[name='"+tagname+"']").find(':selected').data('name');
-
-			if (typeof collection == "undefined") {collection == ''; }
-			if (typeof object == "undefined") {object == ''; }
-
-			if (!object)
-			{
-				toastr.info('', 'Не выбран объект');
-				return true;
-			}
-
-			window.open(`admin/content/page/openas?collection=${collection}&object=${object}&handler=${handler}`);
-		};
 
 
 

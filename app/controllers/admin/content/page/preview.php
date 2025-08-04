@@ -1,47 +1,46 @@
 <?php
 
-	$page = $_POST['pageServiceField'];
+	$page = $_POST;
 	$page['url'] = trim($page['url']);
-	//Удаляем, что бы не мешались
-	unset($_POST['pageServiceField']);
+
 
 
 	//Компилируем содержимое страницы
-	foreach ($_POST as $tag => $value)
+	foreach ($page['content'] as $tag => $value)
 	{
+		//Скрытые элементы показывать не будем
+		if ($value['hidden']) continue;
+
 		switch ($tag[0])
 		{
 			case "~":
 				$tag_name = substr($tag, 1);
-				$buffer = explode(':', $value);
+				$buffer = explode(':', $value['data']);
 				$content[$tag_name]['name'] = $tag_name;
 				$content[$tag_name]['type'] = 'object';
 				$content[$tag_name]['data']	= $buffer[1].':'.$buffer[2];
-				//~ if (isset($buffer[1]) and isset($buffer[2]))
-				//~ {
-					//~ $content[$tag_name]['collection'] = base64_decode($buffer[1]);
-					//~ $content[$tag_name]['object'] = base64_decode($buffer[2]);
-				//~ }
+				$content[$tag_name]['hidden'] = $value['hidden'] ? 'checked' : null;
 				break;
 			case "=":
-				if ( $value != '' )
+				if ( $value['data'] != '' )
 				{
+					$hidden = $content[$tag_name]['hidden']; //TODO:отрефакторить
 					$tag_name = substr($tag, 1);
 					$content[$tag_name]['name'] = $tag_name;
-
-					//$buffer = explode(':', $value);
 					$content[$tag_name]['type'] = 'source';
-					$content[$tag_name]['data'] = $value;
+					$content[$tag_name]['data'] = $value['data'];
+					$content[$tag_name]['hidden'] = $hidden; //TODO:отрефакторить
 				}
+
 				break;
 			default:
 				$content[$tag]['name'] = $tag;
-				$content[$tag]['data'] = $value;
+				$content[$tag]['data'] = $value['data'];
 				$content[$tag]['type'] = 'text';
+				$content[$tag]['hidden'] = $value['hidden'] ? 'checked' : null;
 		}
 	}
 
-	//print_r($content); die;
 
 	$page['content'] = $content;
 

@@ -1,114 +1,3 @@
-					<style>
-						[role=button] {
-						  cursor: pointer;
-						}
-
-						.checkbox-time {
-						  width: 1em;
-						  height: 1em;
-						  background-color: red;
-						  clip-path: polygon(20% 0%, 0% 20%, 30% 50%, 0% 80%, 20% 100%, 50% 70%, 80% 100%, 100% 80%, 70% 50%, 100% 20%, 80% 0%, 50% 30%);
-						}
-
-
-						.checkbox-google {
-							display: inline-block;
-							height: 28px;
-							line-height: 28px;
-							margin-right: 10px;
-							position: relative;
-							vertical-align: middle;
-							font-size: 14px;
-							user-select: none;
-						}
-
-						.checkbox-google .checkbox-google-switch {
-							display: inline-block;
-							width: 36px;
-							height: 20px;
-							border-radius: 20px;
-							position: relative;
-							top: 6px;
-							vertical-align: top;
-							background: #E0EDFF; /* Теперь фон включенного состояния по умолчанию */
-							transition: .2s;
-						}
-
-						.checkbox-google .checkbox-google-switch:before {
-							content: '';
-							display: inline-block;
-							width: 24px;
-							height: 24px;
-							position: absolute;
-							top: -3px;
-							left: 16px; /* Положение кнопки переключателя по умолчанию (выключено) */
-							background: #FAFCFF; /* Цвет кнопки в выключенном состоянии */
-							border-radius: 50%;
-							box-shadow: 0 3px 1px -2px rgba(0,0,0,0.2), 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12);
-							transition: .15s;
-						}
-
-						.checkbox-google input[type=checkbox] {
-							display: block;
-							width: 0;
-							height: 0;
-							position: absolute;
-							z-index: -1;
-							opacity: 0;
-						}
-
-						.checkbox-google input[type=checkbox]:checked + .checkbox-google-switch {
-							background: #9f9f9f; /* Цвет фона для включенного состояния */
-						}
-
-						.checkbox-google input[type=checkbox]:checked + .checkbox-google-switch:before {
-							background: #E5E5E5; /* Цвет кнопки для включенного состояния */
-							transform:translateX(-18px); /* Перемещение кнопки для включенного состояния */
-						}
-
-						/* Hover */
-						.checkbox-google input[type="checkbox"]:not(:disabled) + .checkbox-google-switch {
-							cursor: pointer;
-							border-color: rgba(0, 0, 0, .3);
-						}
-
-						/* Active/Focus */
-						.checkbox-google input[type="checkbox"]:not(:disabled):active + .checkbox-google-switch:before,
-						.checkbox-google input[type="checkbox"]:not(:disabled):focus + .checkbox-google-switch:before {
-							animation: checkbox-active-on 0.5s forwards linear;
-						}
-						@keyframes checkbox-active-on {
-							0% {
-								box-shadow: 0 0 0 0 rgba(212,212,212, 0);
-							}
-							99% {
-								box-shadow: 0 0 0 10px rgba(212,212,212, 0.5);
-							}
-						}
-
-						.checkbox-google input[type="checkbox"]:not(:disabled):checked:active + .checkbox-google-switch:before,
-						.checkbox-google input[type="checkbox"]:not(:disabled):checked:focus + .checkbox-google-switch:before {
-							animation: checkbox-active-off 0.5s forwards linear;
-						}
-						@keyframes checkbox-active-off {
-							0% {
-								box-shadow: 0 0 0 0 rgba(154,190,247, 0);
-							}
-							99% {
-								box-shadow: 0 0 0 10px rgba(154,190,247, 0.5);
-							}
-						}
-
-						/* Disabled */
-						.checkbox-google input[type=checkbox]:disabled + .checkbox-google-switch {
-							filter: grayscale(60%);
-							border-color: rgba(0, 0, 0, .1);
-						}
-						.checkbox-google input[type=checkbox]:disabled + .checkbox-google-switch:before {
-							background: #eee;
-						}
-
-					</style>
 
 					{foreach $section['frames'] as $_frame}
 					<div class="col-lg-12">
@@ -283,8 +172,8 @@
 								var providerName = $(this).data('provider');
 								var objectName   = $(this).data('block');
 
-								$(`input[name="${providerName}"]`).val('');
-								$(`select[name="${objectName}"]`).val('').trigger('chosen:updated');
+								$(`input[name="content[${providerName}][data]"]`).val('');
+								$(`select[name="content[${objectName}][data]"]`).val('').trigger('chosen:updated');
 								//~ $(`select[name="${objectName}"]`).children("option:selected").removeAttr("selected").trigger('chosen:updated');
 								//~ $('select').val('').trigger('chosen:updated');
 
@@ -298,6 +187,23 @@
 
 								//~ $(".chosen-select").trigger('chosen:updated');
 							});
+						};
 
+
+						var openas = function(tagname, handler)
+						{
+							var collection = $(`[name='content[${tagname}][data]']`).find(':selected').data('collection');
+							var object     = $(`[name='content[${tagname}][data]']`).find(':selected').data('name');
+
+							if (typeof collection == "undefined") {collection == ''; }
+							if (typeof object == "undefined") {object == ''; }
+
+							if (!object)
+							{
+								toastr.info('', 'Не выбран объект');
+								return true;
+							}
+
+							window.open(`admin/content/page/openas?collection=${collection}&object=${object}&handler=${handler}`);
 						};
 					</script>

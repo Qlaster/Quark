@@ -26,6 +26,8 @@
 		//да, страница существует - осуществляем небольшую предподготовку
 		foreach ($page['content'] as $name => &$tag)
 		{
+			//Скрытые элементы показывать не будем
+			if ($tag['hidden']) continue;
 			switch ($tag['type'])
 			{
 				case 'text':
