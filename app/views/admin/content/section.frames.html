@@ -112,7 +112,7 @@
 													<li class="divider"></li>
 -->
 												</ul>
-												<button class="btn btn-white btn-bitbucket !ml-2 !btn-rounded button-trash-frame" type="button" data-provider="{$_block['edit']['name']}" data-block="{$_block['name']}"><i class="fa fa-trash"></i></button>
+												<button class="btn btn-white btn-bitbucket !ml-2 !btn-rounded button-trash-frame" type="button" data-provider="{$_block['edit']['name']}" data-block="{$_block['name']}" title="Очистить данные" ><i class="fa fa-trash"></i></button>
 											</div>
 										</div>
 
@@ -163,8 +163,8 @@
 								var switchery = new Switchery(this, { color: '#E5E5E5', size: 'small' });
 
 								this.onchange = function() {
-								  $(this).parent().innerHTML = this.checked;
-								  console.log(this.checked);
+									$(this).parent().innerHTML = this.checked;
+									console.log(this.checked);
 								};
 							});
 
@@ -174,18 +174,6 @@
 
 								$(`input[name="content[${providerName}][data]"]`).val('');
 								$(`select[name="content[${objectName}][data]"]`).val('').trigger('chosen:updated');
-								//~ $(`select[name="${objectName}"]`).children("option:selected").removeAttr("selected").trigger('chosen:updated');
-								//~ $('select').val('').trigger('chosen:updated');
-
-
-								//~ $('.chosen-select').each(function()
-								//~ {
-									//~ var resetValue = this.multiple ? [] : '';
-									//~ $(this).trigger('chosen:updated');
-									//~ $(this).val('').trigger('chosen:updated');
-								//~ });
-
-								//~ $(".chosen-select").trigger('chosen:updated');
 							});
 						};
 
@@ -196,7 +184,7 @@
 							var object     = $(`[name='content[${tagname}][data]']`).find(':selected').data('name');
 
 							if (typeof collection == "undefined") {collection == ''; }
-							if (typeof object == "undefined") {object == ''; }
+							if (typeof object     == "undefined") {object == ''; }
 
 							if (!object)
 							{
