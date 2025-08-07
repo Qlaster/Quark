@@ -490,7 +490,7 @@
 			$tags = $this->config['tags'];
 
 			//Загружаем настройки тегов
-			$html		= self::SectionConstruct($this->vars,  $tags, $this->invisible_mask);
+			$html		= (array) self::SectionConstruct($this->vars,  $tags, $this->invisible_mask);
 
 
 			foreach ($html as $f_name => &$f_frame)
