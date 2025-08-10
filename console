@@ -3,7 +3,7 @@
 /*
  * console.php
  *
- * Copyright 2022 vladimir <vladimir@MacBookAir>
+ * Copyright 2025 vladimir <vladimir@MacBookAir>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,30 +28,33 @@ error_reporting(E_ALL & ~E_NOTICE);
 # ---------------------------------------------------------------- #
 #               Инициализация переменных окружения                 #
 # ---------------------------------------------------------------- #
-$_ENV = array_merge($_ENV, parse_ini_file(".env", true));
+$_ENV = array_merge(parse_ini_file(".env", true), $_ENV);
 
 
 # ---------------------------------------------------------------- #
 #             Объявление автозагрузки (стандарт PSR4)              #
 # ---------------------------------------------------------------- #
 //Подключаем файл с окружением ядра
-include $_ENV['core']['path']."core.php";
+include_once $_ENV['core']['path']."core.php";
 
 
 # ---------------------------------------------------------------- #
 #                     Инициализация приложения                     #
 # ---------------------------------------------------------------- #
 //Создаем приложение (указав диретории размещения расширений ядра, фасадов, моделей и библиотек)
-//~ $APP = new APP('engine/core', ['app'=>'engine/facades', 'models'=>'app/models'], 'engine/vendor');
-$APP = new APP($_ENV['core']['path'], $_ENV['facades'], $_ENV['vendor']);
+$APP = new APP($_ENV['core']['path'], $_ENV['facades'], $_ENV['vendor']['path']);
 //Загрузим переменные окружения
 $APP->config->loadENV(['.env', 'app/.env']);
 
 
-$method = isset($argv[1]) ? $argv[1] : 'help';
+$command  = isset($argv[1]) ? $argv[1] : 'help';
+$method   = isset($argv[2]) ? $argv[2] : '';
+
 try
 {
-	$result = $APP->console->$method(array_slice((array)$argv, 2));
+	$result = method_exists($APP->console->$command, $method)
+			? $APP->console->$command->$method(array_slice((array)$argv, 3))
+			: $APP->console->$command(array_slice((array)$argv, 2));
 }
 catch (Throwable $e)
 {
@@ -65,6 +68,6 @@ echo "
  | (￣ヽ_＿_ヽ_)_)
 　＼二つ
 ";
-	$APP->console->tools->errorPrint( $e->getMessage() );
+	$APP->console->print( $e->getMessage(), E_ERROR );
 	exit((!$errorCode = $e->getCode()) ? 12 : $errorCode);
 }

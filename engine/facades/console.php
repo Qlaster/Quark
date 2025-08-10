@@ -1,75 +1,28 @@
 <?php
-	namespace unit\console;
+	namespace App\Facades\Console;
 
-
-	trait QconsoleTools
-	{
-		public $widthTterminal = 70;
-
-		function print($line='')
-		{
-			echo $line.PHP_EOL;
-		}
-
-		function printH($line)
-		{
-			$widthTterminal = $this->widthTterminal;
-			$tabulator = ($widthTterminal - mb_strlen($line))/2;
-			if ($tabulator < 0) $tabulator = 0;
-
-			$this->print();
-			$this->print(str_repeat('=', $widthTterminal));
-			$this->print(str_repeat(' ', $tabulator).$line);
-			$this->print(str_repeat('=', $widthTterminal));
-		}
-
-		function printH2($line)
-		{
-			$widthTterminal = $this->widthTterminal;
-			$tabulator = ($widthTterminal - mb_strlen($line))/2;
-			if ($tabulator < 0) $tabulator = 0;
-
-			$this->print();
-			$this->print(str_repeat('-', $widthTterminal));
-			$this->print(str_repeat(' ', $tabulator).$line);
-			$this->print(str_repeat('-', $widthTterminal));
-		}
-
-		function printH3($line)
-		{
-			$widthTterminal = $this->widthTterminal;
-			$tabulator = ($widthTterminal - mb_strlen($line))/2;
-			if ($tabulator < 0) $tabulator = 0;
-
-			$this->print();
-			$this->print(str_repeat(' ', $tabulator).$line);
-			$this->print(str_repeat('-', $widthTterminal));
-		}
-
-		function errorPrint($line)
-		{
-			$widthTterminal = $this->widthTterminal;
-			$tabulator = ($widthTterminal - mb_strlen($line))/2;
-			if ($tabulator < 0) $tabulator = 0;
-
-			$this->print();
-			$this->print(str_repeat('!', $widthTterminal));
-			$this->print(str_repeat(' ', $tabulator).$line);
-			$this->print(str_repeat('!', $widthTterminal));
-		}
-	}
+	use QyberTech\Console\Traits\QPrint;
+	use QyberTech\Console\Command\Service;
 
 
 	class QConsole
 	{
+		use QPrint;
+
 		public $config = [];
 		private $app;
+
 
 		function __construct($config, $app=null)
 		{
 			$this->config = $config;
 			$this->app    = $app;
-			$this->tools  = new class {use QconsoleTools;};
+
+			//Команды консоли
+			$this->service = new Service();
+
+
+			//~ $this->tools  = new class {use QPrint;};
 		}
 
 		//Создание резервной копии
@@ -283,7 +236,7 @@
 			}
 		}
 
-		function service(...$args)
+		function services(...$args)
 		{
 			global $argv;
 			$servicefile = $args[0][0];
@@ -309,10 +262,30 @@
 
 			$runfile = getcwd() . DIRECTORY_SEPARATOR .$args[0];
 
+			$controller = $args[0];
+
+
+			//~ $APP->controller->run($controller, ['APP'=>$APP]);
+			//~ exit($controllers);
+
 			//Дополняем расширение
 			$runfile  = is_file($runfile.'.php') ? $runfile.'.php' : $runfile;
 
+
 			return include($runfile);
+		}
+
+		function ping()
+		{
+
+			//~ $xx = new Qtest();
+			//~ echo $xx->ping();
+
+			//~ $this->errorPrint('sdsds');
+
+			$this->print('ABCDE', E_NOTICE);
+
+			echo "ping ok\r\n";
 		}
 	}
 
