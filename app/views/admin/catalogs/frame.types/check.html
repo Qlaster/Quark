@@ -7,14 +7,20 @@
 													</div>
 												</div>
 												<script>
-													$('.i-checks').iCheck(
-													{
-														checkboxClass: 'icheckbox_square-green',
-														radioClass: 'iradio_square-green',
-													});
 
-													$(".js-switch").each(function()
+													$( document ).ready(function()
 													{
-														var switchery = new Switchery(this, { color: '#1AB394' });
+														$('.i-checks').iCheck(
+														{
+															checkboxClass: 'icheckbox_square-green',
+															radioClass: 'iradio_square-green',
+														});
+
+														$(".js-switch").each(function()
+														{
+															var switchery = new Switchery(this, { color: '#1AB394' });
+															$(this).removeClass("js-switch");
+														});
+
 													});
 												</script>

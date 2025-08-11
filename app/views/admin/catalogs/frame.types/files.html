@@ -38,7 +38,10 @@
 		</li>
 	</template>
 	<div class="ibox-content col-md-12 !no-padding ">
-		<input id="{$fileUID}" class="d-none input-files" type="file" name="{$_name}[]" multiple>
+		<!-- сборщик списка файлов-->
+		<input id="{$fileUID}" class="d-none input-files" type="file"   name="{$_name}[]" multiple>
+		<!-- заглушка для 0 количества файлов-->
+		<input type="hidden" name="{$_name}" value="" v>
 
 		<ul class="input-files-list-decorator list-group clear-list !m-t">
 
