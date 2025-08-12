@@ -43,7 +43,6 @@
 			$_POST['id'] = $APP->catalog->items($_GET['catalog'])->insert($_POST)->lastInsertId();
 		}
 
-
 		//Перемещаем файлики
 		foreach	($FILES as $field => $files)
 		{

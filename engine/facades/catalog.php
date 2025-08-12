@@ -117,7 +117,11 @@
 
 			//Укажем актуальные поля (если указали - возмем те что указали, если нет - из конфига. Иначе - все что есть)
 			//TODO: тут бы тестами нормально покрыть
-			$column  = $params['column'] ? is_string($column) ? explode(',', $column) : (array)$column  : $catalog['events']['view']['column']  ?? '';
+			//~ $column  = $params['column'] ? is_string($column) ? explode(',', $column) : (array)$column  : $catalog['events']['view']['column']  ?? '';
+
+			$column = $params['column'] ? $params['column'] : $catalog['events']['view']['column']??'';
+			if ($column && is_string($column) && $column = array_map('trim', explode(',', $column)))
+				$column = array_combine($column, $column);
 
 			//Название каталога
 			$catalog['name']   = $catalogName;
@@ -132,7 +136,8 @@
 
 			//TODO: тут бы тестами нормально покрыть: Отфильтруем заявленные поля каталога, до фактически запрошенных
 			if ($column)
-				$catalog['field'] = array_intersect_key($column, $catalog['field']);
+				$catalog['field'] = array_intersect_key($catalog['field'], $column);
+
 
 			return $catalog;
 		}
