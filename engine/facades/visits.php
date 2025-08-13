@@ -118,7 +118,7 @@
 
 			//Секция с параметрами дампа суперглобальных пременных
 			foreach ((array) $this->config['dump'] as $var => $_enable)
-				if ($_enable && $GLOBALS[$var]) $this->turn['data']['dump'][$var] = $GLOBALS[$var];
+				if ($_enable && isset($GLOBALS[$var])) $this->turn['data']['dump'][$var] = $GLOBALS[$var];
 
 			//Если что-то прилетело в dump - упковываем и фиксируем, если нет - просто указываем пустую строку
 			$this->turn['data']['dump'] = $this->turn['data']['dump'] ? json_encode($this->turn['data']['dump']) : '';
