@@ -100,13 +100,9 @@
 				$PageTools = new PageTools($objects, $vars, $config['config']['var_filter'], $config['ru']);
 				$PageTools->page = $page;
 
-				//~ print_r($page); die;
-
 				//Собираем секции:
 				//Фреймы объектов
 				$content['section']['frames'] 	= $PageTools->FrameConstruct();
-
-				//~ print_r($content['section']['frames']); die;
 
 				//Поле html
 				$content['section']['html'] 	= $PageTools->HtmlConstruct();
@@ -346,7 +342,6 @@
 					//$collection_list['collection']['head'] = $this->config['objects']['collection'];
 					//$collection_list['collection']['disabled'] = 'disabled';
 
-					//~ print_r($this->objects); die;
 					//$collection_buf = $APP->object->collection_list();
 
 					//Построим выпадающий список из объектов
@@ -375,8 +370,6 @@
 								($this->page['content'][$html_tag_name]['data'] == $html_object_name)
 								)
 									$item['active'] = true;
-
-							//~ $item['hidden'] =
 							$collection_list[] = $item;
 						}
 
@@ -417,8 +410,6 @@
 					if ($this->page['content'][$html_tag_name] and $this->page['content'][$html_tag_name]['type'] == 'source')
 							$f_tag['edit']['value'] = $this->page['content'][$html_tag_name]['data'];
 					//$result[$f_name] = $f_frame;
-
-					//~ print_r($this->page['content'][$html_tag_name]);
 
 					//Скрывать ли элемент
 					$f_tag['hidden'] = $this->page['content'][$html_tag_name]['hidden'];
