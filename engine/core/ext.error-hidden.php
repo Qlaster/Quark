@@ -7,6 +7,15 @@ if (PHP_VERSION_ID > 80000)
 {
 	set_error_handler(function($errno, $error)
 	{
-		return str_starts_with($error, 'Undefined array key');
+		$ignore =	[
+						'Trying to access array offset on value of type null',
+						'Undefined array key'
+					];
+
+		foreach ($ignore as $_errorText)
+			if (str_starts_with($error,  $_errorText)) return true;
+
+		return false;
+		//~ return str_starts_with($error, 'Undefined array key');
 	}, E_WARNING);
 }
