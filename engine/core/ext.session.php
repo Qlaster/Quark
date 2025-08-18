@@ -2,7 +2,7 @@
 /*
  * ext.session.php
  *
- * Copyright 2022 vladimir <vladimir@MacBookAir>
+ * Copyright 2025 vladimir <vladimir@MacBookAir>
  *
  * Суть этого расширения ядра - убрать блокировку сессий,
  * которая длится на всем протяжении исполнения скрипта, мешая параллельным
@@ -16,6 +16,7 @@ class QSessionHandlerUnlock implements SessionHandlerInterface
 {
 	private $savePath;
 
+	#[\ReturnTypeWillChange]
 	public function open($savePath, $sessionName)
 	{
 		$this->savePath = $savePath;
@@ -25,21 +26,25 @@ class QSessionHandlerUnlock implements SessionHandlerInterface
 		return true;
 	}
 
+	#[\ReturnTypeWillChange]
 	public function close()
 	{
 		return true;
 	}
 
+	#[\ReturnTypeWillChange]
 	public function read($id)
 	{
 		return (string) @file_get_contents("$this->savePath/sess_$id");
 	}
 
+	#[\ReturnTypeWillChange]
 	public function write($id, $data)
 	{
 		return file_put_contents("$this->savePath/sess_$id", $data, LOCK_EX) === false ? false : true;
 	}
 
+	#[\ReturnTypeWillChange]
 	public function destroy($id)
 	{
 		$file = "$this->savePath/sess_$id";
@@ -49,6 +54,8 @@ class QSessionHandlerUnlock implements SessionHandlerInterface
 		return true;
 	}
 
+
+	#[\ReturnTypeWillChange]
 	public function gc($maxlifetime)
 	{
 		foreach (glob("$this->savePath/sess_*") as $file)
