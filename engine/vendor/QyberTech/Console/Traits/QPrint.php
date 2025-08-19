@@ -5,7 +5,7 @@ namespace QyberTech\Console\Traits;
 
 define('P_ERROR', E_ERROR);
 define('P_TITLE', E_WARNING);
-define('P_H1',    E_STRINCT);
+define('P_H1',    E_STRICT);
 define('P_H2',    E_NOTICE);
 
 
@@ -31,7 +31,7 @@ trait QPrint
 				$border['top']    = '=';
 				$border['bottom'] = '=';
 				break;
-			case E_STRINCT:
+			case E_STRICT:
 				$border['top']    = '-';
 				$border['bottom'] = '-';
 				break;
