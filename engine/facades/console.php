@@ -2,7 +2,7 @@
 	namespace App\Facades\Console;
 
 	use QyberTech\Console\Traits\QPrint;
-	use QyberTech\Console\Command\Service;
+	use QyberTech\Console\Commands\Service;
 
 
 	class QConsole
