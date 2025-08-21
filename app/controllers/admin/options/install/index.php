@@ -4,7 +4,7 @@
 	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
 
-		$installfile = 'app/install.ini';
+	$installfile = 'app/install.ini';
 
 	$content['config']['body'] 		= file_exists($installfile) ? file_get_contents($installfile) : '';
 	$content['config']['action'] 	= "admin/options/install/save";

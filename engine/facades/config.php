@@ -122,7 +122,7 @@
 			static $ini;
 			if (!isset($ini)) $ini = new Core_Ini_Reader;
 
-			return $ini->fromString($string);
+			return $ini->parseIniString($string);
 		}
 
 		public function toString($config)
@@ -201,40 +201,42 @@
 				},
 				E_WARNING
 			);
-			$ini = $this->my_parse_ini_file($filename, true);
+			$ini = $this->parseIniFile($filename, true);
 			restore_error_handler();
 
 			return $this->process($ini);
 		}
 
 		/**
+		 * TODO:DEPRICATED
 		 * fromString(): defined by Reader interface.
 		 *
 		 * @param  string $string
 		 * @return array|bool
 		 * @throws Exception
+		 *
 		 */
-		public function fromString($string)
-		{
-			if (empty($string)) {
-				return array();
-			}
-			$this->directory = null;
+		//~ public function fromString($string)
+		//~ {
+			//~ if (empty($string)) {
+				//~ return array();
+			//~ }
+			//~ $this->directory = null;
 
-			set_error_handler(
-				function ($error, $message = '', $file = '', $line = 0) {
-					throw new Exception (
-						sprintf('Error reading INI string: %s', $message),
-						$error
-					);
-				},
-				E_WARNING
-			);
-			$ini = parse_ini_string($string, true);
-			restore_error_handler();
+			//~ set_error_handler(
+				//~ function ($error, $message = '', $file = '', $line = 0) {
+					//~ throw new Exception (
+						//~ sprintf('Error reading INI string: %s', $message),
+						//~ $error
+					//~ );
+				//~ },
+				//~ E_WARNING
+			//~ );
+			//~ $ini = parse_ini_string($string, true);
+			//~ restore_error_handler();
 
-			return $this->process($ini);
-		}
+			//~ return $this->process($ini);
+		//~ }
 
 		/**
 		 * Process data from the parsed ini file.
@@ -355,16 +357,13 @@
 		}
 
 
-
-		//аналог pars_ini_file
-		function  my_parse_ini_file($filename, $sections=true)
+		function parseIniString($strings, $sections=true)
 		{
-			if (! file_exists($filename) ) throw new Exception ('File INI not found');
-			$ini = file($filename);
+			if (is_string($strings)) $strings = explode("\r", $strings);
 
 			$result = array();
 
-			foreach ($ini as $string)
+			foreach ($strings as $string)
 			{
 				$string = trim($string);
 				if (($string == '') or ($string[0] == '#') or ($string[0] == ';')) continue;
@@ -388,11 +387,14 @@
 					$var 	= trim( mb_substr($string, 0, $separator-1) );
 
 					//Очистим озачение от ковычек (если ни имеются, конечно)
-					if ($value != '')
-						if ( ((mb_substr($value, 0, 1) == '"') and (mb_substr($value, -1) == '"')) or ((mb_substr($value, 0, 1) == "'") and (mb_substr($value, -1) == "'"))  )
-						{
+					if ($value)
+					{
+						$firstChar = mb_substr($value, 0, 1);
+						$lastChar  = mb_substr($value, -1);
+
+						if ($firstChar === $lastChar && in_array($firstChar, ['"', "'"]))
 							$value = mb_substr($value, 1, -1);
-						}
+					}
 
 					//Если мы находимся внутри секции - то будем добавлять перемнные туда. А вот если нет - то просто кинем их в корень
 					if (isset($section_name) and ($section_name != ''))
@@ -410,6 +412,14 @@
 			}
 
 			return $result;
+		}
+
+		function parseIniFile($filename, $sections=true)
+		{
+			if (! file_exists($filename) ) throw new Exception ('File INI not found');
+			$ini = file($filename);
+
+			return $this->parseIniString($ini, $sections);
 		}
 
 
