@@ -1,0 +1,47 @@
+
+						<form class="col-lg-12" method="POST"  id='code_editor_form' >
+							<div class="ibox ">
+								<div class="ibox-title">
+									<h5>
+										Код
+										<small>для изменения файла нажмите кнопку "Сохранить"</small>
+									</h5>
+									<div class="ibox-tools">
+										<!--
+											<button type="button" class="btn btn-primary btn-xs m-l-sm" onclick="send_textarea('code_editor', '')" >Сохранить</button>
+											-->
+										<label class='text-success' id='result-label-code'></label>
+										<button type="button" class="btn-save btn btn-primary btn-xs m-l-sm" onclick="AjaxFormRequest('result-label-code', 'code_editor_form', '{$code['action']}')">Сохранить</button>
+										<a class="collapse-link">
+										<i class="fa fa-chevron-up"></i>
+										</a>
+										<!--
+											<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+											    <i class="fa fa-wrench"></i>
+											</a>
+											<ul class="dropdown-menu dropdown-user">
+											    <li>
+											        <a href="#">Config option 1</a>
+											    </li>
+											    <li>
+											        <a href="#">Config option 2</a>
+											    </li>
+											</ul>
+											-->
+										<a class="close-link">
+										<i class="fa fa-times"></i>
+										</a>
+									</div>
+								</div>
+								<div class="ibox-content">
+									<input type="hidden" name="code[filename]" value="{$code['filename']}">
+									<!--
+										<p class="m-b-lg">
+										    A rich programming API and a CSS theming system are available for customizing CodeMirror to fit your application, and extending it with new functionality. For mor info go to
+										    <a href="http://codemirror.net/" target="_blank">http://codemirror.net/</a>
+										</p>
+										-->
+									<textarea id="code_editor" style="text-align: left;" name="code[body]">{$code['body']}</textarea>
+								</div>
+							</div>
+						</form>

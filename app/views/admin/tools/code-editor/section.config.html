@@ -1,0 +1,60 @@
+
+						<form class="col-lg-12" id='config_editor_form'>
+							<div class="ibox ">
+								<div class="ibox-title">
+									<h5>
+										Конфигурация
+										<small>для изменения файла нажмите кнопку "Сохранить"</small>
+									</h5>
+									<div class="ibox-tools">
+										<!--
+											<button type="button" class="btn btn-primary btn-xs m-l-sm" onclick="save_textarea('config_editor_form', '{$filename['config']}')">Сохранить</button>
+											-->
+										<label id='result-label-config'></label>
+										<button type="button" class="btn-save btn btn-primary btn-xs m-l-sm" onclick="AjaxFormRequest('result-label-config', 'config_editor_form', '{$config['action']}')">{$config['title']}</button>
+										<a class="collapse-link">
+										<i class="fa fa-chevron-up"></i>
+										</a>
+										<!--
+											<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+											    <i class="fa fa-wrench"></i>
+											</a>
+											<ul class="dropdown-menu dropdown-user">
+											    <li>
+											        <a href="#">Config option 1</a>
+											    </li>
+											    <li>
+											        <a href="#">Config option 2</a>
+											    </li>
+											</ul>
+											-->
+										<a class="close-link">
+										<i class="fa fa-times"></i>
+										</a>
+									</div>
+								</div>
+								<div class="ibox-content">
+
+									{if $menu['config']['list']}
+									<div !data-toggle="buttons" class="btn-group m-b-sm">
+										{foreach $menu['config']['list'] as $_item}
+										<a class="btn-pagination btn btn-sm btn-white {? $_item['active']}active{end}" href="{$_item['link']}"><i class="fa {$_item['icon']}"></i>  {$_item['head']}</a>
+										{end}
+<!--
+										<label class="btn-pagination btn btn-sm btn-white " href="admin/catalogs/view/table?name=account&amp;offset=50">2</label>
+										<label class="btn-pagination btn btn-sm btn-white " href="admin/catalogs/view/table?name=account&amp;offset=50">2</label>
+-->
+									</div>
+									{end}
+
+									<input type="hidden" name="config[filename]" value="{$config['filename']}">
+									<!--
+										<p  class="m-b-lg">
+										    <strong>CodeMirror</strong> is a versatile text editor implemented in JavaScript for the browser. It is specialized for editing code, and comes with a number of language modes and addons that implement more advanced editing functionality.
+										</p>
+										-->
+									<textarea id="config_editor"  name="config[body]">{$config['body']}</textarea>
+								</div>
+							</div>
+						</form>
+

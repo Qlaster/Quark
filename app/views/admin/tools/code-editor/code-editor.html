@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>{$title}</title>
+		<link href="../../css/bootstrap.min.css" rel="stylesheet">
+		<link href="../../font-awesome/css/font-awesome.css" rel="stylesheet">
+		<link href="../../css/animate.css" rel="stylesheet">
+		<!-- Toastr style -->
+		<link href="../../css/plugins/toastr/toastr.min.css" rel="stylesheet">
+
+		<!--Темы редактора-->
+		<link href="../../css/plugins/codemirror/codemirror.css" 	rel="stylesheet">
+		<link href="../../css/plugins/codemirror/ambiance.css" 		rel="stylesheet">
+		<link href="../../css/plugins/codemirror/elegant.css" 		rel="stylesheet">
+		<link href="../../css/plugins/codemirror/neo.css" 			rel="stylesheet">
+		<link href="../../css/plugins/codemirror/material.css" 		rel="stylesheet">
+		<link href="../../css/plugins/codemirror/neat.css" 			rel="stylesheet">
+		<link href="../../css/plugins/codemirror/base16-light.css" 	rel="stylesheet">
+		<link href="../../css/plugins/codemirror/zenburn.css" 		rel="stylesheet">
+		<link href="../../css/plugins/codemirror/php.css" 			rel="stylesheet">
+		<link href="../../css/plugins/codemirror/elegant.css" 		rel="stylesheet">
+		<link href="../../css/plugins/codemirror/mdn-like.css"		rel="stylesheet">
+		<link href="../../css/style.css" rel="stylesheet">
+		<!--Дерево-->
+		<link href="../../css/plugins/jsTree/style.min.css" rel="stylesheet">
+		<style>
+			.jstree-open > .jstree-anchor > .fa-folder:before {
+			content: "\f07c";
+			}
+			.jstree-default .jstree-icon.none {
+			width: 0;
+			}
+		</style>
+		<base href="{$$base}" id='baseurl' data-info='../../'>
+	</head>
+	<body>
+		<div id="wrapper">
+
+		<!--Главное меню слева-->
+		{require "../../~section/mainmenu.html"}
+		<!--Конец меню-->
+
+		<div id="page-wrapper" class="gray-bg">
+
+			<!-- Head menu -->
+			{require "../../~section/head.html"}
+			<!-- End head menu -->
+
+
+
+
+			<!-- Менюшка title-->
+			{require "../../~section/title.html"}
+			<!-- конец title-->
+
+			<div class="wrapper wrapper-content  animated fadeInRight">
+				<div class="row">
+
+						{? $config === null and $code === null} {section "section.tree.html"} {end}
+
+						{? $config} {section "section.config.html"} {end}
+						{? $code}   {section "section.code.html"}   {end}
+
+					</div>
+				</div>
+				<!-- Footer block -->
+				{require "../../~section/footer.html"}
+				<!-- End Footer block -->
+			</div>
+		</div>
+		<!-- Mainly scripts -->
+		<script src="../../js/jquery-2.1.1.js"></script>
+		<script src="../../js/bootstrap.min.js"></script>
+		<script src="../../js/plugins/metisMenu/jquery.metisMenu.js"></script>
+		<script src="../../js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+		<!-- Toastr -->
+		<script src="../../js/plugins/toastr/toastr.min.js"></script>
+		<!-- CodeMirror -->
+		<script src="../../js/plugins/codemirror/codemirror.js"></script>
+		<script src="../../js/plugins/codemirror/mode/javascript/javascript.js"></script>
+		<script src="../../js/plugins/codemirror/mode/php/php.js"></script>
+		<script src="../../js/plugins/codemirror/mode/properties/properties.js"></script>
+		<script src="../../js/plugins/codemirror/mode/meta.js"></script>
+		<!--
+			<script src="../../js/plugins/codemirror/mode/shell/shell.js"></script>
+			-->
+		<!-- Custom and plugin javascript -->
+		<script src="../../js/inspinia.js"></script>
+		<script src="../../js/plugins/pace/pace.min.js"></script>
+
+
+
+		<script>
+			$(document).ready(function()
+			{
+
+				if (document.getElementById("config_editor"))
+				{
+					var editor_one = CodeMirror.fromTextArea(document.getElementById("config_editor"),
+					{
+						//~ lineNumbers: true,
+						//~ matchBrackets: true,
+						//~ styleActiveLine: true,
+						//~ mode: "text/x-ini",
+						//~ theme:"zenburn"
+		                 lineNumbers: true,
+						 matchBrackets: true,
+						 styleActiveLine: true,
+						 mode: "text/x-ini",
+						 theme:"ambiance"
+					});
+
+					document.editor_one = editor_one;
+				}
+
+				if (document.getElementById("code_editor"))
+				{
+					var editor_two = CodeMirror.fromTextArea(document.getElementById("code_editor"),
+					{
+						lineNumbers: true,
+						matchBrackets: true,
+						styleActiveLine: true,
+						mime: "application/x-httpd-php",
+						mime: "text/x-ini",
+						theme:"php"
+					});
+
+					document.editor_two = editor_two;
+				}
+
+			});
+		</script>
+
+		<script src="../../js/plugins/jsTree/jstree.min.js"></script>
+		<script>
+
+			//загружаем дерево из контроллера и по окончанию построить дерево
+			$('#view-tree').load( "admin/tools/filemanager/file_tree", jstree_construct );
+
+
+			//$(document).ready(jstree_construct);
+			//функция строит дерево
+			function jstree_construct()
+			{
+
+
+				$('#jstree1').jstree({
+					'core' : {
+						'check_callback' : true
+					},
+					'plugins' : [ 'types', 'dnd' ],
+					'types' : {
+						'default' : {
+							'icon' : 'fa fa-folder'
+						},
+						'html' : {
+							'icon' : 'fa fa-file-code-o'
+						},
+						'svg' : {
+							'icon' : 'fa fa-file-picture-o'
+						},
+						'css' : {
+							'icon' : 'fa fa-file-code-o'
+						},
+						'img' : {
+							'icon' : 'fa fa-file-image-o'
+						},
+						'js' : {
+							'icon' : 'fa fa-file-text-o'
+						}
+
+					}
+				});
+
+				//Одиночный клик по файлу
+				$('li').click(function ()
+				{
+					if (this.className=='on')
+					{
+						//action();
+					}
+					else
+					{
+						//select(this);
+					};
+
+				});
+
+
+
+				//Двойной клик на файле (или диретории)
+				$('li').dblclick(function (event)
+				{
+					var dir = $(this).attr('placeholder');
+					if (dir == undefined) return;
+
+					var target = event.target.parentNode; // где был клик?
+					var filename = $(target).attr('placeholder');
+					location.href = 'admin/tools/codeeditor/?file='+filename;
+				});
+
+				//Одинарный клик на файле (или диретории)
+				$('li').click(function (event)
+				{
+					var target = event.target.parentNode; // где был клик?
+					var dir = $(target).attr('placeholder');
+
+
+					//~ var dir = $(this).attr('placeholder');
+					if (dir == undefined) return;
+
+					$('#ibox-content').load('admin/tools/filemanager/file_info.php?path='+dir);
+				});
+
+			};
+
+
+
+			function send_textarea(id, filename)
+			{
+
+				alert($('#code_editor').val());
+
+				$.ajax({
+					type: "POST",
+					url: "admin/tools/codeeditor/save.php",  <!--путь файла обработчика  -->
+					data: "text="+$("textarea#"+id).val(),  <!--textarea   -->
+					success: function(html)
+					{
+						alert(html);
+						//$("#test").html(html); <!--возвращаем ответ сервера  -->
+					}
+				});
+			}
+
+
+
+
+			function AjaxFormRequest(result_id, formMain, url)
+			{
+
+				if (document.editor_one != undefined) document.editor_one.save();
+				if (document.editor_two != undefined) document.editor_two.save();
+
+
+				jQuery.ajax({
+				 url: url,
+				 type: "POST",
+				 dataType: "html",
+				 data: jQuery("#"+formMain).serialize(),
+				 success: function(response)
+				 {
+					 //~ console.log(jQuery("#"+formMain).serialize());
+					document.getElementById(result_id).innerHTML = "<i class='fa fa-circle text-success'>Успешно</i> ";
+
+					//Удалим запись об удачном сохранении через 2 секунды
+					var timerId = setTimeout(function tick()
+						{
+						  $('#'+result_id).html('');
+						}, 4000);
+
+					toastr.options =
+					{
+						closeButton: true,
+						progressBar: true,
+						showMethod: 'slideDown',
+						timeOut: 4000
+					};
+					toastr.success('', response);
+
+				 },
+				 error: function(response)
+				 {
+					document.getElementById(result_id).innerHTML = "<i class='fa fa-circle text-alert'></i> " + "Возникла сетевая ошибка при отправке формы! Попробуйте еще раз";
+					toastr.error(response, "Возникла сетевая ошибка при отправке формы! Попробуйте еще раз");
+				 }
+				 });
+			}
+
+
+			$(document).bind('keydown', function(e)
+			{
+			  if(e.ctrlKey && (e.which == 83))
+			  {
+				e.preventDefault();
+				$('.btn-save').trigger('click');
+				return false;
+			  }
+			});
+
+
+		</script>
+
+	</body>
+</html>

@@ -33,4 +33,4 @@
 	//~ $content['config'] = file_get_contents('engine/units/route.ini');
 	//~ $themelink = $APP->url->home()."views/admin/";
 
-	$APP->template->file('admin/tools/code_editor/code_editor.html')->display($content);
+	$APP->template->file('admin/tools/code-editor/code-editor.html')->display($content);
