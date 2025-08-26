@@ -5,7 +5,7 @@
 						}
 						.chosen-container-single .chosen-single abbr
 						{
-							top:10px;
+							top:11px;
 						}
 					</style>
 
@@ -64,7 +64,7 @@
 										</div>
 
 										<div class="col-sm-4">
-												<select name="content[{$_block['name']}][data]" data-placeholder="Select group object..." class="chosen-select chosen-single-with-deselect" style="width:100%"  tabindex="2">
+												<select name="content[{$_block['name']}][data]" data-placeholder="Связать с объектом" class="chosen-select-deselect"  tabindex="2">
 													<option value=""></option>
 
 													{foreach $_block['select'] as $_object}
@@ -128,7 +128,7 @@
 
 										<div class="col-sm-5">
 												<div class="input-group">
-													<input name="content[{$_block['edit']['name']}][data]" list="data-providers" type="text" placeholder="Введите путь поставщика данных или ссылку на ресурс" value="{$_block['edit']['value']}" class="form-control">
+													<input name="content[{$_block['edit']['name']}][data]" list="data-providers" type="text" placeholder="Путь поставщика данных или ссылку на ресурс" title="Поставщики данных находятся в app/providers" value="{$_block['edit']['value']}" class="form-control">
                                                     <span class="input-group-btn">
                                                         <a class="btn btn-white btn-bitbucket ml-2 view-provider-button" data-providerhandler="{$form['file']['providerhandler']}" #id="view-provider-button" title="Открыть файл">
 															<i class="fa fa-code"></i>
@@ -185,6 +185,30 @@
 								$(`input[name="content[${providerName}][data]"]`).val('');
 								$(`select[name="content[${objectName}][data]"]`).val('').trigger('chosen:updated');
 							});
+
+
+							//Choisen
+							var config =
+							{
+								'.chosen-select': {},
+								'.chosen-select-deselect': {
+									allow_single_deselect: true,
+									width: "100%"
+								},
+								'.chosen-select-no-single': {
+									disable_search_threshold: 10
+								},
+								'.chosen-select-no-results': {
+									no_results_text: 'Oops, nothing found!'
+								},
+								'.chosen-select-width': {
+									width: "95%"
+								}
+							}
+
+							for (var selector in config) {
+								$(selector).chosen(config[selector]);
+							}
 						};
 
 
