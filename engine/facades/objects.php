@@ -29,6 +29,20 @@
 	 *
 	 * - Удалить коллекцию
 	 * $APP->objects->collection('fruits')->drop();
+	 *
+	 * - Скопировать коллекцию
+	 * $APP->objects->collection('fruits')->copy('newName');
+	 *
+	 * - Скопировать объект
+	 * $APP->objects->collection('fruits')->copy('oldName', 'newName');
+	 * $APP->objects->copy('oldName', 'newName');
+	 *
+	 * - Переименовать коллекцию
+	 * $APP->objects->collection('fruits')->rename('newName');
+	 *
+	 * - Переименовать объект
+	 * $APP->objects->collection('fruits')->rename('oldName', 'newName');
+	 * $APP->objects->rename('oldName', 'newName');
 	*/
 
 	namespace unit\objects;
@@ -61,6 +75,9 @@
 
 		// Получить все записи коллекции
 		public function all();
+
+		// Получить все записи коллекции
+		public function rename($oldName, $newName);
 	}
 
 	# ---------------------------------------------------------------- #
@@ -315,6 +332,89 @@
 			return $result;
 		}
 
+
+		/*
+		 * name: Переименовать имя или коллекцию
+		 * @param string текущее имя объекта или новое имя для коллекции
+		 * @param string новое имя объекта (новое)
+		 * @return
+		 */
+		public function rename($nameA, $nameB=null)
+		{
+			$table = $this->Table;
+
+			if (isset($nameA) && isset($nameB)) //Для объекта
+			{
+				$STH = $this->PDO_INTERFACE->prepare("UPDATE `$table` SET name = :newname WHERE collection = :collection AND name = :oldname;");
+				//Заполняем выражение данными
+				$STH->bindParam(':collection',	$this->current_collection);
+				$STH->bindParam(':oldname',		$nameA);
+				$STH->bindParam(':newname',		$nameB);
+			}
+			elseif ($this->current_collection && isset($nameA)) //для коллекции
+			{
+				$STH = $this->PDO_INTERFACE->prepare("UPDATE `$table` SET collection = :newname WHERE collection = :collection;");
+				//Заполняем выражение данными
+				$STH->bindParam(':collection',	$this->current_collection);
+				$STH->bindParam(':newname',		$nameA);
+			}
+
+			//Выполняем изменения
+			return $STH->execute();
+		}
+
+
+		/**
+		 * Дублировать коллекцию или объект
+		 * @param string текущее имя объекта или новое имя для коллекции
+		 * @param string новое имя объекта
+		 * @return bool Успешность выполнения операции
+		 */
+		public function copy($nameA, $nameB=null)
+		{
+			$table = $this->Table;
+
+			if (isset($nameA) && isset($nameB)) //Для объекта
+			{
+				//Через нативный интерфейс
+				//return $obj = $this->get($nameA) ? $this->set($nameB, $obj) : false;
+
+				$STH = $this->PDO_INTERFACE->prepare("INSERT INTO `$table` (collection, name, value, date)
+						SELECT
+							collection,
+							:nameTarget AS name,
+							value,
+							date
+						FROM
+							`$table`
+						WHERE
+							collection = :collection and name = :name");
+
+				//Заполняем выражение данными
+				$STH->bindParam(':collection',	$this->current_collection);
+				$STH->bindValue(':name',        $nameA);
+				$STH->bindValue(':nameTarget',  $nameB);
+			}
+			elseif ($this->current_collection && isset($nameA)) //для коллекции
+			{
+				$STH = $this->PDO_INTERFACE->prepare("INSERT INTO `$table` (collection, name, value, date)
+						SELECT
+							:collectionTarget AS collection,
+							name,
+							value,
+							date
+						FROM
+							`$table`
+						WHERE
+							collection = :collection;");
+
+				//Заполняем выражение данными
+				$STH->bindParam(':collection',	     $this->current_collection);
+				$STH->bindValue(':collectionTarget', $nameA);
+			}
+
+			return $STH->execute();
+		}
 
 
 		/*
