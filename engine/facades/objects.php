@@ -444,17 +444,28 @@
 		}
 
 
-		//Экспортировать все объекты в строку
-		public function export()
+		/**
+		 * Экспортировать коллекцию или объект в формате JSON
+		 *
+		 * @param string $object Название объекта в коллекции (пустая строка - вся коллекция, указанная через collection())
+		 *
+		 * @return string JSON-строка с результатом экспорта
+		 */
+		public function export($objectName=null): string
 		{
-			$result = [];
-			foreach ($this->collection_list() as $colindex => $collection)
+
+			if($this->current_collection)
 			{
-				$result[$collection] = $this->collection($collection)->all();
+				$result = $objectName ? $this->collection($this->current_collection)->get($objectName) : $this->collection($this->current_collection)->all();
 			}
+			else
+			{
+				foreach ($this->collection_list() as $colindex => $col)
+					$result[$col] = $this->collection($col)->all();
+			}
+
 			return json_encode($result);
 		}
-
 
 		public function import($datastring)
 		{
