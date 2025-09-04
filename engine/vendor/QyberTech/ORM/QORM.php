@@ -507,7 +507,7 @@
 				{
 					//Прописываем колонки
 					$columns[] = "\"$key\" = ?";
-					if ($value == 'NULL') $value = null;
+					if ($value === 'NULL') $value = null;
 				}
 			}
 			$columns = implode(', ', $columns);
