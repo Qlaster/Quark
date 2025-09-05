@@ -753,7 +753,7 @@
 							$this->qinfo['where']['sql'][] = "\"$key\" in ($inQuests)";
 							$values = array_merge((array)$values, $value);
 						}
-						else if (($value == 'NULL') or ($value === NULL))
+						else if (($value === 'NULL') or ($value === NULL))
 						{
 							//Если передали NULL
 							$this->qinfo['where']['sql'][] = "\"$key\" IS NULL";
