@@ -152,7 +152,7 @@
 														<a class="fa {$_fileicon} text-primary" target="_blank" href="{$_fileitem['filename']}" title="{$_fileitem['name']}"></a>
 													{end}
 												</td>
-											{elseif 'id' == $_field['type']}
+											{elseif 'id' == $_field['type'] or 'id' == $_name}
 												<td class="!project-title">
 													<label class="label" for="catalog-btn-edit-{$_record['id']}" style="cursor:pointer">{$_record[$_name]}</label>
 												</td>
