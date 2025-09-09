@@ -122,7 +122,7 @@
 			static $ini;
 			if (!isset($ini)) $ini = new Core_Ini_Reader;
 
-			return $ini->parseIniString($string);
+			return $ini->fromString($string);
 		}
 
 		public function toString($config)
@@ -206,6 +206,17 @@
 
 			return $this->process($ini);
 		}
+
+
+
+		public function fromString($iniString)
+		{
+			$ini = $this->parseIniString($iniString, true);
+			restore_error_handler();
+			return $this->process($ini);
+		}
+
+
 
 		/**
 		 * TODO:DEPRICATED
