@@ -37,7 +37,7 @@
 
 
 							<div class="ibox float-e-margins">
-						<div class="ibox-title">
+								<div class="ibox-title">
 									 <h5>{$catalog['collection']['head']}</h5>
 									 <div class="ibox-tools">
 										  <a class="collapse-link">
@@ -75,10 +75,10 @@
 <!--
 										<div class="hr-line-dashed"></div>
 -->
-										<form action="{$form['collection']['action']}" method='get'>
-											<input name='collection' placeholder="Имя новой коллекции" class="form-control">
+										<form id="new-collection-form" action="{$form['collection']['action']}" method='get'>
+											<input name='collection' placeholder="Имя новой коллекции" class="form-control new-collection-name">
 											<p></p>
-											<button type="submit" class="btn btn-primary !btn-sm btn-outline btn-block">{$form['collection']['button']['add']['head']}</button>
+											<button type="submit" class="btn btn-primary !btn-sm btn-outline btn-block new-collection-btn">{$form['collection']['button']['add']['head']}</button>
 										</form>
 										<div class="hr-line-dashed"></div>
 										<h5>{$catalog['collection']['info']}</h5>
@@ -92,7 +92,34 @@
 <!--
 													<button type="button" class="btn btn-warning btn-xs pull-right" data-link="{$_value['button']['delete']['link']}">{$_value['button']['delete']['head']}</button>
 -->
-													<button type="button" class="btn btn-delete-collection btn-warning btn-xs pull-right" data-head="{$_value['head']}" data-link="{$_value['button']['delete']['link']}"><span class="fa fa-trash"></span></button>
+													<!-- <button type="button" class="btn btn-delete-collection btn-warning btn-xs pull-right" data-head="{$_value['head']}" data-link="{$_value['button']['delete']['link']}"><span class="fa fa-trash"></span></button> -->
+
+													<!-- <div class="btn-group pull-right">
+														<button data-toggle="dropdown" class="btn btn-success btn-xs dropdown-toggle">Действия <span class="caret"></span></button>
+														<ul class="dropdown-menu">
+															<li><a href="#">Переименовать</a></li>
+															<li><a href="#">Дублировать</a></li>
+															<li><a href="#">Удалить</a></li>
+															<li class="divider"></li>
+															<li><a href="#">Экспортировать</a></li>
+															<li><a href="#">Импортировать</a></li>
+														</ul>
+													</div> -->
+
+													{foreach ($_value['button']) as $_button}
+														{if isset($_button['list'])}
+															<div class="btn-group pull-right">
+																<button data-toggle="dropdown" class="btn btn-success btn-xs dropdown-toggle">{$_button['head']} <span class="caret"></span></button>
+																<ul class="dropdown-menu">
+																{foreach $_button['list'] as $_submenu_btn}
+																	<li><a {if $_submenu_btn['link']}href="{$_submenu_btn['link']}"{end} {if $_submenu_btn['data-collection']} onclick="showRenameModal(`{$_submenu_btn['data-collection']}`, `{$_submenu_btn['data-link']}`)" {end}>{$_submenu_btn['head']}</a></li>
+																{end}
+																</ul>
+															</div>
+														{else}
+															<a class="btn btn-white btn-xs" href="{$_button['link']}"><i class="fa {$_button['icon']}"></i> {$_button['head']}</a>
+														{end}
+													{end}
 <!--
 												</a>
 -->
@@ -159,7 +186,7 @@
 									<div class="ibox float-e-margins">
 										<div class="ibox-title">
 											<h5>{$catalog['objects']['head']}</h5>
-											<a href='admin/constructor/object/edit'class="btn btn-primary btn-xs pull-right">{$catalog['objects']['button']['add']['head']}</a>
+											<button class="btn btn-primary btn-xs pull-right edit-object" data-link="{$catalog['objects']['button']['add']['link']}" disabled>{$catalog['objects']['button']['add']['head']}</button>
 											<!--
 												<div class="ibox-tools">
 													<a class="collapse-link">
@@ -193,8 +220,34 @@
 													<tr class="gradeA">
 														<td><a class='text-primary !btn-block' {if $_value['link']} href="{$_value['link']}" {end}>{$_value['head']}</a></td>
 														<td class='center'>
+															
+														<!-- <div class="btn-group">
+															<button data-toggle="dropdown" class="btn btn-white btn-xs dropdown-toggle">Действия <span class="caret"></span></button>
+															<ul class="dropdown-menu">
+																<li><a href="#">Открыть в конструкторе</a></li>
+																<li><a href="#">Открыть в редакторе</a></li>
+																<li><a href="#">Открыть в приложении</a></li>
+																<li class="divider"></li>
+																<li><a href="#">Экспортировать</a></li>
+																<li><a href="#">Импортировать</a></li>
+															</ul>
+														</div> -->
+
 														{foreach ($_value['button']) as $_button}
-															<a class="btn btn-white btn-xs" href="{$_button['link']}"><i class="fa {$_button['icon']}"></i> {$_button['head']}</a>
+															
+															{if isset($_button['list'])}
+																<div class="btn-group pull-left">
+																	<button data-toggle="dropdown" class="btn btn-white btn-xs dropdown-toggle">{$_button['head']} <span class="caret"></span></button>
+																	<ul class="dropdown-menu">
+																	{foreach $_button['list'] as $_submenu_btn}
+																		<li><a {if $_submenu_btn['link']} href="{$_submenu_btn['link']}" {end} {if $_submenu_btn['data-collection']} onclick="showRenameModal(`{$_submenu_btn['data-collection']}`, `{$_submenu_btn['data-link']}`, `{$_submenu_btn['data-object']}`)" {end}>{$_submenu_btn['head']}</a></li>
+																	{end}
+																	</ul>
+																</div>
+															{else}
+																<a class="btn btn-white btn-xs" href="{$_button['link']}"><i class="fa {$_button['icon']}"></i> {$_button['head']}</a>
+															{end}
+															
 														{end}
 <!--
 											<a class="btn btn-white btn-xs" href="{$_value['edit']}">{$catalog['objects']['button']['edit']['head']}</a>
@@ -216,226 +269,7 @@
 																Explorer 5.5
 															</td>
 														</tr>
-														<tr class="gradeA">
-															<td>Trident</td>
-															<td>Internet
-																Explorer 6
-															</td>
-														</tr>
-														<tr class="gradeA">
-															<td>Trident</td>
-															<td>Internet Explorer 7</td>
-														</tr>
-														<tr class="gradeA">
-															<td>Trident</td>
-															<td>AOL browser (AOL desktop)</td>
-														</tr>
-														<tr class="gradeA">
-															<td>Gecko</td>
-															<td>Firefox 1.0</td>
-														</tr>
-														<tr class="gradeA">
-															<td>Gecko</td>
-															<td>Firefox 1.5</td>
-														</tr>
-														<tr class="gradeA">
-															<td>Gecko</td>
-															<td>Firefox 2.0</td>
-														</tr>
-														<tr class="gradeA">
-															<td>Gecko</td>
-															<td>Firefox 3.0</td>
-														</tr>
-														<tr class="gradeA">
-															<td>Gecko</td>
-															<td>Camino 1.0</td>
-														</tr>
-														<tr class="gradeA">
-															<td>Gecko</td>
-															<td>Camino 1.5</td>
-														</tr>
-														<tr class="gradeA">
-															<td>Gecko</td>
-															<td>Netscape 7.2</td>
-														</tr>
-														<tr class="gradeA">
-															<td>Gecko</td>
-															<td>Netscape Browser 8</td>
-														</tr>
-														<tr class="gradeA">
-															<td>Gecko</td>
-															<td>Netscape Navigator 9</td>
-														</tr>
-														<tr class="gradeA">
-															<td>Gecko</td>
-															<td>Mozilla 1.0</td>
-														</tr>
-														<tr class="gradeA">
-															<td>Gecko</td>
-															<td>Mozilla 1.1</td>
-														</tr>
-														<tr class="gradeA">
-															<td>Gecko</td>
-															<td>Mozilla 1.2</td>
-														</tr>
-														<tr class="gradeA">
-															<td>Gecko</td>
-															<td>Mozilla 1.3</td>
-														</tr>
-														<tr class="gradeA">
-															<td>Gecko</td>
-															<td>Mozilla 1.4</td>
-														</tr>
-														<tr class="gradeA">
-															<td>Gecko</td>
-															<td>Mozilla 1.5</td>
-														</tr>
-														<tr class="gradeA">
-															<td>Gecko</td>
-															<td>Mozilla 1.6</td>
-														</tr>
-														<tr class="gradeA">
-															<td>Gecko</td>
-															<td>Mozilla 1.7</td>
-														</tr>
-														<tr class="gradeA">
-															<td>Gecko</td>
-															<td>Mozilla 1.8</td>
-														</tr>
-														<tr class="gradeA">
-															<td>Gecko</td>
-															<td>Seamonkey 1.1</td>
-														</tr>
-														<tr class="gradeA">
-															<td>Gecko</td>
-															<td>Epiphany 2.20</td>
-														</tr>
-														<tr class="gradeA">
-															<td>Webkit</td>
-															<td>Safari 1.2</td>
-														</tr>
-														<tr class="gradeA">
-															<td>Webkit</td>
-															<td>Safari 1.3</td>
-														</tr>
-														<tr class="gradeA">
-															<td>Webkit</td>
-															<td>Safari 2.0</td>
-														</tr>
-														<tr class="gradeA">
-															<td>Webkit</td>
-															<td>Safari 3.0</td>
-														</tr>
-														<tr class="gradeA">
-															<td>Webkit</td>
-															<td>OmniWeb 5.5</td>
-														</tr>
-														<tr class="gradeA">
-															<td>Webkit</td>
-															<td>iPod Touch / iPhone</td>
-														</tr>
-														<tr class="gradeA">
-															<td>Webkit</td>
-															<td>S60</td>
-														</tr>
-														<tr class="gradeA">
-															<td>Presto</td>
-															<td>Opera 7.0</td>
-														</tr>
-														<tr class="gradeA">
-															<td>Presto</td>
-															<td>Opera 7.5</td>
-														</tr>
-														<tr class="gradeA">
-															<td>Presto</td>
-															<td>Opera 8.0</td>
-														</tr>
-														<tr class="gradeA">
-															<td>Presto</td>
-															<td>Opera 8.5</td>
-														</tr>
-														<tr class="gradeA">
-															<td>Presto</td>
-															<td>Opera 9.0</td>
-
-														</tr>
-														<tr class="gradeA">
-															<td>Presto</td>
-															<td>Opera 9.2</td>
-														</tr>
-														<tr class="gradeA">
-															<td>Presto</td>
-															<td>Opera 9.5</td>
-														</tr>
-														<tr class="gradeA">
-															<td>Presto</td>
-															<td>Opera for Wii</td>
-														</tr>
-														<tr class="gradeA">
-															<td>Presto</td>
-															<td>Nokia N800</td>
-														</tr>
-														<tr class="gradeA">
-															<td>Presto</td>
-															<td>Nintendo DS browser</td>
-														</tr>
-														<tr class="gradeC">
-															<td>KHTML</td>
-															<td>Konqureror 3.1</td>
-														</tr>
-														<tr class="gradeA">
-															<td>KHTML</td>
-															<td>Konqureror 3.3</td>
-														</tr>
-														<tr class="gradeA">
-															<td>KHTML</td>
-															<td>Konqureror 3.5</td>
-														</tr>
-														<tr class="gradeX">
-															<td>Tasman</td>
-															<td>Internet Explorer 4.5</td>
-														</tr>
-														<tr class="gradeC">
-															<td>Tasman</td>
-															<td>Internet Explorer 5.1</td>
-														</tr>
-														<tr class="gradeC">
-															<td>Tasman</td>
-															<td>Internet Explorer 5.2</td>
-														</tr>
-														<tr class="gradeA">
-															<td>Misc</td>
-															<td>NetFront 3.1</td>
-														</tr>
-														<tr class="gradeA">
-															<td>Misc</td>
-															<td>NetFront 3.4</td>
-														</tr>
-														<tr class="gradeX">
-															<td>Misc</td>
-															<td>Dillo 0.8</td>
-														</tr>
-														<tr class="gradeX">
-															<td>Misc</td>
-															<td>Links</td>
-														</tr>
-														<tr class="gradeX">
-															<td>Misc</td>
-															<td>Lynx</td>
-														</tr>
-														<tr class="gradeC">
-															<td>Misc</td>
-															<td>IE Mobile</td>
-														</tr>
-														<tr class="gradeC">
-															<td>Misc</td>
-															<td>PSP browser</td>
-														</tr>
-														<tr class="gradeU">
-															<td>Other browsers</td>
-															<td>All others</td>
-														</tr>
-														-->
+													-->
 												</tbody>
 												<!--
 													<tfoot>
@@ -452,6 +286,35 @@
 							</div>
 						</div>
 					</div>
+					
+					<div id="modal-form" class="modal fade" aria-hidden="true">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-body">
+									<div class="row">
+										<div class="col-sm-12"><h3 class="m-t-none m-b">Переименовать</h3>
+
+											<p>Введите новое имя для <b>admin</b></p>
+
+											<form id="form-rename" role="form" method="POST">
+												<div class="form-group">
+													<input type="text" name="new_name" placeholder="Введите новое имя" class="form-control js-form-new-name" required>
+													<input type="hidden" name="collection" class="form-control">
+													<input type="hidden" name="object" class="form-control">
+												</div>
+												<div>
+													<button class="btn btn-sm btn-primary pull-right" type="submit">Сохранить</button>
+													<button class="btn btn-sm btn-white pull-right btn-close-modal">Закрыть</button>
+												</div>
+											</form>
+										</div>
+										
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				
 				</div>
 				<!-- Footer block -->
 				{require "../../~section/footer.html"}
@@ -469,79 +332,145 @@
 		<script src="../../js/inspinia.js"></script>
 		<script src="../../js/plugins/pace/pace.min.js"></script>
 		<script>
-		  $(document).ready(function()
-		  {
+			$(document).ready(function()
+		  	{
 				$('.file-box').each(function() {
 					animationHover(this, 'pulse');
 				});
 
 				$('.btn-delete-collection').click(function() {
-
 					var dlink = $(this).data('link');
 					var head  = $(this).data('head');
 
 					if (confirm(`Удалить коллекцию "${head}" со всем содержимым?`))
 					{
-
 						alert(dlink);
 					}
-
 				});
-		  });
 
-		  function importObjects()
-		  {
-			var input = document.createElement('input');
-			input.type = 'file';
-			input.name = 'objects';
+				$('.new-collection-btn').click(function(e) {
+					e.preventDefault()
+					if(!$('.new-collection-name').val()) {
+						toastr.warning("Введите имя новой коллекции");
+						return;
+					}
+					$('#new-collection-form').submit();
+				});
 
-			input.onchange = e =>
-			{
+				$('.btn-close-modal').click(function(e) {
+					e.preventDefault()
+					$('#modal-form').modal('hide');
+				});
 
-				 // getting a hold of the file reference
-				 var file = e.target.files[0];
+				$('.js-form-new-name').on('input paste keydown', function(e) { 
+					filterInput(e);
+				});
 
-				 // setting up the reader
-				 var reader = new FileReader();
-				 reader.readAsDataURL(file); // this is reading as data url
-
-				//~ reader.onload = function ()
-				//~ {
-					//~ strEncoded = reader.result;
-					//~ console.log( window.atob( strEncoded ));
-				//~ };
-
-
-				//~ // here we tell the reader what to do when it done reading...
-				reader.onload = readerEvent =>
-				{
-					var content = readerEvent.target.result; // this is the content!
-					content = atob(content.substring(29));
-					toastr.info("Импортирую...");
-
-					$.ajax({
-						url: "admin/constructor/object/import",
-						method: "POST",
-						data: { jsonData: content }
-					}).done(function(data)
-					{
-						if (data == "OK")
-						{
-							toastr.success(data);
-							location.reload(); // window.location.reload()
-						}
-						else
-						{
-							toastr.warning(data);
-						}
-						console.log(data);
+				const urlParams = new URLSearchParams(window.location.search);
+				const collection = urlParams.get('collection');
+				
+				if (collection && collection.trim() !== '') {
+					$('.edit-object').removeAttr('disabled');
+					
+					$('.edit-object').click(function() {
+						window.location.href = $('.edit-object').data('link');
 					});
 				}
+		  	});
 
+		  	function showRenameModal (collection, rename_link, object) {
+				$form = $('#modal-form');
+				$form.modal('show');
+				$form.find('b').text(object || collection);
+				$form.find("[name='collection']").val(collection);
+				$form.find("[name='new_name']").val('');
+				$form.find("[name='object']").prop('disabled', !object).val(object || '');
+				$('#form-rename').attr('action', rename_link);
+		  	}
+
+			function importObjects()
+			{
+				var input = document.createElement('input');
+				input.type = 'file';
+				input.name = 'objects';
+
+				input.onchange = e =>
+				{
+
+					// getting a hold of the file reference
+					var file = e.target.files[0];
+
+					// setting up the reader
+					var reader = new FileReader();
+					reader.readAsDataURL(file); // this is reading as data url
+
+					//~ reader.onload = function ()
+					//~ {
+						//~ strEncoded = reader.result;
+						//~ console.log( window.atob( strEncoded ));
+					//~ };
+
+
+					//~ // here we tell the reader what to do when it done reading...
+					reader.onload = readerEvent =>
+					{
+						var content = readerEvent.target.result; // this is the content!
+						content = atob(content.substring(29));
+						toastr.info("Импортирую...");
+
+						$.ajax({
+							url: "admin/constructor/object/import",
+							method: "POST",
+							data: { jsonData: content }
+						}).done(function(data)
+						{
+							if (data == "OK")
+							{
+								toastr.success(data);
+								location.reload(); // window.location.reload()
+							}
+							else
+							{
+								toastr.warning(data);
+							}
+							console.log(data);
+						});
+					}
+
+				}
+
+				input.click();
 			}
 
-			input.click();
-		}
+			function filterInput(e) {
+				const input = e.target;
+				
+				switch (e.type) {
+					case 'paste':
+						e.preventDefault();
+						const cleanData = (e.originalEvent || e).clipboardData
+							.getData('text')
+							.replace(/[.= \r]/g, '');
+						document.execCommand('insertText', false, cleanData);
+						break;
+
+					case 'keydown':
+						if (['.', '=', ' ', 'Enter'].includes(e.key)) {
+							e.preventDefault();
+							return false;
+						}
+						break;
+
+					case 'input':
+						const cursorPos = input.selectionStart;
+						const cleanValue = input.value.replace(/[.= \r]/g, '');
+						if (input.value !== cleanValue) {
+							input.value = cleanValue;
+							input.setSelectionRange(cursorPos, cursorPos);
+						}
+						break;
+				}
+			}
 		</script>
 	</body>
 </html>

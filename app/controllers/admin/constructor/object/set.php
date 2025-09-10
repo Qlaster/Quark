@@ -3,7 +3,6 @@
 
 	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
-
 	//Получаем входные параметры
 	$collection	= urldecode($_GET['collection']);
 	$objectname	= urldecode($_GET['objectname']);

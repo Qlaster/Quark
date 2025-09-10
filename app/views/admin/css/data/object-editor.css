@@ -1,0 +1,206 @@
+.tree-item-name {
+    font-weight: bold;
+    /* color: #1ab394; */
+}
+.tree-item-head {
+    font-weight: normal;
+    font-style: italic;
+    opacity: 0.7;
+    display: inline-block;
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: bottom;
+    padding-right: 0.15rem;
+}
+.tree-item-preview {
+    opacity: 0.7;
+}
+.tree-root-name {
+    opacity: 1;
+    /* opacity: 0.7; */
+}
+.properties-table-controls.disabled {
+    opacity: 0.3;
+    pointer-events: none;
+    cursor: not-allowed;
+}
+.duplicate-row {
+    /* animation: highlightRow 0.1s ease 0.4s forwards; */
+    box-shadow: inset 3px 0 0 #ff4444;
+}
+.duplicate-row td:nth-child(-n+2) {
+    /* animation: highlightCell 0.1s ease 0.4s forwards; */
+    background-color: rgba(255, 0, 0, 0.1);
+}
+/* @keyframes highlightRow {
+    to { box-shadow: inset 3px 0 0 #ff4444; }
+}
+@keyframes highlightCell {
+    to { background-color: rgba(255, 0, 0, 0.1); }
+} */
+
+
+.jstree-empty-node > .jstree-anchor {
+    position: relative;
+    /* padding-left: 15px; */
+    /* margin-left: -3px; */
+    color: #ff8205;
+}
+.jstree-empty-node > .jstree-anchor::before {
+    content: '';
+    /* content: '⚠'; */
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 0.5rem;
+    width: 0.5rem;
+    color: #ff8205;
+    margin-left: -0.5rem;
+    background-color: #ff8205;
+    border-radius: 1rem;
+}
+.jstree-empty-node .jstree-icon {
+    color: #ff8205;
+}
+
+.jstree-duplicate-node > .jstree-anchor {
+    position: relative;
+    /* padding-left: 15px; */
+    /* margin-left: -3px; */
+    color: #F00;
+}
+.jstree-duplicate-node > .jstree-anchor::before {
+    content: '';
+    /* content: '⚠'; */
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 0.5rem;
+    width: 0.5rem;
+    color: #F00;
+    margin-left: -0.5rem;
+    background-color: #ff4444;
+    border-radius: 1rem;
+}
+.jstree-duplicate-node .jstree-icon {
+    color: #F00;
+}
+    
+.element-list {
+    opacity: 1;
+    transition: 
+        max-height 0.3s ease 0s,
+        opacity 0.3s ease 0s,
+        padding 0.3s ease 0s;
+}
+.element-list.disabled {
+    opacity: 0.3;
+    pointer-events: none;
+    user-select: none;
+    transition: 
+        max-height 0.3s ease 2s,
+        opacity 0.3s ease 2s,
+        padding 0.3s ease 2s;
+}
+    
+.js-tree-info {
+    padding: 0 15px;
+    opacity: 0.7;
+}
+.js-tree-errors {
+    color: #F00;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    margin: 0;
+    transition: 
+        max-height 0.3s ease, 
+        opacity 0.3s ease,
+        padding 0.3s ease;
+}
+.js-tree-errors.visible {
+    max-height: 100px;
+    opacity: 1;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+.js-table-errors {
+    color: #F00;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    margin: 0;
+    transition: 
+        max-height 0.3s ease 0s,
+        opacity 0.3s ease 0s,
+        padding 0.3s ease 0s;
+}
+.js-table-errors.visible {
+    max-height: 100px;
+    opacity: 1;
+    padding-top: 15px;
+    padding-bottom: 5px;
+    transition: 
+        max-height 0.3s ease 2s,
+        opacity 0.3s ease 2s,
+        padding 0.3s ease 2s;
+}
+.js-tree-warnings {
+    color: #ff8205;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    margin: 0;
+    transition: 
+        max-height 0.3s ease, 
+        opacity 0.3s ease,
+        padding 0.3s ease;
+}
+.js-tree-warnings.visible {
+    max-height: 100px;
+    opacity: 1;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+/* .jstree-rename-input {
+    max-width: 100%;
+}
+.jstree-container-ul {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    width: 100%;
+}
+.jstree-children {
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+.jstree-node {
+    min-width: 15rem;
+}
+.jstree-anchor {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    max-width: 100%;
+} */
+
+/* .jstree-leaf {
+    font-size: 1.5rem;
+    height: 50px;
+}
+
+.jstree-leaf a.jstree-hovered {
+   height: 50px;
+}
+
+.jstree-leaf a.jstree-clicked {
+    height: 50px;
+} */
