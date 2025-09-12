@@ -15,10 +15,13 @@
 	//Получаем текущий адрес
 	$content['form']['edit']['url']['prefix'] = $APP->url->home();
 
-	//Кнопочка просмотра истории
+
 	if ($_GET['url'])
 	{
+		//Кнопочка просмотра истории
 		$content['form']['edit']['button']['timeline']['action'] .= '?url='.urlencode($_GET['url']);
+		//Кнопочка перехода на страницу
+		$content['form']['edit']['openpage']['action'] = $_GET['url'];
 	}
 	else
 	{

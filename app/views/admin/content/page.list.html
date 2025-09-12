@@ -300,7 +300,7 @@
 													</td>
 													<td> <a href="{$_record['link_edit']}" class="font-bold text-primary "> {$_record['url']}  </a> </td>
 													<td> {$_record['title']}</td>
-													<td>{$_record['html']}</td>
+													<td> <a href="{$_record['link_html']}" class="text-primary "> {$_record['html']} </a> </td>
 													<td class="project-completion">
 														<small>Просмотров <b>{$_record['visits']}</b></small>
 														<div class="progress progress-mini">
@@ -316,7 +316,7 @@
 													<td>
 														<div class='label'>{$_record['lang']}</div>
 													</td>
-													<td> <a href="{$_record['link_timeline']}"> {$_record['version']} </a></td>
+													<td> <a class="text-primary" href="{$_record['link_timeline']}"> {$_record['version']} </a></td>
 													<td>
 														<!--
 															<button type="button" class="btn btn-outline btn-white btn-xs"><i class="fa fa-pencil"> Edit</i></button>
@@ -328,7 +328,7 @@
 														<!--
 															<a type="button" class="btn btn-outline btn-primary btn-xs" title="Page version"  href="{$_record['link_view']}"><i class="fa fa-copy"> Version</i></a>
 															-->
-														<a type="button" class="btn btn-outline btn-danger btn-xs"  title="Delete" onclick="$('#delete-btn').attr('href', '{$_record['link_del']}')" data-toggle="modal" data-target="#Modal-Delete"><i class="fa fa-times"> </i></a>
+														<a type="button" class="btn btn-outline btn-danger btn-xs pull-right"  title="Delete" onclick="$('#delete-btn').attr('href', '{$_record['link_del']}')" data-toggle="modal" data-target="#Modal-Delete"><i class="fa fa-times"> </i></a>
 													</td>
 												</tr>
 												{end}

@@ -128,6 +128,12 @@
                                                 <div class="input-group m-b">
                                                     <span class="input-group-addon">{$form['edit']['url']['prefix']}</span>
                                                     <input class="form-control" placeholder="" name="url" type="text" value="{$form['edit']['url']['text']}">
+                                                    <span class="input-group-btn">
+                                                        <a class="btn {$form['edit']['openpage']['class']} btn-bitbucket ml-2" href="{$form['edit']['openpage']['action']}" target="{$form['edit']['openpage']['target']}" title="{$form['edit']['openpage']['title']}">
+															<i class="fa {$form['edit']['openpage']['icon']}"></i>
+															{$form['edit']['openpage']['head']}
+														</a>
+													</span>
                                                 </div>
                                                 <span class="help-block m-b-none">{$form['edit']['url']['info']}</span>
                                              </div>
@@ -260,6 +266,7 @@
 												{foreach $form['edit']['button'] as $btnname => $_button}
 													<button
 															class="btn {$_button['class']}"
+															title="{$_button['title']}"
 															{if $_button['type']} type="{$_button['type']}" {end}
 															{if $_button['action']} onclick="$('#editpage').attr('action', '{$_button['action']}'); $('#editpage').attr('target', '{$_button['target']}');" {end}
 															>

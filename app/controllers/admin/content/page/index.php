@@ -40,9 +40,13 @@
 		$value['link_edit']		= 'admin/content/page/edit?url='.urlencode($value['url']);
 		$value['link_del']		= 'admin/content/page/del?url='.urlencode($value['url']).'&lang='.$value['lang'];
 		$value['link_timeline'] = 'admin/content/page/timeline?url='.urlencode($value['url']).'&lang='.$value['lang'];
+
+		//Получим директорию с шаблонами
+		$templateDir = $APP->template->config['templates']['folder']; //.DIRECTORY_SEPARATOR
+		$value['link_html']     = 'admin/tools/codeeditor?file='.$templateDir.DIRECTORY_SEPARATOR.urlencode($value['html']);
 	}
 
 
 	//~ $themelink = $APP->url->home()."views/admin/";
-	$APP->template->file('admin/content/page_list.html')->display($content);
+	$APP->template->file('admin/content/page.list.html')->display($content);
 
