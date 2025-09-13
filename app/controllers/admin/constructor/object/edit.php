@@ -4,4 +4,4 @@
 
 	$content['object'] = $_GET['object'];
 
-	$APP->template->file('admin/constructor/object/object_edit.html')->display($content);
+	$APP->template->file('admin/constructor/object/object.edit.html')->display($content);

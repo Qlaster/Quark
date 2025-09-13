@@ -3400,7 +3400,7 @@ table.table-mail tr td {
 /* MARGINS & PADDINGS */
 .p-none
 {
-  padding: 0px;
+  padding: 0px !important;
 }
 .p-xxs {
   padding: 5px;
@@ -3505,7 +3505,7 @@ table.table-mail tr td {
   margin: 0 !important;
 }
 .m-l-none {
-  margin-left: 0;
+  margin-left: 0 !important;
 }
 .m-l-xs {
   margin-left: 5px;
@@ -3548,7 +3548,7 @@ table.table-mail tr td {
 }
 
 .m-t-none {
-  margin-top: 0;
+  margin-top: 0 !important;
 }
 .m-t-xxs {
   margin-top: 1px;
