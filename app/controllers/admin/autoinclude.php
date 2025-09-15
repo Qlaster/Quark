@@ -68,7 +68,8 @@
 		$menu = $APP->object->collection('admin')->get('mainmenu');
 
 		//Подключаем нужное языковое меню
-		$content['nav']['main'] = $menu['ru'];
+		//~ $content['nav']['main'] = $menu['ru'];
+		$content['nav']['main'] = $menu;
 
 		//Load Addons
 		if (file_exists($addonPath = __DIR__ .'/addons'))
@@ -165,7 +166,7 @@
 		//============================================================================================================================
 		//Загружаем меню управления профилем
 		$menu = $APP->object->collection('admin')->get('profilemenu');
-		$content['nav']['profile'] = $menu['ru'];
+		$content['nav']['profile'] = $menu;
 		$content['profile'] = $APP->user->logged();
 
 		//============================================================================================================================

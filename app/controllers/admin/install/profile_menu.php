@@ -1,6 +1,6 @@
 <?php
 
-	$profilemenu['ru']['list'] = $APP->config->get();
+	$profilemenu['list'] = $APP->config->get();
 	
 	
 	
