@@ -37,6 +37,25 @@
 			$this->config = $config;
 		}
 
+		/**
+		* Механизм пересборки параметров правил роутинга
+		*
+		* @rules array
+		* return array
+		*/
+		protected function reassembly($rules)
+		{
+			$result = [];
+			foreach ($rules as $value)
+			{
+				//В том случае, если значение указано в формате json
+				if ($json = json_decode($value, true)) $value = $json;
+				//В том случае, если в конфиге укзаны правила массивом
+				(is_array($value)) ? $result += $value : $result[] = $value;
+			}
+			return $result;
+		}
+
 		public function match($url, array $sections=['hook', 'route'])
 		{
 			$result = [];
@@ -49,16 +68,15 @@
 							if ($record[1]=='>')
 							{
 								$result[] = ltrim($record, '=> ').$url;
-								return $result;
+								return $this->reassembly($result);
 							}
 
 							$result[] = ltrim($record, '= ');
-							return $result;
+							return $this->reassembly($result);
 						}
 						$result[] = $record[0]=='>' ? ltrim($record, '> ').$url : $record;
 					}
-
-			return $result;
+			return $this->reassembly($result);
 		}
 	}
 
