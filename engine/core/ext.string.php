@@ -31,8 +31,8 @@ function mb_str_replace_once($search, $replace, $text)
 //~ use function mb_str_replace_once as str_replace_once;
 
 
-function is_json($string)
+function is_json($string, bool $associative = null)
 {
-   json_decode($string);
-   return json_last_error() === JSON_ERROR_NONE;
+   $result = json_decode($string, $associative);
+   return (json_last_error() === JSON_ERROR_NONE) ? $result : null;
 }
