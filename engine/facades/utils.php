@@ -321,7 +321,6 @@
 				$new_filename = "$targetDir/$filename";
 			}
 
-
 			//Переместим свежий файл в целевую директорию
 			move_uploaded_file($tmpFileRecord['tmp_name'], $new_filename); //$_SERVER['CONTEXT_DOCUMENT_ROOT']
 
@@ -356,16 +355,18 @@
 					foreach	($_filelist as $_key => &$_file)
 					{
 						if (!is_array($_file))	continue;
+						$fileName = $uniqueName ? null : $_file['name'];
 						if ($_file['error'] == UPLOAD_ERR_OK)
-							$_file = $this->uploadMoveSingleFile($_file, $targetDir, $prefix);
+							$_file = $this->uploadMoveSingleFile($_file, $targetDir, $prefix, $fileName);
 					}
 						//~ $_file['new_file'] = $this->uploadMoveSingleFile($_file['tmp_name'], $targetDir);
 				}
 				else
 				{
 					//~ if (($_filelist['error']) and ($_filelist['error'] == UPLOAD_ERR_OK))
+					$fileName = $uniqueName ? null : $_filelist['name'];
 					if ($_filelist['error'] == UPLOAD_ERR_OK)
-						$this->uploadMoveSingleFile($_filelist, $targetDir, $prefix);
+						$this->uploadMoveSingleFile($_filelist, $targetDir, $prefix, $fileName);
 					//~ $_filelist['new_file'] = $this->uploadMoveSingleFile($_filelist['tmp_name'], $targetDir);
 				}
 			}
