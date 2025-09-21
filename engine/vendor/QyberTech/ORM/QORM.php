@@ -741,24 +741,36 @@
 				if ( ($args[0]) and (is_array($args[0])) )
 				{
 					$values = [];
+
 					//Собираем условие запроса
 					foreach ($args[0] as $key => $value)
 					{
 						//Если указан целый набор значений, то объдиним их в "in ()"
 						if (is_array($value))
 						{
-							if (!$value) continue;
-							//Рассчитаем и сгенерируем нужное количество вопросов в запросе
-							$inQuests = trim(str_repeat("?,", count($value)), ',');
-							$this->qinfo['where']['sql'][] = "\"$key\" in ($inQuests)";
-							$values = array_merge((array)$values, $value);
+							$enumeration = [];
+
+							//Если в массиве присутствует NULL значение, заберем из массива и обработаем отдельно, в соответствии с правилами SQL
+							$value = array_filter($value, function($ar_value) use ($key, &$enumeration)
+							{
+								return is_null($ar_value) ? ($enumeration[] = "\"$key\" IS NULL") && false : true;
+							});
+
+							//Если в массиве еще что-то осталось - разбираем и упаковываем в IN
+							if (!empty($value))
+							{
+								//Рассчитаем и сгенерируем нужное количество вопросов в запросе
+								$inQuests = trim(str_repeat("?,", count($value)), ',');
+								$enumeration[] = "\"$key\" in ($inQuests)";
+								$values = array_merge((array)$values, $value);
+							}
+							//Собираем перечень условий ($enumeration) в запрос
+							$this->qinfo['where']['sql'][] = implode(' OR ', $enumeration);
 						}
 						else if (($value === 'NULL') or ($value === NULL))
 						{
 							//Если передали NULL
 							$this->qinfo['where']['sql'][] = "\"$key\" IS NULL";
-							//Этот параметр больше не будет учавствовать в запросе
-							//~ unset($args[0][$key]);
 						}
 						else
 						{
@@ -769,8 +781,7 @@
 
 					$this->qinfo['where']['params'] = array_merge( (array) $this->qinfo['where']['params'], (array) $values );
 					//~ print_r($this->qinfo['where'][0]['sql']); die;
-					//Если все пусто - выходим
-					//~ if (count($values) == 0) return $this;
+					//~ print_r($this->qinfo['where']);
 
 					return $this;
 				}
