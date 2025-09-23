@@ -43,8 +43,9 @@
 			$_POST['id'] = $APP->catalog->items($_GET['catalog'])->insert($_POST)->lastInsertId();
 		}
 
+
 		//Перемещаем файлики
-		foreach	($FILES as $field => $files)
+		foreach ($FILES as $field => $files)
 		{
 			$folder = createCatalogDirectory($catalog, $APP->catalog->config());
 
@@ -77,6 +78,7 @@
 			//Если фалов на добавление нет - пропускаем итерацию
 			if (!$files) continue;
 
+
 			//Обновим свежеиспеченную запись полями загруженых файлов
 			if ($catalog['field'][$field]['type'] == 'files')
 			{//Если тип files - набор файлов, то реализуем другую обработку, с использование коллекций файлов
@@ -85,7 +87,9 @@
 				$APP->catalog->items($_GET['catalog'])->where(['id'=>$_POST['id']])->update([$field=>$processedFiles]);
 			}
 			else
-				$APP->catalog->items($_GET['catalog'])->where(['id'=>$_POST['id']])->update([$field=>current($files)]);
+			{
+				$APP->catalog->items($_GET['catalog'])->where(['id'=>$_POST['id']])->update([$field=>current($files)['filename']]);
+			}
 		}
 
 		if (!$APP->catalog->items($_GET['catalog'])->Commit())

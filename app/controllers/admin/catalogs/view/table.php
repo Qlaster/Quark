@@ -32,6 +32,7 @@
 
 	//~ print_r($content['catalog']); die;
 
+	$content['menu']['pages']['list'] = [];
 
 	//Сконструируем [+ меню пагинации +], если у нас больше записей чем выводим
 	if ($content['catalog']['count'] > count($content['catalog']['list']))
