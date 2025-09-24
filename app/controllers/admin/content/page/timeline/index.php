@@ -75,23 +75,9 @@
 		$previousPage = $currentPage;
 	}
 
-	$content['history']['list'] = array_reverse($history);
-
-	//~ $page =  $APP->page->get('index', '', '2021-11-17 15:47:35');
-
-	//~ print_r($history); die;
-
-	//~ print_r($versions); die;
-
-	//Подгружаем локаль конфига
-	//~ $content = array_merge($content, $config['ru']);
-
-	//Получаем текущий адрес
-	//~ $content['form']['edit']['url']['prefix'] = $APP->url->home();
-
+	$content['history']['list'] = array_reverse($history??[]);
 
 	$content['title'] = 'История изменения страницы: '.$_GET['url'];
-
 
 	//~ $themelink = $APP->url->home()."views/admin/";
 	$APP->template->file('admin/content/page.timeline.html')->display($content);
