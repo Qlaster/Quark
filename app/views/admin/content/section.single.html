@@ -24,9 +24,30 @@
 
 									<!--Пример блока данных с заполнением-->
 									{foreach $section['single']['list'] as $_block}
-									<div class="form-group"><label class="col-sm-2 control-label">{$_block['head']}</label>
-										<div class="col-sm-10"><input name="content[{$_block['name']}][data]" type="text" placeholder="" class="form-control" value="{$_block['text']}"></div>
+									<div class="form-group">
+										<label class="col-sm-2 control-label">{$_block['head']}</label>
+<!--
+										<div class="col-sm-10">
+											<input name="content[{$_block['name']}][data]" type="text" placeholder="" class="form-control" value="{$_block['text']}">
+										</div>
+-->
+										<div class="col-sm-10">
+												<div class="input-group">
+													<input name="content[{$_block['name']}][data]" type="text" placeholder="" class="form-control" value="{$_block['text']}">
+                                                    <span class="input-group-btn">
+<!--
+                                                        <a class="btn btn-white btn-bitbucket !ml-2 view-provider-button" data-target="#myModal5" !data-providerhandler="{$form['file']['providerhandler']}" #id="view-provider-button" title="Указать на файл" >
+															<i class="fa fa-file-o"></i>
+														</a>
+-->
+														<button type="button" class="btn btn-white btn-file-select" data-name="content[{$_block['name']}][data]" data-toggle="modal" data-target="#fileModal">
+															<i class="fa fa-file-o"></i>
+														</button>
+                                                    </span>
+                                                </div>
+                                        </div>
 									</div>
+
 <!--
 									<div class="hr-line-dashed"></div>
 -->
@@ -43,3 +64,59 @@
 							</div>
 						</div>
 					</div>
+
+
+					<div class="modal inmodal fade" id="fileModal" tabindex="-1" role="dialog"  aria-hidden="true">
+						<div class="modal-dialog modal-lg">
+							<div class="modal-content">
+								<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Закрыть</span></button>
+									<h4 class="modal-title">Медиафайлы</h4>
+									<!--
+										<small class="font-bold">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</small>
+										-->
+								</div>
+								<div class="modal-body m-none p-none">
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-white" data-dismiss="modal">Закрыть</button>
+									<button type="button" class="btn btn-primary btn-file-ok" data-dismiss="modal">Выбрать файл</button>
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+					<script>
+
+						$(".btn-file-ok").click(function ()
+						{
+							var val = $(this).closest(".modal-content").find("input[name='files-select']:checked").val();
+							if (!val)
+							{
+								toastr.warning("Выберите файл");
+								return false;
+							}
+
+							$(`input[name='${window.modalInputName}']`).val(val);
+							$("#fileModal").hide();
+						});
+
+						$(".btn-file-select").click(function ()
+						{
+							$(".modal-body").load("admin/content/mediafiles/listing");
+							window.modalInputName = $(this).data('name');
+							//~ var handler = $(this).data("htmlhandler")+$('#template_file').val();
+							//~ window.open(handler, '_blank');
+						});
+
+
+						function fileAttachSelect(elem)
+						{
+
+
+						}
+
+					</script>
+
+
