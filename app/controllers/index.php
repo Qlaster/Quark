@@ -70,5 +70,12 @@
 		//выводим используя встроенный шаблонизатор
 		$APP->template->file($page['html'])->display($content);
 	}
+	else
+	{
+		//Нет, страницы не нашли
+		$content = array();
+		http_response_code(404);
+	}
+
 
 
