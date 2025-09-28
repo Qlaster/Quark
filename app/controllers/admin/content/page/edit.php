@@ -33,7 +33,7 @@
 	$templateDir = $APP->template->config['templates']['folder']; //.DIRECTORY_SEPARATOR
 
 	//Прикрепляем список файлов html (для выбора шаблона)
-	$content['form']['file']['list'][$templateDir] = PageTools::scandirs($templateDir, '*.htm*');
+	//~ $content['form']['file']['list'][$templateDir] = PageTools::scandirs($templateDir, '*.htm*');
 	$content['form']['file']['list'] = PageTools::scandirs($templateDir, '*.htm*');
 
 	//Прикрепим ссылку на обработчик исходного кода

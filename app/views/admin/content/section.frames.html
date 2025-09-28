@@ -39,7 +39,7 @@
 
 									<div class="form-group ">
 
-										<div class="col-sm-2 !alert-danger !m-r-1">
+										<div class="col-sm-2 col-xs-12 !alert-danger !m-r-1">
 
 
 											<label class="checkbox-google" title="Отображать элемент на странице">
@@ -63,8 +63,8 @@
 											<label role="button" class="pull-right control-label well !alert-info" style="padding: 7px 10px">{$_block['head']}</label>
 										</div>
 
-										<div class="col-sm-4">
-												<select name="content[{$_block['name']}][data]" data-placeholder="Связать с объектом" class="chosen-select-deselect"  tabindex="2">
+										<div class="col-sm-4 col-xs-8">
+												<select name="content[{$_block['name']}][data]" data-placeholder="Связать с объектом" class="form-control chosen-select-deselect"  tabindex="2">
 													<option value=""></option>
 
 													{foreach $_block['select'] as $_object}
@@ -108,7 +108,7 @@
 
 										</div>
 
-										<div class="col-sm-1 row p-none">
+										<div class="col-sm-1 col-xs-4 !row p-none">
 
 											<div class="btn-group">
 												<button data-toggle="dropdown" title="Редактировать объекты" class="btn btn-white !btn-sm dropdown-toggle"><i class="fa fa-search"></i> <span class="caret"></span></button>
@@ -126,7 +126,7 @@
 											</div>
 										</div>
 
-										<div class="col-sm-5">
+										<div class="col-sm-5 col-xs-12">
 												<div class="input-group">
 													<input name="content[{$_block['edit']['name']}][data]" list="data-providers" type="text" placeholder="Путь поставщика данных или ссылку на ресурс" title="Поставщики данных находятся в app/providers" value="{$_block['edit']['value']}" class="form-control">
                                                     <span class="input-group-btn">
