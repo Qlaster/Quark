@@ -4,11 +4,12 @@
 				opacity:0.4;
 			}
 		</style>
+
         <div class="mediafiles !wrapper !wrapper-content">
             <div class="row">
                 <div class="col-lg-12 animated !sfadeInRight fadeInUp">
                     <div class="ibox float-e-margins">
-                        <div class="ibox-content">
+                        <div class="ibox-content p-sm">
                             <div class="file-manager !row">
 <!--
                                 <h5>Медиа:</h5>
@@ -20,7 +21,7 @@
 									{end}
 								</div>
 
-								<div class="col-md-4 p-l-none" style="max-width:300px">
+								<div class="col-md-4 col-xs-8 p-l-none" style="max-width:300px">
 									<div class="input-group">
 										<input type="text" class="form-control search-input">
 										<span class="input-group-btn">
@@ -36,7 +37,7 @@
 									<button class="btn btn-white {$_btnID} !col-xs-6" link="{$_button['link']}"><i class="fa {$_button['icon']}"></i> {$_button['head']}</button>
 									{end}
 
-									<input id="{$uid='upload-'.time()}" class="hidden" name="files" type="file"  onchange="uploadFile(this)">
+									<input id="{$uid='upload-'.time()}" class="hidden" name="files" type="file"  onchange="mediafilesUpload(this)">
 									<label class="btn btn-primary !btn-block " for="{$uid}">Загрузить файл</label>
                                 </div>
 
@@ -48,6 +49,10 @@
 
 
 							<div class="table-responsive">
+								{foreach $files['stat'] as $_stat}
+									<span class="m-r-md"><i class="fa {$_stat['icon']}"></i> {$_stat['text']}</span>
+								{end}
+
 								<table class="table table-striped">
 									<thead>
 									<tr>
@@ -77,9 +82,9 @@
 										<td class="word-break-all p-none"> <a href="{$_file['link']}" target="_blank" class="!well btn btn-white !p-xs !m-none !label !label-default"> {$_file['name']} </a></td>
 -->
 										<td class="word-break-all !p-none"> <a href="{$$_file['link']}" download target="_blank" title="Download" class="filename-table btn btn-white !well !p-xs m-none !label !label-default"> {$_file['name']} </a></td>
-										<td class="text-right">{$_file['hsize']}</td>
+										<td class="text-right">{$_file['size']}</td>
 										<td>{$_file['dir']}</td>
-										<td>{$_file['mime'][0]} {$_file['mime'][1]}</td>
+										<td>{$_file['ext']}</td>
 										<td>{$_file['mtime']}</td>
 									</tr>
 									{end}
@@ -133,53 +138,71 @@
     <script>
         $(document).ready(function()
         {
-            $('.i-checks').iCheck(
+            $('.mediafiles .i-checks').iCheck(
             {
 		        checkboxClass: 'icheckbox_square-green',
 		        radioClass: 'iradio_square-green',
 		    });
 
-            //~ $('.file-box').each(function()
-            //~ {
-                //~ animationHover(this, 'pulse');
-            //~ });
-
-            $('.btn-reload').click(function ()
+            $('.mediafiles .btn-reload').click(function ()
             {
                 btn = $(this);
-                simpleLoad(btn, true);
-
-				reloadFilesList(this, $(this).attr('link'));
-
-                simpleLoad(btn, false);
+                mediafilesAnimateLoad(btn, true);
+				mediafilesReload(this, $(this).attr('link'));
+                mediafilesAnimateLoad(btn, false);
             });
 
-   			$('.btn-format').click(function ()
+			$('.mediafiles .btn-format').click(function ()
             {
-				reloadFilesList(this, $(this).attr('link'));
+				mediafilesReload(this, $(this).attr('link'));
 			});
 
-			$('.search-input').on('input', function()
+			$('.mediafiles .btn-delete').click(function ()
+            {
+				if (!mediafilesSelected(this)?.length) return false;
+
+				if (confirm("Вы уверены, что хотите выполнить это действие?"))
+				{
+					console.log(mediafilesSelected(this));
+				}
+			});
+
+
+			$('.mediafiles .search-input').on('input', function()
 			{
 				let text = $(this).val();
 
-				$('.filename-table').each(function()
+				$('.mediafiles .filename-grid').each(function()
 				{
 					if ($(this).text().search(new RegExp(`${text}`, 'i')) < 0 && text != '')
 					{
-						$(this).closest('tr').hide("slow");
+						$(this).closest('.file-box').hide("slow");
 						//~ $(this).closest('.file-box').css("opacity", "0.15");
 
 					} else {
-						$(this).closest('tr').show("slow");
+						$(this).closest('.file-box').show("slow");
 						//~ $(this).closest('.file-box').css("opacity", "1");
 					}
 				});
 			});
         });
 
+		function mediafilesSelected(section)
+		{
+			var flist = section	? $(section).closest(".mediafiles").find("input[name='files-select']:checked")
+								: $(".mediafiles").find("input[name='files-select']:checked");
 
-		function uploadFile(elem)
+			var result = [];
+
+			flist.each(function( index )
+			{
+				result.push($( this ).val());
+			});
+
+			return result;
+		}
+
+		function mediafilesUpload(elem)
 		{
 
 			// создаем объект FormData, его будем передавать по Ajax
@@ -190,6 +213,10 @@
 
 			for (let i = 0; i < files.length; i++)
 			{
+				//~ console.log("Имя файла: " + files[i].name);
+				//~ console.log("Размер файла: " + files[i].size + " байт");
+				//~ console.log("Тип файла: " + files[i].type);
+
 				formData.append('uploadfile-'+i, files[i]);
 			}
 
@@ -211,13 +238,13 @@
 			});
 		}
 
-		function reloadFilesList(elem, url = "admin/content/mediafiles/listing")
+		function mediafilesReload(elem, url = "admin/content/mediafiles/listing")
 		{
 			elem ? $(elem).closest(".mediafiles").parent().load(url)
 				 : $(".mediafiles").parent().load(url);
 		}
 
-		function simpleLoad(btn, state)
+		function mediafilesAnimateLoad(btn, state)
 		{
 			if (state)
 			{

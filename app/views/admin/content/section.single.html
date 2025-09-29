@@ -92,7 +92,9 @@
 
 						$(".btn-file-ok").click(function ()
 						{
-							var val = $(this).closest(".modal-content").find("input[name='files-select']:checked").val();
+							//~ var val = $(this).closest(".modal-content").find("input[name='files-select']:checked").val();
+							//Механизм фрейма медиафайлов, для получения выделенных элементов
+							var val = mediafilesSelected()[0];
 							if (!val)
 							{
 								toastr.warning("Выберите файл");

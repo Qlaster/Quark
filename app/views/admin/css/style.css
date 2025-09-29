@@ -5159,7 +5159,24 @@ body.skin-3 {
 	width:90vw;
 }
 
+/*
 .modal-xl
 {
 	width:80vw;
+}
+*/
+
+
+@media (min-width: 992px)
+{
+  .modal-xl {
+    width: 100vw;
+  }
+}
+
+@media (min-width: 1200px)
+{
+  .modal-xl {
+    width: 80vw;
+  }
 }
