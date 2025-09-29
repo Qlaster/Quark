@@ -7,12 +7,14 @@
 
     <title>{$title}</title>
 
-    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap.css" rel="stylesheet">
     <link href="../font-awesome/css/font-awesome.css" rel="stylesheet">
     <link href="../css/animate.css" rel="stylesheet">
     <!-- Редакторы контента -->
     <link href="../css/plugins/summernote/summernote.css" rel="stylesheet">
+<!--
     <link href="../css/plugins/summernote/summernote-bs3.css" rel="stylesheet">
+-->
 	<!-- Переключатели и флажки -->
     <link href="../css/plugins/switchery/switchery.css" rel="stylesheet">
     <link href="../css/plugins/iCheck/custom.css" rel="stylesheet">
@@ -126,12 +128,12 @@
 
                                             <div class="col-sm-10">
                                                 <div class="input-group m-b">
-                                                    <span class="input-group-addon">{$form['edit']['url']['prefix']}</span>
+                                                    <span class="input-group-addon hidden-xs"><span class="hidden-xs">{$form['edit']['url']['prefix']}</span></span>
                                                     <input class="form-control" placeholder="" name="url" type="text" value="{$form['edit']['url']['text']}">
-                                                    <span class="input-group-btn">
-                                                        <a class="btn {$form['edit']['openpage']['class']} btn-bitbucket ml-2" href="{$form['edit']['openpage']['action']}" target="{$form['edit']['openpage']['target']}" title="{$form['edit']['openpage']['title']}">
+                                                    <span class="!input-group-btn input-group-addon">
+                                                        <a role="button" class="!btn {$form['edit']['openpage']['class']} !btn-bitbucket !ml-2" href="{$form['edit']['openpage']['action']}" target="{$form['edit']['openpage']['target']}" title="{$form['edit']['openpage']['title']}">
 															<i class="fa {$form['edit']['openpage']['icon']}"></i>
-															{$form['edit']['openpage']['head']}
+															<span class="hidden-xs">{$form['edit']['openpage']['head']}</span>
 														</a>
 													</span>
                                                 </div>
@@ -162,28 +164,17 @@
 
                                                 <div class="input-group">
 													<input class="form-control" type="text" id="template_file" name="html" value="{$form['edit']['html']['text']}">
-                                                    <span class="input-group-btn">
-<!--
-                                                        <button class="btn btn-primary" type="button">file
-                                                        </button>
--->
 
-                                                        <a class="btn btn-primary" data-toggle="modal" data-target="#ModalForm_HTML" >
-<!--
-															<i class="fa fa-list-ul"></i>
--->
-															<i class="fa fa-file-code-o"></i>
-															Выбрать файл
+                                                    <span class="input-group-btn">
+                                                        <a class="btn btn-primary " data-toggle="modal" data-target="#ModalForm_HTML" >
+															<i class="fa fa-file-code-o"></i> <span class="hidden-xs">Выбрать файл</span>
 														</a>
 
-                                                        <a class="btn btn-white btn-bitbucket ml-2" data-htmlhandler="{$form['file']['htmlhandler']}" id="view-html-button">
-															<i class="fa fa-slack"></i>
-<!--
-															<i class="fa fa-code"></i>
--->
-															Открыть код
+                                                        <a class="btn btn-white inline" data-htmlhandler="{$form['file']['htmlhandler']}" id="view-html-button">
+															<i class="fa fa-slack"></i> <span class="hidden-xs">Открыть код</span>
 														</a>
                                                     </span>
+
                                                 </div>
                                                 <span class="help-block m-b-none">{$form['edit']['html']['info']}</span>
                                             </div>
@@ -195,14 +186,16 @@
 										<div class="form-group">
                                             <label class="col-sm-2 control-label">{$form['edit']['public']['head']}</label>
                                             <div class="col-sm-10">
+												<div class="form-group col-md-6">
+													<input {$form['edit']['public']['text']} class="js-switch" name='public' type="checkbox" value='checked'/>
 
-												<input {$form['edit']['public']['text']} class="js-switch" name='public' type="checkbox" value='checked'/>
+													<label class="checkbox-inline i-checks">
+														<input {$form['edit']['sitemap']['text']} type="checkbox" name="sitemap" value="checked">
+														{$form['edit']['sitemap']['head']}
+													</label>
+												</div>
 
-												<label class="checkbox-inline i-checks">
-													<input {$form['edit']['sitemap']['text']} type="checkbox" name="sitemap" value="checked">
-													{$form['edit']['sitemap']['head']}
-												</label>
-
+<!--
 												{if $form['edit']['delay']}
 													<div class="pull-right">
 														<input name='time' type="text" class="form-control col-sm-1 col-md-1" style="width:5em;" value="00:00" pattern="([01]?[0-9]|2[0-3]):[0-5][0-9]">
@@ -215,6 +208,33 @@
 														<input {$form['edit']['delay']['text']} type="checkbox" name="index" value="checked">
 														{$form['edit']['delay']['head']}
 													</label>
+												{end}
+-->
+
+												{if $form['edit']['delay']}
+
+														<div class="!form-group !col-md-6 !col-xs-12 text-right !pull-right">
+
+															<label class="checkbox-inline i-checks m-b-md p-b-md !pull-right !col-md-4 !col-xs-12 p-r-md">
+																<input class="p-none" {$form['edit']['delay']['text']} type="checkbox" name="index" value="checked">
+																{$form['edit']['delay']['head']}
+															</label>
+
+															<div class="inline list-inline pull-right">
+																<input name='date' type="date" class="form-control inline !col-sm-2 !col-md-2" style="width:10em;" value="{echo date('d.m.Y')}">
+<!--
+															</div>
+															<div class="inline !list-inline">
+-->
+																<input name='time' type="time" class="form-control inline !col-sm-1 !col-md-1" style="width:7em;" value="00:00" pattern="([01]?[0-9]|2[0-3]):[0-5][0-9]">
+															</div>
+
+
+
+
+													</div>
+
+
 												{end}
 <!--
 												<label class="checkbox-inline"> При включенном состоянии данная страница будет добавлена в карту сайта </label>
@@ -395,7 +415,7 @@
 				{if $section}
 							<div class="col-lg-12">
 								<div class="ibox float-e-margins">
-									<div class="ibox-content">
+									<div class="ibox-content p-none">
 										{if $form['edit']['info']}
 										<div class="alert alert-warning">
 											{$$form['edit']['info']}

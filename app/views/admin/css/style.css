@@ -5146,3 +5146,20 @@ body.skin-3 {
     display: none;
   }
 }
+
+
+/* Additional extended types */
+.word-break-all
+{
+	word-break:break-all;
+}
+
+.modal-xxl
+{
+	width:90vw;
+}
+
+.modal-xl
+{
+	width:80vw;
+}

@@ -1,5 +1,6 @@
 <?php
 
+	namespace App\Facade;
 
 	use QyberTech\Presenter\Presenter;
 

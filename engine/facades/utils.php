@@ -21,7 +21,7 @@
 
 	*/
 
-	namespace unit\utils;
+	namespace App\Facade;
 
 	# ---------------------------------------------------------------- #
 	#                 РЕАЛИЗАЦИЯ   ИНТЕРФЕЙСА                          #
@@ -102,6 +102,7 @@
 		//Превращение массива со списком файлов в дерево
 		function listingToTree(array $listing = [], $delimiter=DIRECTORY_SEPARATOR)
 		{
+			$result = [];
 			foreach ($listing as $_item)
 			{
 				//Разложим путь на массив и обратим порядок в обратную сторону
@@ -371,6 +372,26 @@
 				}
 			}
 			return (array) $filesblocks;
+		}
+
+		/*
+		 * Форматирует размер в удобочитаемый вид с использованием подходящих единиц измерения.
+		 *
+		 * @param int $size Исходный размер в байтах.
+		 * @param array $units Массив единиц измерения (по умолчанию: байт, КБ, МБ, ГБ, ТБ).
+		 * @return string Отформатированное строковое представление размера с выбранной единицей измерения.
+		 */
+		function sizeFormatter(int $size, $units=['байт', 'КБ', 'МБ', 'ГБ', 'ТБ'])
+		{
+			$units = ['байт', 'КБ', 'МБ', 'ГБ', 'ТБ'];
+			$unitIndex = 0;
+
+			while ($size >= 1024 && $unitIndex < count($units) - 1) {
+				$size /= 1024;
+				$unitIndex++;
+			}
+
+			return str_replace(".00", "", number_format($size, 2) . ' ' . $units[$unitIndex]);
 		}
 
 

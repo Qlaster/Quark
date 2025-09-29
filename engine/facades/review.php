@@ -1,5 +1,5 @@
 <?php
-	namespace unit\review;
+	namespace App\Facade;
 
 /*
 	$blog->post->insert();

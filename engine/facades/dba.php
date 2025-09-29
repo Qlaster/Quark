@@ -1,5 +1,6 @@
 <?php
 
+	namespace App\Facade;
 
 	class Berkley_Adapter2
 	{

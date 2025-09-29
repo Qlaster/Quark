@@ -45,7 +45,7 @@
 	 * $APP->objects->rename('oldName', 'newName');
 	*/
 
-	namespace unit\objects;
+	namespace App\Facade;
 
 	# ---------------------------------------------------------------- #
 	#                 ЭКСПОРТИРУЕМ 	ИНТЕРФЕЙС                          #

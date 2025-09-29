@@ -1,5 +1,5 @@
 <?php
-	namespace unit\controller;
+	namespace App\Facade;
 
 	/*
 		Алгоритм работы механизма поддержки контроллеров следующий:

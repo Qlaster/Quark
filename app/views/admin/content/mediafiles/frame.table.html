@@ -1,0 +1,235 @@
+		<style>
+			.icon
+			{
+				opacity:0.4;
+			}
+		</style>
+        <div class="mediafiles !wrapper !wrapper-content">
+            <div class="row">
+                <div class="col-lg-12 animated !sfadeInRight fadeInUp">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-content">
+                            <div class="file-manager !row">
+<!--
+                                <h5>Медиа:</h5>
+-->
+
+								<div class="btn-group !pull-right">
+									{foreach $menu['format']['list'] as $_item}
+										<button class="btn btn-white btn-format {$_item['active']}" link="{$_item['link']}" type="button"><i class="fa {$_item['icon']}"></i></button>
+									{end}
+								</div>
+
+								<div class="col-md-4 p-l-none" style="max-width:300px">
+									<div class="input-group">
+										<input type="text" class="form-control search-input">
+										<span class="input-group-btn">
+											<button type="button" class="btn btn-white"><i class="fa fa-search"></i></button>
+										</span>
+									</div>
+								</div>
+
+
+
+								<div class="!btn-group pull-right">
+									{foreach $button as $_btnID => $_button}
+									<button class="btn btn-white {$_btnID} !col-xs-6" link="{$_button['link']}"><i class="fa {$_button['icon']}"></i> {$_button['head']}</button>
+									{end}
+
+									<input id="{$uid='upload-'.time()}" class="hidden" name="files" type="file"  onchange="uploadFile(this)">
+									<label class="btn btn-primary !btn-block " for="{$uid}">Загрузить файл</label>
+                                </div>
+
+                                <div class="clearfix"></div>
+                            </div>
+
+
+							<div class="hr-line-dashed m-sm"></div>
+
+
+							<div class="table-responsive">
+								<table class="table table-striped">
+									<thead>
+									<tr>
+										<th>#</th>
+										<th></th>
+										<th>Название </th>
+										<th>Размер </th>
+										<th>Путь </th>
+										<th>Тип</th>
+										<th>Изменено</th>
+									</tr>
+									</thead>
+									<tbody>
+
+									{foreach $files['list'] as $_index => $_file}
+									<tr>
+										<td> <input type="checkbox" name="files-select" value="{$_index}" class="i-checks"> </td>
+										<td class="!p-none">
+													{if     'image' == $_file['format']} <a class="image" target="_blank" href="{$_file['link']}" title="{$_file['name']}"> <img   style="height:40px" src="{$_file['link']}" loading="lazy"> </a>
+													{elseif 'video' == $_file['format']} <a class="image" target="_blank" href="{$_file['link']}" title="{$_file['name']}"> <video style="height:40px" src="{$_file['link']}#t=2"></video>   </a>
+													{elseif !$_file['format']}           <div class="icon">  <i class="fa fa-file"></i>                          </div>
+													{else}
+														<div class="icon"> <i class="{$_file['icon']} fa-2x"></i></div>
+													{end}
+										</td>
+<!--
+										<td class="word-break-all p-none"> <a href="{$_file['link']}" target="_blank" class="!well btn btn-white !p-xs !m-none !label !label-default"> {$_file['name']} </a></td>
+-->
+										<td class="word-break-all !p-none"> <a href="{$$_file['link']}" download target="_blank" title="Download" class="filename-table btn btn-white !well !p-xs m-none !label !label-default"> {$_file['name']} </a></td>
+										<td class="text-right">{$_file['hsize']}</td>
+										<td>{$_file['dir']}</td>
+										<td>{$_file['mime'][0]} {$_file['mime'][1]}</td>
+										<td>{$_file['mtime']}</td>
+									</tr>
+									{end}
+
+
+
+									</tbody>
+								</table>
+							</div>
+
+
+
+
+
+
+
+
+
+                        </div>
+                    </div>
+                </div>
+			</div>
+		</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <script>
+        $(document).ready(function()
+        {
+            $('.i-checks').iCheck(
+            {
+		        checkboxClass: 'icheckbox_square-green',
+		        radioClass: 'iradio_square-green',
+		    });
+
+            //~ $('.file-box').each(function()
+            //~ {
+                //~ animationHover(this, 'pulse');
+            //~ });
+
+            $('.btn-reload').click(function ()
+            {
+                btn = $(this);
+                simpleLoad(btn, true);
+
+				reloadFilesList(this, $(this).attr('link'));
+
+                simpleLoad(btn, false);
+            });
+
+   			$('.btn-format').click(function ()
+            {
+				reloadFilesList(this, $(this).attr('link'));
+			});
+
+			$('.search-input').on('input', function()
+			{
+				let text = $(this).val();
+
+				$('.filename-table').each(function()
+				{
+					if ($(this).text().search(new RegExp(`${text}`, 'i')) < 0 && text != '')
+					{
+						$(this).closest('tr').hide("slow");
+						//~ $(this).closest('.file-box').css("opacity", "0.15");
+
+					} else {
+						$(this).closest('tr').show("slow");
+						//~ $(this).closest('.file-box').css("opacity", "1");
+					}
+				});
+			});
+        });
+
+
+		function uploadFile(elem)
+		{
+
+			// создаем объект FormData, его будем передавать по Ajax
+			var formData = new FormData();
+
+			// Получаем список объектов File
+			var files = $(elem).get(0).files;
+
+			for (let i = 0; i < files.length; i++)
+			{
+				formData.append('uploadfile-'+i, files[i]);
+			}
+
+			$.ajax({
+				type: 'POST',
+				url: 'admin/content/mediafiles/listing', // Обработчик
+				data: formData,
+				processData: false,  // tell jQuery not to process the data
+				contentType: false,  // tell jQuery not to set contentType
+				success: function(data)
+				{
+					//~ toastr.success(data);
+					$(elem).closest(".mediafiles").parent().html(data);
+				},
+				error:  function()
+				{
+					toastr.warning(data);
+				}
+			});
+		}
+
+		function reloadFilesList(elem, url = "admin/content/mediafiles/listing")
+		{
+			elem ? $(elem).closest(".mediafiles").parent().load(url)
+				 : $(".mediafiles").parent().load(url);
+		}
+
+		function simpleLoad(btn, state)
+		{
+			if (state)
+			{
+				btn.children().addClass('fa-spin');
+				btn.contents().last().replaceWith(" Обновление");
+			} else {
+				setTimeout(function () {
+					btn.children().removeClass('fa-spin');
+					btn.contents().last().replaceWith(" Индексировать");
+				}, 2000);
+			}
+		}
+
+
+    </script>

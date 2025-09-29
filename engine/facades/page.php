@@ -1,5 +1,7 @@
 <?php
-	namespace unit\page;
+
+	namespace App\Facade;
+
 	use QyberTech\ContentManager\QPage;
 
  	# ---------------------------------------------------------------- #

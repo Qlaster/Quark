@@ -1,5 +1,6 @@
 <?php
-	namespace unit\provider;
+
+	namespace App\Facade;
 
 	/*
 		Алгоритм работы механизма поддержки контроллеров следующий:
@@ -56,7 +57,7 @@
 			//Создадим переменные окружения, которые передали для исполения
 			foreach ($_VARS as $_enviroment_var_name => $_enviroment_var_value) $$_enviroment_var_name = $_enviroment_var_value;
 			unset($_enviroment_var_name, $_enviroment_var_value);
-			
+
 			//Определим, сетевой путь или локальный
 			if (array_key_exists('scheme', parse_url($provider)))
 			{

@@ -1,5 +1,5 @@
 <?php
-	namespace App\Facades\Console;
+	namespace App\Facade\Console;
 
 	use QyberTech\Console\Traits\QPrint;
 	use QyberTech\Console\Commands\Service;

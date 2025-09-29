@@ -1,6 +1,6 @@
 <?php
 
-	namespace unit\db;
+	namespace App\Facade;
 	use QyberTech\ORM\QORM;
 
 	error_reporting(E_ALL & ~E_NOTICE);

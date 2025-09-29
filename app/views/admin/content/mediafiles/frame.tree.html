@@ -1,0 +1,294 @@
+
+		<!-- Простое css дерево без изысков -->
+		<link href="~/../../css/plugins/simpleTree/simpleTree.css" rel="stylesheet">
+
+        <div class="mediafiles !wrapper !wrapper-content">
+            <div class="row">
+                <div class="col-lg-12 animated !sfadeInRight fadeInUp">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-content">
+                            <div class="file-manager !row">
+<!--
+                                <h5>Медиа:</h5>
+-->
+
+								<div class="btn-group !pull-right">
+
+									<button class="btn btn-white" type="button"><i class="fa fa-indent"></i></button>
+									<button class="btn btn-white" type="button"><i class="fa fa-th-list"></i></button>
+									<button class="btn btn-white" type="button"><i class="fa fa-th-large"></i></button>
+								</div>
+
+								<div class="col-md-4 p-l-none" style="max-width:300px">
+									<div class="input-group">
+										<input type="text" class="form-control">
+										<span class="input-group-btn">
+											<button type="button" class="btn btn-white"><i class="fa fa-search"></i></button>
+										</span>
+									</div>
+								</div>
+
+
+
+								<div class="!btn-group pull-right">
+									<button class="btn btn-white reindex-btn "><i class="fa fa-refresh"></i> Индексировать</button>
+									<input id="{$uid='upload-'.time()}" class="hidden" name="files" type="file"  onchange="uploadFile(this)">
+									<label class="btn btn-primary !btn-block " for="{$uid}">Загрузить файл</label>
+                                </div>
+
+
+<!--
+                                <a href="#" class="file-control active">Ale</a>
+                                <a href="#" class="file-control">Documents</a>
+                                <a href="#" class="file-control">Audio</a>
+                                <a href="#" class="file-control">Images</a>
+-->
+
+
+<!--
+                                <div class="hr-line-dashed"></div>
+-->
+<!--
+                                <h5>Folders</h5>
+                                <ul class="folder-list" style="padding: 0">
+                                    <li><a href=""><i class="fa fa-folder"></i> Files</a></li>
+                                    <li><a href=""><i class="fa fa-folder"></i> Pictures</a></li>
+                                    <li><a href=""><i class="fa fa-folder"></i> Web pages</a></li>
+                                    <li><a href=""><i class="fa fa-folder"></i> Illustrations</a></li>
+                                    <li><a href=""><i class="fa fa-folder"></i> Films</a></li>
+                                    <li><a href=""><i class="fa fa-folder"></i> Books</a></li>
+                                </ul>
+-->
+<!--
+                                <h5 class="tag-title">Tags</h5>
+                                <ul class="tag-list" style="padding: 0">
+                                    <li><a href="">Family</a></li>
+                                    <li><a href="">Work</a></li>
+                                    <li><a href="">Home</a></li>
+                                    <li><a href="">Children</a></li>
+                                    <li><a href="">Holidays</a></li>
+                                    <li><a href="">Music</a></li>
+                                    <li><a href="">Photography</a></li>
+                                    <li><a href="">Film</a></li>
+                                </ul>
+-->
+                                <div class="clearfix"></div>
+                            </div>
+
+
+							<div class="hr-line-dashed m-sm"></div>
+
+							<?php
+								//Рисует дерево файлов
+								function PrintFiles($files, $path='')
+								{
+									echo "<ul>";
+									foreach ($files as $name => $value)
+									{
+										if (is_array($value))
+										{
+											echo "<li> <i class='fa fa-folder'> $name </i>";
+											PrintFiles($value, $path.$name.'/');
+										}
+										else
+										{
+
+											echo "<li> <a onclick=\"ModaForm_HTML_show(this.name)\" name='$path$value' data-dismiss='modal' class='fa fa-file-code-o'>  $value </a> </li>";
+										}
+									}
+									echo "</ul>";
+								}
+							?>
+
+							<ul	class="tree">
+								{PrintFiles($files['tree'])}
+							</ul>
+
+
+
+
+
+							<div class="table-responsive">
+								<table class="table table-striped">
+									<thead>
+									<tr>
+										<th>#</th>
+										<th></th>
+										<th>Название </th>
+										<th>Размер </th>
+										<th>Путь </th>
+										<th>Тип</th>
+										<th>Изменено</th>
+									</tr>
+									</thead>
+									<tbody>
+
+									{foreach $files['list'] as $_index => $_file}
+									<tr>
+										<td> <input type="checkbox" name="files-select" value="{$_index}" class="i-checks"> </td>
+										<td class="p-none"> {if $_file['mime']['0'] == 'image'} <img style="height:50px" src="{$_file['link']}"> {end}</td>
+<!--
+										<td class="word-break-all p-none"> <a href="{$_file['link']}" target="_blank" class="!well btn btn-white !p-xs !m-none !label !label-default"> {$_file['name']} </a></td>
+-->
+										<td class="word-break-all p-none"> <a href="{= $$_file['link']}" download target="_blank" class="!well btn btn-white !p-xs !m-none !label !label-default"> {$_file['name']} </a></td>
+										<td class="text-right">{$_file['hsize']}</td>
+										<td>{$_file['dir']}</td>
+										<td>{$_file['mime'][0]} {$_file['mime'][1]}</td>
+										<td>{$_file['mtime']}</td>
+									</tr>
+									{end}
+
+
+
+									</tbody>
+								</table>
+							</div>
+
+
+
+
+
+
+
+
+
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                </div>
+
+
+
+    <!-- Mainly scripts -->
+<!--
+    <script src="js/jquery-2.1.1.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+-->
+
+    <!-- Custom and plugin javascript -->
+<!--
+    <script src="js/inspinia.js"></script>
+    <script src="js/plugins/pace/pace.min.js"></script>
+-->
+
+    <script>
+        $(document).ready(function()
+        {
+            $('.i-checks').iCheck(
+            {
+		        checkboxClass: 'icheckbox_square-green',
+		        radioClass: 'iradio_square-green',
+		    });
+
+            $('.file-box').each(function()
+            {
+                animationHover(this, 'pulse');
+            });
+
+            $('.reindex-btn').click(function ()
+            {
+                btn = $(this);
+                simpleLoad(btn, true);
+
+				reloadFilesList(this);
+
+                // Ajax example
+//                $.ajax().always(function () {
+//                    simpleLoad($(this), false)
+//                });
+
+                simpleLoad(btn, false);
+            });
+
+            $('#imageFile').on("change", function()
+            {
+				uploadFile();
+
+			});
+        });
+
+
+		function uploadFile(elem)
+		{
+
+			// создаем объект FormData, его будем передавать по Ajax
+			var formData = new FormData();
+
+			// Получаем список объектов File
+			var files = $(elem).get(0).files;
+
+			for (let i = 0; i < files.length; i++)
+			{
+				//~ console.log("Имя файла: " + files[i].name);
+				//~ console.log("Размер файла: " + files[i].size + " байт");
+				//~ console.log("Тип файла: " + files[i].type);
+
+				formData.append('uploadfile-'+i, files[i]);
+			}
+
+			$.ajax({
+				type: 'POST',
+				url: 'admin/content/mediafiles/listing', // Обработчик
+				data: formData,
+				processData: false,  // tell jQuery not to process the data
+				contentType: false,  // tell jQuery not to set contentType
+				success: function(data)
+				{
+					//~ toastr.success(data);
+					$(elem).closest(".mediafiles").parent().html(data);
+				},
+				error:  function()
+				{
+					toastr.warning(data);
+				}
+			});
+		}
+
+		function reloadFilesList(elem)
+		{
+			elem ? $(elem).closest(".mediafiles").parent().load("admin/content/mediafiles/listing")
+				 : $(".mediafiles").parent().load("admin/content/mediafiles/listing");
+		}
+
+		function simpleLoad(btn, state)
+		{
+			if (state)
+			{
+				btn.children().addClass('fa-spin');
+				btn.contents().last().replaceWith(" Обновление");
+			} else {
+				setTimeout(function () {
+					btn.children().removeClass('fa-spin');
+					btn.contents().last().replaceWith(" Индексировать");
+				}, 2000);
+			}
+		}
+
+
+    </script>

@@ -1,7 +1,7 @@
 <?php
 
 	/*
-	 * URL
+	 * Account
 	 *
 	 * Управление пользователями
 	 * Регистрация, авторизация и прочие функции реализации аккаунт-менеджмента
@@ -12,7 +12,7 @@
 	 *
 	*/
 
-	namespace unit\account;
+	namespace App\Facade;
 
 	# ---------------------------------------------------------------- #
 	#                  ОПИСАНИЕ     ИНТЕРФЕЙСА                         #
@@ -25,7 +25,7 @@
 		public function login($login, $password);
 
 		// Вернет пользователя, который авторизирован (Если известен session_id - можно провести авторизацию по нему)
-		public function	logged($session_id=null);
+		public function logged($session_id=null);
 
 		// Завершает сессию авторезированного пользователя
 		public function logout($session_id=null);
