@@ -185,12 +185,26 @@
 
 			$('.mediafiles .btn-delete').click(function ()
             {
+				//Запросим выделенные файлики
+				var sfiles = mediafilesSelected(this);
 				//Ничего не выбрано
-				if (!mediafilesSelected(this)?.length) return false;
+				if (!sfiles?.length) return false;
 				//Не подтвердили
 				if (!confirm("Вы уверены, что хотите выполнить это действие?")) return false;
 
-				console.log(mediafilesSelected(this));
+				$.ajax({
+					type: 'POST',
+					url: 'admin/content/mediafiles/delete', // Обработчик
+					data: {'files[]': sfiles},
+					success: function(data)
+					{
+						mediafilesReload($('.mediafiles .btn-reload'), $('.mediafiles .btn-reload').attr('link'));
+					},
+					error:  function()
+					{
+						toastr.warning(data);
+					}
+				});
 			});
 
 			$('.mediafiles .search-input').on('input', function()
