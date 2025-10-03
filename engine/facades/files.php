@@ -9,6 +9,12 @@
 	class QFilesTools
 	{
 		public $umask = 0776;
+		public $config = [];
+
+		public function __construct($config)
+		{
+			$this->config = $config;
+		}
 
 		/**
 		 * Построение дерева файлов и директорий.
@@ -403,4 +409,4 @@
 
 	}
 
-	return new QFilesTools();
+	return new QFilesTools($this->config->get());

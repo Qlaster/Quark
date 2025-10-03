@@ -1,21 +1,21 @@
 <?php
 
-	$mediaDIR = ($_ENV['public']['path']??'public');
+	$config   = $APP->files->config['media'];
+	$mediaDIR = $config['folder']??'public';
 
 	if ($_FILES)
 	{
 		//Загрузим новые файлы
-		$config = $APP->config->get();
-		if (!$uploadDIR = $config['upload']['path']) $uploadDIR = 'media';
+		if (!$uploadDIR = $config['upload']) $uploadDIR = 'public/media';
 
-		$uploadDIR = $mediaDIR.DIRECTORY_SEPARATOR.$uploadDIR.DIRECTORY_SEPARATOR;
-		if (filter_var($config['upload']['groupdate'], FILTER_VALIDATE_BOOLEAN))	$uploadDIR .= date('Y-m-d');
+		//~ $uploadDIR = $mediaDIR.DIRECTORY_SEPARATOR.$uploadDIR.DIRECTORY_SEPARATOR;
+		if (filter_var($config['groupdate'], FILTER_VALIDATE_BOOLEAN))	$uploadDIR .= DIRECTORY_SEPARATOR.date('Y-m-d');
 
 		if (!is_dir($uploadDIR))
 			if (!mkdir($uploadDIR, 0777, true)) throw new Exception("Could not create directory $uploadDIR.");
 
 		//Перемещаем в директорию для медиа, указан, нужно ли генерировать уникальное имя
-		$APP->files->uploadMove($uploadDIR, filter_var($config['upload']['unique'], FILTER_VALIDATE_BOOLEAN), "");
+		$APP->files->uploadMove($uploadDIR, filter_var($config['unique'], FILTER_VALIDATE_BOOLEAN), "");
 	}
 
 	//определяем формат вывода (таблица, плитка и т.д.)
