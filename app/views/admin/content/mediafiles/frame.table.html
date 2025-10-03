@@ -47,11 +47,10 @@
 
 							<div class="hr-line-dashed m-sm"></div>
 
-
+							{foreach $files['stat'] as $_stat}
+								<span class="m-r-md"><i class="fa {$_stat['icon']}"></i> {$_stat['text']}</span>
+							{end}
 							<div class="table-responsive">
-								{foreach $files['stat'] as $_stat}
-									<span class="m-r-md"><i class="fa {$_stat['icon']}"></i> {$_stat['text']}</span>
-								{end}
 
 								<table class="table table-striped">
 									<thead>

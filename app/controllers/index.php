@@ -20,8 +20,8 @@
 	if (($page != null) and ($page['public']))
 	{
 
-		if (! isset($page['content'])) $page['content'] = array();
-		$content = array();
+		if (! isset($page['content'])) $page['content'] = [];
+		$content = [];
 
 		//да, страница существует - осуществляем небольшую предподготовку
 		foreach ($page['content'] as $name => &$tag)
@@ -73,7 +73,7 @@
 	else
 	{
 		//Нет, страницы не нашли
-		$content = array();
+		$content = [];
 		http_response_code(404);
 	}
 
