@@ -43,6 +43,12 @@
 		{require "../~section/title.html"}
 		<!-- End title menu -->
 
+		<style>
+			.btn-logo-remove
+			{
+				position:absolute;
+			}
+		</style>
 
         <form enctype="multipart/form-data" id="form-edit" method='post' action='admin/options/users/save'>
         <div class="wrapper wrapper-content">
@@ -70,9 +76,11 @@
 												<input type="hidden" name="login" value="{$user['login']}">
 											</div>
 												<!--Avatars-->
-												<label for="file-1">
+												<label for="file-1" style="width: 160px;  height: 160px;">
 												{if $user['logo']}
-													<img src="{$user['logo']}" style="max-height:160px; max-width:160px;" class="img-circle circle-border m-b-md" alt="profile">
+													<img src="{$user['logo']}?" class="img-circle circle-border !m-b-md img-circle-proportional" alt="profile">
+													<input type="hidden" name="logo" value="{$user['logo']}">
+													<button class="btn btn-default btn-white !btn-warning btn-circle btn-outline btn-logo-remove" type="button" ><i class="fa fa-times"></i></button>
 												{else}
 													<img src="~/../img/avatars/profile1.png" class="img-circle circle-border m-b-md" alt="profile">
 												{end}
@@ -118,11 +126,11 @@
 									<div class="form-group">
 										<div class="col-lg-12">
 											{if $user['login'] == ''}
-											<div class="has-success">
-												<span class="help-block m-b-none">Enter login new user</span>
-												<input type="text" placeholder="Login" class="form-control" name="login" required autocomplete="new-login">
-												<p></p>
-											</div>
+												<div class="has-success">
+													<span class="help-block m-b-none">Enter login new user</span>
+													<input type="text" placeholder="Login" class="form-control" name="login" required autocomplete="new-login">
+													<p></p>
+												</div>
 
 												<div class="has-success">
 													<input type="password" placeholder="Password" class="form-control" name="password" required autocomplete="new-password">
@@ -464,6 +472,12 @@
                     checkboxClass: 'icheckbox_square-green',
                     radioClass: 'iradio_square-green',
                 });
+
+                $('.btn-logo-remove').click(function()
+                {
+					$('input[name="logo"]').val("");
+					$('.img-circle').css('opacity','0.3');
+				});
             });
 
             function presetSave()
