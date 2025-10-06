@@ -1,15 +1,14 @@
 													<div class="ibox float-e-margins">
 														<div class="ibox-title">
 															<h5>{= $_field['alias'] ?? $_name}</h5>
+<!--
 															<button class="btn btn-primary btn-xs m-l-sm" onclick="edit('htmledit-{$_name}')" type="button">Править</button>
 															<button class="btn btn-primary  btn-xs" onclick="save('htmledit-{$_name}')" type="button">Сохранить</button>
+-->
 														</div>
 														<div class="ibox-content no-padding">
 															<input id="inputedit-{$_name}" type="hidden" name="{$_name}" value="{$_value}" class="form-control">
-															<div id="htmledit-{$_name}" data-input="inputedit-{$_name}" class="htmledit wrapper p-md ">
-																{$$_value}
-															</div>
-
+															<div id="htmledit-{$_name}" data-input="inputedit-{$_name}" class="htmledit !wrapper !p-md summernote">{$$_value}</div>
 														</div>
 													</div>
 
