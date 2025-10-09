@@ -81,8 +81,12 @@
 
 			//Обновим свежеиспеченную запись полями загруженых файлов
 			if ($catalog['field'][$field]['type'] == 'files')
-			{//Если тип files - набор файлов, то реализуем другую обработку, с использование коллекций файлов
+			{
+				//Если тип files - набор файлов, то реализуем другую обработку, с использование коллекций файлов
 				$processedFiles = $APP->catalog->items($_GET['catalog'])->where(['id'=>$_POST['id']])->select()[0][$field];
+				//багфикс с переводом в массив php 7.*, когда создается массив с пустым элементом
+				$processedFiles = ($processedFiles) ? (array) $processedFiles : [];
+
 				foreach ($files as $newFile) $processedFiles[md5($newFile['name'])] = $newFile;
 				$APP->catalog->items($_GET['catalog'])->where(['id'=>$_POST['id']])->update([$field=>$processedFiles]);
 			}
