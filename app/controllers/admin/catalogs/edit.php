@@ -8,7 +8,7 @@
 	if ($_GET['id'])
 		$record = $APP->catalog->items($_GET['catalog'])->where(['id'=>$_GET['id']])->select();
 
-	$content['record'] = current((array)$record);
+	$content['record'] = current((array) ($record??[]));
 
 
 	//Отрисуем

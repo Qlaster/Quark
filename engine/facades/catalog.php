@@ -145,9 +145,9 @@
 		public function get($catalogName=null)
 		{
 			$connectRecord = $this->config()['list'][$catalogName];
-			if (!$connectRecord)          throw new Exception("Not connection name", 1);
-			if (!$connectRecord['db'])    throw new Exception("Missing db name to connect $catalogName", 2);
-			if (!$connectRecord['table']) throw new Exception("Missing table name to connect $catalogName", 3);
+			if (!$connectRecord)          throw new \Exception("Not connection name", 1);
+			if (!$connectRecord['db'])    throw new \Exception("Missing db name to connect $catalogName", 2);
+			if (!$connectRecord['table']) throw new \Exception("Missing table name to connect $catalogName", 3);
 
 			$connectRecord['name'] = $catalogName;
 
@@ -193,7 +193,7 @@
 			$name = $catalog['name'];
 
 			$config = $this->config();
-			if ($config['list'][$name]) throw new Exception("Catalog is exists", 10);
+			if ($config['list'][$name]) throw new \Exception("Catalog is exists", 10);
 			$config['list'][$name] = $catalog;
 			$this->config($config);
 		}
@@ -216,14 +216,14 @@
 		private function catalogValidate($catalog)
 		{
 			//Фильтрация вводных данных
-			if (!$catalog['name']  = trim($catalog['name']))  throw new Exception("Not corrent catalog name", 4);
-			if (!$catalog['db']    = trim($catalog['db']))    throw new Exception("Not corrent db name", 5);
-			if (!$catalog['table'] = trim($catalog['table'])) throw new Exception("Not corrent table name", 6);
+			if (!$catalog['name']  = trim($catalog['name']))  throw new \Exception("Not corrent catalog name", 4);
+			if (!$catalog['db']    = trim($catalog['db']))    throw new \Exception("Not corrent db name", 5);
+			if (!$catalog['table'] = trim($catalog['table'])) throw new \Exception("Not corrent table name", 6);
 			//~ if (!$catalog['field'] or !is_array($catalog['field'])) throw new Exception("Not corrent fields", 7);
 
 			//Контроль состояния БД
-			if (!$this->dbInterface->connect($catalog['db'])) throw new Exception("DB not found", 8);
-			if (!$this->dbInterface->connect($catalog['db'])->table($catalog['table'])) throw new Exception("DB not found", 9);
+			if (!$this->dbInterface->connect($catalog['db'])) throw new \Exception("DB not found", 8);
+			if (!$this->dbInterface->connect($catalog['db'])->table($catalog['table'])) throw new \Exception("DB not found", 9);
 
 			return true;
 		}

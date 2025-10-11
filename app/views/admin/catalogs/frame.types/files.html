@@ -47,69 +47,8 @@
 
 		</ul>
 
-		<div hidden>
-			<table class="table table-hover no-margins">
-				<thead>
-					<tr>
-						<th>Status</th>
-						<th>Date</th>
-						<th>User</th>
-						<th>Value</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td><small>Pending...</small></td>
-						<td><i class="fa fa-clock-o"></i> 11:20pm</td>
-						<td>Samantha</td>
-						<td class="text-navy">
-							<div class="progress progress-small m-b-none">
-								<div style="width: 60%;" class="progress-bar"></div>
-							</div>
-						</td>
-					</tr>
-					<tr>
-						<td><span class="label label-warning">Canceled</span> </td>
-						<td><i class="fa fa-clock-o"></i> 10:40am</td>
-						<td>Monica</td>
-						<td class="text-navy"> <i class="fa fa-level-up"></i> 66% </td>
-					</tr>
-					<tr>
-						<td><small>Pending...</small> </td>
-						<td><i class="fa fa-clock-o"></i> 01:30pm</td>
-						<td>John</td>
-						<td class="text-navy"> <i class="fa fa-level-up"></i> 54% </td>
-					</tr>
-					<tr>
-						<td><small>Pending...</small> </td>
-						<td><i class="fa fa-clock-o"></i> 02:20pm</td>
-						<td>Agnes</td>
-						<td class="text-navy"> <i class="fa fa-level-up"></i> 12% </td>
-					</tr>
-					<tr>
-						<td><small>Pending...</small> </td>
-						<td><i class="fa fa-clock-o"></i> 09:40pm</td>
-						<td>Janet</td>
-						<td class="text-navy"> <i class="fa fa-level-up"></i> 22% </td>
-					</tr>
-					<tr>
-						<td><span class="label label-primary">Completed</span> </td>
-						<td><i class="fa fa-clock-o"></i> 04:10am</td>
-						<td>Amelia</td>
-						<td class="text-navy"> <i class="fa fa-level-up"></i> 66% </td>
-					</tr>
-					<tr>
-						<td><small>Pending...</small> </td>
-						<td><i class="fa fa-clock-o"></i> 12:08am</td>
-						<td>Damian</td>
-						<td class="text-navy"> <i class="fa fa-level-up"></i> 23% </td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
 
-
-		{foreach (array) $_value as $_fkey => $_fileitem}
+		{foreach $_value??[] as $_fkey => $_fileitem}
 		<div class="file-box" style="width:195px">
 			<div class="file ">
 
