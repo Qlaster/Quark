@@ -93,6 +93,10 @@
 			return $this->config['connect'];
 		}
 
+		public function save()
+		{
+			$this->APP->config->set($this->config);
+		}
 	}
 
 

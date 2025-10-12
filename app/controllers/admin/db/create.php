@@ -45,7 +45,7 @@
 
 
 				$APP->db->config['connect'][$head] = $connect;
-				$APP->db->config_save();
+				$APP->db->save();
 			}
 			catch (PDOException $e)
 			{
@@ -60,7 +60,7 @@
 				$DBH = new PDO("$type:engine/database/$dbname");
 				//~ print_r($connect); die;
 				$APP->db->config['connect'][$head] = $connect;
-				$APP->db->config_save();
+				$APP->db->save();
 			}
 			catch (PDOException $e)
 			{

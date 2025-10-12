@@ -8,7 +8,7 @@
 
 	$head = $_GET['head'];
 	unset($APP->db->config['connect'][$head]);
-	$APP->db->config_save();
+	$APP->db->save();
 
 	header("Location: {$_SERVER['HTTP_REFERER']}");
     exit;

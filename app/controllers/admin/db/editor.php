@@ -17,7 +17,7 @@
 			unset($_POST['name']);
 			//Создаем новые
 			$APP->db->config['connect'][$_POST['head']] = $_POST;
-			$APP->db->config_save();
+			$APP->db->save();
 
 			header("Location: connects");
 			exit;
