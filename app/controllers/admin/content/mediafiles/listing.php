@@ -52,6 +52,7 @@
 
 	$mimelist = array_key_column('mime', $APP->objects->collection('admin')->get('mimeicon')['list']);
 
+	$fullsize = 0;
 	//Собираем сводную информацию о файлах
 	foreach ($list as $file)
 	{
