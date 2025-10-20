@@ -272,8 +272,8 @@
 										</div>
 										<div class="col-sm-3">
 											<div class="input-group">
-												<input type="text" placeholder="Поиск" class="input-sm form-control" onkeyup="tableSearch(document.getElementById('table-page-list'), this)">
-												<span class="input-group-btn"><button type="button" class="btn btn-sm btn-primary"> Go!</button></span>
+												<input type="text" id="input-search" placeholder="Поиск страницы + enter" class="input-sm form-control" onchange="tableSearch(document.getElementById('table-page-list'), this)">
+												<label for="input-search" class="input-group-btn"><button type="button" class="btn btn-sm btn-primary"> <i class="fa fa-search"></i> </button></label>
 											</div>
 										</div>
 									</div>
