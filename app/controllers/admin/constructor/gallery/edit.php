@@ -31,7 +31,9 @@
 				chmod($path, 0777);
 			}
 
-			$new_filename = $path.uniqid().'.'.pathinfo($_file['name'])['extension'];
+			//Если файл с таким названием уже есть в каталоге, сгенерируем уникальное
+			$new_filename = file_exists($path.$_file['name'])	? $path.uniqid().'.'.pathinfo($_file['name'])['extension']
+																: $path.$_file['name'];
 
 			move_uploaded_file($_file['tmp_name'], $new_filename); //$_SERVER['CONTEXT_DOCUMENT_ROOT']
 			chmod($new_filename, 0776);
