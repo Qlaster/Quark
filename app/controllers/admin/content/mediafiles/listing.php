@@ -38,12 +38,16 @@
 	$content['button']['btn-reload']['head'] = "Обновить";
 	$content['button']['btn-reload']['icon'] = "fa-refresh";
 	$content['button']['btn-reload']['link'] = "admin/content/mediafiles/listing?format=$format&reload=1";
-
-
-
-
-	$list = $APP->files->listing($mediaDIR);
-	sort($list);
+	
+	
+	//Если есть кеш - будем использовать его
+	if (!$list = $APP->cache->get($config['cache']['key']??'quark:mediafiles') or $_GET['reload'])
+	{
+		$list = $APP->files->listing($mediaDIR);
+		sort($list);
+		$APP->cache->set($config['cache']['key']??'quark:mediafiles', $list, $config['cache']['time']??5000);
+	}
+	
 	$tree = $APP->files->listingToTree($list);
 
 	//~ $tree = $APP->utils->files->listingToTree($list);
