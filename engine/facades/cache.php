@@ -93,7 +93,8 @@
 			//Ищем возможность записать на доступных серверах
 			foreach ($this->config['servers'] as $current)
 			{
-				$result = $lifetime ? $this->mem_interface->set(md5($key), $value, time()+$lifetime) : $this->mem_interface->set( md5($key), $value );
+				//~ $result = $lifetime ? $this->mem_interface->set(md5($key), $value, time()+$lifetime) : $this->mem_interface->set( md5($key), $value ); //depricated
+				$result = $lifetime ? $this->mem_interface->set(md5($key), $value, $lifetime) : $this->mem_interface->set( md5($key), $value );
 
 				//Убеждаемся,что запись в кеш прошла без ошибок
 				if ( $this->mem_interface->getResultCode() == 0 ) return $result;
