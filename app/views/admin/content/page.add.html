@@ -118,8 +118,12 @@
                                 <!-- Начало страницы -->
                                 <!-- Управление параметрами страницы -->
                                 <div class="ibox-content">
-
-
+										{if $message['text']}
+										<div class="alert alert-{$message['type']??'warning'} alert-dismissable">
+											<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+											{$$message['text']}
+										</div>
+										{end}
 <!--
                                     <form name="formbasic" class="form-horizontal" method="get"  action="{$form['edit']['action']}" >
 -->

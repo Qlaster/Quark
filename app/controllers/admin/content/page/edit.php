@@ -118,9 +118,9 @@
 			}
 			else
 			{
-				//Если файл шаблона не найден
-				echo 'File themes not found: ';
-				echo $templateDir.$page['html'];
+				//Если файл шаблона не найден, сформируем предупреждение
+				$content['message'] = $content['message']['nothtml'];
+				$content['message']['text'] = sprintf($content['message']['text'], $templateDir.$page['html']);
 			}
 		}
 		else
