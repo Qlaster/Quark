@@ -42,9 +42,14 @@
 		$value['link_timeline'] = 'admin/content/page/timeline?url='.urlencode($value['url']).'&lang='.$value['lang'];
 
 		//Получим директорию с шаблонами
-		$templateDir = $APP->template->config['templates']['folder']; //.DIRECTORY_SEPARATOR
+		$templateDir			= $APP->template->config['templates']['folder']; //.DIRECTORY_SEPARATOR
 		$value['link_html']     = 'admin/tools/codeeditor?file='.$templateDir.DIRECTORY_SEPARATOR.urlencode($value['html']);
 	}
+
+	$content['menu']['tools'][1]['icon'] = "fa fa-wrench";
+	$content['menu']['tools'][1]['button'][1]['head'] = "Очистить историю изменений";
+	$content['menu']['tools'][1]['button'][1]['link'] = "admin/content/page/timeline/remove";
+
 
 
 	//~ $themelink = $APP->url->home()."views/admin/";

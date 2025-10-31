@@ -502,7 +502,7 @@
 		 * @return
 		 *
 		 */
-		public function clearing()
+		public function clear()
 		{
 			$table_page = $this->Table_Page;
 			$table_content = $this->Table_Content;
