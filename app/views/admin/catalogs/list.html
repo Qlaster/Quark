@@ -41,15 +41,30 @@
                                 <a class="collapse-link">
                                     <i class="fa fa-chevron-up"></i>
                                 </a>
+<!--
                                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                                     <i class="fa fa-wrench"></i>
                                 </a>
+                                
                                 <ul class="dropdown-menu dropdown-user">
-                                    <li><a href="#">Config option 1</a>
-                                    </li>
-                                    <li><a href="#">Config option 2</a>
-                                    </li>
+									{foreach $menu['tools']['list']}
+										<li><a href="#">Config option 1</a></li>
+									{end}
                                 </ul>
+-->
+                      			{foreach $menu['tools']['list'] as $_elem}
+									{if count($_elem['button'])}
+										<a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="{$_elem['icon']}"></i></a>
+										<ul class="dropdown-menu dropdown-user" style="margin-left:-15em; min-width:20em">
+											{foreach $_elem['button'] as $_btn}
+											<li><a href="{$_btn['link']}"><i class="{$_btn['icon']}"></i> {$_btn['head']}</a></li>
+											{end}
+										</ul>
+									{else}
+										<a href="{$_elem['link']}"><i class="{$_elem['icon']}"></i></a>
+									{end}
+								{end}          
+                                
                                 <a class="close-link">
                                     <i class="fa fa-times"></i>
                                 </a>
