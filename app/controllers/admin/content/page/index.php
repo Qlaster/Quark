@@ -48,6 +48,7 @@
 
 	$content['menu']['tools'][1]['icon'] = "fa fa-wrench";
 	$content['menu']['tools'][1]['button'][1]['head'] = "Очистить историю изменений";
+	$content['menu']['tools'][1]['button'][1]['icon'] = "fa fa-trash";
 	$content['menu']['tools'][1]['button'][1]['link'] = "admin/content/page/timeline/remove";
 
 
