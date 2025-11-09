@@ -80,7 +80,7 @@
 				if (!file_exists("$addonPath/$addon/menu.ini")) continue;
 				foreach	($addonMenu = $APP->config->get("$addonPath/$addon/menu.ini") as &$_item)
 					$_item['info'] = $_item['info'] ?? 'addon';
-				$content['nav']['main']['list'] = array_merge($addonMenu + $content['nav']['main']['list']);
+				$content['nav']['main']['list'] = array_merge($addonMenu + (array) $content['nav']['main']['list']);
 			}
 		}
 
