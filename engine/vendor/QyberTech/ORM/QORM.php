@@ -779,7 +779,7 @@
 						}
 					}
 
-					$this->qinfo['where']['params'] = array_merge( (array) $this->qinfo['where']['params'], (array) $values );
+					$this->qinfo['where']['params'] = array_merge( (array) $this->qinfo['where']['params'], (array) array_values($values) );
 					//~ print_r($this->qinfo['where'][0]['sql']); die;
 					//~ print_r($this->qinfo['where']);
 
