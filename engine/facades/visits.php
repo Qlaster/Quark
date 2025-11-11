@@ -111,6 +111,9 @@
 		function __destruct()
 		{
 			if (!$this->turn) return;
+			//Если не активно логирование - выходим
+			if (! boolval($this->config['enable'])) return false;
+
 			//Добавим время исполнения
 			$this->turn['data']['runtime']	= $this->runtime();
 			$this->turn['data']['mempeak']	= $this->mempeak();
@@ -209,9 +212,6 @@
 			//Если пользователь не промаркирован в рамках дня - ставим куку до конца этого дня
 			if ($this->is_unique())
 			{
-				//~ $date = getdate();
-				//~ $date = array_combine(['year', 'mon', 'mday'], explode('-', $this->date())); //Так получается быстрее, чем строка выше
-				//~ $lifetime = mktime(0,0,0, $date['mon'], $date['mday']+1, $date['year']);
 				//Ставим актуальную дату посещения (порядковый номер дня в году) и ставим куку до конца этого дня
 				setcookie($this->config['unique'], $this->date(), $_SERVER['REQUEST_TIME']+86400, $this->url->home());
 			}
@@ -251,10 +251,6 @@
 		public function is_unique()
 		{
 			return ! (isset($_COOKIE[$this->config['unique']]) and ($_COOKIE[$this->config['unique']] == $this->date()));
-			//~ return ! (isset($_COOKIE[$this->config['unique']]));
-
-			//~ if (isset($_COOKIE[$this->config['unique']]) and ($_COOKIE[$this->config['unique']] == $this->date())) return false;
-			//~ return true;
 		}
 
 
@@ -490,8 +486,6 @@
 				$file = file($cache_file);
 				//Если дата модификации файла совпадает - то считаем, что кеш валиден
 				if ($file[0] == filemtime($filename)) return unserialize($file[1]);
-				//Проверяем его валидность
-				//~ return unserialize(file_get_contents($cache_file));
 			}
 
 
