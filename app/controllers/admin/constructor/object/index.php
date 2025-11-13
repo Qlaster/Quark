@@ -50,17 +50,17 @@
 
 	foreach ($objects as $_object_name => $_object)
 	{
-		$d_collection = $_GET['collection'];   //Коллекция уже в base64 (к нам приходит в таком виде)
-		$d_object = ($_object_name);
+		$d_collection = (string) $_GET['collection'];   //Коллекция уже в base64 (к нам приходит в таком виде)
+		$d_object = (string) ($_object_name);
 
 		$item['head'] = $_object_name;
 		$item['link'] = "";
-		
-		
+
+
 		$item['button']['edit']['head'] = 'Конструктор';
 		$item['button']['edit']['link'] = $APP->url->home()."admin/constructor/object/edit?collection=".rawurlencode($d_collection)."&object=".rawurlencode($d_object);
 		$item['button']['edit']['icon'] = 'fa-puzzle-piece';
-		
+
 		$item['button']['editastext']['head'] = 'Редактор';
 		$item['button']['editastext']['link'] = $APP->url->home()."admin/constructor/object/plaintext/edit?collection=".rawurlencode($d_collection)."&object=".rawurlencode($d_object);
 		$item['button']['editastext']['icon'] = 'fa-th-list';
@@ -96,7 +96,7 @@
 		$content['catalog']['objects']['list'][] = $item;
 	}
 
-	$content['catalog']['objects']['button']['add']['link'] = $APP->url->home()."admin/constructor/object/edit?collection=".rawurlencode($_GET['collection']);
+	$content['catalog']['objects']['button']['add']['link'] = $APP->url->home()."admin/constructor/object/edit?collection=".rawurlencode($d_collection);
 
 	//~ $content['catalog']['objects'] =
 	$content['catalog']['objects']['list'] = (array) $content['catalog']['objects']['list'];
