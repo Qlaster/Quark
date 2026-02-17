@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>INSPINIA | Contacts</title>
+    <title>{$title}</title>
 
     <link href="../css/bootstrap.min.css" rel="stylesheet">
     <link href="../font-awesome/css/font-awesome.css" rel="stylesheet">
@@ -63,10 +63,15 @@
             <div class="col-lg-12">
                 <div class="ibox float-e-margins">
                     <div class="ibox-content text-center">
-						<h2></h2>
-						<a href='admin/options/users/edit'>
-							<button type="button" class="btn btn-outline btn-success" >Add new user</button>
+
+						<h2>{$menu['context']['head']}</h2>
+
+						{foreach $menu['context']['list'] as $_item}
+						<a href="{$_item['link']}">
+							<button type="button" class="btn btn-outline btn-success" ><i class="{$_item['icon']}"></i> {$_item['head']}</button>
 						</a>
+						{end}
+
 <!--
 						<button type="button" class="btn btn-block btn-outline btn-success">Add user</button>
 -->

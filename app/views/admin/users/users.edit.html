@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Profile</title>
+    <title>{$title}</title>
 
     <link href="../css/bootstrap.min.css" rel="stylesheet">
     <link href="../font-awesome/css/font-awesome.css" rel="stylesheet">
@@ -23,7 +23,9 @@
 <!--
 	<script>(function(e,t,n){var r=e.querySelectorAll("html")[0];r.className=r.className.replace(/(^|\s)no-js(\s|$)/,"$1js$2")})(document,window,0);</script>
 -->
+<!--
 	<base href="{$$base}">
+-->
 </head>
 
 <body>
@@ -281,7 +283,7 @@
                             <div class="ibox-tools mr-2">
 
                                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                                    <i class="fa fa-list"></i> Пресеты
+                                    <i class="fa fa-list"></i> Роли
                                 </a>
                                 <ul class="dropdown-menu dropdown-user">
 									<li><a onclick="presetSave()"><b>Сохранить текущий</b></a></li>

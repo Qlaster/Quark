@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{$title}</title>
+
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../css/animate.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+    <!-- Toastr style -->
+	<link href="../css/plugins/toastr/toastr.min.css" rel="stylesheet">
+    <link href="../css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="../css/plugins/input-file/component.css" rel="stylesheet">
+<!--
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
+-->
+
+<!--
+	<script>(function(e,t,n){var r=e.querySelectorAll("html")[0];r.className=r.className.replace(/(^|\s)no-js(\s|$)/,"$1js$2")})(document,window,0);</script>
+-->
+	<base href="{$$base}">
+</head>
+
+<body>
+    <div id="wrapper">
+
+     	<!--Главное меню слева-->
+		{require "../~section/mainmenu.html"}
+		<!--Конец меню-->
+
+        <div id="page-wrapper" class="gray-bg">
+
+		<!-- Head menu -->
+		{section "../~section/head.html"}
+		<!-- End head menu -->
+
+		<!-- Title menu-->
+		{require "../~section/title.html"}
+		<!-- End title menu -->
+
+		<style>
+			.btn-logo-remove
+			{
+				position:absolute;
+			}
+		</style>
+
+        <form enctype="multipart/form-data" id="form-edit" method='post' action='admin/options/users/save'>
+        <div class="wrapper wrapper-content">
+            <div class="row animated fadeInRight">
+                <div class="col-md-3">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                            <h5>Роли:</h5>
+
+							<div class="ibox-tools mr-2">
+
+								<button data-toggle="button" class="btn btn-xs btn-white btn-outline"  type="button" onclick="presetRename()">Переименовать</button>
+								<button data-toggle="button" class="btn btn-xs btn-danger btn-outline" type="button" onclick="presetDelete()"><i class="fa fa-trash"></i></button>
+
+<!--
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                    <i class="fa fa-list"></i> Роли
+                                </a>
+                                <ul class="dropdown-menu dropdown-user">
+									<li><a onclick="presetSave()"><b>Сохранить текущий</b></a></li>
+									<li><hr style="margin:0"></li>
+
+									{foreach (array) $menu['presets']['list'] as $_preset}
+										<li><a onclick="presetApply('{$_preset['head']}')">{$_preset['head']}</a></li>
+                                    {end}
+                                </ul>
+
+								<a class="collapse-link">
+									<i class="fa fa-chevron-up"></i>
+								</a>
+-->
+							</div>
+                        </div>
+
+                        <div class="widget-text-box">
+<!--
+                            <h4><strong>Учетная запись</strong></h4>
+-->
+
+<!--
+                            <button type="button" class="btn btn-outline btn-default btn-block">Default</button>
+-->
+
+							<div class="list-group">
+
+								{foreach $menu['presets']['list'] as $_item}
+									<a class="list-group-item {$_item['active']}" href="{$_item['link']}">
+										<span class="list-group-item-heading">{$_item['head']}</span>
+
+<!--
+										<button class="btn btn-danger btn-circle btn-outline pull-right m-0 p-0" type="button">
+											<i class="fa fa-trash"></i>
+										</button>
+-->
+<!--
+											<div class="btn-group">
+												<button data-toggle="dropdown" class="btn btn-white btn-xs dropdown-toggle">Действия <span class="caret"></span></button>
+												<ul class="dropdown-menu">
+													<li><a onclick="showRenameModal(`admin`, `admin/constructor/object/rename`, `mainmenu`)">Переименовать</a></li>
+													<li><a href="/REPOSITORY/GIT/qyber.tech/Quark/admin/constructor/object/export?collection=admin&amp;object=mainmenu">Экспортировать</a></li>
+													<li><a href="/REPOSITORY/GIT/qyber.tech/Quark/admin/constructor/object/del?collection=admin&amp;object=mainmenu">Удалить</a></li>
+												</ul>
+											</div>
+-->
+
+
+
+
+										{if $_item['info']}
+											<p class="list-group-item-text">{$_item['info']}</p>
+										{end}
+									</a>
+								{end}
+
+							</div>
+
+
+
+<!--
+                            {foreach $menu['presets']['list'] as $_item}
+								<button type="button" class="btn btn-outline btn-white btn-block text-left">{$_item['head']}</button>
+                            {end}
+-->
+
+                        </div>
+
+					</div>
+
+               </div>
+
+                <div class="col-md-9">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                            <h5>Доступ к методам</h5>
+                            <div class="ibox-tools mr-2">
+
+
+<!--
+								<button data-toggle="button" class="btn btn-xs btn-danger btn-outline" type="button"><i class="fa fa-trash"></i></button>
+								<button data-toggle="button" class="btn btn-xs btn-white btn-outline" type="button">Переименовать</button>
+-->
+								<button data-toggle="button" class="btn btn-xs btn-success btn-outline" type="button" onclick="presetCreate()">Сохранить как новую роль</button>
+								<button data-toggle="button" class="btn btn-xs btn-primary btn-outline" type="button" onclick="presetSave()">Сохранить</button>
+
+
+<!--
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                    <i class="fa fa-list"></i> Роли
+                                </a>
+                                <ul class="dropdown-menu dropdown-user">
+									<li><a onclick="presetSave()"><b>Сохранить текущий</b></a></li>
+									<li><hr style="margin:0"></li>
+
+									{foreach (array) $menu['presets']['list'] as $_preset}
+										<li><a onclick="presetApply('{$_preset['head']}')">{$_preset['head']}</a></li>
+                                    {end}
+                                </ul>
+
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+
+                                <a class="close-link">
+                                    <i class="fa fa-times"></i>
+                                </a>
+-->
+                            </div>
+                        </div>
+                        <div class="ibox-content">
+						<!--ACCESS LIST-->
+						<div>
+<!--
+									<div class="feed-element">
+										<div class="form-group">
+											<label class="col-sm-4 control-label">
+												 admin / options / page
+											</label>
+											<div class="col-sm-7">
+												<label class="checkbox-inline i-checks"><div class="icheckbox_square-green" style="position: relative;"><input type="checkbox" value="option1" style="position: absolute; opacity: 0;"></div> edit </label>
+												<label class="checkbox-inline i-checks"><div class="icheckbox_square-green" style="position: relative;"><input type="checkbox" value="option2" style="position: absolute; opacity: 0;"></div> page </label>
+												<label class="checkbox-inline i-checks"><div class="icheckbox_square-green" style="position: relative;"><input type="checkbox" value="option3" style="position: absolute; opacity: 0;"></div> list </label>
+												<label class="checkbox-inline i-checks"><div class="icheckbox_square-green" style="position: relative;"><input type="checkbox" value="option3" style="position: absolute; opacity: 0;"></div> index </label>
+											</div>
+										</div>
+									</div>
+-->
+									<!-- {= print_r($user['denied'])} -->
+
+									{foreach $denied as $_gname => $_group}
+										<div class="feed-element">
+											<div class="form-group">
+												<label class="col-sm-4 control-label">
+													 <i class="fa fa-circle text-navy"></i> <label class="text-navy">{echo end(explode('/', $_gname))}</label>
+													 <div class="pull-right">
+														<a class="btn btn-white btn-xs" onclick='$(".{= md5($_gname)}").prop("checked", false)'> <i class="fa fa-check-circle" ></i> </a>
+														<a class="btn btn-white btn-xs" onclick='$(".{= md5($_gname)}").prop("checked", true)'> <i class="fa fa-times-circle" ></i> </a>
+													 </div>
+													 <br>
+													 <i class="fa fa-folder"></i> {$_gname}
+<!--
+													 {$$_gname_decor = substr_replace($_gname, '/ <span class="label label-default">', strrpos($_gname, '/'), 1)."</span>" }
+-->
+
+<!--
+													 {$$_gname_decor = substr_replace($_gname, '/<label class="btn btn-white btn-sm"> ', strrpos($_gname, '/'), 1)."</label>" }
+-->
+													 <br>
+
+<!--
+													 <a class="btn btn-white btn-xs" data-toggle="tooltip" data-placement="top" title="" data-original-title="Reply"><i class="fa fa-check-square-o"></i> Все</a>
+													 <a class="btn btn-white btn-xs" data-toggle="tooltip" data-placement="top" title="" data-original-title="Reply"><i class="fa fa-square-o"></i> Очистить</a>
+-->
+												</label>
+												<div class="col-sm-8 p-0">
+													{foreach $_group as $_cntr}
+<!--
+														<div class="col-md-4">
+-->
+															<div class="col-md-4">
+																<div class="checkbox" >
+																	<input id="checkInfo-{= ++$_i}" type="checkbox" name="denied[{$_cntr['fullname']}]" {if $_cntr['denied']} checked {end}  data-info="{$_cntr['fullname']}" value="action" class="{= md5($_gname)} denied-checkbox !input-mini" />
+																	<label for="checkInfo-{$_i}"><span style="font-size:15px">{$_cntr['filename']}</span></label>
+																</div>
+
+<!--
+																<div class="checkbox" >
+																	<label class="checkbox" for="checkInfo-{= ++$_i}">
+																		<input id="checkInfo-{$_i}" type="checkbox" name="access[{$_cntr['fullname']}]" value="action" class="{= md5($_gname)} !input-mini">{$_cntr['filename']}
+																	</label>
+																</div>
+-->
+															</div>
+
+
+<!--
+															<label class="!checkbox-inline !i-checks"><div class="!icheckbox_square-green" style="position: relative;"><input type="checkbox" class="{= md5($_gname)} checkbox_square-green" name="{$_cntr['fullname']}" value="action" style="position: absolute; !opacity: 0;"></div>  {$_cntr['filename']} </label>
+-->
+<!--
+														</div>
+-->
+													{end}
+<!--
+													<label class="checkbox-inline i-checks"><div class="icheckbox_square-green" style="position: relative;"><input type="checkbox" value="option2" style="position: absolute; opacity: 0;"></div> page </label>
+													<label class="checkbox-inline i-checks"><div class="icheckbox_square-green" style="position: relative;"><input type="checkbox" value="option3" style="position: absolute; opacity: 0;"></div> list </label>
+													<label class="checkbox-inline i-checks"><div class="icheckbox_square-green" style="position: relative;"><input type="checkbox" value="option3" style="position: absolute; opacity: 0;"></div> index </label>
+-->
+												</div>
+											</div>
+										</div>
+
+										<div class="hr-line-dashed"></div>
+									{end}
+
+
+						</div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        </form>
+
+            <!-- Footer block -->
+            {require "../~section/footer.html"}
+            <!-- End Footer block -->
+
+
+        </div>
+        </div>
+
+
+
+	<style>
+		/*** custom checkboxes ***/
+
+		input[type=checkbox] { display:none; } /* to hide the checkbox itself */
+		input[type=checkbox] + label:before
+		{
+		  font-family: FontAwesome;
+		  font-size:1.5em;
+		  display: inline-block;
+		}
+
+		/* unchecked icon */
+		input[type=checkbox] + label:before
+		{
+			content: "\f058";
+			color:#18a689;
+			letter-spacing: 5px;
+		}
+
+		/* checked icon */
+		input[type=checkbox]:checked + label:before
+		{
+			content: "\f057";
+			letter-spacing: 5px;
+			color:#ed5565;
+		}
+
+
+		input[type=checkbox] + label:before >  span:before
+		{
+			content: "\f058";
+			color:#0000FF;
+			letter-spacing: 5px;
+		}
+
+
+	</style>
+
+    <!-- Mainly scripts -->
+    <script src="../js/jquery-2.1.1.js"></script>
+    <script src="../js/bootstrap.js"></script>
+    <script src="../js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="../js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+    <!-- Custom and plugin javascript -->
+    <script src="../js/inspinia.js"></script>
+    <script src="../js/plugins/pace/pace.min.js"></script>
+
+    <!-- Peity -->
+    <script src="../js/plugins/peity/jquery.peity.min.js"></script>
+
+    <!-- Peity -->
+    <script src="../js/demo/peity-demo.js"></script>
+
+    <!-- Toastr script -->
+    <script src="../js/plugins/toastr/toastr.min.js"></script>
+
+    <!-- iCheck -->
+    <script src="../js/plugins/iCheck/icheck.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                $('.i-checks').iCheck({
+                    checkboxClass: 'icheckbox_square-green',
+                    radioClass: 'iradio_square-green',
+                });
+
+                $('.btn-logo-remove').click(function()
+                {
+					$('input[name="logo"]').val("");
+					$('.img-circle').css('opacity','0.3');
+				});
+            });
+
+            function presetCreate()
+			{
+				var newname = prompt('Введите название пресета', '');
+				if (newname == null) return false;
+				$.ajax({
+					type: 'POST',
+						url: "admin/options/users/presets/set?name="+encodeURI(newname), // Обработчик
+						data: $("#form-edit").serialize(),
+						success: function(data)
+						{
+							toastr.success(data);
+							location.href = "admin/options/users/presets/";
+						},
+						error:  function(data)
+						{
+							toastr.warning(data);
+						}
+				});
+
+			}
+
+			function presetSave()
+			{
+				const urlParams = new URLSearchParams(window.location.search);
+				const name = urlParams.get('name');
+
+				if (name == null) return false;
+
+				$.ajax({
+					type: 'POST',
+						url: "admin/options/users/presets/set?name="+encodeURI(name), // Обработчик
+						data: $("#form-edit").serialize(),
+						success: function(data)
+						{
+							toastr.success(data);
+							//~ location.href = "admin/options/users/presets/?name="+encodeURI(name);
+						},
+						error:  function(data)
+						{
+							toastr.warning(data);
+						}
+				});
+
+			}
+
+			function presetRename()
+			{
+				const urlParams = new URLSearchParams(window.location.search);
+				const name = urlParams.get('name');
+
+				if (!name) return false;
+
+				var newname = prompt('Введите название пресета', name);
+				if (newname == null) return false;
+
+				$.ajax({
+					type: 'POST',
+						url: "admin/options/users/presets/rename?name="+encodeURI(name), // Обработчик
+						data: {name: newname},
+						success: function(data)
+						{
+							toastr.success(data);
+							location.href = "admin/options/users/presets/?name="+encodeURI(newname);
+						},
+						error:  function(data)
+						{
+							toastr.warning(data);
+						}
+				});
+
+			}
+
+			function presetDelete()
+			{
+				const urlParams = new URLSearchParams(window.location.search);
+				const name = urlParams.get('name');
+
+				if (!confirm(`Удалить роль ${name}?`)) return false;
+
+				$.ajax({
+					type: 'POST',
+						url: "admin/options/users/presets/delete", // Обработчик
+						data: {name: name},
+						success: function(data)
+						{
+							toastr.success(data);
+							location.href = "admin/options/users/presets/";
+						},
+						error:  function(data)
+						{
+							toastr.warning(data);
+						}
+				});
+
+			}
+
+			function presetApply(name)
+			{
+				$.ajax({
+					type: 'POST',
+						url: "admin/options/users/presets/get?name="+encodeURI(name), // Обработчик
+						success: function(data)
+						{
+							$('.denied-checkbox').prop("checked", false);
+							for (var key in data)
+							{
+								$('[data-info="'+key+'"]').prop("checked", true);
+							}
+
+							toastr.success('Готово');
+						},
+						error:  function(data)
+						{
+							toastr.warning('Возникла ошибка применения пресета');
+						}
+				});
+			}
+
+        </script>
+
+
+    <!--Input file-->
+    <script src="../js/plugins/input-file/custom-file-input.js"></script>
+
+</body>
+
+</html>

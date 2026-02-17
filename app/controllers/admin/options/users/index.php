@@ -7,9 +7,14 @@
 
 	$content['catalog']['users']['list'] = $APP->user->all();
 
+	$content['title'] = 'Пользователи';
+
+	$content['menu'] = $APP->config->get()['menu'];
 
 	//Что бы по алфавиту логинов=)
 	//ksort($content['catalog']['users']['list']);
+
+
 
 	//Крепим ссылки
 	foreach ($content['catalog']['users']['list'] as &$user)
@@ -18,4 +23,4 @@
 	}
 
 
-	$APP->template->file('admin/users/users_list.html')->display($content);
+	$APP->template->file('admin/users/users.list.html')->display($content);
