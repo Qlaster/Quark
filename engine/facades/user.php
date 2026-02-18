@@ -397,6 +397,22 @@
 
 			return $this->config_interface->set($config);
 		}
+
+		function delete($name)
+		{
+			//Загрузим конфиг
+			$config = (array) $this->config_interface->get();
+			unset($config['presets'][$name]);
+			return $this->config_interface->set($config);
+		}
+
+		function rename($oldName, $newName)
+		{
+			$config = (array) $this->config_interface->get();
+			$config['presets'][$newName] = $config['presets'][$oldName];
+			unset($config['presets'][$oldName]);
+			return $this->config_interface->set($config);
+		}
 	}
 
 

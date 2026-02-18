@@ -210,7 +210,7 @@ class Controller implements QControllerInterface
      * Получает список всех контроллеров
      * @return array
      */
-	public function all($path='', $ext='*.php')
+	public function fetch($path='', $ext='*.php')
 	{
 		$pathCtl = rtrim($this->config['folder'], '/').DIRECTORY_SEPARATOR.$path;
 		return $this->interfaces->files->listing($pathCtl, $ext);
