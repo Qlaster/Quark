@@ -149,20 +149,22 @@
 			$fp=opendir($folder);
 			while($cv_file=readdir($fp))
 			{
-				if(is_file($folder.DIRECTORY_SEPARATOR.$cv_file))
+				//~ $filename = rtrim($folder, '/').DIRECTORY_SEPARATOR.$cv_file;
+				$filename = str_replace('//', DIRECTORY_SEPARATOR, $folder.DIRECTORY_SEPARATOR.$cv_file);
+				if (is_file($filename))
 				{
 					if ($mask !== null)
 					{
-						if (fnmatch($mask, $folder.DIRECTORY_SEPARATOR.$cv_file)) $all_files[]=$folder.DIRECTORY_SEPARATOR.$cv_file;
+						if (fnmatch($mask, $filename)) $all_files[] = $filename;
 					}
 					else
 					{
-						$all_files[]=$folder.DIRECTORY_SEPARATOR.$cv_file;
+						$all_files[] = $filename;
 					}
 				}
-				elseif ($cv_file!="." && $cv_file!=".." && is_dir($folder.DIRECTORY_SEPARATOR.$cv_file))
+				elseif ($cv_file!="." && $cv_file!=".." && is_dir($filename))
 				{
-					$this->listing($folder.DIRECTORY_SEPARATOR.$cv_file, $mask, $all_files);
+					$this->listing($filename, $mask, $all_files);
 				}
 			}
 			closedir($fp);

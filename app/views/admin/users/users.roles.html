@@ -432,6 +432,7 @@
 			{
 				const urlParams = new URLSearchParams(window.location.search);
 				const name = urlParams.get('name');
+				if (!name) return false;
 
 				if (!confirm(`Удалить роль ${name}?`)) return false;
 
