@@ -1129,6 +1129,19 @@
 		}
 
 
+		/*
+		 *
+		 * name: Случайная запись по условию
+		 * @param (integer) $limit
+		 * @return (mix)
+		 *
+		 */
+		function random($limit = 1)
+		{
+			return $this->OrderBy("RANDOM()")->limit($limit);
+		}
+
+
 
 		/*
 		 *
