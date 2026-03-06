@@ -1169,6 +1169,55 @@
 		}
 
 
+		function import($file, $options=['delimiter'=>';', 'quotes'=>'"'], $fields = [])
+		{
+			//Вынимаем имя таблицы имя таблицы
+			if (!$table = $this->qinfo['table']) throw new Exception('Enter a table name');
+
+			// Проверяем, доступ к файлу
+			if (!file_exists($file)) throw new Exception('File not found');
+
+			$delimiter	= $options['delimiter']	? $options['delimiter']	: ';';
+			$quotes		= $options['quotes']	? $options['quotes']	: '"';
+
+			// Проверяем, что файл открылся корректно
+			if (!$fp = fopen($file, 'r'))
+				throw new Exception("Error open file '$file'");
+
+			// Читаем первые 3 байта, чтобы проверить BOM
+			$bom = fread($fp, 3);
+			$bomBytes = [0xEF, 0xBB, 0xBF];
+
+			// Проверяем наличие BOM
+			$hasBom = (isset($bom[0], $bom[1], $bom[2])
+				&& ord($bom[0]) === $bomBytes[0]
+				&& ord($bom[1]) === $bomBytes[1]
+				&& ord($bom[2]) === $bomBytes[2]);
+
+			// BOM отсутствует, возвращаем указатель файла назад
+			if (!$hasBom) rewind($fp);
+
+			//Определимся с порядком импортируемых полей
+			if (!$fields) $fields = array_keys($this->columns());
+
+			//Смысл кода ниже в том, что если транзакция открыта до нас - мы ее не трогаем и выполняемся внутри
+			//Но если транзакции нет, мы ее обхявляем и сами закрываем в конце
+			if (!$openTR = $this->inTransaction()) $this->beginTransaction();
+
+			// Разберем CSV файл
+			while (($row = fgetcsv($fp, 0, $delimiter, $quotes))!== FALSE)
+			{
+				$record = array_combine($fields, $row);
+				$this->from($table)->insert($record);
+			}
+
+			if (!$openTR) $this->Commit();
+
+			return true;
+		}
+
+
+
 		public function __get($method)
 		{
 			switch ($method)
