@@ -69,7 +69,7 @@
 					: $uploadDIR.DIRECTORY_SEPARATOR.$file['name'];
 
 				//Переместим файл в целевой каталог
-				if (! move_uploaded_file($file['tmp_name'], $filename) )
+				if (! rename($file['tmp_name'], $filename) )
 					exit("Не удалось обработать файлы (ошибка записи): $filename");
 
 				unset($file['tmp_name']);
