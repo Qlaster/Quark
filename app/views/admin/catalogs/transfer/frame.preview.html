@@ -1,0 +1,34 @@
+
+
+<table class="table table-bordered !table-striped table-striped-columns">
+<!--
+  <caption> </caption>
+-->
+  <thead>
+    <tr>
+		{foreach $table['rows'][0] as $_colNum => $_head}
+		<th>
+			<select class="form-control" name="field[{$_colNum}]">
+				{foreach $table['cols'] as $_colName => $_field}
+				<option value="{$_colName}">[{$_colName}] {$_field['alias']}</option>
+				{end}
+			</select>
+		</th>
+		{end}
+    </tr>
+  </thead>
+  <tbody>
+
+	{foreach $table['rows'] as $_record}
+	<tr>
+		{foreach $_record as $_cell}
+		<td>{$_cell}</td>
+		{end}
+    </tr>
+	{end}
+  </tbody>
+</table>
+
+
+
+

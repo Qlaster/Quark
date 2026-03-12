@@ -9,7 +9,7 @@
 
 	foreach ($content['catalogs']['list'] as $catalogName => &$_catalog)
 	{
-		$_catalog['icon'] = $_catalog['icon'] ?? 'fa-table';
+		$_catalog['icon'] = $_catalog['icon'] ?? 'fa fa-table';
 
 		if ($APP->db->connect($_catalog['db']) and ($_catalog['table']))
 		{
@@ -17,13 +17,14 @@
 			$_catalog['status']['connect'] = 'active';
 			continue;
 		}
-		$_catalog['status']['icon'] = 'fa-plug';
+		//~ $_catalog['status']['icon'] = 'fa fa-plug';
+		$_catalog['status']['icon'] = 'fa fa-low-vision';
 		$_catalog['status']['tone'] = 'text-danger';
 		$_catalog['status']['info'] = 'Соединение с БД недоступно';
 	}
 
 	$content['patterns']['list'] = $APP->catalog->patterns();
-	
+
 	$content['menu']['tools']['list'][1]['icon'] = "fa fa-wrench";
 	$content['menu']['tools']['list'][1]['button'][1]['head'] = "Конфигурация справочников";
 	$content['menu']['tools']['list'][1]['button'][1]['icon'] = "fa fa-cogs";
