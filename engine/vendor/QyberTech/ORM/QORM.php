@@ -950,11 +950,16 @@
 		 * @return ORM instance
 		 *
 		 */
-		public function limit($limit, $offset=null)
+		public function limit($limit=null, $offset=null)
 		{
+			//Сбрасываем limit, если не передали параметров
+			if (count(func_get_args()) == null) $this->qinfo['limit'] = '';
+			//Очищаем limit, если пришло пустое значение
+			if (in_array($limit, ['', null])) $this->qinfo['limit'] = '';
+
 			if (is_numeric($limit))		$this->qinfo['limit'] .= " LIMIT $limit";
 			if (is_numeric($offset))	$this->qinfo['limit'] .= " OFFSET $offset";
-			//$this->qinfo['limit'] = " LIMIT $limit, $offset";
+
 			return $this;
 		}
 
