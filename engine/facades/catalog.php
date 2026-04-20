@@ -80,7 +80,8 @@
 			$orderby = $params['orderby'] ? $params['orderby'] : $catalog['events']['view']['orderby'] ?? null;
 			$where   = $params['where']   ? $params['where']   : $catalog['events']['view']['where']   ?? null;
 
-			$limit   = $params['limit']   ? $params['limit']   : $this->config()['view']['limit'] ?? null;
+			//~ $limit   = $params['limit']   ? $params['limit']   : $this->config()['view']['limit'] ?? null;
+			$limit   = $params['limit']   ? $params['limit']   : null;
 			$offset  = $params['offset']  ? $params['offset']  : null;
 			$like    = $params['like']    ? $params['like']    : null;
 
@@ -127,6 +128,9 @@
 			$catalog['name']   = $catalogName;
 			//Получим актуальные поля
 			$catalog['field']  = $catalog['field'] ?? $this->fields($catalogName);
+
+			$params['limit'] = $params['limit'] ?? $this->config()['view']['limit'] ?? null;
+
 			//Запросим содержимое
 			$catalog['list']   = $this->items($catalogName, $params)->select($column);
 			//количество актуальных записей
