@@ -311,11 +311,13 @@
 						}
 					});
 
-
-					$('.btn-htmlview').click(function()
-					{
+					$('.btn-htmlview').click(function() {
 						var html = $(this).data('value');
-						$("#modal-body").html(html);
+
+						// Очищаем HTML, предотвращая выполнение скриптов
+						var cleanHtml = DOMPurify.sanitize(html, { USE_PROFILES: { html: true } });
+
+						$("#modal-body").html(cleanHtml); // Вставляем очищенный HTML
 					});
 
 					$('.btn-delete').click(function()
