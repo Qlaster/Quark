@@ -47,10 +47,10 @@
 
 
 	$objects = (array) $APP->object->collection((urldecode((string)$_GET['collection'])))->all();
+	$d_collection = (string) $_GET['collection'];   //Коллекция
 
 	foreach ($objects as $_object_name => $_object)
 	{
-		$d_collection = (string) $_GET['collection'];   //Коллекция уже в base64 (к нам приходит в таком виде)
 		$d_object = (string) ($_object_name);
 
 		$item['head'] = $_object_name;
