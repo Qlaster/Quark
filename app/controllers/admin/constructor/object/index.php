@@ -14,6 +14,42 @@
 
 	foreach ($collection_list as $_collection_name)
 	{
+		    $item = [
+				'head' => $_collection_name,
+				'link' => $APP->url->home().$APP->url->page().'?collection='.rawurlencode(($_collection_name)),
+				'icon' => 'fa fa-database',
+				'active' => (bool) ($_GET['collection'] == $_collection_name)
+			];
+
+			// Действия для коллекции
+			$item['button']['actions'] = [
+				'head' => 'Действия',
+				'list' => [
+					[
+						'head' => 'Переименовать',
+						'data-link' => 'admin/constructor/object/rename',
+						'data-collection' => $_collection_name
+					],
+					[
+						'head' => 'Дублировать',
+						'link' => 'admin/constructor/object/copy?collection=' . rawurlencode($_collection_name)
+					],
+					[
+						'head' => 'Удалить',
+						'link' => 'admin/constructor/object/drop?collection=' . rawurlencode($_collection_name)
+					],
+					[
+						'head' => 'Экспортировать',
+						'link' => 'admin/constructor/object/export?collection=' . rawurlencode($_collection_name)
+					]
+				]
+			];
+
+		$content['catalog']['collection']['list'][] = $item;
+		continue;
+
+
+		//TODO: Предыдущая ветка кода для тестиования
 		unset($item);
 		if ($_GET['collection'] == $_collection_name) $item['active'] = true;
 		$item['head'] = $_collection_name;
@@ -53,23 +89,34 @@
 	{
 		$d_object = (string) ($_object_name);
 
-		$item['head'] = $_object_name;
-		$item['link'] = "";
+		$item = [
+			'head' => $_object_name,
+			'link' => ""
+		];
+
+		$item['button']['edit'] = [
+			'head'  => 'Конструктор',
+			'link'  => $APP->url->home() . "admin/constructor/object/edit?collection=" . rawurlencode($d_collection) . "&object=" . rawurlencode($d_object),
+			'icon'  => 'fa-puzzle-piece',
+			'class' => 'btn-success btn-outline'
+		];
 
 
-		$item['button']['edit']['head'] = 'Конструктор';
-		$item['button']['edit']['link'] = $APP->url->home()."admin/constructor/object/edit?collection=".rawurlencode($d_collection)."&object=".rawurlencode($d_object);
-		$item['button']['edit']['icon'] = 'fa-puzzle-piece';
+		$item['button']['editastext'] = [
+			'head' => 'Редактор',
+			'link' => $APP->url->home() . "admin/constructor/object/plaintext/edit?collection=" . rawurlencode($d_collection) . "&object=" . rawurlencode($d_object),
+			'icon' => 'fa-th-list',
+			'class' => 'btn-success btn-outline'
+		];
 
-		$item['button']['editastext']['head'] = 'Редактор';
-		$item['button']['editastext']['link'] = $APP->url->home()."admin/constructor/object/plaintext/edit?collection=".rawurlencode($d_collection)."&object=".rawurlencode($d_object);
-		$item['button']['editastext']['icon'] = 'fa-th-list';
+		$item['button']['timeline'] = [
+			'head' => 'История',
+			'link' => $APP->url->home() . "admin/constructor/object/timeline/?collection=" . rawurlencode($d_collection) . "&name=" . rawurlencode($d_object),
+			'icon' => 'fa-history'
+		];
 
-		$item['button']['timeline']['head'] = 'История';
-		$item['button']['timeline']['link'] = $APP->url->home()."admin/constructor/object/timeline/?collection=".rawurlencode($d_collection)."&name=".rawurlencode($d_object);
-		$item['button']['timeline']['icon'] = 'fa-history';
 
-		$item['button']['actions']['head'] = 'Действия';
+		//~ $item['button']['actions']['head'] = 'Действия';
 		//~ $item['button']['actions']['list'][0]['head'] = 'Открыть в конструкторе';
 		//~ $item['button']['actions']['list'][0]['link'] = $APP->url->home()."admin/constructor/object/edit?collection=".rawurlencode($d_collection)."&object=".rawurlencode($d_object);
 		//~ $item['button']['actions']['list'][1]['head'] = 'Открыть в редакторе';
@@ -77,18 +124,37 @@
 		//~ $item['button']['actions']['list'][2]['head'] = 'Открыть в приложении';
 		//~ $item['button']['actions']['list'][2]['link'] = '';
 
-		$item['button']['actions']['list'][3]['head'] = 'Переименовать';
-		$item['button']['actions']['list'][3]['data-link'] = 'admin/constructor/object/rename';
-		$item['button']['actions']['list'][3]['data-collection'] = $d_collection;
-		$item['button']['actions']['list'][3]['data-object'] = $_object_name;
-		$item['button']['actions']['list'][4]['head'] = 'Экспортировать';
-		$item['button']['actions']['list'][4]['link'] = $APP->url->home()."admin/constructor/object/export?collection=".rawurlencode($d_collection)."&object=".rawurlencode($d_object);
-		//~ $item['button']['actions']['list'][5]['head'] = 'Импортировать';
-		//~ $item['button']['actions']['list'][5]['link'] = '';
-		$item['button']['actions']['list'][6]['head'] = 'Удалить';
-		$item['button']['actions']['list'][6]['link'] = $APP->url->home()."admin/constructor/object/del?collection=".rawurlencode($d_collection)."&object=".rawurlencode($d_object);
+		//~ $item['button']['actions']['list'][3]['head'] = 'Переименовать';
+		//~ $item['button']['actions']['list'][3]['data-link'] = 'admin/constructor/object/rename';
+		//~ $item['button']['actions']['list'][3]['data-collection'] = $d_collection;
+		//~ $item['button']['actions']['list'][3]['data-object'] = $_object_name;
+		//~ $item['button']['actions']['list'][4]['head'] = 'Экспортировать';
+		//~ $item['button']['actions']['list'][4]['link'] = $APP->url->home()."admin/constructor/object/export?collection=".rawurlencode($d_collection)."&object=".rawurlencode($d_object);
+		//~ ////~ $item['button']['actions']['list'][5]['head'] = 'Импортировать';
+		//~ ////~ $item['button']['actions']['list'][5]['link'] = '';
+		//~ $item['button']['actions']['list'][6]['head'] = 'Удалить';
+		//~ $item['button']['actions']['list'][6]['link'] = $APP->url->home()."admin/constructor/object/del?collection=".rawurlencode($d_collection)."&object=".rawurlencode($d_object);
 
 
+		$item['button']['actions'] = [
+				'head' => 'Действия',
+				'list' => [
+					[
+						'head' => 'Переименовать',
+						'data-link' => 'admin/constructor/object/rename',
+						'data-collection' => $d_collection,
+						'data-object' => $_object_name
+					],
+					[
+						'head' => 'Экспортировать',
+						'link' => $APP->url->home() . 'admin/constructor/object/export?collection=' . rawurlencode($d_collection) . '&object=' . rawurlencode($d_object)
+					],
+					[
+						'head' => 'Удалить',
+						'link' => $APP->url->home() . 'admin/constructor/object/del?collection=' . rawurlencode($d_collection) . '&object=' . rawurlencode($d_object)
+					]
+				]
+			];
 
 		// Лучше иметь удаление в 2 клика, чем в 1. Вынес в меню
 		// $item['button']['delete']['head'] = 'Удалить';
