@@ -106,7 +106,7 @@
 		 * @return void
 		 *
 		 */
-		function __construct($PDO_interface, $Table='items', $Table_Content='content')
+		function __construct($PDO_interface, $Table='items', $TableTimeline='timeline')
 		{
 
 			//Если переданный клас не является PDO, то показываем ошибку
@@ -134,6 +134,9 @@
 			//Объявляем имена таблиц
 			$this->Table = $Table;
 			//~ $this->Table_Content 	= $Table_Content;
+
+			// Инициализация Timeline
+			$this->timeline = new timeline($this->PDO_INTERFACE, $TableTimeline, $Table);
 
 			//Построим таблицы, если их нет
 			$this->DBConstruct();
@@ -208,8 +211,24 @@
 		//Записываем объект
 		public function set($name, $value)
 		{
+
 			$table = $this->Table;
-			$value = serialize($value);
+
+			// Проверяем: объект существует? → update, иначе → insert
+			$existing = $this->get($name);
+			$action   = ($existing !== null) ? 'update' : 'insert';
+			$value    = serialize($value);
+
+			// Сохраняем предыдущее состояние
+			if ($existing !== null)
+			{
+				$this->timeline->insert([
+					'collection' => $this->current_collection,
+					'name' => $name,
+					'value' => serialize($existing),
+					'action' => $action
+				]);
+			}
 
 			$STH = $this->PDO_INTERFACE->prepare("REPLACE INTO '$table' ('collection', 'name', 'value') VALUES (:collection, :name, :value)");
 
@@ -258,6 +277,18 @@
 		public function del($name)
 		{
 			$table = $this->Table;
+			$existing = $this->get($name);
+
+			if ($existing !== null)
+			{
+				// Логируем удаление
+				$this->timeline->insert([
+					'collection' => $this->current_collection,
+					'name' => $name,
+					'value' => serialize($existing),
+					'action' => 'delete'
+				]);
+			}
 
 			$STH = $this->PDO_INTERFACE->prepare("DELETE FROM '$table' WHERE (collection = :collection and name = :name);");
 
@@ -487,11 +518,250 @@
 	}
 
 
+	//~ class timeline
+	//~ {
+
+		//~ function insert(array $record)
+		//~ {
+
+		//~ }
+
+
+		//~ function select(array $where)
+		//~ {
+
+		//~ }
+
+
+
+		//~ function delete(array $where)
+		//~ {
+
+
+		//~ }
+
+		//~ function restore($from, $to)
+		//~ {
+
+
+		//~ }
+
+	//~ }
+
+		class timeline
+		{
+			/** @var \PDO */
+			private $PDO;
+
+			/** @var string Таблица истории */
+			private $table;
+
+			/** @var string Таблица основных объектов (для restore) */
+			private $objectsTable;
+
+			/**
+			 * @param \PDO   $PDO
+			 * @param string $table        Имя таблицы истории
+			 * @param string $objectsTable Имя основной таблицы объектов
+			 */
+			public function __construct(\PDO $PDO, string $table = 'timeline', string $objectsTable = 'items')
+			{
+				$this->PDO         = $PDO;
+				$this->table       = $table;
+				$this->objectsTable = $objectsTable;
+				$this->DBConstruct();
+			}
+
+			/**
+			 * Создаёт таблицу истории и индексы, если их нет
+			 */
+			private function DBConstruct()
+			{
+				$t = $this->table;
+
+				//`id`         INTEGER PRIMARY KEY AUTOINCREMENT,
+				$this->PDO->exec("CREATE TABLE IF NOT EXISTS `$t` (
+					`collection` TEXT,
+					`name`       TEXT,
+					`value`      TEXT,
+					`date`       TEXT,
+					`action`     TEXT
+				);");
+
+				$this->PDO->exec("CREATE INDEX IF NOT EXISTS 'tl_idx_collection' ON `$t` (`collection`);");
+				$this->PDO->exec("CREATE INDEX IF NOT EXISTS 'tl_idx_name'       ON `$t` (`name`);");
+				$this->PDO->exec("CREATE INDEX IF NOT EXISTS 'tl_idx_date'       ON `$t` (`date`);");
+			}
+
+			/**
+			 * Записывает снимок объекта в историю.
+			 * Вызывается из методов Objects ДО выполнения изменения.
+			 *
+			 * @param string      $collection Коллекция
+			 * @param string      $name       Имя объекта
+			 * @param string|null $value      Сериализованное значение объекта (null — объекта не было)
+			 * @param string      $action     Тип действия: insert | update | delete | rename
+			 */
+			public function insert(array $record): bool
+			{
+				if (!$record) return false;
+
+				$t    = $this->table;
+				$date = date('Y-m-d H:i:s');
+
+				list($collection, $name, $value, $action) = [$record['collection'], $record['name'], $record['value'], $record['action']];
+
+				$STH = $this->PDO->prepare(
+					"INSERT INTO `$t` (collection, name, value, date, action)
+					 VALUES (:collection, :name, :value, :date, :action)"
+				);
+
+				$STH->bindValue(':collection', $collection);
+				$STH->bindValue(':name',       $name);
+				$STH->bindValue(':value',      $value);
+				$STH->bindValue(':date',       $date);
+				$STH->bindValue(':action',     $action);
+
+				return $STH->execute();
+			}
+
+			/**
+			 * Выборка записей из истории по произвольным условиям.
+			 *
+			 * Пример:
+			 *   $timeline->select(['collection' => 'fruits', 'name' => 'apple'])
+			 *   $timeline->select(['collection' => 'fruits', 'action' => 'delete'])
+			 *
+			 * @param array $where Ассоциативный массив условий [поле => значение]
+			 * @return array
+			 */
+			public function select(array $where): array
+			{
+				$t          = $this->table;
+				$conditions = [];
+				$params     = [];
+
+				foreach ($where as $key => $val)
+				{
+					$conditions[] = "`$key` = :$key";
+					$params[":$key"] = $val;
+				}
+
+				$sql = "SELECT * FROM `$t`";
+
+				if (!empty($conditions))
+					$sql .= " WHERE " . implode(' AND ', $conditions);
+
+
+				$sql .= " ORDER BY `date` DESC";
+
+				$STH = $this->PDO->prepare($sql);
+				$STH->execute($params);
+
+				return $STH->fetchAll(\PDO::FETCH_ASSOC);
+			}
+
+			/**
+			 * Удаление записей из истории по условиям.
+			 *
+			 * Пример:
+			 *   $timeline->delete(['collection' => 'fruits', 'name' => 'apple'])
+			 *   $timeline->delete(['collection' => 'fruits']) // вся история коллекции
+			 *
+			 * @param array $where Ассоциативный массив условий [поле => значение]
+			 * @return bool
+			 */
+			public function delete(array $where): bool
+			{
+				$t          = $this->table;
+				$conditions = [];
+				$params     = [];
+
+				foreach ($where as $key => $val)
+				{
+					$conditions[] = "`$key` = :$key";
+					$params[":$key"] = $val;
+				}
+
+				$sql = "DELETE FROM `$t`";
+
+				if (!empty($conditions))
+					$sql .= " WHERE " . implode(' AND ', $conditions);
+
+
+				$STH = $this->PDO->prepare($sql);
+				return $STH->execute($params);
+			}
+
+			/**
+			 * Восстанавливает объект из истории в основную таблицу.
+			 *
+			 * @param array      $from Условия поиска снимка в истории.
+			 *                         Например: ['collection' => 'fruits', 'name' => 'apple', 'date' => '2024-01-15 10:00:00']
+			 *                         Берётся первая запись (самая свежая по дате ≤ указанной).
+			 * @param array|null $to   Куда восстановить ['collection' => ..., 'name' => ...].
+			 *                         Если null — восстанавливает на то же место.
+			 * @return bool
+			 */
+			public function restore(array $from, $to = null): bool
+			{
+				// Строим запрос с поддержкой диапазона дат (берём снимок НА конкретную дату)
+				$t          = $this->table;
+				$conditions = [];
+				$params     = [];
+
+				foreach ($from as $key => $val)
+				{
+					if ($key === 'date') {
+						// Ищем последний снимок на указанную дату или раньше
+						$conditions[] = "`date` <= :date";
+						$params[':date'] = $val;
+					} else {
+						$conditions[] = "`$key` = :$key";
+						$params[":$key"] = $val;
+					}
+				}
+
+				$sql = "SELECT * FROM `$t`";
+
+				if (!empty($conditions))
+					$sql .= " WHERE " . implode(' AND ', $conditions);
+
+
+				$sql .= " ORDER BY `date` DESC LIMIT 1";
+
+				$STH = $this->PDO->prepare($sql);
+				$STH->execute($params);
+				$record = $STH->fetch(\PDO::FETCH_ASSOC);
+
+				if (!$record)
+					return false; // Снимок не найден
+
+
+				// Определяем целевые collection и name
+				$targetCollection = $to['collection'] ?? $record['collection'];
+				$targetName       = $to['name']       ?? $record['name'];
+
+				// Восстанавливаем объект в основную таблицу
+				$itemsTable = $this->objectsTable;
+				$STH = $this->PDO->prepare(
+					"REPLACE INTO `$itemsTable` (collection, name, value) VALUES (:collection, :name, :value)"
+				);
+				$STH->bindValue(':collection', $targetCollection);
+				$STH->bindValue(':name',       $targetName);
+				$STH->bindValue(':value',      $record['value']);
+
+				return $STH->execute();
+			}
+		}
+
+
+
 
 	# ---------------------------------------------------------------- #
 	# --------------[ СОЗДАЕМ И ПОДКЛЮЧАЕМ ИНТЕРФЕЙС ]---------------- #
 	# ---------------------------------------------------------------- #
 	$config = $this->config->get(__FILE__);
-	return new Objects( new \PDO($config['db']['pdo']), $config['table']['items'] );
+	return new Objects( new \PDO($config['db']['pdo']), $config['table']['items'], $config['table']['timeline'] );
 
 
