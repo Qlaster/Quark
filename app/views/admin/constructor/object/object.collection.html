@@ -109,7 +109,7 @@
 													{foreach ($_value['button']) as $_button}
 														{if isset($_button['list'])}
 															<div class="btn-group pull-right">
-																<button data-toggle="dropdown" class="btn btn-success btn-xs dropdown-toggle">{$_button['head']} <span class="caret"></span></button>
+																<button data-toggle="dropdown" class="btn btn-success btn-outline btn-xs dropdown-toggle">{$_button['head']} <span class="caret"></span></button>
 																<ul class="dropdown-menu">
 																{foreach $_button['list'] as $_submenu_btn}
 																	<li class="p-none" ><a style="padding: 3px" {if $_submenu_btn['link']}href="{$_submenu_btn['link']}"{end} {if $_submenu_btn['data-collection']} onclick="showRenameModal(`{$_submenu_btn['data-collection']}`, `{$_submenu_btn['data-link']}`)" {end}> {$_submenu_btn['head']}</a></li>
@@ -211,16 +211,16 @@
 											<table class="table table-striped table-bordered table-hover dataTables-example" >
 												<thead>
 													<tr>
-														<th>Название объекта</th>
-														<th class="col-lg-5"></th>
+														<th class="font-noraml">Название объекта</th>
+														<th class="col-lg-6"></th>
 													</tr>
 												</thead>
 												<tbody>
 													{foreach $catalog['objects']['list'] as $_value}
 													<tr class="gradeA">
-														<td><a class='text-primary !btn-block' {if $_value['link']} href="{$_value['link']}" {end}>{$_value['head']}</a></td>
+														<td><a class='text-primary !btn-block' {if $_value['link']} href="{$_value['link']}" {end}><strong>{$_value['head']}</strong></a></td>
 														<td class='center'>
-															
+
 														<!-- <div class="btn-group">
 															<button data-toggle="dropdown" class="btn btn-white btn-xs dropdown-toggle">Действия <span class="caret"></span></button>
 															<ul class="dropdown-menu">
@@ -234,7 +234,7 @@
 														</div> -->
 
 														{foreach $_value['button'] as $_button}
-															
+
 															{if isset($_button['list'])}
 																<div class="btn-group">
 																	<button data-toggle="dropdown" class="btn btn-white btn-xs dropdown-toggle">{$_button['head']} <span class="caret"></span></button>
@@ -245,9 +245,9 @@
 																	</ul>
 																</div>
 															{else}
-																<a class="btn btn-white btn-xs" href="{$_button['link']}"><i class="fa {$_button['icon']}"></i> {$_button['head']}</a>
+																<a class="btn {= $_button['class'] ?? 'btn-white'} btn-xs" href="{$_button['link']}"><i class="fa {$_button['icon']}"></i> {$_button['head']}</a>
 															{end}
-															
+
 														{end}
 <!--
 											<a class="btn btn-white btn-xs" href="{$_value['edit']}">{$catalog['objects']['button']['edit']['head']}</a>
@@ -286,7 +286,7 @@
 							</div>
 						</div>
 					</div>
-					
+
 					<div id="modal-form" class="modal fade" aria-hidden="true">
 						<div class="modal-dialog">
 							<div class="modal-content">
@@ -308,13 +308,13 @@
 												</div>
 											</form>
 										</div>
-										
+
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
-				
+
 				</div>
 				<!-- Footer block -->
 				{require "../../~section/footer.html"}
@@ -362,16 +362,16 @@
 					$('#modal-form').modal('hide');
 				});
 
-				$('.js-form-new-name').on('input paste keydown', function(e) { 
+				$('.js-form-new-name').on('input paste keydown', function(e) {
 					filterInput(e);
 				});
 
 				const urlParams = new URLSearchParams(window.location.search);
 				const collection = urlParams.get('collection');
-				
+
 				if (collection && collection.trim() !== '') {
 					$('.edit-object').removeAttr('disabled');
-					
+
 					$('.edit-object').click(function() {
 						window.location.href = $('.edit-object').data('link');
 					});
@@ -444,7 +444,7 @@
 
 			function filterInput(e) {
 				const input = e.target;
-				
+
 				switch (e.type) {
 					case 'paste':
 						e.preventDefault();

@@ -60,10 +60,13 @@
 		$item['button']['edit']['head'] = 'Конструктор';
 		$item['button']['edit']['link'] = $APP->url->home()."admin/constructor/object/edit?collection=".rawurlencode($d_collection)."&object=".rawurlencode($d_object);
 		$item['button']['edit']['icon'] = 'fa-puzzle-piece';
+		$item['button']['edit']['class'] = 'btn-success btn-outline';
+
 
 		$item['button']['editastext']['head'] = 'Редактор';
 		$item['button']['editastext']['link'] = $APP->url->home()."admin/constructor/object/plaintext/edit?collection=".rawurlencode($d_collection)."&object=".rawurlencode($d_object);
 		$item['button']['editastext']['icon'] = 'fa-th-list';
+		$item['button']['editastext']['class'] = 'btn-success btn-outline';
 
 		$item['button']['timeline']['head'] = 'История';
 		$item['button']['timeline']['link'] = $APP->url->home()."admin/constructor/object/timeline/?collection=".rawurlencode($d_collection)."&name=".rawurlencode($d_object);
