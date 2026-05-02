@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{$title}</title>
+    <link href="../../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../css/animate.css" rel="stylesheet">
+    <link href="../../css/style.css" rel="stylesheet">
+</head>
+<body>
+<div id="wrapper">
+
+    {section "../../~section/mainmenu.html"}
+
+    <div id="page-wrapper" class="gray-bg">
+        {section "../../~section/head.html"}
+        {section "../../~section/title.html"}
+
+        <div class="wrapper wrapper-content p-xxs">
+            <div class="row animated fadeInRight">
+                <div class="col-lg-12">
+                <div class="ibox float-e-margins">
+                    <div class="text-center !float-e-margins p-xs">
+                        <span>Настройки отображения: </span>
+                        <a href="#" class="btn btn-xs btn-primary" id="lightVersion">Легкая версия</a>
+                        <a href="#" class="btn btn-xs btn-primary" id="darkVersion">Стандартная версия</a>
+                        <a href="#" class="btn btn-xs btn-primary" id="leftVersion">Изменить ориентацию</a>
+                    </div>
+
+                    <div class="ibox-content" id="ibox-content">
+                        <div id="vertical-timeline" class="!vertical-container dark-timeline center-orientation">
+
+                            {foreach $history['list'] as $_timestamp => $_record}
+                            <div class="vertical-timeline-block">
+                                {if $_record['active']}
+                                    <div class="vertical-timeline-icon navy-bg">
+                                        <i class="fa fa-check"></i>
+                                    </div>
+                                {else}
+                                    <div class="vertical-timeline-icon blue-bg">
+                                        <i class="fa fa-history"></i>
+                                    </div>
+                                {end}
+
+                                <div class="vertical-timeline-content">
+                                    {if $_record['insert']}
+                                    <h3>Добавлено:</h3>
+                                    <ul class="category-list" style="padding: 0;">
+                                        {foreach $_record['insert'] as $_elem}
+                                            <li>
+												<a {if $_elem['link']}href="{$_elem['link']}"{end} style="word-wrap: break-word;">
+                                                <i class="fa fa-circle text-navy"></i>
+                                                <i class="text-navy">({$_elem['type']}) {$_elem['name']} </i>
+                                                <pre>{$_elem['data']}</pre>
+												</a>
+                                            </li>
+                                        {end}
+                                    </ul>
+                                    <p></p>
+                                    {end}
+
+                                    {if $_record['update']}
+                                    <h3>Изменено:</h3>
+                                    <ul class="category-list" style="padding: 0;">
+                                        {foreach $_record['update'] as $_elem}
+                                            <li>
+												<a {if $_elem['link']}href="{$_elem['link']}"{end} style="word-wrap: break-word;">
+                                                <i class="fa fa-circle text-warning"></i>
+                                                <i class="text-navy">({$_elem['type']}) {$_elem['name']} </i>
+                                                <pre style="max-height:50em">{$_elem['data']}</pre>
+												</a>
+                                            </li>
+                                        {end}
+                                    </ul>
+                                    <p></p>
+                                    {end}
+
+                                    {if $_record['delete']}
+                                    <h3>Удалено:</h3>
+                                    <ul class="category-list" style="padding: 0">
+                                        {foreach $_record['delete'] as $_elem}
+                                            <li>
+												<a {if $_elem['link']}href="{$_elem['link']}"{end} style="word-wrap: break-word;">
+                                                <i class="fa fa-circle text-danger"></i>
+                                                <i class="text-navy">({$_elem['type']}) {$_elem['name']}</i>
+                                                <pre>{$_elem['data']}</pre>
+												</a>
+                                            </li>
+                                        {end}
+                                    </ul>
+                                    <p></p>
+                                    {end}
+
+                                    {foreach $_record['button'] as $_button}
+                                        <a href="{$_button['link']}" target="{$_button['target']}" class="btn btn-sm btn-{$_button['style']} m-l-sm m-r-sm">{$_button['head']}</a>
+                                    {end}
+
+                                    <span class="vertical-date">
+                                        {$_record['head']} <br/>
+                                        <small>{$_timestamp}</small>
+                                    </span>
+                                </div>
+                            </div>
+                            {end}
+
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+
+        {section "../../~section/footer.html"}
+    </div>
+</div>
+
+<script src="../../js/jquery-2.1.1.js"></script>
+<script src="../../js/bootstrap.min.js"></script>
+<script src="../../js/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="../../js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="../../js/inspinia.js"></script>
+<script src="../../js/plugins/pace/pace.min.js"></script>
+<script>
+    $(document).ready(function(){
+        $('#lightVersion').click(function(e){ e.preventDefault();
+            $('#ibox-content').removeClass('ibox-content');
+            $('#vertical-timeline').removeClass('dark-timeline').addClass('light-timeline');
+        });
+        $('#darkVersion').click(function(e){ e.preventDefault();
+            $('#ibox-content').addClass('ibox-content');
+            $('#vertical-timeline').removeClass('light-timeline').addClass('dark-timeline');
+        });
+        $('#leftVersion').click(function(e){ e.preventDefault();
+            $('#vertical-timeline').toggleClass('center-orientation');
+        });
+    });
+</script>
+</body>
+</html>

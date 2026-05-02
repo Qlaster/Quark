@@ -65,6 +65,10 @@
 		$item['button']['editastext']['link'] = $APP->url->home()."admin/constructor/object/plaintext/edit?collection=".rawurlencode($d_collection)."&object=".rawurlencode($d_object);
 		$item['button']['editastext']['icon'] = 'fa-th-list';
 
+		$item['button']['timeline']['head'] = 'История';
+		$item['button']['timeline']['link'] = $APP->url->home()."admin/constructor/object/timeline/?collection=".rawurlencode($d_collection)."&name=".rawurlencode($d_object);
+		$item['button']['timeline']['icon'] = 'fa-history';
+
 		$item['button']['actions']['head'] = 'Действия';
 		//~ $item['button']['actions']['list'][0]['head'] = 'Открыть в конструкторе';
 		//~ $item['button']['actions']['list'][0]['link'] = $APP->url->home()."admin/constructor/object/edit?collection=".rawurlencode($d_collection)."&object=".rawurlencode($d_object);
@@ -72,6 +76,7 @@
 		//~ $item['button']['actions']['list'][1]['link'] = $APP->url->home()."admin/constructor/object/plaintext/edit?collection=".rawurlencode($d_collection)."&object=".rawurlencode($d_object);
 		//~ $item['button']['actions']['list'][2]['head'] = 'Открыть в приложении';
 		//~ $item['button']['actions']['list'][2]['link'] = '';
+
 		$item['button']['actions']['list'][3]['head'] = 'Переименовать';
 		$item['button']['actions']['list'][3]['data-link'] = 'admin/constructor/object/rename';
 		$item['button']['actions']['list'][3]['data-collection'] = $d_collection;
