@@ -993,6 +993,48 @@
 			return $this;
 		}
 
+
+		/**
+		 * Right join
+		 * name: Добавляет RIGHT JOIN к запросу
+		 * @param string $table Имя таблицы для присоединения
+		 * @param string $on Условие присоединения
+		 * @return ORM instance
+		 */
+		function joinRight($table, $on)
+		{
+			$this->qinfo['join']['sql'][] = 'RIGHT JOIN "' . str_replace('"', '\"', $table) . '" ON ' . $on;
+			$this->qinfo['join']['on'][] = $on;
+			return $this;
+		}
+
+		/**
+		 * Inner join
+		 * name: Добавляет INNER JOIN к запросу
+		 * @param string $table Имя таблицы для присоединения
+		 * @param string $on Условие присоединения
+		 * @return ORM instance
+		 */
+		function joinInner($table, $on)
+		{
+			$this->qinfo['join']['sql'][] = 'INNER JOIN "' . str_replace('"', '\"', $table) . '" ON ' . $on;
+			$this->qinfo['join']['on'][] = $on;
+			return $this;
+		}
+
+		/**
+		 * Cross join
+		 * name: Добавляет CROSS JOIN к запросу
+		 * @param string $table Имя таблицы для присоединения
+		 * @return ORM instance
+		 */
+		function joinCross($table)
+		{
+			$this->qinfo['join']['sql'][] = 'CROSS JOIN "' . str_replace('"', '\"', $table) . '"';
+			return $this;
+		}
+
+
 		/*
 		 *
 		 * name: Сборка Join в один запрос
