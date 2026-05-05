@@ -636,12 +636,6 @@
 
 
 		/*
-		 *
-		 * name: Выборка по условию. Вызывается $orm->table('tablename')->where('partners WHERE email=? AND pass=?', $a, $b)->select();
-		 * @param (array) columns, fetch params
-		 * @return ORM instance
-		 *
-		 */
 		function select($columns = '*', $fetch = NULL)
 		{
 			//Выдергиваем имя таблицы
@@ -705,6 +699,104 @@
 
 			return $result;
 		}
+		*/
+
+
+
+		/*
+		 *
+		 * name: Построение SELECT запроса и его подготовка через PDO.
+		 * Сбрасывает условия запроса после подготовки.
+		 * @param (string|array) columns - колонки для выборки
+		 * @param (int) fetch - режим выборки PDO (PDO::FETCH_*)
+		 * @return (array) [$stmt, $params, $json] — подготовленный запрос, параметры и список json-колонок
+		 *
+		 */
+		private function _prepareSelect($columns = '*', $fetch = NULL)
+		{
+			$table  = $this->qinfo['table'];
+			$order  = $this->qinfo['order'];
+			$group  = $this->qinfo['group'];
+			$limit  = $this->qinfo['limit'];
+			$json   = $this->qinfo['json'];
+
+			$where  = $this->WhereComposition($this->qinfo['concat']);
+			$params = $this->WhereParams();
+
+			if (is_array($columns) and $columns) $columns = '"'.implode('", "', $columns).'"';
+			if (!$columns) $columns = '*';
+
+			if ($order) $order = " ORDER BY $order";
+			if ($group) $group = " GROUP BY $group";
+			if ($table) $table = "FROM $table";
+
+			$join = $this->joinComposition();
+
+			$this->lastQuery = $where
+				? "SELECT $columns $table $join WHERE ($where) $group $order $limit;"
+				: "SELECT $columns $table $join $group $order $limit;";
+
+			//Подготавливаем запрос
+			$stmt = $this->PDO_INTERFACE->prepare($this->lastQuery);
+
+			//Очистим условия для дальнейших запросов
+			$this->Reset();
+
+			return [$stmt, $params, $json];
+		}
+
+
+		/*
+		 *
+		 * name: Выполнение SELECT запроса. Возвращает все записи в виде массива.
+		 * @param (string|array) columns - колонки для выборки, * по умолчанию
+		 * @param (int) fetch - режим выборки PDO (PDO::FETCH_*)
+		 * @return (array)
+		 *
+		 */
+		function select($columns = '*', $fetch = NULL)
+		{
+			list($stmt, $params, $json) = $this->_prepareSelect($columns, $fetch);
+
+			//Выполняем запрос
+			$stmt->execute($params);
+
+			//Возвращаем результат выборки
+			$result = @$stmt->fetchAll($fetch);
+
+			//Обработка json
+			foreach ((array) $json as $jsonColumn)
+				foreach ($result as &$record)
+					if ($record[$jsonColumn]) $record[$jsonColumn] = json_decode($record[$jsonColumn], true);
+
+			return $result;
+		}
+
+		/*
+		 *
+		 * name: Потоковая выборка записей через генератор.
+		 * Выполняет один запрос и читает записи по одной, не загружая весь результат в память.
+		 * @param (string|array) columns - колонки для выборки, * по умолчанию
+		 * @return (Generator)
+		 *
+		 */
+		public function cursor($columns = '*')
+		{
+			list($stmt, $params, $json) = $this->_prepareSelect($columns);
+
+			//Выполняем запрос
+			$stmt->execute($params);
+
+			//Читаем по одной записи
+			while ($record = $stmt->fetch())
+			{
+				foreach ((array) $json as $jsonColumn)
+					if ($record[$jsonColumn]) $record[$jsonColumn] = json_decode($record[$jsonColumn], true);
+
+				yield $record;
+			}
+		}
+
 
 		/*
 		 *
