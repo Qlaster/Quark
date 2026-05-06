@@ -75,6 +75,9 @@
 
 		private $qinfo;
 		private $PDO_INTERFACE;
+		//Флаг поддержки специфичных функций возврата
+		private $returningSupported;
+
 		public  $PDO;
 		//Состояние транзакции
 		public  $transaction = false;
@@ -100,6 +103,22 @@
 			$this->PDO_INTERFACE->setAttribute( \PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
 			//NULL преобразовывать в пустые строки.
 			//~ $this->PDO_INTERFACE->setAttribute(PDO::ATTR_ORACLE_NULLS, PDO::NULL_TO_STRING);
+
+			//Определяем поддержку RETURNING один раз при инициализации
+			switch ($this->PDO_INTERFACE->getAttribute(\PDO::ATTR_DRIVER_NAME))
+			{
+				case 'pgsql':
+					$this->returningSupported = true;
+					break;
+				case 'sqlite':
+					$this->returningSupported = version_compare(
+						$this->PDO_INTERFACE->query('SELECT sqlite_version()')->fetchColumn(),
+						'3.35.0', '>='
+					);
+					break;
+				default:
+					$this->returningSupported = false;
+			}
 
 			//Обнуляем параметры запроса
 			$this->Reset();
@@ -437,38 +456,28 @@
 			//Приклеиваем указатели переменным
 			$values = str_pad('', count($record)*2-1, '?,');
 
-			//Формируем запрос
-			($this->PDO_INTERFACE->getAttribute(\PDO::ATTR_DRIVER_NAME) != "sqlite") ? $returning = "RETURNING *" : $returning = "";
-
-			//Формируем запрос
+			//Формируем запрос возврата данных
+			$returning = $this->returningSupported ? "RETURNING *" : "";
 			$this->lastQuery = "INSERT INTO $table (\"$columns\") values ($values) $returning;";
 
-			//Отдаем запрос а разбор
+			//Отдаем запрос на разбор
 			$stmt = $this->PDO_INTERFACE->prepare($this->lastQuery);
 
 			//Обработка json
 			foreach ((array) $this->qinfo['json'] as $jsonColumn)
 				if (isset($record[$jsonColumn])) $record[$jsonColumn] = json_encode($record[$jsonColumn]);
 
-			//отправляем запрос на выполнение
+			//Отправляем запрос на выполнение
 			$stmt->execute(array_values($record));
 
 			//Закинем последнее состояние в интерфейс состояния PDO
 			$this->PDO->stmt = $stmt;
-
-			//Обновляем количество записей, затронутых запросом
-			//~ $this->rowCount		= $stmt->rowCount();
-			//~ $this->lastRecord   = $stmt->fetchAll();
-			//~ $this->lastInsertId = end($this->lastRecord)['id'];
-
-			//~ if (!$this->lastInsertId) $this->lastInsertId = $this->PDO_INTERFACE->lastInsertId();
 
 			//Очистим условия для дальнейших запросов
 			$this->Reset();
 
 			return $this;
 		}
-
 
 		/*
 		 *
@@ -513,26 +522,20 @@
 			$columns = implode(', ', $columns);
 
 			//Выбираем условие
-			$where 	= $this->WhereComposition($this->qinfo['concat']);
+			$where  = $this->WhereComposition($this->qinfo['concat']);
 			$params = $this->WhereParams();
 
 			if ($where)
 			{
 				//Формируем запрос возврата данных
-				$returning = ($this->PDO_INTERFACE->getAttribute(\PDO::ATTR_DRIVER_NAME) != "sqlite") ? "RETURNING *" : "; SELECT last_insert_rowid();";
+				$returning = $this->returningSupported ? "RETURNING *" : "";
 				$this->lastQuery = "UPDATE $table SET $columns WHERE ($where) $returning;";
 
 				//Формируем запрос
 				$stmt = $this->PDO_INTERFACE->prepare($this->lastQuery);
 
-				//Указываем значения
-				//~ foreach ($record as $key => &$val) $stmt->bindParam(":$key", $val);
-
-				//отправляем запрос на выполнение (подставляем параметры)
+				//Отправляем запрос на выполнение (подставляем параметры)
 				$stmt->execute(array_values((array)$record+(array)$params));
-
-				//Обновляем количество записей, затронутых запросом
-				//~ $this->rowCount = $stmt->rowCount();
 
 				//Закинем последнее состояние в интерфейс состояния PDO
 				$this->PDO->stmt = $stmt;
@@ -705,49 +708,6 @@
 
 		/*
 		 *
-		 * name: Построение SELECT запроса и его подготовка через PDO.
-		 * Сбрасывает условия запроса после подготовки.
-		 * @param (string|array) columns - колонки для выборки
-		 * @param (int) fetch - режим выборки PDO (PDO::FETCH_*)
-		 * @return (array) [$stmt, $params, $json] — подготовленный запрос, параметры и список json-колонок
-		 *
-		 */
-		private function _prepareSelect($columns = '*', $fetch = NULL)
-		{
-			$table  = $this->qinfo['table'];
-			$order  = $this->qinfo['order'];
-			$group  = $this->qinfo['group'];
-			$limit  = $this->qinfo['limit'];
-			$json   = $this->qinfo['json'];
-
-			$where  = $this->WhereComposition($this->qinfo['concat']);
-			$params = $this->WhereParams();
-
-			if (is_array($columns) and $columns) $columns = '"'.implode('", "', $columns).'"';
-			if (!$columns) $columns = '*';
-
-			if ($order) $order = " ORDER BY $order";
-			if ($group) $group = " GROUP BY $group";
-			if ($table) $table = "FROM $table";
-
-			$join = $this->joinComposition();
-
-			$this->lastQuery = $where
-				? "SELECT $columns $table $join WHERE ($where) $group $order $limit;"
-				: "SELECT $columns $table $join $group $order $limit;";
-
-			//Подготавливаем запрос
-			$stmt = $this->PDO_INTERFACE->prepare($this->lastQuery);
-
-			//Очистим условия для дальнейших запросов
-			$this->Reset();
-
-			return [$stmt, $params, $json];
-		}
-
-
-		/*
-		 *
 		 * name: Выполнение SELECT запроса. Возвращает все записи в виде массива.
 		 * @param (string|array) columns - колонки для выборки, * по умолчанию
 		 * @param (int) fetch - режим выборки PDO (PDO::FETCH_*)
@@ -757,6 +717,9 @@
 		function select($columns = '*', $fetch = NULL)
 		{
 			list($stmt, $params, $json) = $this->_prepareSelect($columns, $fetch);
+
+			//Очистим условия для дальнейших запросов
+			$this->Reset();
 
 			//Выполняем запрос
 			$stmt->execute($params);
@@ -768,6 +731,8 @@
 			foreach ((array) $json as $jsonColumn)
 				foreach ($result as &$record)
 					if ($record[$jsonColumn]) $record[$jsonColumn] = json_decode($record[$jsonColumn], true);
+
+
 
 			return $result;
 		}
@@ -783,6 +748,9 @@
 		public function cursor($columns = '*')
 		{
 			list($stmt, $params, $json) = $this->_prepareSelect($columns);
+
+			//Очистим условия для дальнейших запросов
+			$this->Reset();
 
 			//Выполняем запрос
 			$stmt->execute($params);
@@ -1353,6 +1321,112 @@
 			if (!$openTR) $this->Commit();
 
 			return true;
+		}
+
+
+		/*
+		 *
+		 * name: Экспорт таблицы в CSV файл или поток вывода
+		 * @param (string|null) file - путь к файлу или null для вывода в php://output
+		 * @param (array) options - параметры: delimiter, quotes
+		 * @param (array|null) fields - список полей для экспорта, null = все поля
+		 * @return (bool)
+		 *
+		 */
+		function export($file = null, $options = [], $fields = null)
+		{
+			//Сохраняем имя таблицы до вызова cursor(), который вызовет Reset()
+			$table = $this->qinfo['table'];
+
+			$delimiter = $options['delimiter'] ?? ',';
+			$quotes    = $options['quotes']    ?? '"';
+
+			//Определяем поля для экспорта до вызова cursor()
+			if (!$fields) $fields = array_keys($this->columns());
+
+			//Открываем файл или поток вывода
+			$fp = fopen($file ?? 'php://output', 'w');
+			if (!$fp) throw new \Exception("Не удалось открыть файл для записи: $file");
+
+			//Записываем строку заголовков
+			fputcsv($fp, $fields, $delimiter, $quotes);
+
+			//Потоковая запись записей через cursor() — не загружает всё в память
+			foreach ($this->cursor() as $record)
+			{
+				$row = [];
+				foreach ($fields as $field)
+					$row[] = $record[$field] ?? '';
+
+				fputcsv($fp, $row, $delimiter, $quotes);
+			}
+
+			if ($file && $file !== 'php://output') fclose($fp);
+
+			return $this;
+		}
+
+		/*
+		 *
+		 * name: Построение SELECT запроса и его подготовка через PDO.
+		 * Сбрасывает условия запроса после подготовки.
+		 * @param (string|array) columns - колонки для выборки
+		 * @param (int) fetch - режим выборки PDO (PDO::FETCH_*)
+		 * @return (array) [$stmt, $params, $json] — подготовленный запрос, параметры и список json-колонок
+		 *
+		 */
+		private function _prepareSelect($columns = '*', $fetch = NULL)
+		{
+			$table  = $this->qinfo['table'];
+			$order  = $this->qinfo['order'];
+			$group  = $this->qinfo['group'];
+			$limit  = $this->qinfo['limit'];
+			$json   = $this->qinfo['json'];
+
+			$where  = $this->WhereComposition($this->qinfo['concat']);
+			$params = $this->WhereParams();
+
+			if (is_array($columns) and $columns) $columns = '"'.implode('", "', $columns).'"';
+			if (!$columns) $columns = '*';
+
+			if ($order) $order = " ORDER BY $order";
+			if ($group) $group = " GROUP BY $group";
+			if ($table) $table = "FROM $table";
+
+			$join = $this->joinComposition();
+
+			$this->lastQuery = $where
+				? "SELECT $columns $table $join WHERE ($where) $group $order $limit;"
+				: "SELECT $columns $table $join $group $order $limit;";
+
+			//Подготавливаем запрос
+			$stmt = $this->PDO_INTERFACE->prepare($this->lastQuery);
+
+			return [$stmt, $params, $json];
+		}
+
+		/*
+		 * name: Проверяет, поддерживает ли текущий драйвер конструкцию RETURNING
+		 * @return (bool)
+		 *
+		 */
+		private function _supportsReturning()
+		{
+			$driver = $this->PDO_INTERFACE->getAttribute(\PDO::ATTR_DRIVER_NAME);
+
+			switch ($driver)
+			{
+				case 'pgsql':
+					return true;
+
+				case 'sqlite':
+					// RETURNING поддерживается с SQLite 3.35.0 (2021)
+					$version = $this->PDO_INTERFACE->query('SELECT sqlite_version()')->fetchColumn();
+					return version_compare($version, '3.35.0', '>=');
+
+				default:
+					return false;
+			}
 		}
 
 
