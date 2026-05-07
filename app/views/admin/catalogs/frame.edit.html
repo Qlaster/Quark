@@ -14,15 +14,21 @@
 
 									<div class="col-sm-12">
 
-										{? 'html'    == $_field['type']} {section "frame.types/html.html"}    {;$df=1} {end}
-										{? 'link'    == $_field['type']} {section "frame.types/link.html"}    {;$df=1} {end}
-										{? 'files'   == $_field['type']} {section "frame.types/files.html"}   {;$df=1} {end}
-										{? 'image'   == $_field['type']} {section "frame.types/image.html"}   {;$df=1} {end}
-										{? 'audio'   == $_field['type']} {section "frame.types/audio.html"}   {;$df=1} {end}
-										{? 'check'   == $_field['type']} {section "frame.types/check.html"}   {;$df=1} {end}
-										{? 'select'  == $_field['type']} {section "frame.types/select.html"}  {;$df=1} {end}
-										{? 'integer' == $_field['type']} {section "frame.types/integer.html"} {;$df=1} {end}
-										{? !$df}                         {section "frame.types/default.html"} {;$df=0} {end}
+										{? 'html'      == $_field['type']} {section "frame.types/html.html"}      {;$df=1} {end}
+										{? 'link'      == $_field['type']} {section "frame.types/link.html"}      {;$df=1} {end}
+										{? 'date'      == $_field['type']} {section "frame.types/date.html"}      {;$df=1} {end}
+										{? 'datetime'  == $_field['type']} {section "frame.types/datetime.html"}  {;$df=1} {end}
+										{? 'files'     == $_field['type']} {section "frame.types/files.html"}     {;$df=1} {end}
+										{? 'image'     == $_field['type']} {section "frame.types/image.html"}     {;$df=1} {end}
+										{? 'audio'     == $_field['type']} {section "frame.types/audio.html"}     {;$df=1} {end}
+										{? 'check'     == $_field['type']} {section "frame.types/check.html"}     {;$df=1} {end}
+										{? 'select'    == $_field['type']} {section "frame.types/select.html"}    {;$df=1} {end}
+										{? 'integer'   == $_field['type']} {section "frame.types/integer.html"}   {;$df=1} {end}
+										{? 'textarea'  == $_field['type']} {section "frame.types/textarea.html"}  {;$df=1} {end}
+										{? 'checkdate' == $_field['type']} {section "frame.types/checkdate.html"} {;$df=1} {end}
+										{? 'input'     == $_field['type']} {section "frame.types/input.html"}     {;$df=1} {end}
+										{? 'relation'  == $_field['type']} {section "frame.types/relation.html"}  {;$df=1} {end}
+										{? !$df}                           {section "frame.types/default.html"}   {;$df=0} {end}
 
 										{;$df = 0}
 									</div>

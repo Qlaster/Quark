@@ -1,0 +1,29 @@
+<div class="input-group m-b">
+    <span class="input-group-addon gray-bg" style="min-width:8em">{= $_field['alias'] ?? $_name}</span>
+    <input class="js-datetime-input form-control" type="datetime-local" name="{$_name}" value="{$_value}">
+    <div class="input-group-btn">
+        <button type="button" class="btn btn-default js-datetime-now" title="Сейчас"><i class="fa fa-clock-o"></i></button>
+        <button type="button" class="btn btn-default js-datetime-clear" title="Очистить"><i class="fa fa-times"></i></button>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function()
+    {
+        $(".input-group").has(".js-datetime-input").each(function()
+        {
+            var input = $(this).find(".js-datetime-input");
+            $(this).find(".js-datetime-now").on("click", function() {
+                var now = new Date();
+                var local = new Date(now - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+                input.val(local);
+                input.removeClass("js-datetime-input");
+            });
+            $(this).find(".js-datetime-clear").on("click", function() {
+                input.val('');
+                input.removeClass("js-datetime-input");
+            });
+            input.removeClass("js-datetime-input");
+        });
+    });
+</script>

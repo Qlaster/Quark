@@ -1,0 +1,16 @@
+<div class="input-group m-b">  
+    <span class="input-group-addon gray-bg" style="min-width:8em">{= $_field['alias'] ?? $_name}</span>  
+    <input id="date-{$_name}" type="date" name="{$_name}" value="{$_value}" class="form-control">  
+    <div class="input-group-btn">  
+        <button type="button" class="btn btn-default"  
+                onclick="document.getElementById('date-{$_name}').value = new Date().toISOString().split('T')[0]"  
+                title="Сегодня">  
+            <i class="fa fa-calendar"></i>  
+        </button>  
+        <button type="button" class="btn btn-default"  
+                onclick="document.getElementById('date-{$_name}').value = ''"  
+                title="Очистить">  
+            <i class="fa fa-times"></i>  
+        </button>  
+    </div>  
+</div>

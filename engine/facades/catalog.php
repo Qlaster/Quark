@@ -125,9 +125,13 @@
 				$column = array_combine($column, $column);
 
 			//Название каталога
-			$catalog['name']   = $catalogName;
-			//Получим актуальные поля
-			$catalog['field']  = $catalog['field'] ?? $this->fields($catalogName);
+			$catalog['name']  = $catalogName;
+
+			// Всегда вызываем fields() — он обогащает поля обработанными данными
+			// (в т.ч. заполняет $field['relation'] для relation-полей).
+			// Нельзя использовать $catalog['field'] ?? fields(), т.к. get() возвращает
+			// сырой конфиг без обработки, и relation-поля никогда не будут разрешены.
+			$catalog['field'] = $this->fields($catalogName);
 
 			$params['limit'] = $params['limit'] ?? $this->config()['view']['limit'] ?? null;
 
@@ -141,6 +145,26 @@
 			//TODO: тут бы тестами нормально покрыть: Отфильтруем заявленные поля каталога, до фактически запрошенных
 			if ($column)
 				$catalog['field'] = array_intersect_key($catalog['field'], $column);
+
+			// Разрешаем relation-поля: заменяем хранимые ID на читаемые лейблы из связанной таблицы.
+			// Один SQL-запрос на поле (не на запись) — строим lookup-карту id => label.
+			foreach ((array) $catalog['field'] as $fieldName => $field)
+			{
+				if (empty($field['relation'])) continue; // Пропускаем поля не-relation типа или те, у которых не заполнен relation-конфиг
+
+				$relation = $field['relation'];
+				$rows = $this->dbInterface->connect($relation['db'])->table($relation['table'])->select(['id', $relation['column']]);
+				// Строим словарь id => label для быстрого поиска без вложенных циклов.
+				// array_column($rows, 'name', 'id') даёт [1 => 'Новости', 2 => 'Статьи', ...]
+				$map  = array_column((array) $rows, $relation['column'], 'id');
+
+				// Заменяем сырой ID в каждой записи на массив ['id' => ..., 'label' => ...],
+				foreach ($catalog['list'] as &$record)
+					$record[$fieldName] = [
+						'id'    => $record[$fieldName],
+						'label' => $map[$record[$fieldName]] ?? null, // null если связанная запись не найдена
+					];
+			}
 
 
 			return $catalog;
@@ -174,6 +198,7 @@
 			$actualColumns = array_intersect_key($catalog['field'], $actualColumns);
 
 			foreach ($actualColumns as &$column)
+			{
 				if ($column['type'] == 'select')
 				{
 					$column['source'] = explode('.', $column['source']);
@@ -185,6 +210,39 @@
 						foreach ($column['source'] as &$value)
 							$value = current($value);
 				}
+
+				// Разбираем source для relation-полей.
+				// Разделитель :: выбран намеренно — точка может встречаться в именах таблиц.
+				// Форматы:
+				//   "table::column"                — таблица в БД текущего каталога
+				//   "catalog_or_db::table::column" — сначала ищем каталог с таким именем,
+				//                                    если не найден — считаем именем DB-соединения
+				if ($column['type'] == 'relation' && $column['source'])
+				{
+					$parts = explode('::', $column['source']);
+
+					if (count($parts) === 3)
+					{
+						// Формат: "catalog_or_db::table::column"
+						$target = null;
+						try { $target = $this->get($parts[0]); } catch (\Exception $e) {}
+						$column['relation'] = [
+							'db'      => $target ? $target['db'] : $parts[0],
+							'table'   => $parts[1],
+							'column'  => $parts[2],
+							'catalog' => $target ? $parts[0] : null, // ← имя каталога, если нашли
+						];
+					} else {
+						// Формат: "table::column" — таблица в текущей БД, каталог неизвестен
+						$column['relation'] = [
+							'db'      => $catalog['db'],
+							'table'   => $parts[0],
+							'column'  => $parts[1] ?? 'id',
+							'catalog' => null,
+						];
+					}
+				}
+			}
 
 			return $actualColumns;
 			//~ return $catalog['field'] ? array_keys($catalog['field']) : array_keys($this->dbInterface->connect($catalog['db'])->table($catalog['table'])->columns());

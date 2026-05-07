@@ -166,6 +166,12 @@
 												<td class="!project-title">
 													<label class="label" for="catalog-btn-edit-{$_record['id']}" style="cursor:pointer">{$_record[$_name]}</label>
 												</td>
+											{elseif 'relation' == $_field['type']}
+											<td class="project-title" title="Связь с другой таблицей">
+												{? $_record[$_name]['id']}
+													<span class="label label-default"> <i class="fa fa-link"></i> {$_record[$_name]['id']}</span> {$_record[$_name]['label']}
+												{end}
+											</td>
 											{else}
 												<td class="project-title">{= mb_strimwidth(strip_tags($_record[$_name]), 0, 120, '...')}</td>
 											{end}

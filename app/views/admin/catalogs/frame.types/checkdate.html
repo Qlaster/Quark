@@ -1,0 +1,35 @@
+<input type="hidden" class="js-switchdate-val" name="{$_name}" value="{$_value}">  
+  
+<div class="input-group m-b">  
+    <span class="input-group-addon gray-bg" style="min-width:8em">{= $_field['alias'] ?? $_name}</span>  
+    <div style="display:flex; align-items:center; padding:6px 12px; gap:1em;">  
+        <input type="checkbox" class="js-switchdate" data-name="{$_name}" {if $_value} checked {end} />  
+        <small class="js-switchdate-lbl text-muted" data-name="{$_name}" title="{$_value}">{$_value}</small>  
+    </div>  
+</div>  
+  
+<script>  
+    $(document).ready(function() 
+    {  
+        $(".js-switchdate").each(function() 
+        {  
+            var switchery = new Switchery(this, { color: '#1AB394' });  
+            $(this).removeClass("js-switchdate");  
+  
+            var name     = $(this).data('name');  
+            var valInput = $('.js-switchdate-val[name="' + name + '"]');  
+            var lbl      = $('.js-switchdate-lbl[data-name="' + name + '"]');  
+  
+            this.onchange = function() {  
+                if (this.checked) {  
+                    var local = new Date().toLocaleString('sv');  
+                    valInput.val(local);  
+                    lbl.text(local).attr('title', local);  
+                } else {  
+                    valInput.val('');  
+                    lbl.text('').attr('title', '');  
+                }  
+            };  
+        });  
+    });  
+</script>

@@ -1,0 +1,172 @@
+<!--
+    Метка поля и строка подсказки автокомплита.
+    .autocomplete-hint обновляется через MutationObserver — туда копируется
+    текст aria-live региона jQuery UI (например "20 results available...").
+-->
+<label class="text-bold control-label">{= $_field['alias'] ?? $_name}</label>
+<span class="autocomplete-hint pull-right"></span>
+
+<!--
+    Весь компонент обёрнут в .js-relation-wrapper.
+    JS ищет все дочерние элементы через wrapper.find() — это изолирует
+    компонент и позволяет безопасно использовать несколько таких полей на странице.
+-->
+<div class="js-relation-wrapper">
+
+    <!--
+        Скрытый input хранит фактическое значение поля — ID связанной записи.
+        Именно он отправляется на сервер при сохранении формы.
+        Видимый текстовый input — только для отображения и поиска, name у него отсутствует.
+    -->
+    <input type="hidden" class="js-relation-val" name="{$_name}" value="{$_value}">
+
+    <div class="input-group m-b col-md-12">
+        <!--
+            Отображает текущий ID связанной записи.
+            Инициализируется из шаблона сразу, без AJAX.
+            Обновляется через JS при выборе нового значения.
+        -->
+        <span class="input-group-addon js-relation-id" data-name="{$_name}">{$_value}</span>
+
+        <!--
+            Видимый текстовый input для поиска и отображения лейбла.
+            data-name — имя поля, используется JS для связи с hidden input.
+            data-catalog — имя каталога, передаётся в AJAX-запрос.
+            data-source — строка source из конфига поля, передаётся в AJAX-запрос.
+        -->
+        <input type="text"
+               class="js-relation-input form-control col-md-12"
+               data-name="{$_name}"
+               data-catalog="{$catalog['name']}"
+               data-source="{$_field['source']}">
+
+        <div class="input-group-btn">
+            <!-- Кнопка "Показать все" — загружает все записи без фильтра -->
+            <button type="button" class="btn btn-default js-relation-all" title="Показать все">
+                <i class="fa fa-list"></i>
+            </button>
+            <!-- Кнопка "Очистить" — сбрасывает ID, span и текстовый input -->
+            <button type="button" class="btn btn-default js-relation-clear" title="Очистить">
+                <i class="fa fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Контейнер для выпадающего списка jQuery UI Autocomplete. -->
+    <!-- Вынесен за пределы .input-group, чтобы не влиять на его высоту. -->
+    <div class="autocomplete-list"></div>
+
+</div>
+
+<script>
+    $(function()
+    {
+        // Инициализируем каждый необработанный компонент на странице.
+        // Паттерн из check.html: removeClass после инициализации защищает
+        // от повторной инициализации при динамическом обновлении DOM.
+        $('.js-relation-input').each(function()
+        {
+            var input   = $(this);
+            var name    = input.data('name');
+            var catalog = input.data('catalog');
+            var source  = input.data('source');
+
+            // Находим корневой контейнер компонента.
+            // Все дочерние элементы ищем через wrapper.find() —
+            // это изолирует компонент при нескольких полях на странице.
+            var wrapper = input.closest('.js-relation-wrapper');
+            var val     = wrapper.find('.js-relation-val');
+            var idSpan  = wrapper.find('.js-relation-id');
+            var hint    = wrapper.prev('.autocomplete-hint');
+
+            // Инициализируем jQuery UI Autocomplete.
+            input.autocomplete({
+                // appendTo: список рисуется в .autocomplete-list рядом с input-group,
+                // а не в <body> — это предотвращает вылет за границы Bootstrap-модала.
+                appendTo: wrapper.find('.autocomplete-list'),
+
+                // minLength: 0 — позволяет показать все варианты при пустом запросе
+                // (нужно для кнопки "Показать все" и двойного клика).
+                minLength: 0,
+
+                // source: AJAX-запрос к search.php.
+                // term — строка поиска от jQuery UI.
+                // field — имя поля, чтобы search.php нашёл нужный source в fields().
+                source: function(request, response)
+                {
+                    $.getJSON('admin/catalogs/relation/search', {
+                        catalog: catalog,
+                        field:   name,
+                        term:    request.term
+                    }, response);
+                },
+
+                // select: вызывается при выборе элемента из списка.
+                // ui.item.value — ID, ui.item.label — отображаемое название.
+                // return false — запрещает jQuery UI перезаписать input своим значением (ID).
+                select: function(event, ui)
+                {
+                    val.val(ui.item.value);      // ID → в скрытый input
+                    idSpan.text(ui.item.value);  // ID → в span
+                    input.val(ui.item.label);    // label → в текстовый input
+                    return false;
+                }
+            });
+
+            // Восстанавливаем лейбл при открытии формы:
+            // если поле уже заполнено (есть ID), подгружаем соответствующий лейбл по AJAX.
+            if (val.val())
+            {
+                $.getJSON('admin/catalogs/relation/search', {
+                    catalog: catalog,
+                    field:   name,
+                    id:      val.val()
+                }, function(data)
+                {
+                    if (data[0]) input.val(data[0].label);
+                });
+            }
+
+            // Кнопка "Показать все" — запускает поиск с пустой строкой,
+            // что при minLength: 0 загружает все доступные варианты.
+            wrapper.find('.js-relation-all').on('click', function()
+            {
+                input.focus();
+                input.autocomplete('search', '');
+            });
+
+            // Кнопка "Очистить" — сбрасывает все три элемента.
+            wrapper.find('.js-relation-clear').on('click', function()
+            {
+                val.val('');
+                idSpan.text('');
+                input.val('');
+            });
+
+            // Двойной клик на input — открывает весь список (аналог кнопки "Показать все").
+            input.on('dblclick', function()
+            {
+                input.focus();
+                input.autocomplete('search', '');
+            });
+
+            // Убираем класс после инициализации — паттерн из check.html,
+            // защищает от повторной инициализации при динамическом обновлении DOM.
+            input.removeClass('js-relation-input');
+
+            // Скрываем оригинальный liveRegion (он остаётся в DOM для скринридеров).
+            // .siblings() надёжнее чем .prev() — не зависит от порядка элементов.
+            // Элемент остаётся в DOM для скринридеров, просто визуально скрыт.
+            var liveRegion = input.siblings('[role="status"]').first();
+            liveRegion.hide();
+
+            // MutationObserver копирует текст liveRegion в .autocomplete-hint
+            // при каждом его изменении (jQuery UI обновляет его при появлении
+            // результатов или закрытии списка).
+            new MutationObserver(function()
+            {
+                hint.text(liveRegion.text());
+            }).observe(liveRegion[0], { childList: true, subtree: true, characterData: true });
+        });
+    });
+</script>
