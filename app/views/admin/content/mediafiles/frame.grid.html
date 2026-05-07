@@ -76,7 +76,13 @@
 
 												<a target="_blank" href="{$_fileitem['link']}" title="{$_fileitem['name']}">
 												<span class="corner"></span>
-													{if     'image' == $_fileitem['format']} <div class="image"> <img class="img-responsive" loading="lazy" src="{$_fileitem['link']}"> </div>
+													{if     'image' == $_fileitem['format']}
+													<div class="image">
+														<img class="img-responsive lazy-load" loading="lazy"
+															 data-src="{$_fileitem['link']}"
+															 src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkxvYWRpbmcuLi48L3RleHQ+PC9zdmc+"
+															 alt="{$_fileitem['name']}">
+													</div>
 													{elseif 'video' == $_fileitem['format']} <div class="image"> <video src="{$_fileitem['link']}#t=2"></video>         </div>
 													{elseif !$_fileitem['format']}           <div class="icon">  <i class="fa fa-file"></i>                              </div>
 													{else}
@@ -286,6 +292,28 @@
 				}, 2000);
 			}
 		}
+
+		// Ленивая загрузка изображений
+		function mediafilesLazyLoadImages()
+		{
+			const images = document.querySelectorAll('.lazy-load');
+
+			const imageObserver = new IntersectionObserver((entries, observer) =>
+			{
+				entries.forEach(entry => {
+					if (entry.isIntersecting) {
+						const img = entry.target;
+						img.src = img.dataset.src;
+						img.classList.remove('lazy-load');
+						observer.unobserve(img);
+					}
+				});
+			});
+
+			images.forEach(img => imageObserver.observe(img));
+		}
+
+		mediafilesLazyLoadImages();
 
 
     </script>

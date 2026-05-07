@@ -203,7 +203,8 @@
 															<li class="divider"></li>
 -->
 															<li><a data-toggle="modal" data-target="#importModal" class="importCsv" data-catalog="{$name}">Импортировать CSV</a></li>
-															<li><a >Экспортировать CSV</a></li>
+															<!-- ДОБАВЛЕНО: открываем модальное окно экспорта -->
+															<li><a data-toggle="modal" data-target="#exportModal" class="exportCsv" data-catalog="{$name}">Экспортировать CSV</a></li>
 
 														</ul>
 													</span>
@@ -239,7 +240,7 @@
 	</div>
 
 
-	<!-- Modal -->
+	<!-- Modal: Импорт CSV -->
 	<div class="modal inmodal fade" id="importModal" tabindex="-1" role="dialog" aria-hidden="true">
 		<div class="modal-dialog modal-xl">
 			<div class="modal-content animated !fadeIn">
@@ -297,9 +298,9 @@
 					</form>
 
 <!--
-					<p class="m-t-md"><strong>Lorem Ipsum is simply dummy</strong> text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown
-						printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting,
-						remaining essentially unchanged.</p>
+				<p class="m-t-md"><strong>Lorem Ipsum is simply dummy</strong> text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown
+					printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting,
+					remaining essentially unchanged.</p>
 -->
 				</div>
 				<div class="modal-footer">
@@ -310,6 +311,43 @@
 		</div>
 	</div>
 
+	<!-- ДОБАВЛЕНО: Modal: Экспорт CSV -->
+	<div class="modal inmodal fade" id="exportModal" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content animated !fadeIn">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h4 class="modal-title">Экспорт CSV</h4>
+					<small>Экспорт данных каталога в файл CSV</small>
+				</div>
+				<div class="modal-body">
+					<form id="exportForm" class="form-horizontal">
+
+						<input type="hidden" name="catalog" value="">
+
+						<div class="col-md-6 p-none">
+							<div class="form-group">
+								<label class="col-sm-8 control-label">Разделитель полей</label>
+								<div class="col-sm-4"><input type="text" class="form-control" required placeholder=";" name="delimiter" value=";"></div>
+							</div>
+						</div>
+
+						<div class="col-md-6 p-none">
+							<div class="form-group">
+								<label class="col-sm-8 control-label">Символ кавычки</label>
+								<div class="col-sm-4"><input type="text" class="form-control" required placeholder='"' name="quotes" value='"'></div>
+							</div>
+						</div>
+
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-white" data-dismiss="modal">Отмена</button>
+					<button type="button" class="btn btn-primary" id="exportButton">Экспорт</button>
+				</div>
+			</div>
+		</div>
+	</div>
 
 
 	<!-- Mainly scripts -->
@@ -358,6 +396,13 @@
 				$('#importForm').find('input[name="catalog"]').val(catalogName);
 				$('#importForm').find('input[name="document"]').val('');
 				$('#importForm').find('.preview-frame').html('');
+			});
+
+			// ДОБАВЛЕНО: заполняем скрытое поле catalog при открытии модального окна экспорта
+			$(".exportCsv").on('click', function()
+			{
+				var catalogName = $(this).data('catalog');
+				$('#exportForm').find('input[name="catalog"]').val(catalogName);
 			});
 
 			$("#importForm input[name='document']").on('input', function()
@@ -446,6 +491,22 @@
 					}
 				});
 
+			});
+
+			// ДОБАВЛЕНО: обработчик кнопки экспорта — инициирует скачивание файла
+			$("#exportButton").on('click', function()
+			{
+				var catalog   = $('#exportForm').find('input[name="catalog"]').val();
+				var delimiter = $('#exportForm').find('input[name="delimiter"]').val();
+				var quotes    = $('#exportForm').find('input[name="quotes"]').val();
+
+				var url = 'admin/catalogs/transfer/export'
+					+ '?catalog='   + encodeURIComponent(catalog)
+					+ '&delimiter=' + encodeURIComponent(delimiter)
+					+ '&quotes='    + encodeURIComponent(quotes);
+
+				window.location.href = url;
+				$('#exportModal').modal('hide');
 			});
 
 
