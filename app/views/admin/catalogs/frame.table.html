@@ -1,4 +1,4 @@
-			<div class="ibox !float-e-margins">
+			<div class="ibox !float-e-margins" data-refresh="{$catalog['refresh']}"  data-url="{$catalog['uri']}">
 				<div class="ibox-title">
 					<h5>{$catalog['head']}</h5>
 					<div class="ibox-tools">
@@ -362,6 +362,45 @@
 					{
 						$('audio').trigger('pause');
 					});
+
+
+					// --- Автообновление ---
+
+					// Останавливаем предыдущий таймер (если tableInit вызван повторно при пагинации/поиске)
+					if (window.tableRefreshTimer)
+						clearInterval(window.tableRefreshTimer);
+
+					// Читаем интервал из data-атрибута (секунды → миллисекунды)
+					var refreshInterval = parseInt($(tableViewSection).find('.ibox').data('refresh'));
+					var refreshUrl      = $(tableViewSection).find('.ibox').data('url');
+
+					if (refreshInterval > 0 && refreshUrl)
+					{
+						window.tableRefreshTimer = setInterval(function()
+						{
+							// Не обновляем пока открыто модальное окно редактирования
+							if ($('#ModalEdit').hasClass('in')) return;
+
+							$.get(refreshUrl, function(newHtml)
+							{
+								// Сравниваем только содержимое tbody — игнорируем динамические атрибуты
+								var newTbody  = $('<div>').html(newHtml).find('tbody').html();
+								var currTbody = $(tableViewSection).find('tbody').html();
+
+								if (newTbody !== currTbody)
+								{
+									// Данные изменились — перерисовываем и уведомляем
+									$(tableViewSection).html(newHtml);
+									tableInit(tableViewSection);
+
+									toastr.options = { closeButton: true, progressBar: true, timeOut: 4000 };
+									toastr.info('Данные обновлены');
+								}
+							});
+
+						}, refreshInterval * 1000);
+					}
+
 
 				}
 			</script>

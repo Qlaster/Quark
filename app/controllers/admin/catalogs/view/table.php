@@ -30,7 +30,8 @@
 
 	$content['catalog'] = $APP->catalog->view($name, $_GET);
 
-	//~ print_r($content['catalog']); die;
+	// URL для автообновления — текущий запрос со всеми GET-параметрами
+	$content['catalog']['uri'] = linker();
 
 	$content['menu']['pages']['list'] = [];
 
