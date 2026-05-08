@@ -148,7 +148,6 @@
 			foreach ($catalog['field'] as $fieldName => $field)
 			{
 				if ($field['type'] !== 'relation' || !$field['relation']) continue;
-
 				// Директива ignore = true отключает подстановку для этого поля
 				if ($field['ignore']) continue;
 
@@ -160,16 +159,15 @@
 					array_key_column($fieldName, (array) $catalog['list'])
 				));
 
-				if (!$ids) continue;
+				if ($ids)
+				{
+					$rows = $this->dbInterface->connect($relation['db'])
+						->table($relation['table'])
+						->where(['id' => $ids])
+						->select(['id', $relation['column']]);
 
-				// Один запрос на поле — только нужные записи, не вся таблица
-				$rows = $this->dbInterface->connect($relation['db'])
-					->table($relation['table'])
-					->where(['id' => $ids])
-					->select(['id', $relation['column']]);
-
-				// Строим словарь id => label для быстрого поиска
-				$map = array_column((array) $rows, $relation['column'], 'id');
+					$map = array_column((array) $rows, $relation['column'], 'id');
+				}
 
 				// Заменяем сырой ID на массив ['id' => ..., 'label' => ...]
 				foreach ($catalog['list'] as &$record)
