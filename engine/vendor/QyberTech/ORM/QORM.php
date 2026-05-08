@@ -430,11 +430,19 @@
 			if ($stmt)
 			{
 				$stmt->execute($params);
+
+				//Забираем результат пока курсор открыт
+				$result = $stmt->fetchAll();
+
+				//Кэшируем для lastRecord() и закрываем курсор
+				$this->PDO->lastFetch = $result;
+				$stmt->closeCursor();
+
 				//Закинем последнее состояние в интерфейс состояния PDO
 				$this->PDO->stmt = $stmt;
 			}
 
-			return $stmt->fetchAll();;
+			return $result ?? [];
 		}
 
 		/*
@@ -469,6 +477,10 @@
 
 			//Отправляем запрос на выполнение
 			$stmt->execute(array_values($record));
+
+			//Кэшируем результат (RETURNING * для PostgreSQL/SQLite 3.35+) и закрываем курсор
+			$this->PDO->lastFetch = $stmt->fetchAll();
+			$stmt->closeCursor();
 
 			//Закинем последнее состояние в интерфейс состояния PDO
 			$this->PDO->stmt = $stmt;
@@ -537,6 +549,10 @@
 				//Отправляем запрос на выполнение (подставляем параметры)
 				$stmt->execute(array_values((array)$record+(array)$params));
 
+				//Кэшируем результат (RETURNING * для PostgreSQL/SQLite 3.35+) и закрываем курсор
+				$this->PDO->lastFetch = $stmt->fetchAll();
+				$stmt->closeCursor();
+
 				//Закинем последнее состояние в интерфейс состояния PDO
 				$this->PDO->stmt = $stmt;
 			}
@@ -581,18 +597,15 @@
 			//Указываем значения
 			foreach ($record as $key => &$val) $stmt->bindParam(":$key", $val);
 
-			//отправляем запрос на выполнение
+			//Отправляем запрос на выполнение
 			$result = $stmt->execute();
+
+			//Кэшируем результат и закрываем курсор
+			$this->PDO->lastFetch = $stmt->fetchAll();
+			$stmt->closeCursor();
 
 			//Закинем последнее состояние в интерфейс состояния PDO
 			$this->PDO->stmt = $stmt;
-
-			//Обновляем количество записей, затронутых запросом
-			//~ $this->rowCount		= $stmt->rowCount();
-			//~ $this->lastRecord   = $stmt->fetchAll();
-			//~ $this->lastInsertId = end($this->lastRecord)['id'];
-
-			//~ if (!$this->lastInsertId) $this->lastInsertId = $this->PDO_INTERFACE->lastInsertId();
 
 			//Очистим условия для дальнейших запросов
 			$this->Reset();
@@ -621,11 +634,12 @@
 			{
 				//Формируем запрос
 				$stmt = $this->PDO_INTERFACE->prepare("DELETE FROM $table WHERE ($where);");
-				//отправляем запрос на выполнение (подставляем параметры)
+				//Отправляем запрос на выполнение (подставляем параметры)
 				$stmt->execute($params);
 
-				//Обновляем количество записей, затронутых запросом
-				//~ $this->rowCount = $stmt->rowCount();
+				//DELETE не возвращает строк — кэш пустой, курсор закрываем
+				$this->PDO->lastFetch = [];
+				$stmt->closeCursor();
 
 				//Закинем последнее состояние в интерфейс состояния PDO
 				$this->PDO->stmt = $stmt;
@@ -1085,7 +1099,6 @@
 		/**
 		 * Cross join
 		 * name: Добавляет CROSS JOIN к запросу
-		 * @param string $table Имя таблицы для присоединения
 		 * @return ORM instance
 		 */
 		function joinCross($table)
@@ -1265,14 +1278,15 @@
 		/*
 		 *
 		 * name: Последняя добавленная запись
+		 * Возвращает результат последнего insert/update/replace/SQL.
+		 * Данные кэшируются до closeCursor(), поэтому доступны в любой момент.
 		 * @param
 		 * @return (array)
 		 *
 		 */
 		function lastRecord()
 		{
-			if ($this->PDO->stmt)
-				return $this->PDO->stmt->fetchAll();
+			return $this->PDO->lastFetch ?? [];
 		}
 
 
@@ -1403,30 +1417,6 @@
 			$stmt = $this->PDO_INTERFACE->prepare($this->lastQuery);
 
 			return [$stmt, $params, $json];
-		}
-
-		/*
-		 * name: Проверяет, поддерживает ли текущий драйвер конструкцию RETURNING
-		 * @return (bool)
-		 *
-		 */
-		private function _supportsReturning()
-		{
-			$driver = $this->PDO_INTERFACE->getAttribute(\PDO::ATTR_DRIVER_NAME);
-
-			switch ($driver)
-			{
-				case 'pgsql':
-					return true;
-
-				case 'sqlite':
-					// RETURNING поддерживается с SQLite 3.35.0 (2021)
-					$version = $this->PDO_INTERFACE->query('SELECT sqlite_version()')->fetchColumn();
-					return version_compare($version, '3.35.0', '>=');
-
-				default:
-					return false;
-			}
 		}
 
 
