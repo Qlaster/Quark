@@ -55,22 +55,22 @@ class Talk
 		// Сообщение — нижний уровень иерархии. Комментарий, ответ, реплика в чате.
 		// Примеры: ответ оператора поддержки, комментарий к статье, сообщение в чате.
 		$orm->SQL("CREATE TABLE IF NOT EXISTS $messages (
-			id       INTEGER PRIMARY KEY AUTOINCREMENT,                       -- Внутренний числовой идентификатор
+			id       INTEGER PRIMARY KEY AUTOINCREMENT,                        -- Внутренний числовой идентификатор
 			post_id  INTEGER NOT NULL REFERENCES $posts(id) ON DELETE CASCADE, -- FK на пост; при удалении поста сообщения удаляются автоматически
-			text     TEXT,                                                    -- Текст сообщения (может быть пустым, если есть только вложения)
-			author   TEXT,                                                    -- Автор: email, логин или имя пользователя
-			files    TEXT,                                                    -- JSON-массив путей к прикреплённым файлам (скриншоты, документы)
-			tags     TEXT,                                                    -- JSON-массив меток (напр. 'system', 'internal' для служебных сообщений)
-			meta     TEXT,                                                    -- JSON-объект для расширений: reply_to, is_pinned, reaction и т.д.
-			created  INTEGER,                                                 -- Unix timestamp создания сообщения
-			updated  INTEGER,                                                 -- Unix timestamp последнего редактирования сообщения
-			archived INTEGER                                                  -- 0 = активно, 1 = удалено/скрыто (мягкое удаление без потери истории)
+			text     TEXT,                                                     -- Текст сообщения (может быть пустым, если есть только вложения)
+			author   TEXT,                                                     -- Автор: email, логин или имя пользователя
+			files    TEXT,                                                     -- JSON-массив путей к прикреплённым файлам (скриншоты, документы)
+			tags     TEXT,                                                     -- JSON-массив меток (напр. 'system', 'internal' для служебных сообщений)
+			meta     TEXT,                                                     -- JSON-объект для расширений: reply_to, is_pinned, reaction и т.д.
+			created  INTEGER,                                                  -- Unix timestamp создания сообщения
+			updated  INTEGER,                                                  -- Unix timestamp последнего редактирования сообщения
+			archived INTEGER                                                   -- 0 = активно, 1 = удалено/скрыто (мягкое удаление без потери истории)
 		)");
 	}
 
     public function blog(string $name): BlogContext
     {
-        return new BlogContext($this->orm, $this->cfg, $name);
+        return new BlogContext($this->orm, $this->config, $name);
     }
 }
 
@@ -81,19 +81,19 @@ class Talk
 class BlogContext
 {
     private $orm;
-    private $cfg;
+    private $config;
     private $name;
 
     private function table(): string
     {
-        return $this->cfg['table']['blogs'] ?? 'talk_blogs';
+        return $this->config['table']['blogs'] ?? 'talk_blogs';
     }
 
-    public function __construct($orm, $cfg, string $name)
+    public function __construct($orm, $config, string $name)
     {
-        $this->orm  = $orm;
-        $this->cfg  = $cfg;
-        $this->name = $name;
+        $this->orm     = $orm;
+        $this->config  = $config;
+        $this->name    = $name;
     }
 
     public function create(array $data = []): self
@@ -114,10 +114,13 @@ class BlogContext
         return $this;
     }
 
-    public function select(array $where = []): array
+    // Исправлено: variadic $where + wheres() вместо array $where + where($where)
+    public function select(...$where): array
     {
-        $where['name'] = $this->name;
-        $rows = $this->orm->table($this->table())->where($where)->select();
+        $rows = $this->orm->table($this->table())
+            ->where(['name' => $this->name])
+            ->wheres(...$where)
+            ->select();
         return array_map([$this, 'decode'], (array) $rows);
     }
 
@@ -145,9 +148,10 @@ class BlogContext
         return $this->update(['archived' => (int) $state]);
     }
 
-    public function post(string $name): PostContext
+    // Исправлено: $name = string → ?string $name = null
+    public function post(?string $name = null): PostContext
     {
-        return new PostContext($this->orm, $this->cfg, $this->name, $name);
+        return new PostContext($this->orm, $this->config, $this->name, $name);
     }
 
     private function decode(array $row): array
@@ -165,17 +169,18 @@ class BlogContext
 class PostContext
 {
     private $orm;
-    private $cfg;
+    private $config;
     private $blogName;
-    private $postName;
+    private $postName; // может быть null — тогда select() вернёт все посты блога
 
-    private function blogsTable(): string { return $this->cfg['table']['blogs']    ?? 'talk_blogs'; }
-    private function postsTable(): string { return $this->cfg['table']['posts']    ?? 'talk_posts'; }
+    private function blogsTable(): string { return $this->config['table']['blogs'] ?? 'talk_blogs'; }
+    private function postsTable(): string { return $this->config['table']['posts'] ?? 'talk_posts'; }
 
-    public function __construct($orm, $cfg, string $blogName, string $postName)
+    // Исправлено: ?string $postName = null
+    public function __construct($orm, $config, string $blogName, ?string $postName = null)
     {
         $this->orm      = $orm;
-        $this->cfg      = $cfg;
+        $this->config   = $config;
         $this->blogName = $blogName;
         $this->postName = $postName;
     }
@@ -188,6 +193,9 @@ class PostContext
 
     public function create(array $data = []): self
     {
+        if ($this->postName === null)
+            throw new \RuntimeException("post() requires a name to create");
+
         $blogId = $this->blogId();
         if (!$blogId) throw new \RuntimeException("Blog '{$this->blogName}' not found");
 
@@ -211,19 +219,27 @@ class PostContext
         return $this;
     }
 
-    public function select(array $where = []): array
+    // Исправлено: variadic $where + wheres(); name фильтруется только если задан
+    public function select(...$where): array
     {
         $blogId = $this->blogId();
         if (!$blogId) return [];
 
-        $where['blog_id'] = $blogId;
-        $where['name']    = $this->postName;
-        $rows = $this->orm->table($this->postsTable())->where($where)->select();
+        $query = $this->orm->table($this->postsTable())
+            ->where(['blog_id' => $blogId]);
+
+        if ($this->postName !== null)
+            $query->where(['name' => $this->postName]);
+
+        $rows = $query->wheres(...$where)->select();
         return array_map([$this, 'decode'], (array) $rows);
     }
 
     public function update(array $data): self
     {
+        if ($this->postName === null)
+            throw new \RuntimeException("post() requires a name to update");
+
         $blogId = $this->blogId();
         if (!$blogId) throw new \RuntimeException("Blog '{$this->blogName}' not found");
 
@@ -244,6 +260,9 @@ class PostContext
 
     public function delete(): self
     {
+        if ($this->postName === null)
+            throw new \RuntimeException("post() requires a name to delete");
+
         $blogId = $this->blogId();
         if (!$blogId) return $this;
 
@@ -260,7 +279,10 @@ class PostContext
 
     public function message(): MessageContext
     {
-        return new MessageContext($this->orm, $this->cfg, $this->blogName, $this->postName);
+        if ($this->postName === null)
+            throw new \RuntimeException("post() requires a name to access messages");
+
+        return new MessageContext($this->orm, $this->config, $this->blogName, $this->postName);
     }
 
     private function decode(array $row): array
@@ -279,18 +301,18 @@ class PostContext
 class MessageContext
 {
     private $orm;
-    private $cfg;
+    private $config;
     private $blogName;
     private $postName;
 
-    private function blogsTable():    string { return $this->cfg['table']['blogs']    ?? 'talk_blogs'; }
-    private function postsTable():    string { return $this->cfg['table']['posts']    ?? 'talk_posts'; }
-    private function messagesTable(): string { return $this->cfg['table']['messages'] ?? 'talk_messages'; }
+    private function blogsTable():    string { return $this->config['table']['blogs']    ?? 'talk_blogs'; }
+    private function postsTable():    string { return $this->config['table']['posts']    ?? 'talk_posts'; }
+    private function messagesTable(): string { return $this->config['table']['messages'] ?? 'talk_messages'; }
 
-    public function __construct($orm, $cfg, string $blogName, string $postName)
+    public function __construct($orm, $config, string $blogName, string $postName)
     {
         $this->orm      = $orm;
-        $this->cfg      = $cfg;
+        $this->config   = $config;
         $this->blogName = $blogName;
         $this->postName = $postName;
     }
@@ -338,13 +360,16 @@ class MessageContext
         return $this;
     }
 
-    public function select(array $where = []): array
+    // Исправлено: variadic $where + wheres()
+    public function select(...$where): array
     {
         $postId = $this->postId();
         if (!$postId) return [];
 
-        $where['post_id'] = $postId;
-        $rows = $this->orm->table($this->messagesTable())->where($where)->select();
+        $rows = $this->orm->table($this->messagesTable())
+            ->where(['post_id' => $postId])
+            ->wheres(...$where)
+            ->select();
         return array_map([$this, 'decode'], (array) $rows);
     }
 
@@ -359,9 +384,9 @@ class MessageContext
         if (isset($data['meta']) && is_array($data['meta']))
             $data['meta'] = json_encode($data['meta']);
 
-		$this->orm->table($this->messagesTable())
-			->where(['id' => $id, 'post_id' => $this->postId()])
-			->update($data);
+        $this->orm->table($this->messagesTable())
+            ->where(['id' => $id, 'post_id' => $this->postId()])
+            ->update($data);
 
         return $this;
     }
@@ -369,8 +394,8 @@ class MessageContext
     public function delete(int $id): self
     {
         $this->orm->table($this->messagesTable())
-			->where(['id' => $id, 'post_id' => $this->postId()])
-			->delete();
+            ->where(['id' => $id, 'post_id' => $this->postId()])
+            ->delete();
 
         return $this;
     }
@@ -389,12 +414,11 @@ class MessageContext
         $postId = $this->postId();
         if (!$postId) return [];
 
-        $msgs = $this->messagesTable();
-		$rows = $this->orm->table($msgs)
-			->where(['post_id' => $postId])
-			->where("created > ?", $since)
-			->OrderBy('created ASC')
-			->select();
+        $rows = $this->orm->table($this->messagesTable())
+            ->where(['post_id' => $postId])
+            ->where("created > ?", $since)
+            ->OrderBy('created ASC')
+            ->select();
 
         return array_map([$this, 'decode'], (array) $rows);
     }
