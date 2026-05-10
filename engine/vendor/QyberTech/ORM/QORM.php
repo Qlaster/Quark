@@ -902,6 +902,7 @@
 			//Получаем аргументы функции (совместимость со старыми версиями php)
 			foreach ((array) func_get_args() as $_wheres)
 				$this->where(... $_wheres);
+			return $this;
 		}
 
 
