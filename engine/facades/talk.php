@@ -114,7 +114,6 @@ class BlogContext
         return $this;
     }
 
-    // Исправлено: variadic $where + wheres() вместо array $where + where($where)
     public function select(...$where): array
     {
         $rows = $this->orm->table($this->table())
@@ -148,7 +147,6 @@ class BlogContext
         return $this->update(['archived' => (int) $state]);
     }
 
-    // Исправлено: $name = string → ?string $name = null
     public function post(?string $name = null): PostContext
     {
         return new PostContext($this->orm, $this->config, $this->name, $name);
@@ -176,7 +174,6 @@ class PostContext
     private function blogsTable(): string { return $this->config['table']['blogs'] ?? 'talk_blogs'; }
     private function postsTable(): string { return $this->config['table']['posts'] ?? 'talk_posts'; }
 
-    // Исправлено: ?string $postName = null
     public function __construct($orm, $config, string $blogName, ?string $postName = null)
     {
         $this->orm      = $orm;
@@ -219,7 +216,6 @@ class PostContext
         return $this;
     }
 
-    // Исправлено: variadic $where + wheres(); name фильтруется только если задан
     public function select(...$where): array
     {
         $blogId = $this->blogId();
@@ -229,7 +225,7 @@ class PostContext
             ->where(['blog_id' => $blogId]);
 
         if ($this->postName !== null)
-            $query->where(['name' => $this->postName]);
+            $query = $query->where(['name' => $this->postName]);
 
         $rows = $query->wheres(...$where)->select();
         return array_map([$this, 'decode'], (array) $rows);
@@ -277,12 +273,13 @@ class PostContext
         return $this->update(['archived' => (int) $state]);
     }
 
-    public function message(): MessageContext
+    // Изменено: принимает необязательный int $id
+    public function message(?int $id = null): MessageContext
     {
         if ($this->postName === null)
             throw new \RuntimeException("post() requires a name to access messages");
 
-        return new MessageContext($this->orm, $this->config, $this->blogName, $this->postName);
+        return new MessageContext($this->orm, $this->config, $this->blogName, $this->postName, $id);
     }
 
     private function decode(array $row): array
@@ -304,17 +301,20 @@ class MessageContext
     private $config;
     private $blogName;
     private $postName;
+    private $messageId; // null — контекст всех сообщений; int — контекст конкретного сообщения
 
     private function blogsTable():    string { return $this->config['table']['blogs']    ?? 'talk_blogs'; }
     private function postsTable():    string { return $this->config['table']['posts']    ?? 'talk_posts'; }
     private function messagesTable(): string { return $this->config['table']['messages'] ?? 'talk_messages'; }
 
-    public function __construct($orm, $config, string $blogName, string $postName)
+    // Изменено: добавлен необязательный параметр $messageId
+    public function __construct($orm, $config, string $blogName, string $postName, ?int $messageId = null)
     {
-        $this->orm      = $orm;
-        $this->config   = $config;
-        $this->blogName = $blogName;
-        $this->postName = $postName;
+        $this->orm       = $orm;
+        $this->config    = $config;
+        $this->blogName  = $blogName;
+        $this->postName  = $postName;
+        $this->messageId = $messageId;
     }
 
     private function postId(): ?int
@@ -330,6 +330,7 @@ class MessageContext
         return $post[0]['id'] ?? null;
     }
 
+    // create() не требует ID — всегда создаёт новое сообщение
     public function create(array $data): self
     {
         $postId = $this->postId();
@@ -360,21 +361,28 @@ class MessageContext
         return $this;
     }
 
-    // Исправлено: variadic $where + wheres()
+    // Изменено: если $messageId задан — фильтрует по нему
     public function select(...$where): array
     {
         $postId = $this->postId();
         if (!$postId) return [];
 
-        $rows = $this->orm->table($this->messagesTable())
-            ->where(['post_id' => $postId])
-            ->wheres(...$where)
-            ->select();
+        $query = $this->orm->table($this->messagesTable())
+            ->where(['post_id' => $postId]);
+
+        if ($this->messageId !== null)
+            $query = $query->where(['id' => $this->messageId]);
+
+        $rows = $query->wheres(...$where)->select();
         return array_map([$this, 'decode'], (array) $rows);
     }
 
-    public function update(int $id, array $data): self
+    // Изменено: ID берётся из $this->messageId, не из параметра
+    public function update(array $data): self
     {
+        if ($this->messageId === null)
+            throw new \RuntimeException("message() requires an id to update");
+
         $data['updated'] = time();
 
         if (isset($data['files']) && is_array($data['files']))
@@ -385,24 +393,32 @@ class MessageContext
             $data['meta'] = json_encode($data['meta']);
 
         $this->orm->table($this->messagesTable())
-            ->where(['id' => $id, 'post_id' => $this->postId()])
+            ->where(['id' => $this->messageId, 'post_id' => $this->postId()])
             ->update($data);
 
         return $this;
     }
 
-    public function delete(int $id): self
+    // Изменено: ID берётся из $this->messageId
+    public function delete(): self
     {
+        if ($this->messageId === null)
+            throw new \RuntimeException("message() requires an id to delete");
+
         $this->orm->table($this->messagesTable())
-            ->where(['id' => $id, 'post_id' => $this->postId()])
+            ->where(['id' => $this->messageId, 'post_id' => $this->postId()])
             ->delete();
 
         return $this;
     }
 
-    public function archive(int $id, bool $state = true): self
+    // Изменено: ID берётся из $this->messageId
+    public function archive(bool $state = true): self
     {
-        return $this->update($id, ['archived' => (int) $state]);
+        if ($this->messageId === null)
+            throw new \RuntimeException("message() requires an id to archive");
+
+        return $this->update(['archived' => (int) $state]);
     }
 
     /**
