@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{$title}</title>
+
+    <link href="../../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="../../css/animate.css" rel="stylesheet">
+    <link href="../../css/style.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+    <div id="wrapper">
+
+		<!--Главное меню слева-->
+		{section "../../~section/mainmenu.html"}
+		<!--Конец меню-->
+
+        <div id="page-wrapper" class="gray-bg">
+
+  			<!-- Head menu -->
+			{section "../../~section/head.html"}
+			<!-- End head menu -->
+
+			<!-- Title menu-->
+			{section "../../~section/title.html"}
+			<!-- End title menu -->
+
+        <div class="wrapper wrapper-content">
+        <div class="row">
+            <div class="col-lg-3">
+
+				 <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                            <h5>{$catalog['channels']['head']}</h5><!--Каналы:-->
+                            <div class="ibox-tools">
+
+
+								<button class="btn btn-white btn-xs" title="Создать новый канал"><i class="fa fa-plus"></i> Новый</button>
+								<button class="btn btn-white btn-xs" title="Изменить выбранный канал"><i class="fa fa-edit"></i> Изменить</button>
+								<button class="btn btn-white btn-xs" title="Переместить/достать выбранный в архив"><i class="fa fa-archive"></i> </button>
+								<button class="btn btn-white btn-xs" title="Удалить выбранный канал"><i class="fa fa-trash-o"></i> </button>
+
+<!--
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                    <i class="fa fa-wrench"></i>
+                                </a>
+                                <ul class="dropdown-menu dropdown-user">
+                                    <li><a href="#">Config option 1</a>
+                                    </li>
+                                    <li><a href="#">Config option 2</a>
+                                    </li>
+                                </ul>
+                                <a class="close-link">
+                                    <i class="fa fa-times"></i>
+                                </a>
+-->
+                            </div>
+                        </div>
+                        <div class="ibox-content no-padding">
+                            <ul class="list-group">
+								{foreach $catalog['channels']['list'] as $_channel}
+                                <li class="list-group-item ibox-heading"> <!--- ibox-heading - это способ выделить выбранный элемент цветом --->
+									<a class=" text-primary ">
+										<strong><i class="fa fa-archive" title="В архиве"></i> {$_channel['name']}</strong>
+										<small class="block text-muted pull-right"><i class="fa fa-clock-o"></i> {$_channel['updated']}</small>
+										<p>{$_channel['title']}</p>
+										<span class="label badge pull-right">{$_channel['count']}</span> <!--Количество постов внутри канала-->
+										<div>
+											{foreach (array) $_channel['tags'] as $_tag}
+												<span class="label label-default">{$_tag}</span>
+											{end}
+										</div>
+									</a>
+                                </li>
+                                {end}
+
+
+<!--
+                                <li class="list-group-item ibox-heading">
+									<a class=" text-primary ">
+										<strong><i class="fa fa-archive" title="В архиве"></i> Название канала</strong>
+										<small class="block text-muted pull-right"><i class="fa fa-clock-o"></i> 2026-2-2 14:00:00</small>
+										<p>Человеческий заголовок канала (title)</p>
+										<span class="label badge pull-right">16</span>
+										<div>
+											<span class="label label-default">tag 1</span>
+											<span class="label label-default">tag 2</span>
+										</div>
+									</a>
+                                </li>
+
+                                <li class="list-group-item">
+									<a class=" text-primary ">
+										<strong>support</strong>
+										<small class="block text-muted pull-right"><i class="fa fa-clock-o"></i> 1 minuts ago</small>
+										<p>Поддержка и решение пользовательских вопросов</p>
+										<span class="label badge pull-right" title="Количество постов внутри канала">16</span>
+										<div>
+											<span class="label label-default">tag 1</span>
+											<span class="label label-default">tag 2</span>
+										</div>
+									</a>
+                                </li>
+-->
+
+<!--
+                                <li class="list-group-item">
+                                    <p><a class="text-info" href="#">@Stock Man</a> Check this stock chart. This price is crazy! </p>
+                                    <small class="block text-muted"><i class="fa fa-clock-o"></i> 2 hours ago</small>
+                                </li>
+                                <li class="list-group-item">
+                                    <p><a class="text-info" href="#">@Kevin Smith</a> Lorem ipsum unknown printer took a galley </p>
+                                    <small class="block text-muted"><i class="fa fa-clock-o"></i> 2 minuts ago</small>
+                                </li>
+                                <li class="list-group-item ">
+                                    <p><a class="text-info" href="#">@Jonathan Febrick</a> The standard chunk of Lorem Ipsum</p>
+                                    <small class="block text-muted"><i class="fa fa-clock-o"></i> 1 hour ago</small>
+                                </li>
+-->
+                            </ul>
+                        </div>
+                    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content mailbox-content">
+                        <div class="file-manager">
+                            <a class="btn btn-block btn-primary compose-mail" href="mail_compose.html">Compose Mail</a>
+                            <div class="space-25"></div>
+
+                            <h5>Categories</h5>
+                            <ul class="category-list" style="padding: 0">
+                                <li><a href="#"> <i class="fa fa-circle text-navy"></i> Work </a></li>
+                                <li><a href="#"> <i class="fa fa-circle text-danger"></i> Documents</a></li>
+                                <li><a href="#"> <i class="fa fa-circle text-primary"></i> Social</a></li>
+                                <li><a href="#"> <i class="fa fa-circle text-info"></i> Advertising</a></li>
+                                <li><a href="#"> <i class="fa fa-circle text-warning"></i> Clients</a></li>
+                            </ul>
+
+                            <h5>Folders</h5>
+                            <ul class="folder-list m-b-md" style="padding: 0">
+                                <li><a href="mailbox.html"> <i class="fa fa-inbox "></i> Inbox <span class="label label-warning pull-right">16</span> </a></li>
+                                <li><a href="mailbox.html"> <i class="fa fa-envelope-o"></i> Send Mail</a></li>
+                                <li><a href="mailbox.html"> <i class="fa fa-certificate"></i> Important</a></li>
+                                <li><a href="mailbox.html"> <i class="fa fa-file-text-o"></i> Drafts <span class="label label-danger pull-right">2</span></a></li>
+                                <li><a href="mailbox.html"> <i class="fa fa-trash-o"></i> Trash</a></li>
+                            </ul>
+
+
+                            <h5 class="tag-title">Labels</h5>
+                            <ul class="tag-list" style="padding: 0">
+                                <li><a href=""><i class="fa fa-tag"></i> Family</a></li>
+                                <li><a href=""><i class="fa fa-tag"></i> Work</a></li>
+                                <li><a href=""><i class="fa fa-tag"></i> Home</a></li>
+                                <li><a href=""><i class="fa fa-tag"></i> Children</a></li>
+                                <li><a href=""><i class="fa fa-tag"></i> Holidays</a></li>
+                                <li><a href=""><i class="fa fa-tag"></i> Music</a></li>
+                                <li><a href=""><i class="fa fa-tag"></i> Photography</a></li>
+                                <li><a href=""><i class="fa fa-tag"></i> Film</a></li>
+                            </ul>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                </div>
+
+
+-->
+            </div>
+            <div class="col-lg-9 animated fadeInRight">
+            <div class="mail-box-header">
+
+
+<!--
+                <h2>
+                    Посты (16)
+                </h2>
+-->
+                <div class="mail-tools tooltip-demo m-t-md">
+                    <div class="btn-group pull-right">
+                        <button class="btn btn-white btn-sm"><i class="fa fa-arrow-left"></i></button>
+                        <button class="btn btn-white btn-sm"><i class="fa fa-arrow-right"></i></button>
+
+                    </div>
+
+                    <form method="get" action="" class="pull-right mail-search m-r-lg">
+						<div class="input-group">
+							<input type="text" class="form-control input-sm" name="search" placeholder="Поиск">
+							<div class="input-group-btn">
+								<button type="submit" class="btn btn-sm btn-primary">
+									<i class="fa fa-search"></i>
+								</button>
+							</div>
+						</div>
+					</form>
+
+
+					<button class="btn btn-white btn-sm" title="Создать новый пост"><i class="fa fa-plus"></i> Новый</button>
+					<button class="btn btn-white btn-sm" title="Изменить пост"><i class="fa fa-edit"></i> Изменить</button>
+                    <button class="btn btn-white btn-sm" title="Переместить/изъять выделенные посты из архива"><i class="fa fa-archive"></i> Архив</button>
+                    <button class="btn btn-white btn-sm" title="Удалить выделенные посты"><i class="fa fa-trash-o"></i> </button>
+
+                    <button class="btn btn-white btn-sm m-l-md" title="Обновить страницу"><i class="fa fa-refresh"></i> Обновить</button>
+
+                </div>
+            </div>
+                <div class="mail-box">
+
+                <table class="table table-hover table-mail">
+                <tbody>
+					{foreach $catalog['posts']['list'] as $_post}
+					<tr class="unread">
+						<td class="check-mail">
+							<input type="checkbox" class="i-checks">
+						</td>
+						<td class="mail-ontact"><a href="">{$_post['name']}</a> {if $_post['status']}<span class="label label-warning pull-right">{$_post['status']}</span>{end} </td>
+						<td class="mail-subject">{if $_post['archive']}<span class="fa fa-archive"></span>{end} <a href="">{$_post['title']}</a></td>
+						<td class="">
+							<ul class="tag-list" style="padding: 0">
+								{foreach $_post['tags'] as $_tag}
+									<li><a href=""><i class="fa fa-tag"></i> {$_tag}</a></li>
+								{end}
+							</ul>
+						</td>
+						<td class="">
+							{foreach $_post['files'] as $_file}
+								<i class="fa fa-paperclip" title="Имеет вложенные файлы">{$_file}</i>
+							{end}
+						</td>
+						<td class="text-right mail-date">{$_post['updated']}</td>
+					</tr>
+					{end}
+
+<!--
+                <tr class="unread">
+                    <td class="check-mail">
+                        <input type="checkbox" class="i-checks" checked>
+                    </td>
+                    <td class="mail-ontact"><a href="mail_detail.html">Jack Nowak</a> </td>
+                    <td class="mail-subject"><a href="mail_detail.html">Aldus PageMaker including versions of Lorem Ipsum.</a></td>
+                    <td class="">
+                    	<ul class="tag-list" style="padding: 0">
+                                <li><a href=""><i class="fa fa-tag"></i> Family</a></li>
+                                <li><a href=""><i class="fa fa-tag"></i> Work</a></li>
+                                <li><a href=""><i class="fa fa-tag"></i> Photography</a></li>
+                        </ul>
+                    </td>
+                    <td class=""></td>
+                    <td class="text-right mail-date">8.22 PM</td>
+                </tr>
+                <tr class="read">
+                    <td class="check-mail">
+                        <input type="checkbox" class="i-checks">
+                    </td>
+                    <td class="mail-ontact"><a href="mail_detail.html">Facebook</a> <span class="label label-warning pull-right">Clients</span> </td>
+                    <td class="mail-subject"><a href="mail_detail.html">Many desktop publishing packages and web page editors.</a></td>
+                    <td class=""></td>
+                    <td class=""></td>
+                    <td class="text-right mail-date">Jan 16</td>
+                </tr>
+                <tr class="read">
+                    <td class="check-mail">
+                        <input type="checkbox" class="i-checks">
+                    </td>
+                    <td class="mail-ontact"><a href="mail_detail.html">Mailchip</a></td>
+                    <td class="mail-subject"><a href="mail_detail.html">There are many variations of passages of Lorem Ipsum.</a></td>
+                    <td class=""></td>
+                    <td class=""></td>
+                    <td class="text-right mail-date">Mar 22</td>
+                </tr>
+                <tr class="read">
+                    <td class="check-mail">
+                        <input type="checkbox" class="i-checks">
+                    </td>
+                    <td class="mail-ontact"><a href="mail_detail.html">Alex T.</a> <span class="label label-danger pull-right">Documents</span></td>
+                    <td class="mail-subject"><a href="mail_detail.html">Lorem ipsum dolor noretek imit set.</a></td>
+                    <td class=""></td>
+                    <td class=""><i class="fa fa-paperclip"></i></td>
+                    <td class="text-right mail-date">December 22</td>
+                </tr>
+                <tr class="read">
+                    <td class="check-mail">
+                        <input type="checkbox" class="i-checks">
+                    </td>
+                    <td class="mail-ontact"><a href="mail_detail.html">Monica Ryther</a></td>
+                    <td class="mail-subject"><a href="mail_detail.html">The standard chunk of Lorem Ipsum used.</a></td>
+                    <td class=""></td>
+                    <td class=""></td>
+                    <td class="text-right mail-date">Jun 12</td>
+                </tr>
+                <tr class="read">
+                    <td class="check-mail">
+                        <input type="checkbox" class="i-checks">
+                    </td>
+                    <td class="mail-ontact"><a href="mail_detail.html">Sandra Derick</a></td>
+                    <td class="mail-subject"><a href="mail_detail.html">Contrary to popular belief.</a></td>
+                    <td class=""></td>
+                    <td class=""></td>
+                    <td class="text-right mail-date">May 28</td>
+                </tr>
+                <tr class="read">
+                    <td class="check-mail">
+                        <input type="checkbox" class="i-checks">
+                    </td>
+                    <td class="mail-ontact"><a href="mail_detail.html">Patrick Pertners</a> <span class="label label-info pull-right">Adv</span></td>
+                    <td class="mail-subject"><a href="mail_detail.html">If you are going to use a passage of Lorem </a></td>
+                    <td class=""></td>
+                    <td class=""></td>
+                    <td class="text-right mail-date">May 28</td>
+                </tr>
+                <tr class="read">
+                    <td class="check-mail">
+                        <input type="checkbox" class="i-checks">
+                    </td>
+                    <td class="mail-ontact"><a href="mail_detail.html">Michael Fox</a></td>
+                    <td class="mail-subject"><a href="mail_detail.html">Humour, or non-characteristic words etc.</a></td>
+                    <td class=""></td>
+                    <td class=""></td>
+                    <td class="text-right mail-date">Dec 9</td>
+                </tr>
+                <tr class="read">
+                    <td class="check-mail">
+                        <input type="checkbox" class="i-checks">
+                    </td>
+                    <td class="mail-ontact"><a href="mail_detail.html">Damien Ritz</a></td>
+                    <td class="mail-subject"><a href="mail_detail.html">Oor Lorem Ipsum is that it has a more-or-less normal.</a></td>
+                    <td class=""></td>
+                    <td class=""></td>
+                    <td class="text-right mail-date">Jun 11</td>
+                </tr>
+                <tr class="read">
+                    <td class="check-mail">
+                        <input type="checkbox" class="i-checks">
+                    </td>
+                    <td class="mail-ontact"><a href="mail_detail.html">Anna Smith</a></td>
+                    <td class="mail-subject"><a href="mail_detail.html">Lorem ipsum dolor noretek imit set.</a></td>
+                    <td class=""></td>
+                    <td class=""><i class="fa fa-paperclip"></i></td>
+                    <td class="text-right mail-date">6.10 AM</td>
+                </tr>
+                <tr class="read">
+                    <td class="check-mail">
+                        <input type="checkbox" class="i-checks">
+                    </td>
+                    <td class="mail-ontact"><a href="mail_detail.html">Jack Nowak</a></td>
+                    <td class="mail-subject"><a href="mail_detail.html">Aldus PageMaker including versions of Lorem Ipsum.</a></td>
+                    <td class=""></td>
+                    <td class=""></td>
+                    <td class="text-right mail-date">8.22 PM</td>
+                </tr>
+                <tr class="read">
+                    <td class="check-mail">
+                        <input type="checkbox" class="i-checks">
+                    </td>
+                    <td class="mail-ontact"><a href="mail_detail.html">Mailchip</a></td>
+                    <td class="mail-subject"><a href="mail_detail.html">There are many variations of passages of Lorem Ipsum.</a></td>
+                    <td class=""></td>
+                    <td class=""></td>
+                    <td class="text-right mail-date">Mar 22</td>
+                </tr>
+                <tr class="read">
+                    <td class="check-mail">
+                        <input type="checkbox" class="i-checks">
+                    </td>
+                    <td class="mail-ontact"><a href="mail_detail.html">Alex T.</a> <span class="label label-warning pull-right">Clients</span></td>
+                    <td class="mail-subject"><a href="mail_detail.html">Lorem ipsum dolor noretek imit set.</a></td>
+                    <td class=""></td>
+                    <td class=""><i class="fa fa-paperclip"></i></td>
+                    <td class="text-right mail-date">December 22</td>
+                </tr>
+                <tr class="read">
+                    <td class="check-mail">
+                        <input type="checkbox" class="i-checks">
+                    </td>
+                    <td class="mail-ontact"><a href="mail_detail.html">Monica Ryther</a></td>
+                    <td class="mail-subject"><a href="mail_detail.html">The standard chunk of Lorem Ipsum used.</a></td>
+                    <td class=""></td>
+                    <td class=""></td>
+                    <td class="text-right mail-date">Jun 12</td>
+                </tr>
+                <tr class="read">
+                    <td class="check-mail">
+                        <input type="checkbox" class="i-checks">
+                    </td>
+                    <td class="mail-ontact"><a href="mail_detail.html">Sandra Derick</a></td>
+                    <td class="mail-subject"><a href="mail_detail.html">Contrary to popular belief.</a></td>
+                    <td class=""></td>
+                    <td class=""></td>
+                    <td class="text-right mail-date">May 28</td>
+                </tr>
+                <tr class="read">
+                    <td class="check-mail">
+                        <input type="checkbox" class="i-checks">
+                    </td>
+                    <td class="mail-ontact"><a href="mail_detail.html">Patrick Pertners</a> </td>
+                    <td class="mail-subject"><a href="mail_detail.html">If you are going to use a passage of Lorem </a></td>
+                    <td class=""></td>
+                    <td class=""></td>
+                    <td class="text-right mail-date">May 28</td>
+                </tr>
+                <tr class="read">
+                    <td class="check-mail">
+                        <input type="checkbox" class="i-checks">
+                    </td>
+                    <td class="mail-ontact"><a href="mail_detail.html">Michael Fox</a></td>
+                    <td class="mail-subject"><a href="mail_detail.html">Humour, or non-characteristic words etc.</a></td>
+                    <td class=""></td>
+                    <td class=""></td>
+                    <td class="text-right mail-date">Dec 9</td>
+                </tr>
+                <tr class="read">
+                    <td class="check-mail">
+                        <input type="checkbox" class="i-checks">
+                    </td>
+                    <td class="mail-ontact"><a href="mail_detail.html">Damien Ritz</a></td>
+                    <td class="mail-subject"><a href="mail_detail.html">Oor Lorem Ipsum is that it has a more-or-less normal.</a></td>
+                    <td class=""></td>
+                    <td class=""></td>
+                    <td class="text-right mail-date">Jun 11</td>
+                </tr>
+-->
+                </tbody>
+                </table>
+
+
+                </div>
+            </div>
+        </div>
+        </div>
+
+
+        	<!-- Footer block -->
+			{section "../../~section/footer.html"}
+			<!-- End Footer block -->
+
+        </div>
+        </div>
+
+    <!-- Mainly scripts -->
+    <script src="../../js/jquery-2.1.1.js"></script>
+    <script src="../../js/bootstrap.min.js"></script>
+    <script src="../../js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="../../js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+    <!-- Custom and plugin javascript -->
+    <script src="../../js/inspinia.js"></script>
+    <script src="../../js/plugins/pace/pace.min.js"></script>
+
+    <!-- iCheck -->
+    <script src="../../js/plugins/iCheck/icheck.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('.i-checks').iCheck({
+                checkboxClass: 'icheckbox_square-green',
+                radioClass: 'iradio_square-green',
+            });
+        });
+    </script>
+</body>
+
+</html>
