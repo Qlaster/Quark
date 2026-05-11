@@ -2,17 +2,26 @@
 
 try
 {
-    $channel = $_GET['channel'] ?? '';
-    $post    = $_GET['post']    ?? '';
+    $channel = $_REQUEST['channel'] ?? '';
     if (!$channel) throw new Exception("Не указан канал");
-    if (!$post)    throw new Exception("Не указан пост");
 
-    $APP->talk->blog($channel)->post($post)->delete();
+    // Bulk-режим (POST posts[]) или одиночный (GET post=)
+    if (!empty($_POST['posts'])) {
+        $posts = array_filter(array_map('trim', (array)$_POST['posts']));
+    } elseif (!empty($_GET['post'])) {
+        $posts = [$_GET['post']];
+    } else {
+        throw new Exception("Не указан пост");
+    }
 
-    // Удаляем директорию с файлами поста
-    $folder = rtrim($APP->talk->config['upload']['folder'] ?? 'public/talk/', '/');
-    $uploadDir = "$folder/$channel/$post";
-    if (is_dir($uploadDir)) $APP->utils->files->remove($uploadDir);
+    $folder = rtrim($APP->talk->config['upload']['folder'] ?? 'public/talk/');
+
+    foreach ($posts as $post)
+    {
+        $APP->talk->blog($channel)->post($post)->delete();
+        $uploadDir = "$folder/$channel/$post";
+        if (is_dir($uploadDir)) $APP->utils->files->remove($uploadDir);
+    }
 
     header('Location: ' . $APP->url->home() . "admin/communication/talk/?channel=$channel");
     exit;

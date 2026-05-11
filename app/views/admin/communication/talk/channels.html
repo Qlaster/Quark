@@ -20,478 +20,192 @@
 
     <div id="wrapper">
 
-		<!--Главное меню слева-->
-		{section "../../~section/mainmenu.html"}
-		<!--Конец меню-->
+        {section "../../~section/mainmenu.html"}
 
         <div id="page-wrapper" class="gray-bg">
 
-  			<!-- Head menu -->
-			{section "../../~section/head.html"}
-			<!-- End head menu -->
-
-			<!-- Title menu-->
-			{section "../../~section/title.html"}
-			<!-- End title menu -->
+            {section "../../~section/head.html"}
+            {section "../../~section/title.html"}
 
         <div class="wrapper wrapper-content">
         <div class="row">
             <div class="col-lg-3">
 
-				 <div class="ibox float-e-margins">
-                        <div class="ibox-title">
-                            <h5>{$catalog['channels']['head']}</h5><!--Каналы:-->
-                            <div class="ibox-tools">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>{$catalog['channels']['head']}</h5>
+                        <div class="ibox-tools">
 
-								<!-- ИЗМЕНЕНО: кнопки управления каналами -->
-								<button class="btn btn-white btn-xs" title="Создать новый канал"
-								    data-toggle="modal" data-target="#modalChannel">
-								    <i class="fa fa-plus"></i> Новый
-								</button>
+                            <button class="btn btn-white btn-xs" title="Создать новый канал"
+                                data-toggle="modal" data-target="#modalChannel">
+                                <i class="fa fa-plus"></i> Новый
+                            </button>
 
-								{if $catalog['channels']['selected']}
-								<button class="btn btn-white btn-xs" title="Изменить выбранный канал"
-								    data-toggle="modal" data-target="#modalChannel"
-								    data-name="{$catalog['channels']['selected']['name']}"
-								    data-title="{$catalog['channels']['selected']['title']}"
-								    data-tags="{$catalog['channels']['selected']['tags_str']}"
-								    data-meta="{$catalog['channels']['selected']['meta']}"
-								    data-archived="{$catalog['channels']['selected']['archived']}">
-								    <i class="fa fa-edit"></i> Изменить
-								</button>
-								<a class="btn btn-white btn-xs" title="Переместить/достать выбранный в архив"
-								    href="{$base}admin/communication/talk/channel/update?channel={$catalog['channels']['selected']['name']}&archived={if $catalog['channels']['selected']['archived']}0{else}1{end}">
-								    <i class="fa fa-archive"></i>
-								</a>
-								<a class="btn btn-white btn-xs" title="Удалить выбранный канал"
-								    href="{$base}admin/communication/talk/channel/delete?channel={$catalog['channels']['selected']['name']}"
-								    onclick="return confirm('Удалить канал «{$catalog['channels']['selected']['name']}»? Все посты и сообщения будут удалены.')">
-								    <i class="fa fa-trash-o"></i>
-								</a>
-								{else}
-								<button class="btn btn-white btn-xs" disabled title="Изменить выбранный канал"><i class="fa fa-edit"></i> Изменить</button>
-								<button class="btn btn-white btn-xs" disabled title="Переместить/достать выбранный в архив"><i class="fa fa-archive"></i></button>
-								<button class="btn btn-white btn-xs" disabled title="Удалить выбранный канал"><i class="fa fa-trash-o"></i></button>
-								{end}
-								<!-- /ИЗМЕНЕНО -->
+                            {if $catalog['channels']['selected']}
+                            <button class="btn btn-white btn-xs" title="Изменить выбранный канал"
+                                data-toggle="modal" data-target="#modalChannel"
+                                data-name="{$catalog['channels']['selected']['name']}"
+                                data-title="{$catalog['channels']['selected']['title']}"
+                                data-tags="{$catalog['channels']['selected']['tags_str']}"
+                                data-meta="{$catalog['channels']['selected']['meta']}"
+                                data-archived="{$catalog['channels']['selected']['archived']}">
+                                <i class="fa fa-edit"></i> Изменить
+                            </button>
+                            <a class="btn btn-white btn-xs" title="Переместить/достать выбранный в архив"
+                                href="admin/communication/talk/channel/update?channel={$catalog['channels']['selected']['name']}&archived={if $catalog['channels']['selected']['archived']}0{else}1{end}">
+                                <i class="fa fa-archive"></i>
+                            </a>
+                            <a class="btn btn-white btn-xs" title="Удалить выбранный канал"
+                                href="admin/communication/talk/channel/delete?channel={$catalog['channels']['selected']['name']}"
+                                onclick="return confirm('Удалить канал «{$catalog['channels']['selected']['name']}»? Все посты и сообщения будут удалены.')">
+                                <i class="fa fa-trash-o"></i>
+                            </a>
+                            {else}
+                            <button class="btn btn-white btn-xs" disabled><i class="fa fa-edit"></i> Изменить</button>
+                            <button class="btn btn-white btn-xs" disabled><i class="fa fa-archive"></i></button>
+                            <button class="btn btn-white btn-xs" disabled><i class="fa fa-trash-o"></i></button>
+                            {end}
 
-<!--
-                                <a class="collapse-link">
-                                    <i class="fa fa-chevron-up"></i>
-                                </a>
-                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                                    <i class="fa fa-wrench"></i>
-                                </a>
-                                <ul class="dropdown-menu dropdown-user">
-                                    <li><a href="#">Config option 1</a>
-                                    </li>
-                                    <li><a href="#">Config option 2</a>
-                                    </li>
-                                </ul>
-                                <a class="close-link">
-                                    <i class="fa fa-times"></i>
-                                </a>
--->
-                            </div>
-                        </div>
-                        <div class="ibox-content no-padding">
-                            <ul class="list-group">
-								<!-- ИЗМЕНЕНО: список каналов -->
-								{foreach $catalog['channels']['list'] as $_channel}
-                                <li class="list-group-item {if $_channel['selected']}ibox-heading{end}">
-									<a href="{$base}admin/communication/talk/?channel={$_channel['name']}" class="text-primary">
-										<strong>
-											{if $_channel['archived']}<i class="fa fa-archive" title="В архиве"></i> {end}
-											{$_channel['name']}
-										</strong>
-										<small class="block text-muted pull-right"><i class="fa fa-clock-o"></i> {$_channel['updated']}</small>
-										<p>{$_channel['title']}</p>
-<!--
-										<span class="label badge pull-right" title="Количество постов">{$_channel['count']}</span>
--->
-										<div>
-											{foreach (array) $_channel['tags'] as $_tag}
-												<span class="label label-default">{$_tag}</span>
-											{end}
-										</div>
-									</a>
-                                </li>
-                                {end}
-								<!-- /ИЗМЕНЕНО -->
-
-
-<!--
-                                <li class="list-group-item ibox-heading">
-									<a class=" text-primary ">
-										<strong><i class="fa fa-archive" title="В архиве"></i> Название канала</strong>
-										<small class="block text-muted pull-right"><i class="fa fa-clock-o"></i> 2026-2-2 14:00:00</small>
-										<p>Человеческий заголовок канала (title)</p>
-										<span class="label badge pull-right">16</span>
-										<div>
-											<span class="label label-default">tag 1</span>
-											<span class="label label-default">tag 2</span>
-										</div>
-									</a>
-                                </li>
-
-                                <li class="list-group-item">
-									<a class=" text-primary ">
-										<strong>support</strong>
-										<small class="block text-muted pull-right"><i class="fa fa-clock-o"></i> 1 minuts ago</small>
-										<p>Поддержка и решение пользовательских вопросов</p>
-										<span class="label badge pull-right" title="Количество постов внутри канала">16</span>
-										<div>
-											<span class="label label-default">tag 1</span>
-											<span class="label label-default">tag 2</span>
-										</div>
-									</a>
-                                </li>
--->
-
-<!--
-                                <li class="list-group-item">
-                                    <p><a class="text-info" href="#">@Stock Man</a> Check this stock chart. This price is crazy! </p>
-                                    <small class="block text-muted"><i class="fa fa-clock-o"></i> 2 hours ago</small>
-                                </li>
-                                <li class="list-group-item">
-                                    <p><a class="text-info" href="#">@Kevin Smith</a> Lorem ipsum unknown printer took a galley </p>
-                                    <small class="block text-muted"><i class="fa fa-clock-o"></i> 2 minuts ago</small>
-                                </li>
-                                <li class="list-group-item ">
-                                    <p><a class="text-info" href="#">@Jonathan Febrick</a> The standard chunk of Lorem Ipsum</p>
-                                    <small class="block text-muted"><i class="fa fa-clock-o"></i> 1 hour ago</small>
-                                </li>
--->
-                            </ul>
                         </div>
                     </div>
-
-
-<!--
-                <div class="ibox float-e-margins">
-                    <div class="ibox-content mailbox-content">
-                        <div class="file-manager">
-                            <a class="btn btn-block btn-primary compose-mail" href="mail_compose.html">Compose Mail</a>
-                            <div class="space-25"></div>
-
-                            <h5>Categories</h5>
-                            <ul class="category-list" style="padding: 0">
-                                <li><a href="#"> <i class="fa fa-circle text-navy"></i> Work </a></li>
-                                <li><a href="#"> <i class="fa fa-circle text-danger"></i> Documents</a></li>
-                                <li><a href="#"> <i class="fa fa-circle text-primary"></i> Social</a></li>
-                                <li><a href="#"> <i class="fa fa-circle text-info"></i> Advertising</a></li>
-                                <li><a href="#"> <i class="fa fa-circle text-warning"></i> Clients</a></li>
-                            </ul>
-
-                            <h5>Folders</h5>
-                            <ul class="folder-list m-b-md" style="padding: 0">
-                                <li><a href="mailbox.html"> <i class="fa fa-inbox "></i> Inbox <span class="label label-warning pull-right">16</span> </a></li>
-                                <li><a href="mailbox.html"> <i class="fa fa-envelope-o"></i> Send Mail</a></li>
-                                <li><a href="mailbox.html"> <i class="fa fa-certificate"></i> Important</a></li>
-                                <li><a href="mailbox.html"> <i class="fa fa-file-text-o"></i> Drafts <span class="label label-danger pull-right">2</span></a></li>
-                                <li><a href="mailbox.html"> <i class="fa fa-trash-o"></i> Trash</a></li>
-                            </ul>
-
-
-                            <h5 class="tag-title">Labels</h5>
-                            <ul class="tag-list" style="padding: 0">
-                                <li><a href=""><i class="fa fa-tag"></i> Family</a></li>
-                                <li><a href=""><i class="fa fa-tag"></i> Work</a></li>
-                                <li><a href=""><i class="fa fa-tag"></i> Home</a></li>
-                                <li><a href=""><i class="fa fa-tag"></i> Children</a></li>
-                                <li><a href=""><i class="fa fa-tag"></i> Holidays</a></li>
-                                <li><a href=""><i class="fa fa-tag"></i> Music</a></li>
-                                <li><a href=""><i class="fa fa-tag"></i> Photography</a></li>
-                                <li><a href=""><i class="fa fa-tag"></i> Film</a></li>
-                            </ul>
-                            <div class="clearfix"></div>
-                        </div>
+                    <div class="ibox-content no-padding">
+                        <ul class="list-group">
+                            {foreach $catalog['channels']['list'] as $_channel}
+                            <li class="list-group-item {if $_channel['selected']}ibox-heading{end}">
+                                <a href="admin/communication/talk/?channel={$_channel['name']}" class="text-primary">
+                                    <strong>
+                                        {if $_channel['archived']}<i class="fa fa-archive" title="В архиве"></i> {end}
+                                        {$_channel['name']}
+                                    </strong>
+                                    <small class="block text-muted pull-right"><i class="fa fa-clock-o"></i> {$_channel['updated']}</small>
+                                    <p>{$_channel['title']}</p>
+                                    <div>
+                                        {foreach (array) $_channel['tags'] as $_tag}
+                                            <span class="label label-default">{$_tag}</span>
+                                        {end}
+                                    </div>
+                                </a>
+                            </li>
+                            {end}
+                        </ul>
                     </div>
                 </div>
 
-
--->
             </div>
             <div class="col-lg-9 animated fadeInRight">
             <div class="mail-box-header">
 
-
-<!--
-                <h2>
-                    Посты (16)
-                </h2>
--->
                 <div class="mail-tools tooltip-demo m-t-md">
                     <div class="btn-group pull-right">
                         <button class="btn btn-white btn-sm"><i class="fa fa-arrow-left"></i></button>
                         <button class="btn btn-white btn-sm"><i class="fa fa-arrow-right"></i></button>
-
                     </div>
 
                     <form method="get" action="" class="pull-right mail-search m-r-lg">
-						<div class="input-group">
-							<input type="text" class="form-control input-sm" name="search" placeholder="Поиск">
-							<div class="input-group-btn">
-								<button type="submit" class="btn btn-sm btn-primary">
-									<i class="fa fa-search"></i>
-								</button>
-							</div>
-						</div>
-					</form>
+                        <input type="hidden" name="channel" value="{$catalog['channels']['selected']['name']}">
+                        <div class="input-group">
+                            <input type="text" class="form-control input-sm" name="search" placeholder="{$form['search']['placeholder']}">
+                            <div class="input-group-btn">
+                                <button type="submit" class="btn btn-sm btn-primary">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
 
+                    {if $catalog['channels']['selected']}
+                    <button class="btn btn-white btn-sm" title="Создать новый пост"
+                        data-toggle="modal" data-target="#modalPost">
+                        <i class="fa fa-plus"></i> Новый
+                    </button>
+                    {else}
+                    <button class="btn btn-white btn-sm" disabled><i class="fa fa-plus"></i> Новый</button>
+                    {end}
 
-					<button class="btn btn-white btn-sm" title="Создать новый пост"><i class="fa fa-plus"></i> Новый</button>
-					<button class="btn btn-white btn-sm" title="Изменить пост"><i class="fa fa-edit"></i> Изменить</button>
-                    <button class="btn btn-white btn-sm" title="Переместить/изъять выделенные посты из архива"><i class="fa fa-archive"></i> Архив</button>
-                    <button class="btn btn-white btn-sm" title="Удалить выделенные посты"><i class="fa fa-trash-o"></i> </button>
+                    {if $catalog['posts']['selected']}
+                    <button class="btn btn-white btn-sm" title="Изменить выбранный пост"
+                        data-toggle="modal" data-target="#modalPost"
+                        data-name="{$catalog['posts']['selected']['name']}"
+                        data-title="{$catalog['posts']['selected']['title']}"
+                        data-author="{$catalog['posts']['selected']['author']}"
+                        data-status="{$catalog['posts']['selected']['status']}"
+                        data-tags="{$catalog['posts']['selected']['tags_str']}"
+                        data-meta="{$catalog['posts']['selected']['meta']}"
+                        data-archived="{$catalog['posts']['selected']['archived']}">
+                        <i class="fa fa-edit"></i> Изменить
+                    </button>
+                    {else}
+                    <button class="btn btn-white btn-sm" disabled><i class="fa fa-edit"></i> Изменить</button>
+                    {end}
 
-                    <button class="btn btn-white btn-sm m-l-md" title="Обновить страницу"><i class="fa fa-refresh"></i> Обновить</button>
+                    <button type="button" id="btn-posts-archive" class="btn btn-white btn-sm"
+                        title="Переместить/извлечь выделенные посты из архива">
+                        <i class="fa fa-archive"></i> Архив
+                    </button>
+                    <button type="button" id="btn-posts-delete" class="btn btn-white btn-sm"
+                        title="Удалить выделенные посты">
+                        <i class="fa fa-trash-o"></i>
+                    </button>
+
+                    <button class="btn btn-white btn-sm m-l-md" title="Обновить страницу"
+                        onclick="location.reload()">
+                        <i class="fa fa-refresh"></i> Обновить
+                    </button>
 
                 </div>
             </div>
                 <div class="mail-box">
 
-                <table class="table table-hover table-mail">
-                <tbody>
-					{foreach $catalog['posts']['list'] as $_post}
-					<tr class="unread">
-						<td class="check-mail">
-							<input type="checkbox" class="i-checks">
-						</td>
-						<td class="mail-ontact"><a href="">{$_post['name']}</a> {if $_post['status']}<span class="label label-warning pull-right">{$_post['status']}</span>{end} </td>
-						<td class="mail-subject">{if $_post['archive']}<span class="fa fa-archive"></span>{end} <a href="">{$_post['title']}</a></td>
-						<td class="">
-							<ul class="tag-list" style="padding: 0">
-								{foreach $_post['tags'] as $_tag}
-									<li><a href=""><i class="fa fa-tag"></i> {$_tag}</a></li>
-								{end}
-							</ul>
-						</td>
-						<td class="">
-							{foreach $_post['files'] as $_file}
-								<i class="fa fa-paperclip" title="Имеет вложенные файлы">{$_file}</i>
-							{end}
-						</td>
-						<td class="text-right mail-date">{$_post['updated']}</td>
-					</tr>
-					{end}
-
-<!--
-                <tr class="unread">
-                    <td class="check-mail">
-                        <input type="checkbox" class="i-checks" checked>
-                    </td>
-                    <td class="mail-ontact"><a href="mail_detail.html">Jack Nowak</a> </td>
-                    <td class="mail-subject"><a href="mail_detail.html">Aldus PageMaker including versions of Lorem Ipsum.</a></td>
-                    <td class="">
-                    	<ul class="tag-list" style="padding: 0">
-                                <li><a href=""><i class="fa fa-tag"></i> Family</a></li>
-                                <li><a href=""><i class="fa fa-tag"></i> Work</a></li>
-                                <li><a href=""><i class="fa fa-tag"></i> Photography</a></li>
-                        </ul>
-                    </td>
-                    <td class=""></td>
-                    <td class="text-right mail-date">8.22 PM</td>
-                </tr>
-                <tr class="read">
-                    <td class="check-mail">
-                        <input type="checkbox" class="i-checks">
-                    </td>
-                    <td class="mail-ontact"><a href="mail_detail.html">Facebook</a> <span class="label label-warning pull-right">Clients</span> </td>
-                    <td class="mail-subject"><a href="mail_detail.html">Many desktop publishing packages and web page editors.</a></td>
-                    <td class=""></td>
-                    <td class=""></td>
-                    <td class="text-right mail-date">Jan 16</td>
-                </tr>
-                <tr class="read">
-                    <td class="check-mail">
-                        <input type="checkbox" class="i-checks">
-                    </td>
-                    <td class="mail-ontact"><a href="mail_detail.html">Mailchip</a></td>
-                    <td class="mail-subject"><a href="mail_detail.html">There are many variations of passages of Lorem Ipsum.</a></td>
-                    <td class=""></td>
-                    <td class=""></td>
-                    <td class="text-right mail-date">Mar 22</td>
-                </tr>
-                <tr class="read">
-                    <td class="check-mail">
-                        <input type="checkbox" class="i-checks">
-                    </td>
-                    <td class="mail-ontact"><a href="mail_detail.html">Alex T.</a> <span class="label label-danger pull-right">Documents</span></td>
-                    <td class="mail-subject"><a href="mail_detail.html">Lorem ipsum dolor noretek imit set.</a></td>
-                    <td class=""></td>
-                    <td class=""><i class="fa fa-paperclip"></i></td>
-                    <td class="text-right mail-date">December 22</td>
-                </tr>
-                <tr class="read">
-                    <td class="check-mail">
-                        <input type="checkbox" class="i-checks">
-                    </td>
-                    <td class="mail-ontact"><a href="mail_detail.html">Monica Ryther</a></td>
-                    <td class="mail-subject"><a href="mail_detail.html">The standard chunk of Lorem Ipsum used.</a></td>
-                    <td class=""></td>
-                    <td class=""></td>
-                    <td class="text-right mail-date">Jun 12</td>
-                </tr>
-                <tr class="read">
-                    <td class="check-mail">
-                        <input type="checkbox" class="i-checks">
-                    </td>
-                    <td class="mail-ontact"><a href="mail_detail.html">Sandra Derick</a></td>
-                    <td class="mail-subject"><a href="mail_detail.html">Contrary to popular belief.</a></td>
-                    <td class=""></td>
-                    <td class=""></td>
-                    <td class="text-right mail-date">May 28</td>
-                </tr>
-                <tr class="read">
-                    <td class="check-mail">
-                        <input type="checkbox" class="i-checks">
-                    </td>
-                    <td class="mail-ontact"><a href="mail_detail.html">Patrick Pertners</a> <span class="label label-info pull-right">Adv</span></td>
-                    <td class="mail-subject"><a href="mail_detail.html">If you are going to use a passage of Lorem </a></td>
-                    <td class=""></td>
-                    <td class=""></td>
-                    <td class="text-right mail-date">May 28</td>
-                </tr>
-                <tr class="read">
-                    <td class="check-mail">
-                        <input type="checkbox" class="i-checks">
-                    </td>
-                    <td class="mail-ontact"><a href="mail_detail.html">Michael Fox</a></td>
-                    <td class="mail-subject"><a href="mail_detail.html">Humour, or non-characteristic words etc.</a></td>
-                    <td class=""></td>
-                    <td class=""></td>
-                    <td class="text-right mail-date">Dec 9</td>
-                </tr>
-                <tr class="read">
-                    <td class="check-mail">
-                        <input type="checkbox" class="i-checks">
-                    </td>
-                    <td class="mail-ontact"><a href="mail_detail.html">Damien Ritz</a></td>
-                    <td class="mail-subject"><a href="mail_detail.html">Oor Lorem Ipsum is that it has a more-or-less normal.</a></td>
-                    <td class=""></td>
-                    <td class=""></td>
-                    <td class="text-right mail-date">Jun 11</td>
-                </tr>
-                <tr class="read">
-                    <td class="check-mail">
-                        <input type="checkbox" class="i-checks">
-                    </td>
-                    <td class="mail-ontact"><a href="mail_detail.html">Anna Smith</a></td>
-                    <td class="mail-subject"><a href="mail_detail.html">Lorem ipsum dolor noretek imit set.</a></td>
-                    <td class=""></td>
-                    <td class=""><i class="fa fa-paperclip"></i></td>
-                    <td class="text-right mail-date">6.10 AM</td>
-                </tr>
-                <tr class="read">
-                    <td class="check-mail">
-                        <input type="checkbox" class="i-checks">
-                    </td>
-                    <td class="mail-ontact"><a href="mail_detail.html">Jack Nowak</a></td>
-                    <td class="mail-subject"><a href="mail_detail.html">Aldus PageMaker including versions of Lorem Ipsum.</a></td>
-                    <td class=""></td>
-                    <td class=""></td>
-                    <td class="text-right mail-date">8.22 PM</td>
-                </tr>
-                <tr class="read">
-                    <td class="check-mail">
-                        <input type="checkbox" class="i-checks">
-                    </td>
-                    <td class="mail-ontact"><a href="mail_detail.html">Mailchip</a></td>
-                    <td class="mail-subject"><a href="mail_detail.html">There are many variations of passages of Lorem Ipsum.</a></td>
-                    <td class=""></td>
-                    <td class=""></td>
-                    <td class="text-right mail-date">Mar 22</td>
-                </tr>
-                <tr class="read">
-                    <td class="check-mail">
-                        <input type="checkbox" class="i-checks">
-                    </td>
-                    <td class="mail-ontact"><a href="mail_detail.html">Alex T.</a> <span class="label label-warning pull-right">Clients</span></td>
-                    <td class="mail-subject"><a href="mail_detail.html">Lorem ipsum dolor noretek imit set.</a></td>
-                    <td class=""></td>
-                    <td class=""><i class="fa fa-paperclip"></i></td>
-                    <td class="text-right mail-date">December 22</td>
-                </tr>
-                <tr class="read">
-                    <td class="check-mail">
-                        <input type="checkbox" class="i-checks">
-                    </td>
-                    <td class="mail-ontact"><a href="mail_detail.html">Monica Ryther</a></td>
-                    <td class="mail-subject"><a href="mail_detail.html">The standard chunk of Lorem Ipsum used.</a></td>
-                    <td class=""></td>
-                    <td class=""></td>
-                    <td class="text-right mail-date">Jun 12</td>
-                </tr>
-                <tr class="read">
-                    <td class="check-mail">
-                        <input type="checkbox" class="i-checks">
-                    </td>
-                    <td class="mail-ontact"><a href="mail_detail.html">Sandra Derick</a></td>
-                    <td class="mail-subject"><a href="mail_detail.html">Contrary to popular belief.</a></td>
-                    <td class=""></td>
-                    <td class=""></td>
-                    <td class="text-right mail-date">May 28</td>
-                </tr>
-                <tr class="read">
-                    <td class="check-mail">
-                        <input type="checkbox" class="i-checks">
-                    </td>
-                    <td class="mail-ontact"><a href="mail_detail.html">Patrick Pertners</a> </td>
-                    <td class="mail-subject"><a href="mail_detail.html">If you are going to use a passage of Lorem </a></td>
-                    <td class=""></td>
-                    <td class=""></td>
-                    <td class="text-right mail-date">May 28</td>
-                </tr>
-                <tr class="read">
-                    <td class="check-mail">
-                        <input type="checkbox" class="i-checks">
-                    </td>
-                    <td class="mail-ontact"><a href="mail_detail.html">Michael Fox</a></td>
-                    <td class="mail-subject"><a href="mail_detail.html">Humour, or non-characteristic words etc.</a></td>
-                    <td class=""></td>
-                    <td class=""></td>
-                    <td class="text-right mail-date">Dec 9</td>
-                </tr>
-                <tr class="read">
-                    <td class="check-mail">
-                        <input type="checkbox" class="i-checks">
-                    </td>
-                    <td class="mail-ontact"><a href="mail_detail.html">Damien Ritz</a></td>
-                    <td class="mail-subject"><a href="mail_detail.html">Oor Lorem Ipsum is that it has a more-or-less normal.</a></td>
-                    <td class=""></td>
-                    <td class=""></td>
-                    <td class="text-right mail-date">Jun 11</td>
-                </tr>
--->
-                </tbody>
-                </table>
-
+                <form id="postsForm" method="post">
+                    <input type="hidden" name="channel" value="{$catalog['channels']['selected']['name']}">
+                    <table class="table table-hover table-mail">
+                    <tbody>
+                    {foreach $catalog['posts']['list'] as $_post}
+                    <tr class="{if $_post['selected']}active{else}unread{end}" data-archived="{$_post['archived']}">
+                        <td class="check-mail">
+                            <input type="checkbox" class="i-checks" name="posts[]" value="{$_post['name']}">
+                        </td>
+                        <td class="mail-ontact">
+                            <a href="admin/communication/talk/?channel={$catalog['channels']['selected']['name']}&post={$_post['name']}">{$_post['name']}</a>
+                            {if $_post['status']}<span class="label label-warning pull-right">{$_post['status']}</span>{end}
+                        </td>
+                        <td class="mail-subject">
+                            {if $_post['archived']}<span class="fa fa-archive"></span>{end}
+                            <a href="admin/communication/talk/?channel={$catalog['channels']['selected']['name']}&post={$_post['name']}">{$_post['title']}</a>
+                        </td>
+                        <td class="">
+                            <ul class="tag-list" style="padding: 0">
+                                {foreach $_post['tags'] as $_tag}
+                                    <li><a href=""><i class="fa fa-tag"></i> {$_tag}</a></li>
+                                {end}
+                            </ul>
+                        </td>
+                        <td class="">
+                            {if $_post['files']}<i class="fa fa-paperclip" title="Имеет вложенные файлы"></i>{end}
+                        </td>
+                        <td class="text-right mail-date">{$_post['updated']}</td>
+                    </tr>
+                    {end}
+                    </tbody>
+                    </table>
+                </form>
 
                 </div>
             </div>
         </div>
         </div>
 
-
-        	<!-- Footer block -->
-			{section "../../~section/footer.html"}
-			<!-- End Footer block -->
+            {section "../../~section/footer.html"}
 
         </div>
         </div>
 
-    <!-- Mainly scripts -->
     <script src="../../js/jquery-2.1.1.js"></script>
     <script src="../../js/bootstrap.min.js"></script>
     <script src="../../js/plugins/metisMenu/jquery.metisMenu.js"></script>
     <script src="../../js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
-
-    <!-- Custom and plugin javascript -->
     <script src="../../js/inspinia.js"></script>
     <script src="../../js/plugins/pace/pace.min.js"></script>
-
-    <!-- iCheck -->
     <script src="../../js/plugins/iCheck/icheck.min.js"></script>
     <script>
         $(document).ready(function(){
@@ -500,13 +214,32 @@
                 radioClass: 'iradio_square-green',
             });
         });
+
+        $('#btn-posts-delete').on('click', function() {
+            var checked = $('input[name="posts[]"]:checked');
+            if (!checked.length) { alert('Выберите хотя бы один пост'); return; }
+            if (!confirm('Удалить выбранные посты (' + checked.length + ' шт.)?')) return;
+            $('#postsForm').attr('action', 'admin/communication/talk/post/delete').submit();
+        });
+
+        $('#btn-posts-archive').on('click', function() {
+            var checked = $('input[name="posts[]"]:checked');
+            if (!checked.length) { alert('Выберите хотя бы один пост'); return; }
+            var allArchived = checked.toArray().every(function(el) {
+                return $(el).closest('tr').data('archived') == 1;
+            });
+            var channel = $('#postsForm input[name="channel"]').val();
+            $('#postsForm')
+                .attr('action', 'admin/communication/talk/post/update?channel=' +
+                      encodeURIComponent(channel) + '&archived=' + (allArchived ? 0 : 1))
+                .submit();
+        });
     </script>
 
-    <!-- ИЗМЕНЕНО: модал создания/редактирования канала -->
     <div class="modal fade" id="modalChannel" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <form method="post" id="modalChannelForm" action="{$base}admin/communication/talk/channel/save">
+                <form method="post" id="modalChannelForm" action="admin/communication/talk/channel/save">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
                         <h4 class="modal-title" id="modalChannelTitle">Канал</h4>
@@ -529,12 +262,6 @@
                                    placeholder="tag1, tag2, tag3">
                             <p class="help-block">Через запятую</p>
                         </div>
-<!--
-                        <div class="form-group">
-                            <label>Meta (JSON)</label>
-                            <textarea class="form-control" name="meta" id="field-meta" rows="3"></textarea>
-                        </div>
--->
                         <div class="form-group">
                             <div class="checkbox">
                                 <label>
@@ -554,17 +281,12 @@
     </div>
 
     <script>
-        //~ var _base = '{$base}';
-
-        $('#modalChannel').on('show.bs.modal', function(e)
-        {
+        $('#modalChannel').on('show.bs.modal', function(e) {
             var btn    = $(e.relatedTarget);
             var name   = btn.data('name') || '';
             var isEdit = !!name;
 
             $('#modalChannelTitle').text(isEdit ? 'Изменить канал' : 'Новый канал');
-
-            // При редактировании — POST на update?channel=name, при создании — на save
             $('#modalChannelForm').attr(
                 'action',
                 isEdit
@@ -575,17 +297,107 @@
             $('#field-name').val(name).prop('readonly', isEdit);
             $('#field-title').val(btn.data('title') || '');
             $('#field-tags').val(btn.data('tags')   || '');
-            $('#field-meta').val(btn.data('meta')   || '');
             $('#field-archived').prop('checked', btn.data('archived') == 1);
         });
 
-        // При закрытии модала — сбрасываем форму
         $('#modalChannel').on('hidden.bs.modal', function() {
             $('#modalChannelForm')[0].reset();
             $('#field-name').prop('readonly', false);
         });
     </script>
-    <!-- /ИЗМЕНЕНО -->
+
+    <div class="modal fade" id="modalPost" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form method="post" id="modalPostForm" enctype="multipart/form-data"
+                      action="admin/communication/talk/post/save">
+                    <input type="hidden" name="channel" id="post-channel"
+                           value="{$catalog['channels']['selected']['name']}">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                        <h4 class="modal-title" id="modalPostTitle">Пост</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Slug (name) <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="name" id="post-name"
+                                   placeholder="ticket-abc123" required>
+                            <p class="help-block">Уникальный идентификатор поста (латиница, дефис)</p>
+                        </div>
+                        <div class="form-group">
+                            <label>Заголовок (title)</label>
+                            <input type="text" class="form-control" name="title" id="post-title">
+                        </div>
+                        <div class="form-group">
+                            <label>Автор (author)</label>
+                            <input type="text" class="form-control" name="author" id="post-author">
+                        </div>
+                        <div class="form-group">
+                            <label>Статус (status)</label>
+                            <input type="text" class="form-control" name="status" id="post-status"
+                                   placeholder="open">
+                        </div>
+                        <div class="form-group">
+                            <label>Метки (tags)</label>
+                            <input type="text" class="form-control" name="tags" id="post-tags"
+                                   placeholder="tag1, tag2, tag3">
+                            <p class="help-block">Через запятую</p>
+                        </div>
+                        <div class="form-group">
+                            <label>Meta (JSON)</label>
+                            <textarea class="form-control" name="meta" id="post-meta" rows="2"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Файлы</label>
+                            <input type="file" name="files[]" multiple>
+                        </div>
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="archived" id="post-archived" value="1">
+                                    В архиве
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-white" data-dismiss="modal">Отмена</button>
+                        <button type="submit" class="btn btn-primary">Сохранить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $('#modalPost').on('show.bs.modal', function(e) {
+            var btn     = $(e.relatedTarget);
+            var name    = btn.data('name') || '';
+            var channel = $('#post-channel').val();
+            var isEdit  = !!name;
+
+            $('#modalPostTitle').text(isEdit ? 'Изменить пост' : 'Новый пост');
+            $('#modalPostForm').attr(
+                'action',
+                isEdit
+                    ? 'admin/communication/talk/post/update?channel=' + encodeURIComponent(channel) + '&post=' + encodeURIComponent(name)
+                    : 'admin/communication/talk/post/save'
+            );
+
+            $('#post-name').val(name).prop('readonly', isEdit);
+            $('#post-title').val(btn.data('title')   || '');
+            $('#post-author').val(btn.data('author') || '');
+            $('#post-status').val(btn.data('status') || '');
+            $('#post-tags').val(btn.data('tags')     || '');
+            $('#post-meta').val(btn.data('meta')     || '');
+            $('#post-archived').prop('checked', btn.data('archived') == 1);
+        });
+
+        $('#modalPost').on('hidden.bs.modal', function() {
+            $('#modalPostForm')[0].reset();
+            $('#post-name').prop('readonly', false);
+        });
+    </script>
 
 </body>
 

@@ -4,16 +4,16 @@ $content['title'] = 'Коммуникации — Каналы';
 
 $channel = $_GET['channel'] ?? null;
 $post    = $_GET['post']    ?? null;
+$search  = trim($_GET['search'] ?? '');
 
 // Каналы
 $blogs = $APP->talk->blog()->select();
 
 foreach ($blogs as &$_blog)
 {
-    $_blog['selected']  = ($channel === $_blog['name']);
-    //~ $_blog['count']     = count($APP->talk->blog($_blog['name'])->post()->select());
-    $_blog['updated']   = $_blog['updated'] ? date('d.m.Y H:i', $_blog['updated']) : '—';
-    $_blog['tags_str']  = implode(', ', (array)($_blog['tags'] ?? []));
+    $_blog['selected'] = ($channel === $_blog['name']);
+    $_blog['updated']  = $_blog['updated'] ? date('d.m.Y H:i', $_blog['updated']) : '—';
+    $_blog['tags_str'] = implode(', ', (array)($_blog['tags'] ?? []));
 }
 unset($_blog);
 
@@ -32,7 +32,9 @@ $content['catalog']['posts']['selected'] = null;
 
 if ($channel)
 {
-    $posts = $APP->talk->blog($channel)->post()->select();
+    $postCtx = $APP->talk->blog($channel)->post();
+    $posts   = $search ? $postCtx->search($search) : $postCtx->select();
+
     foreach ($posts as &$_post) {
         $_post['selected'] = ($post === $_post['name']);
         $_post['updated']  = $_post['updated'] ? date('d.m.Y H:i', $_post['updated']) : '—';
@@ -42,5 +44,10 @@ if ($channel)
     unset($_post);
     $content['catalog']['posts']['list'] = $posts;
 }
+
+
+
+$content['form']['search']['placeholder'] = $search ? $search : 'Поиск';
+
 
 $APP->template->file('admin/communication/talk/channels.html')->display($content);
