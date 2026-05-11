@@ -4,6 +4,31 @@ namespace App\Facade;
 // ----------------------------------------------------------------
 //  Talk — иерархический фасад: blog → post → message
 // ----------------------------------------------------------------
+/*
+ *
+	// Все сообщения поста
+	$APP->talk->blog('support')->post('ticket-abc123')->message()->select()
+
+	// Конкретное сообщение
+	$APP->talk->blog('support')->post('ticket-abc123')->message(42)->select()
+
+	// Обновить конкретное сообщение
+	$APP->talk->blog('support')->post('ticket-abc123')->message(42)->update([
+		'text' => 'Исправленный текст',
+	])
+
+	// Удалить конкретное сообщение
+	$APP->talk->blog('support')->post('ticket-abc123')->message(42)->delete()
+
+	// Архивировать конкретное сообщение
+	$APP->talk->blog('support')->post('ticket-abc123')->message(42)->archive()
+
+	// create() — всегда без ID (создаёт новое)
+	$APP->talk->blog('support')->post('ticket-abc123')->message()->create([...])
+
+*/
+
+
 
 class Talk
 {
@@ -68,7 +93,8 @@ class Talk
 		)");
 	}
 
-    public function blog(string $name): BlogContext
+    // ИЗМЕНЕНО: $name стал необязательным — blog() без аргумента вернёт контекст всех блогов
+    public function blog(?string $name = null): BlogContext
     {
         return new BlogContext($this->orm, $this->config, $name);
     }
@@ -89,7 +115,8 @@ class BlogContext
         return $this->config['table']['blogs'] ?? 'talk_blogs';
     }
 
-    public function __construct($orm, $config, string $name)
+    // : $name стал nullable
+    public function __construct($orm, $config, ?string $name = null)
     {
         $this->orm     = $orm;
         $this->config  = $config;
@@ -98,6 +125,10 @@ class BlogContext
 
     public function create(array $data = []): self
     {
+        // : guard — нельзя создать блог без имени
+        if ($this->name === null)
+            throw new \RuntimeException("blog() requires a name to create");
+
         $now  = time();
         $data = array_merge(['title' => null, 'tags' => null, 'meta' => null], $data);
 
@@ -114,17 +145,24 @@ class BlogContext
         return $this;
     }
 
+    // : если $name === null — возвращает все блоги без фильтра по имени
     public function select(...$where): array
     {
-        $rows = $this->orm->table($this->table())
-            ->where(['name' => $this->name])
-            ->wheres(...$where)
-            ->select();
+        $query = $this->orm->table($this->table());
+
+        if ($this->name !== null)
+            $query = $query->where(['name' => $this->name]);
+
+        $rows = $query->wheres(...$where)->select();
         return array_map([$this, 'decode'], (array) $rows);
     }
 
     public function update(array $data): self
     {
+        // : guard
+        if ($this->name === null)
+            throw new \RuntimeException("blog() requires a name to update");
+
         $data['updated'] = time();
 
         if (isset($data['tags']) && is_array($data['tags']))
@@ -138,17 +176,28 @@ class BlogContext
 
     public function delete(): self
     {
+        // : guard
+        if ($this->name === null)
+            throw new \RuntimeException("blog() requires a name to delete");
+
         $this->orm->table($this->table())->where(['name' => $this->name])->delete();
         return $this;
     }
 
     public function archive(bool $state = true): self
     {
+        // : guard — update() уже бросит исключение, но явный guard нагляднее
+        if ($this->name === null)
+            throw new \RuntimeException("blog() requires a name to archive");
+
         return $this->update(['archived' => (int) $state]);
     }
 
     public function post(?string $name = null): PostContext
     {
+		if ($this->name === null)
+			throw new \RuntimeException("blog() requires a name to access posts");
+
         return new PostContext($this->orm, $this->config, $this->name, $name);
     }
 
