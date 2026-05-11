@@ -94,7 +94,7 @@ class Talk
 	}
 
     // ИЗМЕНЕНО: $name стал необязательным — blog() без аргумента вернёт контекст всех блогов
-    public function blog(?string $name = null): BlogContext
+    public function blog($name = null): BlogContext
     {
         return new BlogContext($this->orm, $this->config, $name);
     }
@@ -116,7 +116,7 @@ class BlogContext
     }
 
     // : $name стал nullable
-    public function __construct($orm, $config, ?string $name = null)
+    public function __construct($orm, $config, $name = null)
     {
         $this->orm     = $orm;
         $this->config  = $config;
@@ -193,7 +193,7 @@ class BlogContext
         return $this->update(['archived' => (int) $state]);
     }
 
-    public function post(?string $name = null): PostContext
+    public function post($name = null): PostContext
     {
 		if ($this->name === null)
 			throw new \RuntimeException("blog() requires a name to access posts");
@@ -223,7 +223,7 @@ class PostContext
     private function blogsTable(): string { return $this->config['table']['blogs'] ?? 'talk_blogs'; }
     private function postsTable(): string { return $this->config['table']['posts'] ?? 'talk_posts'; }
 
-    public function __construct($orm, $config, string $blogName, ?string $postName = null)
+    public function __construct($orm, $config, string $blogName, $postName = null)
     {
         $this->orm      = $orm;
         $this->config   = $config;
@@ -231,7 +231,7 @@ class PostContext
         $this->postName = $postName;
     }
 
-    private function blogId(): ?int
+    private function blogId()
     {
         $row = $this->orm->table($this->blogsTable())->where(['name' => $this->blogName])->select(['id']);
         return $row[0]['id'] ?? null;
@@ -323,7 +323,7 @@ class PostContext
     }
 
     // Изменено: принимает необязательный int $id
-    public function message(?int $id = null): MessageContext
+    public function message($id = null): MessageContext
     {
         if ($this->postName === null)
             throw new \RuntimeException("post() requires a name to access messages");
@@ -357,7 +357,7 @@ class MessageContext
     private function messagesTable(): string { return $this->config['table']['messages'] ?? 'talk_messages'; }
 
     // Изменено: добавлен необязательный параметр $messageId
-    public function __construct($orm, $config, string $blogName, string $postName, ?int $messageId = null)
+    public function __construct($orm, $config, string $blogName, string $postName, $messageId = null)
     {
         $this->orm       = $orm;
         $this->config    = $config;
@@ -366,7 +366,7 @@ class MessageContext
         $this->messageId = $messageId;
     }
 
-    private function postId(): ?int
+    private function postId(): int
     {
         $blogs = $this->blogsTable();
         $posts = $this->postsTable();

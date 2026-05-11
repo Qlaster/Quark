@@ -43,11 +43,37 @@
                             <h5>{$catalog['channels']['head']}</h5><!--Каналы:-->
                             <div class="ibox-tools">
 
+								<!-- ИЗМЕНЕНО: кнопки управления каналами -->
+								<button class="btn btn-white btn-xs" title="Создать новый канал"
+								    data-toggle="modal" data-target="#modalChannel">
+								    <i class="fa fa-plus"></i> Новый
+								</button>
 
-								<button class="btn btn-white btn-xs" title="Создать новый канал"><i class="fa fa-plus"></i> Новый</button>
-								<button class="btn btn-white btn-xs" title="Изменить выбранный канал"><i class="fa fa-edit"></i> Изменить</button>
-								<button class="btn btn-white btn-xs" title="Переместить/достать выбранный в архив"><i class="fa fa-archive"></i> </button>
-								<button class="btn btn-white btn-xs" title="Удалить выбранный канал"><i class="fa fa-trash-o"></i> </button>
+								{if $catalog['channels']['selected']}
+								<button class="btn btn-white btn-xs" title="Изменить выбранный канал"
+								    data-toggle="modal" data-target="#modalChannel"
+								    data-name="{$catalog['channels']['selected']['name']}"
+								    data-title="{$catalog['channels']['selected']['title']}"
+								    data-tags="{$catalog['channels']['selected']['tags_str']}"
+								    data-meta="{$catalog['channels']['selected']['meta']}"
+								    data-archived="{$catalog['channels']['selected']['archived']}">
+								    <i class="fa fa-edit"></i> Изменить
+								</button>
+								<a class="btn btn-white btn-xs" title="Переместить/достать выбранный в архив"
+								    href="{$base}admin/communication/talk/channel/update?channel={$catalog['channels']['selected']['name']}&archived={if $catalog['channels']['selected']['archived']}0{else}1{end}">
+								    <i class="fa fa-archive"></i>
+								</a>
+								<a class="btn btn-white btn-xs" title="Удалить выбранный канал"
+								    href="{$base}admin/communication/talk/channel/delete?channel={$catalog['channels']['selected']['name']}"
+								    onclick="return confirm('Удалить канал «{$catalog['channels']['selected']['name']}»? Все посты и сообщения будут удалены.')">
+								    <i class="fa fa-trash-o"></i>
+								</a>
+								{else}
+								<button class="btn btn-white btn-xs" disabled title="Изменить выбранный канал"><i class="fa fa-edit"></i> Изменить</button>
+								<button class="btn btn-white btn-xs" disabled title="Переместить/достать выбранный в архив"><i class="fa fa-archive"></i></button>
+								<button class="btn btn-white btn-xs" disabled title="Удалить выбранный канал"><i class="fa fa-trash-o"></i></button>
+								{end}
+								<!-- /ИЗМЕНЕНО -->
 
 <!--
                                 <a class="collapse-link">
@@ -70,13 +96,19 @@
                         </div>
                         <div class="ibox-content no-padding">
                             <ul class="list-group">
+								<!-- ИЗМЕНЕНО: список каналов -->
 								{foreach $catalog['channels']['list'] as $_channel}
-                                <li class="list-group-item ibox-heading"> <!--- ibox-heading - это способ выделить выбранный элемент цветом --->
-									<a class=" text-primary ">
-										<strong><i class="fa fa-archive" title="В архиве"></i> {$_channel['name']}</strong>
+                                <li class="list-group-item {if $_channel['selected']}ibox-heading{end}">
+									<a href="{$base}admin/communication/talk/?channel={$_channel['name']}" class="text-primary">
+										<strong>
+											{if $_channel['archived']}<i class="fa fa-archive" title="В архиве"></i> {end}
+											{$_channel['name']}
+										</strong>
 										<small class="block text-muted pull-right"><i class="fa fa-clock-o"></i> {$_channel['updated']}</small>
 										<p>{$_channel['title']}</p>
-										<span class="label badge pull-right">{$_channel['count']}</span> <!--Количество постов внутри канала-->
+<!--
+										<span class="label badge pull-right" title="Количество постов">{$_channel['count']}</span>
+-->
 										<div>
 											{foreach (array) $_channel['tags'] as $_tag}
 												<span class="label label-default">{$_tag}</span>
@@ -85,6 +117,7 @@
 									</a>
                                 </li>
                                 {end}
+								<!-- /ИЗМЕНЕНО -->
 
 
 <!--
@@ -132,23 +165,6 @@
                             </ul>
                         </div>
                     </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 <!--
@@ -485,6 +501,92 @@
             });
         });
     </script>
+
+    <!-- ИЗМЕНЕНО: модал создания/редактирования канала -->
+    <div class="modal fade" id="modalChannel" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form method="post" id="modalChannelForm" action="{$base}admin/communication/talk/channel/save">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                        <h4 class="modal-title" id="modalChannelTitle">Канал</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Slug (name) <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="name" id="field-name"
+                                   placeholder="support" required>
+                            <p class="help-block">Уникальный идентификатор канала (латиница, дефис)</p>
+                        </div>
+                        <div class="form-group">
+                            <label>Заголовок (title)</label>
+                            <input type="text" class="form-control" name="title" id="field-title"
+                                   placeholder="Техническая поддержка">
+                        </div>
+                        <div class="form-group">
+                            <label>Метки (tags)</label>
+                            <input type="text" class="form-control" name="tags" id="field-tags"
+                                   placeholder="tag1, tag2, tag3">
+                            <p class="help-block">Через запятую</p>
+                        </div>
+<!--
+                        <div class="form-group">
+                            <label>Meta (JSON)</label>
+                            <textarea class="form-control" name="meta" id="field-meta" rows="3"></textarea>
+                        </div>
+-->
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="archived" id="field-archived" value="1">
+                                    В архиве
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-white" data-dismiss="modal">Отмена</button>
+                        <button type="submit" class="btn btn-primary">Сохранить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        //~ var _base = '{$base}';
+
+        $('#modalChannel').on('show.bs.modal', function(e)
+        {
+            var btn    = $(e.relatedTarget);
+            var name   = btn.data('name') || '';
+            var isEdit = !!name;
+
+            $('#modalChannelTitle').text(isEdit ? 'Изменить канал' : 'Новый канал');
+
+            // При редактировании — POST на update?channel=name, при создании — на save
+            $('#modalChannelForm').attr(
+                'action',
+                isEdit
+                    ? 'admin/communication/talk/channel/update?channel=' + encodeURIComponent(name)
+                    : 'admin/communication/talk/channel/save'
+            );
+
+            $('#field-name').val(name).prop('readonly', isEdit);
+            $('#field-title').val(btn.data('title') || '');
+            $('#field-tags').val(btn.data('tags')   || '');
+            $('#field-meta').val(btn.data('meta')   || '');
+            $('#field-archived').prop('checked', btn.data('archived') == 1);
+        });
+
+        // При закрытии модала — сбрасываем форму
+        $('#modalChannel').on('hidden.bs.modal', function() {
+            $('#modalChannelForm')[0].reset();
+            $('#field-name').prop('readonly', false);
+        });
+    </script>
+    <!-- /ИЗМЕНЕНО -->
+
 </body>
 
 </html>
