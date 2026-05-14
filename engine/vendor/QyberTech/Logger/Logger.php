@@ -12,21 +12,31 @@ class Logger
     const ALERT     = 'ALERT';
     const EMERGENCY = 'EMERGENCY';
 
-    private $dir;
-    private $channel;
-    private $keep;
+    private static $levelMap = [
+        'debug'     => 100,
+        'info'      => 200,
+        'notice'    => 250,
+        'warning'   => 300,
+        'error'     => 400,
+        'critical'  => 500,
+        'alert'     => 550,
+        'emergency' => 600,
+    ];
 
-    public function __construct($dir, $channel = 'app', $keep = 30)
+    public $config = [];
+
+    public function __construct($dir, $channel = 'app', $keep = 30, $level = 'debug')
     {
-        $this->dir     = rtrim($dir, '/');
-        $this->channel = $this->sanitize($channel);
-        $this->keep    = (int) $keep;
+        $this->config['dir']     = rtrim($dir, '/');
+        $this->config['channel'] = $this->sanitize($channel);
+        $this->config['keep']    = (int) $keep;
+        $this->config['level']   = strtolower($level);
     }
 
     public function channel($name)
     {
-        $clone          = clone $this;
-        $clone->channel = $clone->sanitize($name);
+        $clone = clone $this;
+        $clone->config['channel'] = $clone->sanitize($name);
         return $clone;
     }
 
@@ -52,15 +62,17 @@ class Logger
 
     private function write($level, $message, array $context)
     {
+        $minLevel = self::$levelMap[$this->config['level']] ?? 100;
+        $msgLevel = self::$levelMap[strtolower($level)]     ?? 0;
+        if ($msgLevel < $minLevel) return;
+
         $date = date('Y-m-d');
         $time = date('Y-m-d H:i:s');
         $ctx  = $context ? ' ' . json_encode($context) : '';
-        $line = "[{$time}] [{$this->channel}] {$level}: {$message}{$ctx}" . PHP_EOL;
+        $line = "[{$time}] [{$this->config['channel']}] {$level}: {$message}{$ctx}" . PHP_EOL;
 
-        $dir = "{$this->dir}/{$this->channel}";
-        if (!is_dir($dir)) {
-            mkdir($dir, 0755, true);
-        }
+        $dir = "{$this->config['dir']}/{$this->config['channel']}";
+        if (!is_dir($dir)) mkdir($dir, 0755, true);
 
         file_put_contents("{$dir}/{$date}.log", $line, FILE_APPEND | LOCK_EX);
 
@@ -69,17 +81,15 @@ class Logger
 
     private function rotate($dir)
     {
-        if ($this->keep <= 0) return;
+        if ($this->config['keep'] <= 0) return;
 
         $files = glob("{$dir}/*.log");
-        if (!$files || count($files) <= $this->keep) return;
+        if (!$files || count($files) <= $this->config['keep']) return;
 
-        rsort($files); // новые первыми (дата в имени = алфавитная = хронологическая)
+        rsort($files);
 
-        foreach (array_slice($files, $this->keep) as $old) {
-            if (is_writable($old)) {
-                @unlink($old);
-            }
-        }
+        foreach (array_slice($files, $this->config['keep']) as $old)
+            if (is_writable($old)) @unlink($old);
+
     }
 }
