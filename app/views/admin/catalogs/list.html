@@ -55,6 +55,27 @@
 							<div class="ibox-title">
 								<h5>Список каталогов</h5>
 								<div class="ibox-tools">
+
+<!--
+									<a href="admin/catalogs/config/edit" class="btn btn-primary btn-xs">
+										<i class="fa fa-plus"></i> Создать каталог
+									</a>
+-->
+
+									{foreach $menu['tools']['list'] as $_elem}
+										{if count($_elem['button'])}
+										<a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="{$_elem['icon']}"></i></a>
+										<ul class="dropdown-menu dropdown-user" style="margin-left:-15em; min-width:20em">
+											{foreach $_elem['button'] as $_btn}
+											<li><a href="{$_btn['link']}"><i class="{$_btn['icon']}"></i> {$_btn['head']}</a></li>
+											{end}
+										</ul>
+										{else}
+										<a class="{$_elem['class']}" href="{$_elem['link']}"><i class="{$_elem['icon']}"></i>{$_elem['head']}</a>
+										{end}
+									{end}
+
+
 									<a class="collapse-link">
 										<i class="fa fa-chevron-up"></i>
 									</a>
@@ -69,18 +90,7 @@
 									{end}
 								</ul>
 -->
-									{foreach $menu['tools']['list'] as $_elem}
-										{if count($_elem['button'])}
-										<a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="{$_elem['icon']}"></i></a>
-										<ul class="dropdown-menu dropdown-user" style="margin-left:-15em; min-width:20em">
-											{foreach $_elem['button'] as $_btn}
-											<li><a href="{$_btn['link']}"><i class="{$_btn['icon']}"></i> {$_btn['head']}</a></li>
-											{end}
-										</ul>
-										{else}
-										<a href="{$_elem['link']}"><i class="{$_elem['icon']}"></i></a>
-										{end}
-									{end}
+
 
 									<a class="close-link">
 										<i class="fa fa-times"></i>
@@ -91,7 +101,12 @@
 							<div class="ibox-content forum-container">
 
 								<div class="row">
-									<div class="col-sm-12">
+									<div class="col-md-2 col-sm-12">
+										<a href="admin/catalogs/config/edit" class="btn-edit btn btn-success btn-outline btn-sm mr-4"><i class="fa fa-plus"></i> Добавить справочник</a>
+									</div>
+
+									<div class="col-md-10 col-sm-12">
+
 										<div class="input-group"><input id="search-catalog" type="text" placeholder="Поиск" class="input-sm form-control">
 											<span class="input-group-btn">
 												<button type="button" class="btn btn-sm btn-primary"><i class="fa fa-search"></i></button>
@@ -112,7 +127,9 @@
 													<i class="fa {$catalog['icon']} "></i>
 												</div>
 												<a {if $catalog['link']} href="{$catalog['link']}" {else} disabled {end} class="forum-item-title ">{$catalog['head']}</a>
-												<div class="forum-sub-title">{$catalog['info']}
+												<div class="forum-sub-title">
+													{$catalog['info']}
+													<small>{$$catalog['html']}</small>
 
 <!--
 													<small style="opacity: 0.7;"> <i class="fa fa-database"></i> {$catalog['db']}  <i class="fa fa-angle-double-right"></i> <i class="fa fa-table"></i> {$catalog['table']}</small>
@@ -153,16 +170,14 @@
 
 -->
 
-											<div class="col-md-3 text-right no-padding">
+											<div class="col-md-2 text-right no-padding">
 												{foreach $catalog['labels'] as $_lable}
 												<span class="label">{$_lable['head']}</span>
 												{end}
 											</div>
 
 											<div class="col-md-1 text-right no-padding">
-												<span class="views-number !text-center {$catalog['status']['tone']}">
-													<i class="{$catalog['status']['icon']} "></i>
-												</span>
+
 												<!--
 												<span class="btn btn-danger btn-circle btn-lg" style="opacity:0.8" type="button"><i class="fa {$catalog['status']['icon']}"></i></span>
 -->
@@ -170,20 +185,37 @@
 												<span class="btn-danger  btn-lg" style="opacity:0.8" type="button"><i class="fa {$catalog['status']['icon']}"></i></span>
 -->
 											</div>
-											<div class="col-md-2 !text-right !text-center !forum-info {$catalog['status']['tone']}">
+											<div class="col-md-2 no-padding !text-right !text-center !forum-info {$catalog['status']['tone']}">
 												<!--
 												<span class="!views-number"><i class="fa fa-databa	se"></i> {$catalog['db']}</span>
 -->
 
+
 												<span>
-													<span><i class="fa fa-database"></i> {$catalog['db']}</span>
+
+													<span title="Название подключения БД"><i class="fa fa-database"></i> {$catalog['db']}</span>
 													<span> <i class="fa fa-angle-double-right"></i> </span>
-													<span><i class="fa fa-table"></i> {$catalog['table']}</span>
+													<span title="Таблица базы данных для хранения"><i class="fa fa-table"></i> {$catalog['table']}</span>
+<!--
+													<span> <i class="fa fa-angle-double-right"></i> </span>
+-->
+													<span> — </span>
+													<code title="Системное название каталога" class="{= $catalog['status']['tone'] ?? 'text-success'} "><i class="fa fa-inbox"></i> {$name}</code>
+
 
 													<br>
+													<span class="!views-number !text-center {$catalog['status']['tone']}">
+														<i class="{$catalog['status']['icon']} "></i>
+													</span>
 													<small>{$catalog['status']['info']}</small>
 
+
 												</span>
+
+
+
+
+
 
 												<!--
 												<div>
@@ -192,7 +224,8 @@
 -->
 											</div>
 
-											<div class="col-md-1 text-right">
+											<div class="col-md-2 text-right">
+
 
 												<div class="!d-inline !input-group">
 													<span class="btn-group">
@@ -208,7 +241,12 @@
 
 														</ul>
 													</span>
-													<!--
+
+													<a class="btn btn-white !btn-xs dropdown-toggle " href="admin/catalogs/config/edit?name={$name}"><i class="fa fa-cogs"></i> </a>
+													<a class="btn btn-danger btn-outline btn-delete dropdown-toggle " style="opacity:0.6" data-name="{$name}" ><i class="fa fa-trash-o"></i>  </a>
+
+
+<!--
 													<span class="btn-group">
 														<button data-toggle="dropdown" class="btn btn-white !btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i>  <span class="caret"></span></button>
 														<ul class="dropdown-menu" style="left:-100px">
@@ -388,6 +426,17 @@
 					}
 				});
 			});
+
+
+			$('.btn-delete').on('click', function(e)
+			{
+				e.preventDefault();
+				var name = $(this).data('name');
+				if (!confirm('Удалить каталог "' + name + '" из конфигурации?\n\nДанные в базе данных затронуты не будут.'))
+					return;
+				window.location.href = 'admin/catalogs/config/delete?name=' + encodeURIComponent(name);
+			});
+
 
 
 			$(".importCsv").on('click', function()

@@ -212,7 +212,7 @@
 			{
 				if ($column['type'] == 'select')
 				{
-					$column['source'] = explode('.', $column['source']);
+					$column['source'] = explode('::', $column['source']);
 
 					if (count($column['source']) == 2) $column['source'] = $this->dbInterface->connect($catalog['db'])->table($column['source'][0])->select($column['source'][1]);
 					if (count($column['source']) == 1) $column['source'] = $this->dbInterface->connect($catalog['db'])->table($catalog['table'])->select($column['source'][0]);

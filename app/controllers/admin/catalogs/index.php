@@ -25,10 +25,22 @@
 
 	$content['patterns']['list'] = $APP->catalog->patterns();
 
+
+	//~ $content['menu']['tools']['list']['create']['head'] = 'Создать каталог';
+	//~ $content['menu']['tools']['list']['create']['icon'] = 'fa fa-plus';
+	//~ $content['menu']['tools']['list']['create']['link'] = 'admin/catalogs/config/edit';
+	//~ $content['menu']['tools']['list']['create']['class'] = 'btn btn-primary btn-xs';
+
+
 	$content['menu']['tools']['list'][1]['icon'] = "fa fa-wrench";
 	$content['menu']['tools']['list'][1]['button'][1]['head'] = "Конфигурация справочников";
 	$content['menu']['tools']['list'][1]['button'][1]['icon'] = "fa fa-cogs";
 	$content['menu']['tools']['list'][1]['button'][1]['link'] = "admin/tools/codeeditor/?config=".$_ENV['facades']['path'].'/catalog.ini';
+
+
+
+
+
 
 
 	$APP->template->file('admin/catalogs/list.html')->display($content);

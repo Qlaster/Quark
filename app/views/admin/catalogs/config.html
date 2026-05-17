@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{$title}</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../css/animate.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+    <link href="../css/plugins/toastr/toastr.min.css" rel="stylesheet">
+</head>
+<body>
+<div id="wrapper">
+
+    {section "../~section/mainmenu.html"}
+
+    <div id="page-wrapper" class="gray-bg">
+        {section "../~section/head.html"}
+        {section "../~section/title.html"}
+
+        <div class="wrapper wrapper-content">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                            <h5>{$title}</h5>
+                            <div class="ibox-tools">
+                                <a href="admin/catalogs/" class="btn btn-white btn-xs">
+                                    <i class="fa fa-arrow-left"></i> К списку
+                                </a>
+                            </div>
+                        </div>
+                        <div class="ibox-content">
+
+                            <!-- =====================================================
+                                 Шаблон строки поля (не рендерится браузером).
+                                 Плейсхолдер [tFieldName] заменяется в JS.
+                                 Опции <select> добавляются через JS после клонирования.
+                            ====================================================== -->
+                            <template id="tpl-field-row">
+                                <tr data-field="[tFieldName]">
+                                    <td>
+                                        <code>[tFieldName]</code>
+                                    </td>
+                                    <td>
+                                        <input type="text"
+                                               name="field[[tFieldName]][alias]"
+                                               class="form-control input-sm"
+                                               placeholder="[tFieldName]">
+                                    </td>
+                                    <td>
+                                        <select name="field[[tFieldName]][type]"
+                                                class="form-control input-sm field-type-select">
+                                            <!-- опции вставляются через JS -->
+                                        </select>
+                                    </td>
+                                    <td class="field-extra">
+                                        <div class="extra-source" style="display:none">
+                                            <input type="text"
+                                                   name="field[[tFieldName]][source]"
+                                                   class="form-control input-sm"
+                                                   placeholder="catalog::table::column">
+                                        </div>
+                                        <div class="extra-input" style="display:none">
+                                            <input type="text"
+                                                   name="field[[tFieldName]][input]"
+                                                   class="form-control input-sm"
+                                                   placeholder="color, date, number...">
+                                        </div>
+                                        <div class="extra-ignore" style="display:none">
+                                            <label class="checkbox-inline">
+                                                <input type="checkbox"
+                                                       name="field[[tFieldName]][ignore]"
+                                                       value="1">
+                                                Скрыть в view
+                                            </label>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <button type="button"
+                                                class="btn btn-danger btn-xs btn-remove-field"
+                                                title="Убрать из конфигурации">
+                                            <i class="fa fa-times"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </template>
+
+                            <form id="catalog-form" method="POST" action="admin/catalogs/config/save" novalidate>
+                                <input type="hidden" name="_action" value="{if $is_new}create{else}update{end}">
+
+                                <ul class="nav nav-tabs" role="tablist">
+                                    <li class="active">
+                                        <a href="#tab-general" data-toggle="tab">
+                                            <i class="fa fa-cog"></i> Основные
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#tab-view" data-toggle="tab">
+                                            <i class="fa fa-eye"></i> Отображение
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#tab-fields" data-toggle="tab">
+                                            <i class="fa fa-columns"></i> Поля
+                                            <span class="badge" id="fields-count">0</span>
+                                        </a>
+                                    </li>
+                                </ul>
+
+                                <div class="tab-content" style="padding-top:20px">
+
+                                    <!-- ===== Tab 1: Основные ===== -->
+                                    <div class="tab-pane active" id="tab-general">
+                                        <div class="row">
+                                            <div class="col-md-6">
+
+                                                <div class="form-group">
+                                                    <label>Системное имя <span class="text-danger">*</span></label>
+                                                    {if $is_new}
+                                                    <input type="text" name="name" class="form-control" required
+                                                           placeholder="например: products"
+                                                           pattern="[a-zA-Z0-9_]+"
+                                                           value="{$catalog['name']}">
+                                                    <small class="text-muted">Только латиница, цифры и подчёркивание</small>
+                                                    {else}
+                                                    <input type="text" name="name" class="form-control" readonly
+                                                           value="{$catalog['name']}">
+                                                    {end}
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label>Подключение к БД <span class="text-danger">*</span></label>
+                                                    <select name="db" id="select-db" class="form-control" required>
+                                                        <option value="">— выберите подключение —</option>
+                                                        {foreach $db_list as $dbName => $dbConfig}
+                                                        <option value="{$dbName}" {if $catalog['db'] == $dbName}selected{end}>
+                                                            {$dbName} — {$dbConfig['head']}
+                                                        </option>
+                                                        {end}
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label>Таблица <span class="text-danger">*</span></label>
+                                                    <select name="table" id="select-table" class="form-control" required>
+                                                        <option value="">— сначала выберите БД —</option>
+                                                        {? $catalog['table']}
+                                                        <option value="{$catalog['table']}" selected>{$catalog['table']}</option>
+                                                        {end}
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label>Иконка (Font Awesome)</label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon">
+                                                            <i id="icon-preview" class="fa {$catalog['icon']}"></i>
+                                                        </span>
+                                                        <input type="text" name="icon" id="input-icon"
+                                                               class="form-control"
+                                                               placeholder="fa-table"
+                                                               value="{$catalog['icon']}">
+                                                    </div>
+                                                    <small class="text-muted">Например: fa-users, fa-table, fa-cog</small>
+                                                </div>
+
+                                            </div>
+                                            <div class="col-md-6">
+
+                                                <div class="form-group">
+                                                    <label>Заголовок (head)</label>
+                                                    <input type="text" name="head" class="form-control"
+                                                           placeholder="Название каталога"
+                                                           value="{$catalog['head']}">
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label>Краткое описание (info)</label>
+                                                    <input type="text" name="info" class="form-control"
+                                                           placeholder="Одна строка описания"
+                                                           value="{$catalog['info']}">
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label>Подсказка (help)</label>
+                                                    <input type="text" name="help" class="form-control"
+                                                           placeholder="Подсказка для пользователей"
+                                                           value="{$catalog['help']}">
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label>HTML-аннотация (html)</label>
+                                                    <textarea name="html" class="form-control" rows="3"
+                                                              placeholder="<i>Дополнительное описание в формате HTML</i>">{$catalog['html']}</textarea>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label>Интервал обновления, сек (refresh)</label>
+                                                    <input type="number" name="refresh" class="form-control"
+                                                           placeholder="0 — без автообновления"
+                                                           value="{$catalog['refresh']}" min="0">
+                                                    <small class="text-muted">Автообновление данных в открытом каталоге</small>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- ===== Tab 2: Отображение ===== -->
+                                    <div class="tab-pane" id="tab-view">
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <p class="text-muted">
+                                                    Настройки по умолчанию для отображения каталога (events.view.*)
+                                                </p>
+
+                                                <div class="form-group">
+                                                    <label>Отображаемые колонки (column)</label>
+                                                    <input type="text" name="events_view_column"
+                                                           class="form-control"
+                                                           placeholder="id, name, status — через запятую; пусто = все"
+                                                           value="{$catalog['events']['view']['column']}">
+                                                    <small class="text-muted">Список полей для отображения в таблице каталога</small>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label>Сортировка (orderby)</label>
+                                                    <input type="text" name="events_view_orderby"
+                                                           class="form-control"
+                                                           placeholder="id DESC, name ASC"
+                                                           value="{$catalog['events']['view']['orderby']}">
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label>Группировка (groupby)</label>
+                                                    <input type="text" name="events_view_groupby"
+                                                           class="form-control"
+                                                           placeholder="category_id"
+                                                           value="{$catalog['events']['view']['groupby']}">
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label>Фильтр (where)</label>
+                                                    <input type="text" name="events_view_where"
+                                                           class="form-control"
+                                                           placeholder="status = 1 AND deleted = 0"
+                                                           value="{$catalog['events']['view']['where']}">
+                                                    <small class="text-muted">SQL-условие без ключевого слова WHERE</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- ===== Tab 3: Поля ===== -->
+                                    <div class="tab-pane" id="tab-fields">
+                                        <p class="text-muted">
+                                            Поля берутся из таблицы БД. Задайте псевдоним и тип для каждого поля.
+                                            Новые поля (не существующие в таблице) будут добавлены через ALTER TABLE при сохранении.
+                                        </p>
+
+                                        <div id="fields-loading" style="display:none" class="text-center p-md">
+                                            <i class="fa fa-spinner fa-spin fa-2x"></i>
+                                            <p>Загрузка колонок...</p>
+                                        </div>
+
+                                        <table class="table table-bordered table-condensed" id="fields-table">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width:150px">Поле (колонка)</th>
+                                                    <th style="width:160px">Псевдоним</th>
+                                                    <th style="width:160px">Тип</th>
+                                                    <th>Доп. параметры</th>
+                                                    <th style="width:40px"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="fields-body">
+
+                                                {foreach $db_columns as $colName}
+                                                {;$fieldCfg = $catalog['field'][$colName]}
+                                                <tr data-field="{$colName}">
+                                                    <td><code>{$colName}</code></td>
+                                                    <td>
+                                                        <input type="text"
+                                                               name="field[{$colName}][alias]"
+                                                               class="form-control input-sm"
+                                                               placeholder="{$colName}"
+                                                               value="{$fieldCfg['alias']}">
+                                                    </td>
+                                                    <td>
+                                                        <select name="field[{$colName}][type]"
+                                                                class="form-control input-sm field-type-select">
+                                                            <option value="">— не задан —</option>
+                                                            {foreach $patterns as $typeName => $typeConfig}
+                                                            <option value="{$typeName}"
+                                                                {if $fieldCfg['type'] == $typeName}selected{end}>
+                                                                {$typeConfig['head']}
+                                                            </option>
+                                                            {end}
+                                                        </select>
+                                                    </td>
+                                                    <td class="field-extra">
+                                                        <div class="extra-source"
+                                                             style="display:{if $fieldCfg['type'] == 'relation' || $fieldCfg['type'] == 'select'}block{else}none{end}">
+                                                            <input type="text"
+                                                                   name="field[{$colName}][source]"
+                                                                   class="form-control input-sm"
+                                                                   placeholder="catalog::table::column"
+                                                                   value="{$fieldCfg['source']}">
+                                                        </div>
+                                                        <div class="extra-input"
+                                                             style="display:{if $fieldCfg['type'] == 'input'}block{else}none{end}">
+                                                            <input type="text"
+                                                                   name="field[{$colName}][input]"
+                                                                   class="form-control input-sm"
+                                                                   placeholder="color, date, number..."
+                                                                   value="{$fieldCfg['input']}">
+                                                        </div>
+                                                        <div class="extra-ignore"
+                                                             style="display:{if $fieldCfg['type'] == 'relation'}block{else}none{end}">
+                                                            <label class="checkbox-inline">
+                                                                <input type="checkbox"
+                                                                       name="field[{$colName}][ignore]"
+                                                                       value="1"
+                                                                       {? $fieldCfg['ignore']}checked{end}>
+                                                                Скрыть в view
+                                                            </label>
+                                                        </div>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <button type="button"
+                                                                class="btn btn-danger btn-xs btn-remove-field"
+                                                                title="Убрать из конфигурации">
+                                                            <i class="fa fa-times"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                {end}
+
+                                            </tbody>
+                                        </table>
+
+                                        <div class="row m-t-sm">
+                                            <div class="col-md-5">
+                                                <div class="input-group">
+                                                    <input type="text" id="new-field-name"
+                                                           class="form-control input-sm"
+                                                           placeholder="Имя нового поля (латиница, цифры, _)">
+                                                    <span class="input-group-btn">
+                                                        <button type="button" id="btn-add-field"
+                                                                class="btn btn-primary btn-sm">
+                                                            <i class="fa fa-plus"></i> Добавить поле
+                                                        </button>
+                                                    </span>
+                                                </div>
+                                                <small class="text-muted">
+                                                    Новое поле будет добавлено в таблицу БД при сохранении
+                                                </small>
+                                            </div>
+                                        </div>
+
+                                    </div><!-- /tab-fields -->
+
+                                </div><!-- /tab-content -->
+
+                                <hr>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fa fa-save"></i> Сохранить
+                                        </button>
+                                        <a href="admin/catalogs/config/" class="btn btn-white">Отмена</a>
+                                    </div>
+                                </div>
+
+                            </form>
+
+                        </div><!-- /ibox-content -->
+                    </div><!-- /ibox -->
+                </div>
+            </div>
+        </div>
+
+        {section "../~section/footer.html"}
+    </div>
+</div>
+
+<script src="../js/jquery-2.1.1.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script src="../js/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="../js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="../js/inspinia.js"></script>
+<script src="../js/plugins/pace/pace.min.js"></script>
+<script src="../js/plugins/toastr/toastr.min.js"></script>
+
+<script>
+// -------------------------------------------------------
+// Данные из PHP (шаблонизатор не обрабатывает {теги} внутри <script>)
+// -------------------------------------------------------
+var APP_PATTERNS   = <?php echo json_encode($patterns);   ?>;
+var APP_DB_COLUMNS = <?php echo json_encode($db_columns); ?>;
+
+// -------------------------------------------------------
+// Строим строку <option> из серверных данных
+// -------------------------------------------------------
+var patternOptions = '<option value="">— не задан —</option>';
+$.each(APP_PATTERNS, function(typeName, typeConfig) {
+    patternOptions += '<option value="' + typeName + '">' + typeConfig.head + '</option>';
+});
+
+// -------------------------------------------------------
+// Создание строки поля из <template id="tpl-field-row">
+// Плейсхолдер [tFieldName] заменяется на имя колонки.
+// Опции типов вставляются в <select> после клонирования.
+// -------------------------------------------------------
+function makeFieldRow(colName, isNew) {
+    // Берём HTML из <template> и заменяем все вхождения плейсхолдера
+    var tplHtml = $('#tpl-field-row').html();
+    var html    = tplHtml.replace(/\[tFieldName\]/g, colName);
+    var $row    = $(html);
+
+    // Вставляем опции типов в select
+    $row.find('.field-type-select').html(patternOptions);
+
+    // Помечаем новые поля (не существующие в таблице БД)
+    if (isNew) {
+        $row.attr('data-new', '1');
+        $row.find('td:first code').after(' <span class="label label-warning">новое</span>');
+    }
+
+    return $row;
+}
+
+// -------------------------------------------------------
+// Показать/скрыть доп. поля при смене типа
+// -------------------------------------------------------
+function bindTypeSelect($row) {
+    $row.find('.field-type-select').on('change', function() {
+        var type   = $(this).val();
+        var $extra = $row.find('.field-extra');
+        $extra.find('.extra-source').toggle(type === 'relation' || type === 'select');
+        $extra.find('.extra-input').toggle(type === 'input');
+        $extra.find('.extra-ignore').toggle(type === 'relation');
+    });
+}
+
+function updateFieldsCount() {
+    $('#fields-count').text($('#fields-body tr').length);
+}
+
+// -------------------------------------------------------
+// Инициализация
+// -------------------------------------------------------
+$(document).ready(function() {
+
+    updateFieldsCount();
+
+    // Биндим type-select для строк, отрисованных сервером
+    $('#fields-body tr').each(function() {
+        bindTypeSelect($(this));
+    });
+
+    // Превью иконки
+    $('#input-icon').on('input', function() {
+        $('#icon-preview').attr('class', 'fa ' + $(this).val().trim());
+    });
+
+    // -------------------------------------------------------
+    // Смена БД → загрузка таблиц
+    // -------------------------------------------------------
+    $('#select-db').on('change', function() {
+        var db   = $(this).val();
+        var $sel = $('#select-table');
+
+        $sel.html('<option value="">— загрузка... —</option>').prop('disabled', true);
+
+        if (!db) {
+            $sel.html('<option value="">— сначала выберите БД —</option>').prop('disabled', false);
+            return;
+        }
+
+        $.getJSON('admin/catalogs/config/tables?db=' + encodeURIComponent(db))
+            .done(function(tables) {
+                var html = '<option value="">— выберите таблицу —</option>';
+                $.each(tables, function(i, t) {
+                    html += '<option value="' + t + '">' + t + '</option>';
+                });
+                $sel.html(html).prop('disabled', false);
+            })
+            .fail(function() {
+                $sel.html('<option value="">— ошибка загрузки —</option>').prop('disabled', false);
+                toastr.error('Не удалось загрузить список таблиц');
+            });
+    });
+
+    // -------------------------------------------------------
+    // Смена таблицы → загрузка колонок
+    // -------------------------------------------------------
+    $('#select-table').on('change', function() {
+        var db    = $('#select-db').val();
+        var table = $(this).val();
+        if (!db || !table) return;
+
+        $('#fields-loading').show();
+        $('#fields-table').hide();
+
+        // Сохраняем вручную добавленные новые поля
+        var newFields = [];
+        $('#fields-body tr[data-new]').each(function() {
+            newFields.push($(this).data('field'));
+        });
+
+        $.getJSON('admin/catalogs/config/columns?db=' + encodeURIComponent(db) + '&table=' + encodeURIComponent(table))
+            .done(function(columns) {
+                var $body = $('#fields-body');
+                $body.empty();
+
+                $.each(columns, function(i, col) {
+                    var $row = makeFieldRow(col, false);
+                    $body.append($row);
+                    bindTypeSelect($row);
+                });
+
+                // Восстанавливаем новые поля
+                $.each(newFields, function(i, col) {
+                    if ($.inArray(col, columns) === -1) {
+                        var $row = makeFieldRow(col, true);
+                        $body.append($row);
+                        bindTypeSelect($row);
+                    }
+                });
+
+                updateFieldsCount();
+                $('#fields-loading').hide();
+                $('#fields-table').show();
+            })
+            .fail(function() {
+                $('#fields-loading').hide();
+                $('#fields-table').show();
+                toastr.error('Не удалось загрузить колонки таблицы');
+            });
+    });
+
+    // -------------------------------------------------------
+    // Добавить новое поле вручную
+    // -------------------------------------------------------
+    $('#btn-add-field').on('click', function() {
+        var name = $('#new-field-name').val().trim();
+
+        if (!name) {
+            toastr.warning('Введите имя поля');
+            return;
+        }
+        if (!/^[a-zA-Z0-9_]+$/.test(name)) {
+            toastr.warning('Имя поля: только латиница, цифры и подчёркивание');
+            return;
+        }
+        if ($('#fields-body tr[data-field="' + name + '"]').length) {
+            toastr.warning('Поле "' + name + '" уже есть в списке');
+            return;
+        }
+
+        var $row = makeFieldRow(name, true);
+        $('#fields-body').append($row);
+        bindTypeSelect($row);
+        updateFieldsCount();
+        $('#new-field-name').val('');
+    });
+
+    // -------------------------------------------------------
+    // Удалить строку поля
+    // -------------------------------------------------------
+    $(document).on('click', '.btn-remove-field', function() {
+        $(this).closest('tr').remove();
+        updateFieldsCount();
+    });
+
+    // -------------------------------------------------------
+    // Валидация перед отправкой
+    // -------------------------------------------------------
+	$('#catalog-form').on('submit', function()
+	{
+		var errors = [];
+
+		// Проверка имени (только при создании)
+		var $name = $('[name="name"]');
+		if (!$name.prop('readonly')) {
+			var nameVal = $name.val().trim();
+			if (!nameVal) {
+				errors.push('Укажите системное имя каталога');
+			} else if (!/^[a-zA-Z0-9_]+$/.test(nameVal)) {
+				errors.push('Системное имя: только латиница, цифры и подчёркивание');
+			}
+		}
+
+		// Проверка БД и таблицы
+		if (!$('#select-db').val())    errors.push('Выберите подключение к БД');
+		if (!$('#select-table').val()) errors.push('Выберите таблицу');
+
+		if (errors.length) {
+			$.each(errors, function(i, msg) { toastr.error(msg); });
+			// Переключаемся на первый таб, где находятся эти поля
+			$('a[href="#tab-general"]').tab('show');
+			return false;
+		}
+
+		return true;
+	});
+
+
+
+});
+</script>
+</body>
+</html>
