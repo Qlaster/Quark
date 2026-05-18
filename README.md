@@ -106,9 +106,8 @@ Foreach:
 │       ├── 🗎objects.php
 │       ├── 🗎page.php
 │       ├── 🗎provider.php
-│       ├── 🗎review.php
 │       ├── 🗎route.php
-│       ├── 🗎sms.php
+│       ├── 🗎talk.php
 │       ├── 🗎template.php
 │       ├── 🗎url.php
 │       ├── 🗎user.php
