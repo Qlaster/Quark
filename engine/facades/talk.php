@@ -317,6 +317,19 @@ class PostContext
         return $this;
     }
 
+    public function search(string $term): array
+	{
+		$blogId = $this->blogId();
+		if (!$blogId) return [];
+
+		$rows = $this->orm->table($this->postsTable())
+			->where(['blog_id' => $blogId])
+			->like($term)
+			->select();
+
+		return array_map([$this, 'decode'], (array) $rows);
+	}
+
     public function archive(bool $state = true): self
     {
         return $this->update(['archived' => (int) $state]);
