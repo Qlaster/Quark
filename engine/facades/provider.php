@@ -84,7 +84,7 @@
 		{
 			if (!file_exists($this->config['folder'] .DIRECTORY_SEPARATOR. $path)) return [];
 
-			$pathLength = mb_strlen($this->config['folder'].DIRECTORY_SEPARATOR.$path)+1;
+			$pathLength = mb_strlen($this->config['folder'].DIRECTORY_SEPARATOR.$path);
 			$providerlist = $this->utils->listing($this->config['folder'] .DIRECTORY_SEPARATOR. $path, $math);
 
 			foreach ($providerlist as &$filePath)
