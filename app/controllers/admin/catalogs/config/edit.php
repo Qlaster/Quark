@@ -12,11 +12,17 @@
         $content['catalog']['name'] = $name;
 
         if ($content['catalog']['db'] && $content['catalog']['table'])
-            $content['db_columns'] = array_keys(
-                (array) $APP->db->connect($content['catalog']['db'])
-                                ->table($content['catalog']['table'])
-                                ->columns()
-            );
+        {
+
+			if ($APP->db->connect($content['catalog']['db']))
+			{
+				$content['db_columns'] = array_keys(
+					(array) $APP->db->connect($content['catalog']['db'])
+									->table($content['catalog']['table'])
+									->columns()
+				);
+			}
+        }
     }
     else
     {
