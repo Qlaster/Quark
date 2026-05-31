@@ -51,7 +51,7 @@
 				//В том случае, если значение указано в формате json
 				if ($json = json_decode($value, true)) $value = $json;
 				//В том случае, если в конфиге укзаны правила массивом
-				(is_array($value)) ? $result += $value : $result[] = $value;
+				(is_array($value)) ? $result = array_merge($result, $value) : $result[] = $value;
 			}
 			return $result;
 		}
@@ -63,7 +63,7 @@
 				foreach ((array) $this->config[$section] as $pattern => $record)
 					if (fnmatch($pattern, $url))
 					{
-						if ($record[0]=='=')
+						if (strlen($record) >= 1 && $record[0]=='=')
 						{
 							if ($record[1]=='>')
 							{
