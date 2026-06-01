@@ -555,7 +555,7 @@
 				return $value;
 			} elseif (is_bool($value)) {
 				return ($value ? 'true' : 'false');
-			} elseif (false === mb_strpos($value, '"')) {
+			} elseif (false === mb_strpos((string)$value, '"')) {
 				return '"' . $value .  '"';
 			} else {
 				return $value;
