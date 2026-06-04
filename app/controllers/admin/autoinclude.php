@@ -172,11 +172,11 @@
 		//============================================================================================================================
 		//			FOOTER
 		//============================================================================================================================
-	    $host = $APP->url->host();
+		$host = $APP->url->host();
 		$spacedisk = disk_free_space(__DIR__)/1024/1024;
 		$spacedisk = $spacedisk > 1024 ? round($spacedisk/1024, 2).' Gb' : round($spacedisk, 2).' Mb';
 
-	    $content['footer']['head'] = "Свободное пространство: $spacedisk";
+		$content['footer']['head'] = "Свободное пространство: $spacedisk";
 		$content['footer']['text'] = "<strong> $host </strong> - Admin panel. Copyright " . date("Y");
 
 
