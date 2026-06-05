@@ -42,7 +42,7 @@
 	}
 
 
-	$page['content'] = $content;
+	$page['content'] = $content ?? [];
 
 	//Запустим контроллер рендеринга страницы
 	$APP->controller->run('index', ['APP'=>$APP, 'page'=>$page]);
