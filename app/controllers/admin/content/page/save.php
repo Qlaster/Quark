@@ -12,6 +12,8 @@
 
 	$page = $_POST;
 	$page['url'] = trim($page['url']);
+	$content = [];
+
 
 	//~ print_r($_POST); die;
 
@@ -31,7 +33,7 @@
 	//~ unset($_POST['INDEX']);
 
 	//Компилируем содержимое страницы
-	foreach ($_POST['content'] as $tag => $value)
+	foreach ((array) $_POST['content'] as $tag => $value)
 	{
 		switch ($tag[0])
 		{
