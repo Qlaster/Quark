@@ -22,6 +22,7 @@
  *
  *
  */
+	header('Content-Type: text/html');
 
 	//Если функция уже доступна - вызовем ее
 	if (isset($autoconstruct)) return $autoconstruct($APP);
@@ -32,8 +33,8 @@
 		//============================================================================================================================
 		//			LOCK PAGE
 		//============================================================================================================================
-		//Если сессия залочена - маршрутим на другую страницу
-		if (isset($_SESSION['lock']) and !($APP->url->home().'admin/options/users/lock'))
+		//Если сессия залочена — редирект на lock-страницу (кроме самой lock-страницы, иначе цикл)
+		if (isset($_SESSION['lock']) and $APP->url->page() != 'admin/options/users/lock')
 		{
 			header('Location: '.$APP->url->home().'admin/options/users/lock');
 			exit();
