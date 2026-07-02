@@ -19,13 +19,15 @@
 
 	try
 	{
-		if (!$_REQUEST['id']) throw new Exception("Не указан ID", 101);
+		$id = filter_var($_REQUEST['id'], FILTER_VALIDATE_INT);
+		if (!$id) throw new Exception("Не указан ID", 101);
 		if (!$_REQUEST['catalog']) throw new Exception("Не указан каталог", 102);
 
-		$APP->catalog->items($_REQUEST['catalog'])->where(['id'=>$_REQUEST['id']])->delete();
+		$APP->catalog->items($_REQUEST['catalog'])->where(['id'=>$id])->delete();
 
+		//Удаляем только каталог внутри catalogDIR — id строго числовой, без обхода пути
 		if ($catalogDIR = $APP->catalog->get($_REQUEST['catalog'])['folder'])
-			$APP->utils->files->remove($catalogDIR.DIRECTORY_SEPARATOR.$_REQUEST['id']);
+			$APP->files->remove($catalogDIR.DIRECTORY_SEPARATOR.$id);
 		echo "OK";
 	}
 	catch (Exception $e)
