@@ -26,7 +26,7 @@
 		if (!$_GET['catalog']) throw new Exception("Не указан каталог", 102);
 
 		//Запросим переданные файлы
-		$FILES = $APP->utils->files->uploadList();
+		$FILES = $APP->files->uploadList();
 
 		//Получим каталог
 		$catalog = $APP->catalog->get($_GET['catalog']);
