@@ -13,7 +13,7 @@
 	//~ print_r($_FILES);
 
 
-	$file = current($APP->utils->files->uploadList()['document']);
+	$file = current($APP->files->uploadList()['document']);
 
 	// Пример использования:
 	//~ $filename = 'path/to/your/file.csv';
