@@ -5,8 +5,9 @@
 
 
 	$envFile = $_GET['file'] ?? '.env';
+	$envPath = $APP->files->jailPath($envFile);
 
-	$content['config']['body'] 		= is_readable($envFile) ? file_get_contents($envFile) : '';
+	$content['config']['body'] 		= ($envPath and is_readable($envPath)) ? file_get_contents($envPath) : '';
 	$content['config']['action'] 	= "admin/options/env/save";
 	$content['config']['filename']	= $envFile;
 	$content['config']['title'] 	= 'Сохранить';
