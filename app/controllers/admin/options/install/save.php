@@ -3,9 +3,11 @@
 
 	if ($_POST['config'])
 	{
-		echo file_put_contents($_POST['config']['filename'], $_POST['config']['body']) ? 'Установленные объекты: ' : exit('Не удалось сохранить файл');
+		//Запись только внутри разрешённых директорий
+		$fn = $APP->files->jailPath($_POST['config']['filename'] ?? '');
+		echo ($fn and file_put_contents($fn, $_POST['config']['body']) !== false) ? 'Установленные объекты: ' : exit('Не удалось сохранить файл');
 
-		$config = $APP->config->get($_POST['config']['filename']);
+		$config = $APP->config->get($fn);
 		foreach ($config as $section => $objects)
 			foreach ($objects as $name => $object)
 			{
