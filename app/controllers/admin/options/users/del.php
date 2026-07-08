@@ -13,7 +13,7 @@
 		$user = reset($user);
 
 		//Добавим все права на него. А то как то не по мужски...
-		$files = $APP->utils->files->listing('controllers/admin/', '*.php');
+		$files = $APP->files->listing('controllers/admin/', '*.php');
 
 		foreach ($files as $value)
 		{
