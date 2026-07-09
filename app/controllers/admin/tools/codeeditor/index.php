@@ -7,19 +7,19 @@
 	//~ print_r($content); die;
 
 
-	//Файлы, который нужно открыть
-	if (file_exists($_GET['file'] ?? ''))
+	//Файлы, который нужно открыть (только внутри разрешённых директорий)
+	if (($f = $APP->files->jailPath($_GET['file'] ?? '')) and is_file($f))
 	{
-		$content['code']['body'] 		= file_get_contents($_GET['file']);
+		$content['code']['body'] 		= file_get_contents($f);
 		$content['code']['action'] 		= "admin/tools/codeeditor/save.php";
-		$content['code']['filename']	= $_GET['file'];
+		$content['code']['filename']	= $f;
 		$content['title'] 				= $_GET['file'];
 	}
-	if (file_exists($_GET['config'] ?? ''))
+	if (($f = $APP->files->jailPath($_GET['config'] ?? '')) and is_file($f))
 	{
-		$content['config']['body'] 		= file_get_contents($_GET['config']);
+		$content['config']['body'] 		= file_get_contents($f);
 		$content['config']['action'] 	= "admin/tools/codeeditor/save.php";
-		$content['config']['filename']	= $_GET['config'];
+		$content['config']['filename']	= $f;
 		$content['config']['title'] 	= 'Сохранить';
 		$content['title'] 				= $_GET['config'];
 	}
