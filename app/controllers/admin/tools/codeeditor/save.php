@@ -3,11 +3,14 @@
 
 	if ($_POST['code'])
 	{
-		echo file_put_contents($_POST['code']['filename'], $_POST['code']['body']) ? 'Сохранение успешно' : 'Не удалось сохранить файл';
+		//Запись только внутри разрешённых директорий
+		$fn = $APP->files->jailPath($_POST['code']['filename'] ?? '');
+		echo ($fn and file_put_contents($fn, $_POST['code']['body']) !== false) ? 'Сохранение успешно' : 'Не удалось сохранить файл';
 	}
 
 
 	if ($_POST['config'])
 	{
-		echo file_put_contents($_POST['config']['filename'], $_POST['config']['body']) ? 'Сохранение успешно' : 'Не удалось сохранить файл';
+		$fn = $APP->files->jailPath($_POST['config']['filename'] ?? '');
+		echo ($fn and file_put_contents($fn, $_POST['config']['body']) !== false) ? 'Сохранение успешно' : 'Не удалось сохранить файл';
 	}
