@@ -7,7 +7,8 @@
 
 	//~ echo $_GET['path'];
 	//~ die;
-	if (!touch($_GET['path'].'/'.$_GET['filename']))
+	$f = $APP->files->jailPath(($_GET['path'] ?? '').DIRECTORY_SEPARATOR.($_GET['filename'] ?? ''));
+	if (!$f or !touch($f))
 	{
 		exit('Не удалось создать директории...');
 	}
