@@ -6,7 +6,8 @@
 
 	try
 	{
-		$result = $APP->utils->files->remove($_GET['path']);
+		//jail-проверка пути выполняется внутри remove() (см. files.ini [jail])
+		$result = $APP->files->remove($_GET['path']);
 	}
 	catch (Exception $e)
 	{
