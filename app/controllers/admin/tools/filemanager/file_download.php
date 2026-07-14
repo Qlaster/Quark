@@ -3,7 +3,7 @@
 
 	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
-	file_force_download($_GET['path']);
+	if ($f = $APP->files->jailPath($_GET['path'] ?? '')) file_force_download($f);
 
 
 	/*
