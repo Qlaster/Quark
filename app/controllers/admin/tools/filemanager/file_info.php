@@ -3,14 +3,13 @@
 
 	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
-	//Файлы, который нужно открыть
-	if (!file_exists($_GET['path']))
+	//Файлы, который нужно открыть (только внутри разрешённых директорий)
+	$path = $APP->files->jailPath($_GET['path'] ?? '');
+	if (!$path or !file_exists($path))
 	{
 		echo 'Элемент '.$_GET['path'].' не найден';
 		return;
 	}
-
-	$path = $_GET['path'];
 	$info = stat($path);
 
 	//Имя
