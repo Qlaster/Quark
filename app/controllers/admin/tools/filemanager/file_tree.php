@@ -12,7 +12,7 @@
 	$home = $APP->url->home();
 	$cwd  =  getcwd();
 
-	$tree = $APP->utils->files->tree($cwd);
+	$tree = $APP->files->tree($cwd);
 
 	//~ print_r($tree); die;
 
