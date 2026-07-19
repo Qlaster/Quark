@@ -6,8 +6,8 @@
 	//Текущая директория
 	$path = getcwd();
 
-	//Получаем путь
-	if ($_GET['path']) $path = $_GET['path'];
+	//Получаем путь (только внутри разрешённых директорий)
+	if ($_GET['path'] and $jailed = $APP->files->jailPath($_GET['path'])) $path = $jailed;
 
 	//Запрашиваем содержимое
 	$glob = glob("$path/*");
