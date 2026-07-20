@@ -1,13 +1,10 @@
 <?php
 
 
-	$path  = realpath($_POST['path']).DIRECTORY_SEPARATOR;
-
-
-
-	//Очень базово защитимся от загрузки файлов вне рабочей директории
-	if (strpos($path, getcwd().DIRECTORY_SEPARATOR ) !== 0)
+	//Защита от загрузки файлов вне разрешённых директорий
+	$path = $APP->files->jailPath($_POST['path'] ?? '');
+	if (!$path)
 		throw new Exception('Ограничение доступа к целевой директории');
 
 
-	$APP->utils->files->uploadMove("$path", filter_var($_POST['uniq'], FILTER_VALIDATE_BOOLEAN), '');
+	$APP->files->uploadMove($path.DIRECTORY_SEPARATOR, filter_var($_POST['uniq'], FILTER_VALIDATE_BOOLEAN), '');
