@@ -154,6 +154,109 @@ class Controller implements QControllerInterface
 	}
 
 
+	/**
+	 * Разбирает файл через token_get_all() и возвращает имена
+	 * классов/интерфейсов/трейтов/enum, которые он объявляет — БЕЗ выполнения файла.
+	 * Это безопасная альтернатива include() для диагностики (см. probe()),
+	 * не рискующая коллизией в глобальной таблице классов процесса.
+	 *
+	 * @param string     $filename Путь к файлу, который нужно просканировать
+	 * @param array|null $types    Какие секции включать в результат.
+	 *                             null трактуется как "все секции" (эквивалент дефолта).
+	 * @param bool       $flat     true — вернуть единый список имён без группировки по типу;
+	 *                             false (по умолчанию) — вернуть массив, сгруппированный по типу конструкции.
+	 * @return array Ассоциативный массив вида ['class' => ['Имя' => 'Имя', ...], 'interface' => [...], ...]
+	 *               либо плоский список имён, если $flat = true.
+	 */
+	public function scan($filename, array $types = ['class', 'interface', 'trait', 'enum'], $flat = false)
+	{
+		//Разбиваем исходник на токены компилятора PHP. Файл при этом не выполняется —
+		//это чисто лексический анализ, поэтому include()-подобных побочных эффектов не будет
+		$tokens = token_get_all(file_get_contents($filename));
+
+		//Заготовка результата: фиксируем секции заранее, чтобы порядок и набор ключей
+		//были предсказуемы даже если в файле не нашлось, например, ни одного trait
+		$result = ['class' => [], 'interface' => [], 'trait' => [], 'enum' => []];
+
+		//Текущий namespace файла — обновляется по ходу разбора, т.к. namespace
+		//может встретиться несколько раз (или отсутствовать вовсе — тогда имена глобальные)
+		$namespace = '';
+
+		//Сопоставление токена конструкции с ключом секции результата
+		$typeMap = [
+			T_CLASS     => 'class',
+			T_INTERFACE => 'interface',
+			T_TRAIT     => 'trait',
+		];
+		//T_ENUM появился только в PHP 8.1 — подключаем токен только если он определён,
+		//иначе на старых версиях PHP будет "Undefined constant"
+		if (defined('T_ENUM')) $typeMap[T_ENUM] = 'enum';
+
+		//Проходим по всем токенам файла
+		for ($i = 0; $i < count($tokens); $i++)
+		{
+			$token = $tokens[$i];
+
+			//Встретили объявление namespace — вычитываем его полное имя
+			//до символа ";" или "{" (границы блока namespace)
+			if (is_array($token) && $token[0] === T_NAMESPACE)
+			{
+				$namespace = '';
+				$j = $i + 1;
+				while (isset($tokens[$j]) && $tokens[$j] !== ';' && $tokens[$j] !== '{')
+				{
+					//T_NAME_QUALIFIED/T_NAME_FULLY_QUALIFIED — токены PHP 8+,
+					//раньше "App\Facade" разбивалось на T_STRING + T_NS_SEPARATOR по частям
+					if (is_array($tokens[$j]) && in_array($tokens[$j][0], [T_STRING, T_NS_SEPARATOR, T_NAME_QUALIFIED, T_NAME_FULLY_QUALIFIED]))
+						$namespace .= $tokens[$j][1];
+					$j++;
+				}
+				//Перепрыгиваем уже разобранные токены namespace, чтобы не разбирать их повторно
+				$i = $j;
+				continue;
+			}
+
+			//Встретили class/interface/trait/enum
+			if (is_array($token) && isset($typeMap[$token[0]]))
+			{
+				//Пропускаем анонимные классы вида "new class { ... }" —
+				//у них нет объявляемого имени и они не создают риска коллизии по имени
+				$prev = $tokens[$i-1] ?? null;
+				if (is_array($prev) && $prev[0] === T_NEW) continue;
+
+				//Ищем следующий значимый токен — это и есть имя класса/интерфейса/трейта
+				//(пропускаем пробелы между словом "class" и именем)
+				$j = $i + 1;
+				while (isset($tokens[$j]) && (!is_array($tokens[$j]) || $tokens[$j][0] === T_WHITESPACE)) $j++;
+
+				if (isset($tokens[$j]) && is_array($tokens[$j]) && $tokens[$j][0] === T_STRING)
+				{
+					//Собираем полное имя (FQCN) — с namespace, если он был объявлен
+					$fqcn = $namespace ? $namespace.'\\'.$tokens[$j][1] : $tokens[$j][1];
+
+					//Кладём имя одновременно как ключ и как значение —
+					//это даёт дедупликацию "бесплатно" (повторная запись не создаст дубль)
+					//и быстрый O(1) поиск через isset() вместо in_array()
+					$result[$typeMap[$token[0]]][$fqcn] = $fqcn;
+				}
+			}
+		}
+
+		//Если запрошены не все секции — отфильтровываем результат,
+		//оставляя только те ключи, что перечислены в $types.
+		//null трактуем как "все секции" — сохраняем поведение по умолчанию
+		if ($types !== null)
+			$result = array_intersect_key($result, array_flip($types));
+
+		//Если группировка не нужна — сворачиваем все секции в один список.
+		//Ключи (имена) сохраняются осознанно — это даёт тот же O(1)-поиск через isset(),
+		//что и в сгруппированном виде, а не просто "список для отображения"
+		if ($flat)
+			return array_merge(...array_values($result));
+
+		//По умолчанию — сгруппированный по типу конструкции результат
+		return $result;
+	}
 
     /**
      * Корректирует конфигурацию, заполняя недостающие параметры по умолчанию
