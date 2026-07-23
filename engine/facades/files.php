@@ -11,10 +11,51 @@
 		public $umask = 0776;
 		public $config = [];
 
+		//Разрешённые корневые директории для jail-проверок
+		private $jailRoots = [];
+
 		public function __construct($config)
 		{
 			$this->config = $config;
+
+			//Разрешённые зоны: корень проекта + системный temp + доп.пути из конфига [jail] root[]
+			$roots = array_merge([getcwd(), sys_get_temp_dir()], (array)($config['jail']['root'] ?? []));
+			$this->jailRoots = array_filter(array_map('realpath', $roots));
 		}
+
+		/**
+		 * Безопасное разрешение пути внутри разрешённых директорий.
+		 * Текстовая нормализация . и .. без обращения к ФС, затем префикс-проверка
+		 * по разрешённым корням. Симлинки НЕ резолвятся намеренно — симлинк
+		 * внутри зоны это осознанный способ администратора "пробросить"
+		 * внешний каталог внутрь jail-зоны.
+		 * @param string $path Проверяемый путь.
+		 * @return string|false Нормализованный путь или false, если путь вне зоны.
+		 */
+		public function jailPath(string $path)
+		{
+			if ($path === '') return false;
+
+			//Абсолютный путь + текстовое разрешение . и ..
+			$abs = $path[0] === DIRECTORY_SEPARATOR ? $path : getcwd().DIRECTORY_SEPARATOR.$path;
+
+			$parts = [];
+			foreach (explode(DIRECTORY_SEPARATOR, $abs) as $part)
+			{
+				if ($part === '' or $part === '.') continue;
+				if ($part === '..') { array_pop($parts); continue; }
+				$parts[] = $part;
+			}
+			$normalized = DIRECTORY_SEPARATOR.implode(DIRECTORY_SEPARATOR, $parts);
+
+			foreach ($this->jailRoots as $base)
+				if ($normalized === $base or strpos($normalized, $base.DIRECTORY_SEPARATOR) === 0)
+					return $normalized;
+
+			return false;
+		}
+
+
 
 		/**
 		 * Построение дерева файлов и директорий.
@@ -24,6 +65,8 @@
 		 */
 		public function tree(string $start, string $mask = null): array
 		{
+			if ($this->config['jail'][__FUNCTION__] and ($start = $this->jailPath($start)) === false) return [];
+
 			$files = [];
 			$handle = @opendir($start);
 			if (!$handle) return $files;
@@ -65,6 +108,8 @@
 		 */
 		public function listing(string $folder, string $mask = null, array &$all_files = []): array
 		{
+			if ($this->config['jail'][__FUNCTION__] and ($folder = $this->jailPath($folder)) === false) return $all_files;
+
 			$fp = @opendir($folder);
 			if (!$fp) return $all_files;
 
@@ -145,6 +190,8 @@
 		 */
 		public function listingDir(string $dir): array
 		{
+			if ($this->config['jail'][__FUNCTION__] and ($dir = $this->jailPath($dir)) === false) return [];
+
 			$result = [];
 			$handle = @opendir($dir);  //Открываем директорию
 			if (!$handle) return $result;
@@ -170,6 +217,8 @@
 		 */
 		public function exists(string $dir, string $name): bool
 		{
+			if ($this->config['jail'][__FUNCTION__] and ($dir = $this->jailPath($dir)) === false) return false;
+
 			$buf = $this->listingDir($dir);
 			return in_array($name, $buf, true);
 		}
@@ -184,6 +233,8 @@
 		 */
 		public function collection(string $folder, string $mask = null): array
 		{
+			if ($this->config['jail'][__FUNCTION__] and ($folder = $this->jailPath($folder)) === false) return [];
+
 			$all_files = $this->listing($folder);
 			$result = [];
 
@@ -204,6 +255,8 @@
 		 */
 		public function remove(string $path): bool
 		{
+			if ($this->config['jail'][__FUNCTION__] and ($path = $this->jailPath($path)) === false) return false;
+
 			if (is_file($path)) return unlink($path);
 			if (is_dir($path))
 			{
@@ -289,6 +342,8 @@
 		 */
 		public function uploadMoveSingleFile(array &$tmpFileRecord, string $targetDir, string $prefix = "content_", string $filename = null): array
 		{
+			if ($this->config['jail'][__FUNCTION__] and ($targetDir = $this->jailPath($targetDir)) === false) return [];
+
 			//Получим расширение файла
 			$ext = pathinfo($tmpFileRecord['name'], PATHINFO_EXTENSION);
 
@@ -324,6 +379,8 @@
 		 */
 		public function uploadMove(string $targetDir, bool $uniqueName = true, string $prefix = "content_"): array
 		{
+			if ($this->config['jail'][__FUNCTION__] and ($targetDir = $this->jailPath($targetDir)) === false) return [];
+
 			//Получим список загружаемых файлов
 			$filesblocks = $this->uploadList();
 
@@ -384,6 +441,7 @@
 		public function info(string $file)
 		{
 			// Проверка, доступен ли файл для чтения. Если нет — возвращаем null.
+			if ($this->config['jail'][__FUNCTION__] and ($file = $this->jailPath($file)) === false) return null;
 			if (!is_readable($file)) return null;
 
 			// Получение информации о пути файла: директория, расширение, имя и т.д.
