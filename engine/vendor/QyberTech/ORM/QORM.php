@@ -265,12 +265,8 @@
 			//Проводим некоторые предварительные операции с данными
 			foreach ($columns as $key => &$value)
 			{
-				//Попытка экранировать символы
-				//~ $value = str_replace('`', '', $value);
-				//~ $value = str_replace('\\', '', $value);
-				//~ $value = "`$value`";
-
-				$value = "\"$key\" $value";
+				//Квотируем идентификатор колонки
+				$value = $this->qident($key)." $value";
 			}
 
 
@@ -458,15 +454,15 @@
 			$table = $this->qinfo['table'];
 			if ((!is_array($record)) or (count($record) == 0)) return $this;
 
-			//Вытягиваем колонки
-			$columns = implode('","', array_keys($record));
+			//Вытягиваем колонки (с квотированием идентификаторов)
+			$columns = implode(',', array_map([$this, 'qident'], array_keys($record)));
 
 			//Приклеиваем указатели переменным
 			$values = str_pad('', count($record)*2-1, '?,');
 
 			//Формируем запрос возврата данных
 			$returning = $this->returningSupported ? "RETURNING *" : "";
-			$this->lastQuery = "INSERT INTO $table (\"$columns\") values ($values) $returning;";
+			$this->lastQuery = "INSERT INTO $table ($columns) values ($values) $returning;";
 
 			//Отдаем запрос на разбор
 			$stmt = $this->PDO_INTERFACE->prepare($this->lastQuery);
@@ -513,6 +509,9 @@
 			//Приклеиваем двоеточие ко всем ключам массива
 			foreach ($record as $key => &$value)
 			{
+				//Квотируем идентификатор — защита от инъекций через имя колонки
+				$qkey = $this->qident($key);
+
 				if (is_array($value))
 				{
 					foreach ($value as $_arrkey => &$_arrvalue)
@@ -521,13 +520,13 @@
 						$arrelements[] = $_arrvalue;
 					}
 					$arrelements = implode(',', $arrelements);
-					$columns[] = "\"$key\" = '{{$arrelements}}'";
+					$columns[] = "$qkey = '{{$arrelements}}'";
 					unset($record[$key]);
 				}
 				else
 				{
 					//Прописываем колонки
-					$columns[] = "\"$key\" = ?";
+					$columns[] = "$qkey = ?";
 					if ($value === 'NULL') $value = null;
 				}
 			}
@@ -577,15 +576,15 @@
 
 			if ((!is_array($record)) or (count($record) == 0)) return $this;
 
-			//Вытягиваем колонки
-			$columns = implode('","', array_keys($record));
+			//Вытягиваем колонки (с квотированием идентификаторов)
+			$columns = implode(',', array_map([$this, 'qident'], array_keys($record)));
 
 			//Приклеиваем двоеточие ко всем ключам массива
 			foreach ($record as $key => &$value) $values[] = ":$key";
 			$values  = implode(', ', $values);
 
 			//Формируем запрос возврата данных
-			$this->lastQuery = "REPLACE INTO $table (\"$columns\") values ($values);";
+			$this->lastQuery = "REPLACE INTO $table ($columns) values ($values);";
 
 			//Формируем запрос
 			$stmt = $this->PDO_INTERFACE->prepare($this->lastQuery);
@@ -667,7 +666,7 @@
 			$params = $this->WhereParams();
 
 			//Если это массив и он не пустой
-			if (is_array($columns) and $columns) $columns = '"'.implode('", "', $columns).'"';
+			if (is_array($columns) and $columns) $columns = implode(', ', array_map([$this,'qident'], $columns));
 
 			//Если вдруг NULL прилетел или пустая строка, то это нарушит запрос. Подставим по умолчангию
 			if	(!$columns) $columns = '*';
@@ -782,6 +781,21 @@
 
 		/*
 		 *
+		 * name: Квотирование идентификатора (имени колонки).
+		 * Внутренние кавычки удваиваются по стандарту SQL —
+		 * защита от инъекций через ключи массивов условий и записей.
+		 * @param (string) key — имя колонки
+		 * @return (string) — идентификатор в двойных кавычках
+		 *
+		 */
+		private function qident($key)
+		{
+			return '"'.str_replace('"', '""', (string) $key).'"';
+		}
+
+
+		/*
+		 *
 		 * name: Условия выборки. Вызывается $orm->table('tablename')->where('partners WHERE email=? AND pass=?', $a, $b)->select();
 		 * @param ...
 		 * @return ORM instance
@@ -819,6 +833,9 @@
 					//Собираем условие запроса
 					foreach ($args[0] as $key => $value)
 					{
+						//Квотируем идентификатор — защита от инъекций через имя ключа
+						$key = $this->qident($key);
+
 						//Если указан целый набор значений, то объдиним их в "in ()"
 						if (is_array($value))
 						{
@@ -827,7 +844,7 @@
 							//Если в массиве присутствует NULL значение, заберем из массива и обработаем отдельно, в соответствии с правилами SQL
 							$value = array_filter($value, function($ar_value) use ($key, &$enumeration)
 							{
-								return is_null($ar_value) ? ($enumeration[] = "\"$key\" IS NULL") && false : true;
+								return is_null($ar_value) ? ($enumeration[] = "$key IS NULL") && false : true;
 							});
 
 							//Если в массиве еще что-то осталось - разбираем и упаковываем в IN
@@ -835,7 +852,7 @@
 							{
 								//Рассчитаем и сгенерируем нужное количество вопросов в запросе
 								$inQuests = trim(str_repeat("?,", count($value)), ',');
-								$enumeration[] = "\"$key\" in ($inQuests)";
+								$enumeration[] = "$key in ($inQuests)";
 								$values = array_merge((array)$values, $value);
 							}
 							//Собираем перечень условий ($enumeration) в запрос
@@ -844,11 +861,11 @@
 						else if (($value === 'NULL') or ($value === NULL))
 						{
 							//Если передали NULL
-							$this->qinfo['where']['sql'][] = "\"$key\" IS NULL";
+							$this->qinfo['where']['sql'][] = "$key IS NULL";
 						}
 						else
 						{
-							$this->qinfo['where']['sql'][] = "\"$key\" = ?";
+							$this->qinfo['where']['sql'][] = "$key = ?";
 							$values[] = $value;
 						}
 					}
@@ -948,21 +965,24 @@
 					//Собираем условие запроса
 					foreach ($args[0] as $key => $value)
 					{
+						//Квотируем идентификатор — защита от инъекций через имя ключа
+						$key = $this->qident($key);
+
 						//Если указан целый набор значений, то объдиним их в "in ()"
 						if (is_array($value))
 						{
 							//Рассчитаем и сгенерируем нужное количество вопросов в запросе
-							$this->qinfo['where']['sql'][] = rtrim(str_repeat("CAST(\"$key\" AS TEXT) LIKE ? OR ", count($value)), ' OR ');
+							$this->qinfo['where']['sql'][] = rtrim(str_repeat("CAST($key AS TEXT) LIKE ? OR ", count($value)), ' OR ');
 							$values = array_merge($values ?? [], $value);
 						}
 						elseif (($value === 'NULL') or ($value === NULL))
 						{
 							//Если передали NULL
-							$this->qinfo['where']['sql'][] = "\"$key\" IS NULL";
+							$this->qinfo['where']['sql'][] = "$key IS NULL";
 						}
 						else
 						{
-							$this->qinfo['where']['sql'][] = "CAST(\"$key\" AS TEXT) LIKE ?";
+							$this->qinfo['where']['sql'][] = "CAST($key AS TEXT) LIKE ?";
 							$values[] = $value;
 						}
 					}
@@ -997,7 +1017,7 @@
 					$direction	= strtoupper($direction);
 					$direction	= current(array_intersect((array)$direction, ['ASC', 'DESC']));
 					if (! $direction) continue;
-					$column 	= str_replace("'", "\'", $column);
+					$column 	= $this->qident($column);
 					$query[] = "$column $direction";
 				}
 				$this->qinfo['order'] = implode(',', (array) $query);
@@ -1401,7 +1421,7 @@
 			$where  = $this->WhereComposition($this->qinfo['concat']);
 			$params = $this->WhereParams();
 
-			if (is_array($columns) and $columns) $columns = '"'.implode('", "', $columns).'"';
+			if (is_array($columns) and $columns) $columns = implode(', ', array_map([$this,'qident'], $columns));
 			if (!$columns) $columns = '*';
 
 			if ($order) $order = " ORDER BY $order";
