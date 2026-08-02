@@ -22,12 +22,14 @@
 								</div>
 
 								<div class="col-md-4 col-xs-8 p-l-none" style="max-width:300px">
+									<form class="form-filter" action="{$form['filter']['action']}" method="GET">
 									<div class="input-group">
-										<input type="text" class="form-control search-input">
+										<input type="text" class="form-control search-input" name="like" value="{$form['filter']['like']['value']}" placeholder="Поиск: имя файла + enter">
 										<span class="input-group-btn">
-											<button type="button" class="btn btn-white"><i class="fa fa-search"></i></button>
+											<button type="submit" class="btn btn-white"><i class="fa fa-search"></i></button>
 										</span>
 									</div>
+									</form>
 								</div>
 
 
@@ -47,9 +49,21 @@
 
 							<div class="hr-line-dashed m-sm"></div>
 
-							{foreach $files['stat'] as $_stat}
-								<span class="m-r-md"><i class="fa {$_stat['icon']}"></i> {$_stat['text']}</span>
+							<p class="pull-left m-b-none">
+								{foreach $files['stat'] as $_stat}
+									<span class="m-r-md"><i class="fa {$_stat['icon']}"></i> {$_stat['text']}</span>
+								{end}
+							</p>
+
+							{if $menu['pages']['list']}
+							<div class="btn-group pull-right" data-toggle="buttons">
+								{foreach $menu['pages']['list'] as $_page}
+								<label class="btn-pagination btn btn-sm btn-white {if $_page['active']} active {end}" href="{$_page['link']}">{$_page['head']}</label>
+								{end}
+							</div>
 							{end}
+							<div class="clearfix"></div>
+
 							<div class="table-responsive">
 
 								<table class="table table-striped">
@@ -93,6 +107,14 @@
 									</tbody>
 								</table>
 							</div>
+
+							{if $menu['pages']['list']}
+							<div class="btn-group pull-right m-t-sm" data-toggle="buttons">
+								{foreach $menu['pages']['list'] as $_page}
+								<label class="btn-pagination btn btn-sm btn-white {if $_page['active']} active {end}" href="{$_page['link']}">{$_page['head']}</label>
+								{end}
+							</div>
+							{end}
 
 
 
@@ -180,22 +202,15 @@
 				});
 			});
 
-			$('.mediafiles .search-input').on('input', function()
+			$('.mediafiles .btn-pagination').click(function ()
+            {
+				mediafilesReload(this, $(this).attr('href'));
+			});
+
+			$('.mediafiles .form-filter').submit(function()
 			{
-				let text = $(this).val();
-
-				$('.mediafiles .filename-table').each(function()
-				{
-					if ($(this).text().search(new RegExp(`${text}`, 'i')) < 0 && text != '')
-					{
-						$(this).closest('tr').hide("slow");
-						//~ $(this).closest('.file-box').css("opacity", "0.15");
-
-					} else {
-						$(this).closest('tr').show("slow");
-						//~ $(this).closest('.file-box').css("opacity", "1");
-					}
-				});
+				mediafilesReload(null, $(this).attr('action') + '&' + $(this).serialize());
+				return false;
 			});
         });
 
