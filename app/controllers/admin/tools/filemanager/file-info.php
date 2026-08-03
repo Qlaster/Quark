@@ -42,8 +42,8 @@
 	$content['info'] 	= $info;
 	//~ $themelink = $APP->url->home()."views/admin/";
 
-	$html = 'admin/tools/file_manager/file_manager_info.html';
-	if ($_GET['version'] == 'min') $html = 'admin/tools/file_manager/file_manager_info_min.html';
+	$html = 'admin/tools/file-manager/file-manager-info.html';
+	if ($_GET['version'] == 'min') $html = 'admin/tools/file-manager/file-manager-info-min.html';
 
 
 

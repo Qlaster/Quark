@@ -1,8 +1,6 @@
 <?php
 
 
-	error_reporting(0);
-
 	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
 	//~ echo $_GET['path'];

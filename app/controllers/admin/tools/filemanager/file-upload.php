@@ -30,11 +30,36 @@ if (preg_match("/^[0123456789abcdef]{32}$/i",$hash))
 			{
 				syslog(LOG_INFO, "Finished for hash ".$hash);
 
-				if (is_file($uploaddir."/".$hash.".original")) unlink($uploaddir."/".$hash.".original");
+				//Целевая директория и имя — только внутри разрешённых директорий
+				$targetDir = $APP->files->jailPath($_GET['path'] ?? '');
+				$filename  = basename((string) ($_GET['name'] ?? ''));
+				$src       = $uploaddir."/".$hash.".html5upload";
 
-				rename($uploaddir."/".$hash.".html5upload", $uploaddir."/".$hash.".original");
+				if (!$targetDir or in_array($filename, ['','.','..']))
+				{
+					header("HTTP/1.0 500 Internal Server Error");
+					print "Wrong upload target.";
+					return;
+				}
+				if (!is_file($src))
+				{
+					header("HTTP/1.0 500 Internal Server Error");
+					print "Uploaded content not found.";
+					return;
+				}
+				//Контроль целостности — размер собранного файла
+				if (isset($_GET['size']) and filesize($src) != (int) $_GET['size'])
+				{
+					header("HTTP/1.0 500 Internal Server Error");
+					print "Uploaded size mismatch.";
+					return;
+				}
 
-				$fw=fopen($uploaddir."/".$hash.".original_ready","wb");if ($fw) fclose($fw);
+				$dest = $targetDir.DIRECTORY_SEPARATOR.$filename;
+				if (filter_var($_GET['uniq'], FILTER_VALIDATE_BOOLEAN))
+					$dest = $targetDir.DIRECTORY_SEPARATOR.uniqid().'_'.$filename;
+
+				rename($src, $dest);
 			}
 	}
 	elseif ($_SERVER["REQUEST_METHOD"]=="POST")
