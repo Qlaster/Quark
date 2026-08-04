@@ -75,7 +75,7 @@
 		//Load Addons
 		if (file_exists($addonPath = __DIR__ .'/addons'))
 		{
-			$addons = (array) $APP->utils->files->dirListing($addonPath);
+			$addons = (array) $APP->files->listingDir($addonPath);
 			foreach ($addons as $addon)
 			{
 				if (!file_exists("$addonPath/$addon/menu.ini")) continue;
