@@ -4,7 +4,7 @@ php_flag display_errors on
 #php_value error_reporting E_ALL
 
 
-#Время жизни сессии 1 неделя
+#Время жизни сессии ~полгода (16048000 сек = ~186 дней)
 php_value session.gc_maxlifetime 16048000
 php_value session.cookie_lifetime 16048000
 
