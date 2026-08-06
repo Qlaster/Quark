@@ -35,7 +35,7 @@
 	#                   Обработка правил редиректа                     #
 	# ---------------------------------------------------------------- #
 	if ($redirect = $APP->route->match($APP->url->page(), ['redirect']))
-		header('Location: '.$redirect[0]) or exit;
+		exit(header('Location: '.$redirect[0]));
 
 	# ---------------------------------------------------------------- #
 	#            Обработка правил маршрутеризации (роутинг)            #
@@ -56,10 +56,15 @@
 					throw new ErrorException('Default controller '.$APP->controller->config['handler'].' not found', 500);
 
 	}
-	catch (Error $error)
+	catch (Throwable $error)
 	{
-		$errorController = $APP->route->match('500', ['error'])[0];
-		$APP->controller->run($errorController, ['APP'=>$APP, 'error'=>$error]);
+		http_response_code(500);
+		try {
+			$errorController = $APP->route->match('500', ['error'])[0] ?? null;
+			$APP->controller->run($errorController, ['APP'=>$APP, 'error'=>$error]);
+		} catch (Throwable $e) {
+			echo '500 Internal Server Error'; // последняя линия обороны
+		}
 	}
 
 	//~ echo "<!---".$APP->utils->runtime()."-->";
