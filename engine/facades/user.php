@@ -1,164 +1,249 @@
 <?php
 
+	/*
+	 * user
+	 *
+	 * Пользователи админ-панели. Хранилище - sqlite:
+	 * системные поля колонками, произвольные пользовательские поля в data (JSON).
+	 * Пресеты прав доступа - в таблице presets той же базы.
+	 *
+	 * При первом запуске данные переносятся из легаси engine/database/users.dba
+	 * (если доступно расширение dba), иначе создается пользователь по умолчанию.
+	 * Легаси md5-хэши прозрачно переписываются на password_hash при входе.
+	 *
+	 */
+
 	namespace App\Facade;
-
-	# ---------------------------------------------------------------- #
-	#                  ОПИСАНИЕ     ИНТЕРФЕЙСА                         #
-	# ---------------------------------------------------------------- #
-	interface QAdminUserInterface
-	{
-		// Добавление нового пользователя
-		public function add($user);
-
-		// Редактирование пользователя
-		public function	edit($user);
-
-		// Запрашивает пользователя по логину
-		public function get($login);
-
-		// Проверяет наличие пользователя по логину
-		public function exists($login);
-
-		// Вернет весь список пользователей
-		public function all();
-
-		// Удаление пользователя по логину
-		public function del($login);
-
-		// Авторизация пользователя
-		public function login($login, $password);
-
-		// Вернет пользователя, который авторизирован
-		public function	logged();
-
-		// Завершает сессию авторезированного пользователя
-		public function logout();
-
-		// Проверяет права доступа на операцию вошедшего пользователя
-		public function access();
-	}
 
 	# ---------------------------------------------------------------- #
 	#                 РЕАЛИЗАЦИЯ   ИНТЕРФЕЙСА                          #
 	# ---------------------------------------------------------------- #
-	class CMSUser implements QAdminUserInterface
+	class CMSUser
 	{
-		private $dba_interface;
-		private $config_interface;
+		//Системные поля — колонки таблицы. Всё, что не входит в список, уходит в data (JSON)
+		private $columns 	= ['login', 'hash', 'name', 'email', 'info', 'logo', 'disable', 'access', 'denied'];
+		//Колонки, хранящие сериализованные структуры (JSON)
+		private $jsonCols 	= ['access', 'denied'];
+
 		public $config;
+		public $preset;
 
-		public function __construct($dba_interface, $config_interface=null)
+		private $pdo;
+		private $table;
+		private $loggedCache = null;
+
+		public function __construct($pdo, $configInterface)
 		{
-			//Берем интерейс nosql базы данных
-			$this->dba_interface    = $dba_interface;
-			$this->config_interface = $config_interface;
+			$this->configInterface = $configInterface;
 
-			//Устанавливаем дефолтный конфиг
-			$this->config['database'] = 'users.dba';
-			$this->config['default_user']['name'] = 'Root user';
-			$this->config['default_user']['login'] = 'admin';
-			$this->config['default_user']['password'] = 'admin';
+			//Дефолтный конфиг, поверх накатываем ini
+			$this->config['db']['pdo']   = 'sqlite:engine/database/users.sqlite';
+			$this->config['db']['table'] = 'users';
+			$this->config['default_user']['name']     = 'Root user';
+			$this->config['default_user']['login']    = 'admin';
+			$this->config['default_user']['password'] = 'quark';
+			//Новый id сессии при логине (защита от session fixation)
+			$this->config['session']['regenerate-id'] = true;
+			//Время жизни сессии в секундах; 0 = наследовать php.ini/.htaccess
+			$this->config['session']['lifetime']      = 0;
 
-			$this->config = array_replace_recursive($this->config, $this->config_interface->get(__file__));
-			$this->presets = new CmsUserPreset($this->config_interface);
+			$this->config = array_replace_recursive($this->config, (array) $configInterface->get(__file__));
 
+			$this->table = $this->config['db']['table'];
 
-			if (!$this->exists($this->config['default_user']['login']))
-				$this->create_default();
-			//~ if (! session_id()) session_start();
+			if ($pdo)
+			{
+				$this->pdo = $pdo;
+			}
+			else
+			{
+				//Одно подключение на фасад — sqlite сам разруливает конкурентность
+				$this->pdo = new \PDO($this->config['db']['pdo']);
+				$this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+			}
+
+			$this->constructTable();
+
+			//Таблица пресетов прав доступа
+			$this->pdo->exec(
+				"CREATE TABLE IF NOT EXISTS '".($this->config['db']['presets'] ?? 'presets')."' (
+					'name'  TEXT PRIMARY KEY,
+					'rules' TEXT
+				)"
+			);
+
+			$this->preset = new UserPresets($this->pdo, $this->config['db']['presets'] ?? 'presets');
+
+			//Разовый перенос пресетов из ini в таблицу (только если таблица пуста)
+			if ($this->config['presets'] and !$this->preset->count())
+				$this->preset->importIni($this->config['presets']);
+
+			//Первый запуск: если юзеров нет вообще — переливаем легаси dba, либо создаём дефолтного
+			if (!$this->all())
+			{
+				$this->importDba();
+				if (!$this->all()) $this->createDefault();
+			}
 		}
 
-		// Возвращает указатель на интерфейс упрвления базой данных
-		private function db()
+		private function constructTable()
 		{
-			return $this->dba_interface->db($this->config['database']);
+			$table = $this->table;
+			$this->pdo->exec(
+				"CREATE TABLE IF NOT EXISTS '$table' (
+					'login'   TEXT PRIMARY KEY,
+					'hash'    TEXT,
+					'name'    TEXT,
+					'email'   TEXT,
+					'info'    TEXT,
+					'logo'    TEXT,
+					'disable' INTEGER DEFAULT 0,
+					'access'  TEXT,
+					'denied'  TEXT,
+					'data'    TEXT
+				)"
+			);
+		}
+
+
+		# ---------------------------------------------------------------- #
+		#              УПАКОВКА / РАСПАКОВКА ЗАПИСИ                        #
+		# ---------------------------------------------------------------- #
+
+		//Массив пользователя -> строка таблицы
+		private function pack($user)
+		{
+			//Пароль — write-only: в хранилище не попадает ни в колонках, ни в data
+			unset($user['password']);
+
+			$row = [];
+			$data = [];
+
+			foreach ($user as $key => $value)
+			{
+				if (!in_array($key, $this->columns))
+				{
+					//Произвольное пользовательское поле — в data
+					$data[$key] = $value;
+					continue;
+				}
+				$row[$key] = in_array($key, $this->jsonCols) ? json_encode($value) : $value;
+			}
+
+			$row['data'] = json_encode($data);
+			return $row;
+		}
+
+		//Строка таблицы -> массив пользователя (та же форма, что отдавал dba)
+		private function unpack($row)
+		{
+			if (!$row) return $row;
+
+			$user = [];
+			foreach ($row as $key => $value)
+			{
+				if ($key === 'data') continue;
+				$user[$key] = in_array($key, $this->jsonCols) ? (array) json_decode($value, true) : $value;
+			}
+
+			//Пользовательские поля из data — не перекрывают системные колонки
+			foreach ((array) json_decode($row['data'], true) as $key => $value)
+				if (!in_array($key, $this->columns))
+					$user[$key] = $value;
+
+			return $user;
+		}
+
+
+		# ---------------------------------------------------------------- #
+		#                     ХЭШИРОВАНИЕ                                  #
+		# ---------------------------------------------------------------- #
+
+		private function hash($password)
+		{
+			return password_hash($password, PASSWORD_DEFAULT);
+		}
+
+		//Проверка пароля. Вернет true, 'legacy' (легаси md5 - надо переписать хэш) или false
+		private function verify($password, $hash)
+		{
+			//Легаси-хэш из users.dba — md5 (32 hex-символа)
+			if (preg_match('/^[a-f0-9]{32}$/i', (string) $hash))
+				return (md5($password) === $hash) ? 'legacy' : false;
+
+			return password_verify($password, (string) $hash) ? true : false;
+		}
+
+		//Детерминированный токен сессии (password_hash пересчитать нельзя - он с солью)
+		private function sessionToken($login, $hash)
+		{
+			return hash('sha256', $login.' '.$hash);
+		}
+
+		//Стартует сессию с учётом настроек [session]
+		private function ensureSession()
+		{
+			if (session_status() !== PHP_SESSION_NONE) return;
+
+			if ($lifetime = (int) ($this->config['session']['lifetime'] ?? 0))
+			{
+				session_set_cookie_params($lifetime);
+				ini_set('session.gc_maxlifetime', (string) $lifetime);
+			}
+			session_start();
 		}
 
 
 		//Дополняет исходный массив необходимыми полями
-		private function user_correct(&$user)
+		private function userCorrect(&$user)
 		{
-			$_user['login'] = '';
-			//$_user['password'] = '';
-			$_user['hash'] = '';
-			$_user['name'] = '';
-			$_user['logo'] = '';
-			$_user['mail'] = '';
-			$_user['info'] = '';
-			$_user['disable'] = '';
-			$_user['access'] = array();
+			$_user['login']   = '';
+			$_user['hash']    = '';
+			$_user['name']    = '';
+			$_user['logo']    = '';
+			$_user['email']   = '';
+			$_user['info']    = '';
+			$_user['disable'] = 0;
+			$_user['access']  = [];
+			$_user['denied']  = [];
 
-			//return array_merge($_user, $user);
 			$user = array_merge($_user, $user);
 			$user['login'] = mb_strtolower($user['login']);
-			//return $user;
-		}
 
-		private function hash($password)
-		{
-			return md5($password);
+			//Логин — ключ записи и часть файловых путей: без разделителей каталога и NUL
+			if (strpbrk($user['login'], "/\\\0")) $user['login'] = '';
 		}
 
 
+		# ---------------------------------------------------------------- #
+		#                     CRUD                                         #
+		# ---------------------------------------------------------------- #
 
-		/*
-		 *
-		 * name: добавление нового пользователя
-		 * @param
-		 * @return
-		 *
-		 */
 		public function add($user)
 		{
-			if ($user['login'] == '')
-			{
-				trigger_error ( "Enter the login!" , E_USER_WARNING );
-				return false;
-			}
-			$this->user_correct($user);
+			$this->userCorrect($user);
+			if ($user['login'] == '') return false;
 
-			if ($this->exists($user['login']))
-			{
-				$login = $user['login'];
-				trigger_error ( "User '$login' already exists!" , E_USER_WARNING );
-				return false;
-			}
-
-			if ($user['password'] == '')
-			{
-				//throw new Exception('Enter the password!');
-				trigger_error ( "Enter the user password!" , E_USER_WARNING );
-				return false;
-			}
+			if ($this->exists($user['login'])) return false;
+			if ($user['password'] == '')       return false;
 
 			$user['hash'] = $this->hash($user['password']);
 			unset($user['password']);
-			$this->db()->insert($user['login'], $user);
+
+			$row = $this->pack($user);
+			$cols = implode(',', array_map(function($c){ return "'$c'"; }, array_keys($row)));
+			$marks = implode(',', array_fill(0, count($row), '?'));
+
+			$stmt = $this->pdo->prepare("INSERT INTO '{$this->table}' ($cols) VALUES ($marks)");
+			return $stmt->execute(array_values($row));
 		}
 
-
-		/*
-		 *
-		 * name: Редактирование пользователя
-		 * @param
-		 * @return
-		 *
-		 */
 		public function edit($user)
 		{
-			if ($user['login'] == '')
-			{
-				trigger_error ( "Enter the login!" , E_USER_WARNING );
-				return false;
-			}
-			$this->user_correct($user);
+			$this->userCorrect($user);
+			if ($user['login'] == '') return false;
 
-			if (! $this->exists($user['login']))
-			{
-				$login = $user['login'];
-				trigger_error ( "User '$login' does not exist!" , E_USER_WARNING );
-				return false;
-			}
+			if (! $this->exists($user['login'])) return false;
 
 			if ((isset($user['password'])) and ($user['password'] != ''))
 			{
@@ -166,174 +251,112 @@
 				unset($user['password']);
 			}
 
-			if ( (!isset($user['hash'])) or ($user['hash'] == ''))
-			{
-				trigger_error ( "Enter the user password!" , E_USER_WARNING );
-				return false;
-			}
+			if ($user['hash'] == '') return false;
 
+			$row = $this->pack($user);
+			unset($row['login']);
 
-			$this->user_correct($user);
-			return $this->db()->update($user['login'], $user);
+			$set = implode(', ', array_map(function($c){ return "'$c' = ?"; }, array_keys($row)));
+			$stmt = $this->pdo->prepare("UPDATE '{$this->table}' SET $set WHERE login = ?");
+			return $stmt->execute(array_merge(array_values($row), [$user['login']]));
 		}
-
-
 
 		public function get($login)
 		{
-			return $this->db()->select(mb_strtolower((string) $login));
+			$stmt = $this->pdo->prepare("SELECT * FROM '{$this->table}' WHERE login = ?");
+			$stmt->execute([mb_strtolower((string) $login)]);
+			return $this->unpack($stmt->fetch(\PDO::FETCH_ASSOC));
 		}
 
-
-		/*
-		 *
-		 * name: Получить пользователя по id
-		 * @param
-		 * @return
-		 *
-		 */
-		public function get_id($id)
-		{
-			return $this->db()->where('id = ?', $id)->Select();
-		}
-
-		/*
-		 *
-		 * name: Проверяет наличие пользователя
-		 * @param
-		 * @return
-		 *
-		 */
 		public function exists($login)
 		{
-			return $this->db()->exists(mb_strtolower($login));
+			$stmt = $this->pdo->prepare("SELECT 1 FROM '{$this->table}' WHERE login = ? LIMIT 1");
+			$stmt->execute([mb_strtolower((string) $login)]);
+			return (bool) $stmt->fetchColumn();
 		}
-
-
-		/*
-		 *
-		 * name: Вывести всех пользователей
-		 * @param
-		 * @return
-		 *
-		 */
 
 		public function all()
 		{
-
-			//Получаем имя базы, в которой храним коллекцию
-			//$filename = $this->db_filename();
-
-			//Если базы с коллекцией не существует - даже нет смысла выполнять код дальше - просто вернем пустой массив
-			if (! $this->dba_interface->db_exists($this->config['database'])) return array();
-
-
-			return (array) $this->dba_interface->all();
+			$stmt = $this->pdo->query("SELECT * FROM '{$this->table}'");
+			$result = [];
+			foreach ($stmt->fetchAll(\PDO::FETCH_ASSOC) as $row)
+				$result[$row['login']] = $this->unpack($row);
+			return $result;
 		}
 
-
-
-		/*
-		 *
-		 * name: Удаление
-		 * @param
-		 * @return
-		 *
-		 */
 		public function del($login)
 		{
-			$this->db()->delete(mb_strtolower($login));
+			$stmt = $this->pdo->prepare("DELETE FROM '{$this->table}' WHERE login = ?");
+			return $stmt->execute([mb_strtolower((string) $login)]);
 		}
 
-		/*
-		 *
-		 * name: Авторезирует пользователя.
-		 * @param
-		 * @return
-		 *
-		 */
+
+		# ---------------------------------------------------------------- #
+		#                     СЕССИЯ / ДОСТУП                              #
+		# ---------------------------------------------------------------- #
 
 		public function login($login, $password)
 		{
 			$login = mb_strtolower($login);
-			if (! $this->exists($login))
-			{
-				//trigger_error ( "User does not exist!" , E_USER_WARNING );
-				return false;
-			}
-
-			if ($password == '')
-			{
-				//trigger_error ( "Enter the password!" , E_USER_WARNING );
-				return false;
-			}
+			if ($password == '') return false;
 
 			$user = $this->get($login);
+			if (! $user) return false;
 
 			//Если пользователь отключен
 			if ($user['disable']) return false;
 
+			$verify = $this->verify($password, $user['hash']);
+			if ($verify === false) return false;
 
-			//Если верификация пройдена
-			if ($this->hash($password) == $user['hash'])
-			{
-				$_SESSION['cms_login'] = $login;
-				$_SESSION['cms_password'] = $this->hash($login.' '.$user['hash']);
-				return true;
-			}
+			//Прозрачная миграция легаси md5-хэша на password_hash
+			if ($verify === 'legacy')
+				$user['hash'] = $this->rehash($login, $password);
 
-			return false;
+			$this->ensureSession();
+
+			//Защита от session fixation: новый id при повышении привилегий
+			if (($this->config['session']['regenerate-id'] ?? true) and session_status() === PHP_SESSION_ACTIVE)
+				session_regenerate_id(true);
+
+			$_SESSION['cms_login']    = $login;
+			$_SESSION['cms_password'] = $this->sessionToken($user['login'], $user['hash']);
+			return true;
 		}
 
-
-		/*
-		 *
-		 * name: Вернет пользователя, который авторизирован
-		 * @param
-		 * @return
-		 *
-		 */
-		public function	logged()
+		//Переписывает хэш пользователя на password_hash. Возвращает новый хэш.
+		private function rehash($login, $password)
 		{
-			//альтернативный метод получения user id через сессию
-			//Суть кода - если сессия активна - берем её id. А если нет - то генерируем с помощью неё id и уничтождаем, как и было до этого.
-			//if (! $session = session_id()) session_start();
+			$hash = $this->hash($password);
+			$stmt = $this->pdo->prepare("UPDATE '{$this->table}' SET hash = ? WHERE login = ?");
+			$stmt->execute([$hash, $login]);
+			return $hash;
+		}
 
-			if(session_status() === PHP_SESSION_NONE) session_start();
+		public function logged()
+		{
+			//Кеш на время запроса: autoinclude дёргает logged() многократно
+			if ($this->loggedCache !== null) return $this->loggedCache;
+
+			$this->ensureSession();
 
 			if (!isset($_SESSION['cms_login']) or (!isset($_SESSION['cms_password']))) return false;
 
 			$user = $this->get($_SESSION['cms_login']);
 			if (! $user) return false;
 
-			if ($this->hash($user['login'].' '.$user['hash']) !== $_SESSION['cms_password']) return false;
-			return $user;
+			if (! hash_equals($this->sessionToken($user['login'], $user['hash']), $_SESSION['cms_password'])) return false;
+
+			return $this->loggedCache = $user;
 		}
-
-
-		/*
-		 *
-		 * name: Завершает сессию авторезированного пользователя
-		 * @param
-		 * @return
-		 *
-		 */
 
 		public function logout()
 		{
+			$this->loggedCache = null;
 			unset($_SESSION['cms_login']);
 			unset($_SESSION['cms_password']);
 		}
 
-
-
-		/*
-		 *
-		 * name: Проверяет права доступа на операцию вошедшего пользователя
-		 * @param
-		 * @return
-		 *
-		 */
 		public function access($access_item=null)
 		{
 			$user = $this->logged();
@@ -343,14 +366,6 @@
 			return null;
 		}
 
-
-		/*
-		 *
-		 * name: Проверяет запреты на исполнение контроллеров вошедшего пользователя
-		 * @param
-		 * @return
-		 *
-		 */
 		public function denied($access_item=null)
 		{
 			$user = $this->logged();
@@ -360,58 +375,118 @@
 			return null;
 		}
 
-		public function create_default()
+		public function createDefault()
 		{
 			$user = $this->config['default_user'];
 			$this->add($user);
 		}
 
+
+		# ---------------------------------------------------------------- #
+		#            МИГРАЦИЯ С ЛЕГАСИ users.dba                           #
+		# ---------------------------------------------------------------- #
+
+		//Переносит записи из старого users.dba в таблицу. Вернет число импортированных или false
+		public function importDba($dbaFile='engine/database/users.dba')
+		{
+			if (! function_exists('dba_open') or ! file_exists($dbaFile)) return false;
+
+			//Подбираем доступный handler
+			$handler = null;
+			foreach ((array) dba_handlers(true) as $h)
+				if (in_array($h, ['db4', 'gdbm', 'flatfile', 'inifile'])) { $handler = $h; break; }
+			if (!$handler) return false;
+
+			$h = @dba_open($dbaFile, 'r', $handler);
+			if (!$h) return false;
+
+			$count = 0;
+			for ($key = dba_firstkey($h); $key !== false; $key = dba_nextkey($h))
+			{
+				$user = unserialize(dba_fetch($key, $h));
+				if (!is_array($user) or $this->exists($key)) continue;
+
+				//Легаси-поле 'mail' унифицируем в 'email'
+				if (isset($user['mail']) and !isset($user['email'])) $user['email'] = $user['mail'];
+				unset($user['mail'], $user['password']);
+
+				//md5-хэш переносим как есть — смигрирует на password_hash при первом входе
+				$user['login'] = $key;
+				$row = $this->pack($user);
+
+				$cols  = implode(',', array_map(function($c){ return "'$c'"; }, array_keys($row)));
+				$marks = implode(',', array_fill(0, count($row), '?'));
+				$this->pdo->prepare("INSERT OR IGNORE INTO '{$this->table}' ($cols) VALUES ($marks)")
+						  ->execute(array_values($row));
+				$count++;
+			}
+			dba_close($h);
+			return $count;
+		}
 	}
 
-	class CmsUserPreset
-	{
-		private $config_interface;
 
-		public function __construct($config_interface=null)
+	# ---------------------------------------------------------------- #
+	#                  ПРЕСЕТЫ ПРАВ ДОСТУПА                            #
+	# ---------------------------------------------------------------- #
+	class UserPresets
+	{
+		private $pdo;
+		private $table;
+
+		public function __construct($pdo, $table='presets')
 		{
-			$this->config_interface = $config_interface;
+			$this->pdo   = $pdo;
+			$this->table = $table;
 		}
 
+		//$APP->users->preset->get()        - все пресеты (name => rules)
+		//$APP->users->preset->get($name)   - правила одного пресета
 		function get($name=null)
 		{
-			$presets = (array) $this->config_interface->get()['presets'];
-			foreach ($presets as &$value)
-				$value = json_decode($value, true);
+			if ($name !== null)
+			{
+				$stmt = $this->pdo->prepare("SELECT rules FROM '{$this->table}' WHERE name = ?");
+				$stmt->execute([$name]);
+				$rules = $stmt->fetchColumn();
+				return $rules === false ? null : json_decode($rules, true);
+			}
 
+			$presets = [];
+			foreach ($this->pdo->query("SELECT name, rules FROM '{$this->table}'") as $row)
+				$presets[$row['name']] = json_decode($row['rules'], true);
 			return $presets;
-			//~ return $name ? $this->config_interface->get()['presets'][$name] : $this->config_interface->get()['presets'];
 		}
 
-		function set($presets)
+		//$APP->users->preset->set($name, $rules)
+		function set($name, $rules)
 		{
-			//Загрузим конфиг
-			$config = (array) $this->config_interface->get();
-			foreach ($presets as $key => $value)
-				$config['presets'][$key] = json_encode($value);
-
-
-			return $this->config_interface->set($config);
+			$stmt = $this->pdo->prepare("INSERT OR REPLACE INTO '{$this->table}' (name, rules) VALUES (?, ?)");
+			return $stmt->execute([$name, json_encode($rules)]);
 		}
 
 		function delete($name)
 		{
-			//Загрузим конфиг
-			$config = (array) $this->config_interface->get();
-			unset($config['presets'][$name]);
-			return $this->config_interface->set($config);
+			$stmt = $this->pdo->prepare("DELETE FROM '{$this->table}' WHERE name = ?");
+			return $stmt->execute([$name]);
 		}
 
 		function rename($oldName, $newName)
 		{
-			$config = (array) $this->config_interface->get();
-			$config['presets'][$newName] = $config['presets'][$oldName];
-			unset($config['presets'][$oldName]);
-			return $this->config_interface->set($config);
+			$stmt = $this->pdo->prepare("UPDATE '{$this->table}' SET name = ? WHERE name = ?");
+			return $stmt->execute([$newName, $oldName]);
+		}
+
+		function count()
+		{
+			return (int) $this->pdo->query("SELECT COUNT(*) FROM '{$this->table}'")->fetchColumn();
+		}
+
+		//Перенос пресетов из ini-секции в таблицу (значения в ini - JSON-строки)
+		function importIni($presets)
+		{
+			foreach ((array) $presets as $name => $rules)
+				$this->set($name, is_string($rules) ? json_decode($rules, true) : $rules);
 		}
 	}
 
@@ -421,4 +496,4 @@
 	# --------------[ СОЗДАЕМ И ПОДКЛЮЧАЕМ ИНТЕРФЕЙС ]---------------- #
 	# ---------------------------------------------------------------- #
 
-	return new CMSUser($this->dba, $this->config);
+	return new CMSUser(null, $this->config);
