@@ -133,5 +133,5 @@
 	# ---------------------------------------------------------------- #
 
 	//Создаем класс управления контроллерами
-	return new Provider($this->config->get(__file__), $this->utils->files);
+	return new Provider($this->config->get(__file__), $this->files);
 

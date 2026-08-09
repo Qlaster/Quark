@@ -93,7 +93,6 @@ class Talk
 		)");
 	}
 
-    // ИЗМЕНЕНО: $name стал необязательным — blog() без аргумента вернёт контекст всех блогов
     public function blog($name = null): BlogContext
     {
         return new BlogContext($this->orm, $this->config, $name);
@@ -101,111 +100,139 @@ class Talk
 }
 
 // ----------------------------------------------------------------
+//  Базовый контекст: ORM-ссылка, таблицы, JSON-упаковка, slug-имена
+// ----------------------------------------------------------------
+
+abstract class TalkContext
+{
+    protected $orm;
+    protected $config;
+
+    // JSON-колонки конкретного контекста (переопределяется в наследниках)
+    protected $jsonFields = [];
+
+    public function __construct($orm, $config)
+    {
+        $this->orm    = $orm;
+        $this->config = $config;
+    }
+
+    protected function table(string $key): string
+    {
+        return $this->config['table'][$key] ?? "talk_$key";
+    }
+
+    // Slug-валидация имени. Имя уходит и в БД, и в файловые пути аплоадов —
+    // разделители путей и навигационные сегменты запрещены.
+    // null — это "контекст всего уровня", кидает RuntimeException только на write-операциях.
+    protected static function checkName($name, string $what)
+    {
+        if ($name === null)
+            throw new \RuntimeException("$what() requires a name");
+
+        if (!is_string($name) or $name === '' or $name === '.' or $name === '..'
+            or strpbrk($name, "/\\") !== false or strpos($name, "\0") !== false)
+            throw new \InvalidArgumentException("Invalid $what name");
+    }
+
+    // JSON-колонки: массивы -> строки перед записью
+    protected function encodeJson(array $data): array
+    {
+        foreach ($this->jsonFields as $field)
+            if (isset($data[$field]) && is_array($data[$field]))
+                $data[$field] = json_encode($data[$field]);
+        return $data;
+    }
+
+    // JSON-колонки: строки -> массивы после чтения
+    protected function decodeRow(array $row): array
+    {
+        foreach ($this->jsonFields as $field)
+            if (!empty($row[$field])) $row[$field] = json_decode($row[$field], true);
+        return $row;
+    }
+
+    // Поля, которые нельзя перезаписать через update()
+    protected function sanitizeUpdate(array $data, array $protected): array
+    {
+        foreach ($protected as $field) unset($data[$field]);
+        return $data;
+    }
+}
+
+// ----------------------------------------------------------------
 //  BlogContext
 // ----------------------------------------------------------------
 
-class BlogContext
+class BlogContext extends TalkContext
 {
-    private $orm;
-    private $config;
+    protected $jsonFields = ['tags', 'meta'];
+
     private $name;
 
-    private function table(): string
-    {
-        return $this->config['table']['blogs'] ?? 'talk_blogs';
-    }
-
-    // : $name стал nullable
     public function __construct($orm, $config, $name = null)
     {
-        $this->orm     = $orm;
-        $this->config  = $config;
-        $this->name    = $name;
+        parent::__construct($orm, $config);
+        // null = контекст всех блогов; имя валидируем сразу — slug должен быть честным
+        if ($name !== null) self::checkName($name, 'blog');
+        $this->name = $name;
     }
 
     public function create(array $data = []): self
     {
-        // : guard — нельзя создать блог без имени
-        if ($this->name === null)
-            throw new \RuntimeException("blog() requires a name to create");
+        self::checkName($this->name, 'blog');
 
         $now  = time();
-        $data = array_merge(['title' => null, 'tags' => null, 'meta' => null], $data);
-
-        if (isset($data['tags']) && is_array($data['tags']))
-            $data['tags'] = json_encode($data['tags']);
-        if (isset($data['meta']) && is_array($data['meta']))
-            $data['meta'] = json_encode($data['meta']);
+        $data = $this->encodeJson(array_merge(['title' => null, 'tags' => null, 'meta' => null], $data));
 
         $data['name']    = $this->name;
         $data['created'] = $now;
         $data['updated'] = $now;
 
-        $this->orm->table($this->table())->insert($data);
+        $this->orm->table($this->table('blogs'))->insert($data);
         return $this;
     }
 
-    // : если $name === null — возвращает все блоги без фильтра по имени
+    // $name === null — все блоги без фильтра по имени
     public function select(...$where): array
     {
-        $query = $this->orm->table($this->table());
+        $query = $this->orm->table($this->table('blogs'));
 
         if ($this->name !== null)
             $query = $query->where(['name' => $this->name]);
 
         $rows = $query->wheres(...$where)->select();
-        return array_map([$this, 'decode'], (array) $rows);
+        return array_map([$this, 'decodeRow'], (array) $rows);
     }
 
     public function update(array $data): self
     {
-        // : guard
-        if ($this->name === null)
-            throw new \RuntimeException("blog() requires a name to update");
+        self::checkName($this->name, 'blog');
 
+        $data = $this->encodeJson($this->sanitizeUpdate($data, ['id', 'name', 'created']));
         $data['updated'] = time();
 
-        if (isset($data['tags']) && is_array($data['tags']))
-            $data['tags'] = json_encode($data['tags']);
-        if (isset($data['meta']) && is_array($data['meta']))
-            $data['meta'] = json_encode($data['meta']);
-
-        $this->orm->table($this->table())->where(['name' => $this->name])->update($data);
+        $this->orm->table($this->table('blogs'))->where(['name' => $this->name])->update($data);
         return $this;
     }
 
     public function delete(): self
     {
-        // : guard
-        if ($this->name === null)
-            throw new \RuntimeException("blog() requires a name to delete");
+        self::checkName($this->name, 'blog');
 
-        $this->orm->table($this->table())->where(['name' => $this->name])->delete();
+        $this->orm->table($this->table('blogs'))->where(['name' => $this->name])->delete();
         return $this;
     }
 
     public function archive(bool $state = true): self
     {
-        // : guard — update() уже бросит исключение, но явный guard нагляднее
-        if ($this->name === null)
-            throw new \RuntimeException("blog() requires a name to archive");
-
         return $this->update(['archived' => (int) $state]);
     }
 
     public function post($name = null): PostContext
     {
-		if ($this->name === null)
-			throw new \RuntimeException("blog() requires a name to access posts");
-
+        self::checkName($this->name, 'blog');
         return new PostContext($this->orm, $this->config, $this->name, $name);
-    }
-
-    private function decode(array $row): array
-    {
-        if ($row['tags']) $row['tags'] = json_decode($row['tags'], true);
-        if ($row['meta']) $row['meta'] = json_decode($row['meta'], true);
-        return $row;
     }
 }
 
@@ -213,55 +240,52 @@ class BlogContext
 //  PostContext
 // ----------------------------------------------------------------
 
-class PostContext
+class PostContext extends TalkContext
 {
-    private $orm;
-    private $config;
-    private $blogName;
-    private $postName; // может быть null — тогда select() вернёт все посты блога
+    protected $jsonFields = ['files', 'tags', 'meta'];
 
-    private function blogsTable(): string { return $this->config['table']['blogs'] ?? 'talk_blogs'; }
-    private function postsTable(): string { return $this->config['table']['posts'] ?? 'talk_posts'; }
+    private $blogName;
+    private $postName; // null — select() вернёт все посты блога
+    private $blogId;   // null = не резолвлен, false = блог не найден
 
     public function __construct($orm, $config, string $blogName, $postName = null)
     {
-        $this->orm      = $orm;
-        $this->config   = $config;
+        parent::__construct($orm, $config);
+        if ($postName !== null) self::checkName($postName, 'post');
         $this->blogName = $blogName;
         $this->postName = $postName;
     }
 
+    // id блога резолвится один раз на контекст — объекты живут в пределах запроса
     private function blogId()
     {
-        $row = $this->orm->table($this->blogsTable())->where(['name' => $this->blogName])->select(['id']);
-        return $row[0]['id'] ?? null;
+        if ($this->blogId === null)
+        {
+            $row = $this->orm->table($this->table('blogs'))
+                ->where(['name' => $this->blogName])->select(['id']);
+            $this->blogId = $row[0]['id'] ?? false;
+        }
+        return $this->blogId;
     }
 
     public function create(array $data = []): self
     {
-        if ($this->postName === null)
-            throw new \RuntimeException("post() requires a name to create");
+        self::checkName($this->postName, 'post');
 
         $blogId = $this->blogId();
         if (!$blogId) throw new \RuntimeException("Blog '{$this->blogName}' not found");
 
         $now  = time();
-        $data = array_merge(['title' => null, 'author' => null, 'status' => 'open',
-                             'files' => null, 'tags' => null, 'meta' => null], $data);
-
-        if (isset($data['files']) && is_array($data['files']))
-            $data['files'] = json_encode($data['files']);
-        if (isset($data['tags']) && is_array($data['tags']))
-            $data['tags'] = json_encode($data['tags']);
-        if (isset($data['meta']) && is_array($data['meta']))
-            $data['meta'] = json_encode($data['meta']);
+        $data = $this->encodeJson(array_merge(
+            ['title' => null, 'author' => null, 'status' => 'open',
+             'files' => null, 'tags' => null, 'meta' => null], $data));
 
         $data['blog_id'] = $blogId;
         $data['name']    = $this->postName;
         $data['created'] = $now;
         $data['updated'] = $now;
 
-        $this->orm->table($this->postsTable())->insert($data);
+        $this->orm->table($this->table('posts'))->insert($data);
         return $this;
     }
 
@@ -270,34 +294,27 @@ class PostContext
         $blogId = $this->blogId();
         if (!$blogId) return [];
 
-        $query = $this->orm->table($this->postsTable())
+        $query = $this->orm->table($this->table('posts'))
             ->where(['blog_id' => $blogId]);
 
         if ($this->postName !== null)
             $query = $query->where(['name' => $this->postName]);
 
         $rows = $query->wheres(...$where)->select();
-        return array_map([$this, 'decode'], (array) $rows);
+        return array_map([$this, 'decodeRow'], (array) $rows);
     }
 
     public function update(array $data): self
     {
-        if ($this->postName === null)
-            throw new \RuntimeException("post() requires a name to update");
+        self::checkName($this->postName, 'post');
 
         $blogId = $this->blogId();
         if (!$blogId) throw new \RuntimeException("Blog '{$this->blogName}' not found");
 
+        $data = $this->encodeJson($this->sanitizeUpdate($data, ['id', 'blog_id', 'name', 'created']));
         $data['updated'] = time();
 
-        if (isset($data['files']) && is_array($data['files']))
-            $data['files'] = json_encode($data['files']);
-        if (isset($data['tags']) && is_array($data['tags']))
-            $data['tags'] = json_encode($data['tags']);
-        if (isset($data['meta']) && is_array($data['meta']))
-            $data['meta'] = json_encode($data['meta']);
-
-        $this->orm->table($this->postsTable())
+        $this->orm->table($this->table('posts'))
             ->where(['blog_id' => $blogId, 'name' => $this->postName])
             ->update($data);
         return $this;
@@ -305,13 +322,12 @@ class PostContext
 
     public function delete(): self
     {
-        if ($this->postName === null)
-            throw new \RuntimeException("post() requires a name to delete");
+        self::checkName($this->postName, 'post');
 
         $blogId = $this->blogId();
         if (!$blogId) return $this;
 
-        $this->orm->table($this->postsTable())
+        $this->orm->table($this->table('posts'))
             ->where(['blog_id' => $blogId, 'name' => $this->postName])
             ->delete();
         return $this;
@@ -322,12 +338,12 @@ class PostContext
 		$blogId = $this->blogId();
 		if (!$blogId) return [];
 
-		$rows = $this->orm->table($this->postsTable())
+		$rows = $this->orm->table($this->table('posts'))
 			->where(['blog_id' => $blogId])
 			->like($term)
 			->select();
 
-		return array_map([$this, 'decode'], (array) $rows);
+		return array_map([$this, 'decodeRow'], (array) $rows);
 	}
 
     public function archive(bool $state = true): self
@@ -335,21 +351,10 @@ class PostContext
         return $this->update(['archived' => (int) $state]);
     }
 
-    // Изменено: принимает необязательный int $id
     public function message($id = null): MessageContext
     {
-        if ($this->postName === null)
-            throw new \RuntimeException("post() requires a name to access messages");
-
+        self::checkName($this->postName, 'post');
         return new MessageContext($this->orm, $this->config, $this->blogName, $this->postName, $id);
-    }
-
-    private function decode(array $row): array
-    {
-        if ($row['files']) $row['files'] = json_decode($row['files'], true);
-        if ($row['tags'])  $row['tags']  = json_decode($row['tags'],  true);
-        if ($row['meta'])  $row['meta']  = json_decode($row['meta'],  true);
-        return $row;
     }
 }
 
@@ -357,39 +362,49 @@ class PostContext
 //  MessageContext
 // ----------------------------------------------------------------
 
-class MessageContext
+class MessageContext extends TalkContext
 {
-    private $orm;
-    private $config;
+    protected $jsonFields = ['files', 'tags', 'meta'];
+
     private $blogName;
     private $postName;
-    private $messageId; // null — контекст всех сообщений; int — контекст конкретного сообщения
+    private $messageId; // null — контекст всех сообщений; int — конкретное сообщение
+    private $blogId;    // null = не резолвлен, false = не найден
+    private $postId;
 
-    private function blogsTable():    string { return $this->config['table']['blogs']    ?? 'talk_blogs'; }
-    private function postsTable():    string { return $this->config['table']['posts']    ?? 'talk_posts'; }
-    private function messagesTable(): string { return $this->config['table']['messages'] ?? 'talk_messages'; }
-
-    // Изменено: добавлен необязательный параметр $messageId
     public function __construct($orm, $config, string $blogName, string $postName, $messageId = null)
     {
-        $this->orm       = $orm;
-        $this->config    = $config;
+        parent::__construct($orm, $config);
         $this->blogName  = $blogName;
         $this->postName  = $postName;
         $this->messageId = $messageId;
     }
 
-    private function postId(): int
+    private function blogId()
     {
-        $blogs = $this->blogsTable();
-        $posts = $this->postsTable();
+        if ($this->blogId === null)
+        {
+            $row = $this->orm->table($this->table('blogs'))
+                ->where(['name' => $this->blogName])->select(['id']);
+            $this->blogId = $row[0]['id'] ?? false;
+        }
+        return $this->blogId;
+    }
 
-        $blog = $this->orm->table($blogs)->where(['name' => $this->blogName])->select(['id']);
-        $blogId = $blog[0]['id'] ?? null;
-        if (!$blogId) return null;
-
-        $post = $this->orm->table($posts)->where(['blog_id' => $blogId, 'name' => $this->postName])->select(['id']);
-        return $post[0]['id'] ?? null;
+    // id поста или false — резолвится один раз на контекст
+    private function postId()
+    {
+        if ($this->postId === null)
+        {
+            $this->postId = false;
+            if ($blogId = $this->blogId())
+            {
+                $row = $this->orm->table($this->table('posts'))
+                    ->where(['blog_id' => $blogId, 'name' => $this->postName])->select(['id']);
+                $this->postId = $row[0]['id'] ?? false;
+            }
+        }
+        return $this->postId;
     }
 
     // create() не требует ID — всегда создаёт новое сообщение
@@ -399,87 +414,74 @@ class MessageContext
         if (!$postId) throw new \RuntimeException("Post '{$this->postName}' not found");
 
         $now  = time();
-        $data = array_merge(['text' => null, 'author' => null,
-                             'files' => null, 'tags' => null, 'meta' => null], $data);
-
-        if (isset($data['files']) && is_array($data['files']))
-            $data['files'] = json_encode($data['files']);
-        if (isset($data['tags']) && is_array($data['tags']))
-            $data['tags'] = json_encode($data['tags']);
-        if (isset($data['meta']) && is_array($data['meta']))
-            $data['meta'] = json_encode($data['meta']);
+        $data = $this->encodeJson(array_merge(
+            ['text' => null, 'author' => null, 'files' => null, 'tags' => null, 'meta' => null], $data));
 
         $data['post_id'] = $postId;
         $data['created'] = $now;
         $data['updated'] = $now;
 
-        $this->orm->table($this->messagesTable())->insert($data);
+        $this->orm->table($this->table('messages'))->insert($data);
 
         // Обновляем updated у поста при добавлении нового сообщения
-        $this->orm->table($this->postsTable())
+        $this->orm->table($this->table('posts'))
             ->where(['id' => $postId])
             ->update(['updated' => $now]);
 
         return $this;
     }
 
-    // Изменено: если $messageId задан — фильтрует по нему
+    // $messageId задан — фильтрует по нему
     public function select(...$where): array
     {
         $postId = $this->postId();
         if (!$postId) return [];
 
-        $query = $this->orm->table($this->messagesTable())
+        $query = $this->orm->table($this->table('messages'))
             ->where(['post_id' => $postId]);
 
         if ($this->messageId !== null)
             $query = $query->where(['id' => $this->messageId]);
 
         $rows = $query->wheres(...$where)->select();
-        return array_map([$this, 'decode'], (array) $rows);
+        return array_map([$this, 'decodeRow'], (array) $rows);
     }
 
-    // Изменено: ID берётся из $this->messageId, не из параметра
     public function update(array $data): self
     {
         if ($this->messageId === null)
             throw new \RuntimeException("message() requires an id to update");
 
+        $postId = $this->postId();
+        if (!$postId) throw new \RuntimeException("Post '{$this->postName}' not found");
+
+        $data = $this->encodeJson($this->sanitizeUpdate($data, ['id', 'post_id', 'created']));
         $data['updated'] = time();
 
-        if (isset($data['files']) && is_array($data['files']))
-            $data['files'] = json_encode($data['files']);
-        if (isset($data['tags']) && is_array($data['tags']))
-            $data['tags'] = json_encode($data['tags']);
-        if (isset($data['meta']) && is_array($data['meta']))
-            $data['meta'] = json_encode($data['meta']);
-
-        $this->orm->table($this->messagesTable())
-            ->where(['id' => $this->messageId, 'post_id' => $this->postId()])
+        $this->orm->table($this->table('messages'))
+            ->where(['id' => $this->messageId, 'post_id' => $postId])
             ->update($data);
 
         return $this;
     }
 
-    // Изменено: ID берётся из $this->messageId
     public function delete(): self
     {
         if ($this->messageId === null)
             throw new \RuntimeException("message() requires an id to delete");
 
-        $this->orm->table($this->messagesTable())
-            ->where(['id' => $this->messageId, 'post_id' => $this->postId()])
+        $postId = $this->postId();
+        if (!$postId) throw new \RuntimeException("Post '{$this->postName}' not found");
+
+        $this->orm->table($this->table('messages'))
+            ->where(['id' => $this->messageId, 'post_id' => $postId])
             ->delete();
 
         return $this;
     }
 
-    // Изменено: ID берётся из $this->messageId
     public function archive(bool $state = true): self
     {
-        if ($this->messageId === null)
-            throw new \RuntimeException("message() requires an id to archive");
-
         return $this->update(['archived' => (int) $state]);
     }
 
@@ -492,21 +494,13 @@ class MessageContext
         $postId = $this->postId();
         if (!$postId) return [];
 
-        $rows = $this->orm->table($this->messagesTable())
+        $rows = $this->orm->table($this->table('messages'))
             ->where(['post_id' => $postId])
             ->where("created > ?", $since)
             ->OrderBy('created ASC')
             ->select();
 
-        return array_map([$this, 'decode'], (array) $rows);
-    }
-
-    private function decode(array $row): array
-    {
-        if ($row['files']) $row['files'] = json_decode($row['files'], true);
-        if ($row['tags'])  $row['tags']  = json_decode($row['tags'],  true);
-        if ($row['meta'])  $row['meta']  = json_decode($row['meta'],  true);
-        return $row;
+        return array_map([$this, 'decodeRow'], (array) $rows);
     }
 }
 

@@ -342,5 +342,5 @@ class Controller implements QControllerInterface
 # ---------------------------------------------------------------- #
 
 //Создаем класс управления контроллерами
-return new Controller($this->config->get(__file__), ['files'=>$this->utils->files]);
+return new Controller($this->config->get(__file__), ['files'=>$this->files]);
 

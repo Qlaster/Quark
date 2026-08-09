@@ -65,7 +65,7 @@
 		 */
 		public function tree(string $start, string $mask = null): array
 		{
-			if ($this->config['jail'][__FUNCTION__] and ($start = $this->jailPath($start)) === false) return [];
+			if ($this->config['jail'][__FUNCTION__] and $this->jailPath($start) === false) return [];
 
 			$files = [];
 			$handle = @opendir($start);
@@ -108,7 +108,7 @@
 		 */
 		public function listing(string $folder, string $mask = null, array &$all_files = []): array
 		{
-			if ($this->config['jail'][__FUNCTION__] and ($folder = $this->jailPath($folder)) === false) return $all_files;
+			if ($this->config['jail'][__FUNCTION__] and $this->jailPath($folder) === false) return $all_files;
 
 			$fp = @opendir($folder);
 			if (!$fp) return $all_files;
@@ -190,7 +190,7 @@
 		 */
 		public function listingDir(string $dir): array
 		{
-			if ($this->config['jail'][__FUNCTION__] and ($dir = $this->jailPath($dir)) === false) return [];
+			if ($this->config['jail'][__FUNCTION__] and $this->jailPath($dir) === false) return [];
 
 			$result = [];
 			$handle = @opendir($dir);  //Открываем директорию
@@ -217,7 +217,7 @@
 		 */
 		public function exists(string $dir, string $name): bool
 		{
-			if ($this->config['jail'][__FUNCTION__] and ($dir = $this->jailPath($dir)) === false) return false;
+			if ($this->config['jail'][__FUNCTION__] and $this->jailPath($dir) === false) return false;
 
 			$buf = $this->listingDir($dir);
 			return in_array($name, $buf, true);
@@ -233,7 +233,7 @@
 		 */
 		public function collection(string $folder, string $mask = null): array
 		{
-			if ($this->config['jail'][__FUNCTION__] and ($folder = $this->jailPath($folder)) === false) return [];
+			if ($this->config['jail'][__FUNCTION__] and $this->jailPath($folder) === false) return [];
 
 			$all_files = $this->listing($folder);
 			$result = [];
@@ -255,7 +255,7 @@
 		 */
 		public function remove(string $path): bool
 		{
-			if ($this->config['jail'][__FUNCTION__] and ($path = $this->jailPath($path)) === false) return false;
+			if ($this->config['jail'][__FUNCTION__] and $this->jailPath($path) === false) return false;
 
 			if (is_file($path)) return unlink($path);
 			if (is_dir($path))
@@ -342,7 +342,7 @@
 		 */
 		public function uploadMoveSingleFile(array &$tmpFileRecord, string $targetDir, string $prefix = "content_", string $filename = null): array
 		{
-			if ($this->config['jail'][__FUNCTION__] and ($targetDir = $this->jailPath($targetDir)) === false) return [];
+			if ($this->config['jail'][__FUNCTION__] and $this->jailPath($targetDir) === false) return [];
 
 			//Получим расширение файла
 			$ext = pathinfo($tmpFileRecord['name'], PATHINFO_EXTENSION);
@@ -379,7 +379,7 @@
 		 */
 		public function uploadMove(string $targetDir, bool $uniqueName = true, string $prefix = "content_"): array
 		{
-			if ($this->config['jail'][__FUNCTION__] and ($targetDir = $this->jailPath($targetDir)) === false) return [];
+			if ($this->config['jail'][__FUNCTION__] and $this->jailPath($targetDir) === false) return [];
 
 			//Получим список загружаемых файлов
 			$filesblocks = $this->uploadList();
@@ -441,7 +441,7 @@
 		public function info(string $file)
 		{
 			// Проверка, доступен ли файл для чтения. Если нет — возвращаем null.
-			if ($this->config['jail'][__FUNCTION__] and ($file = $this->jailPath($file)) === false) return null;
+			if ($this->config['jail'][__FUNCTION__] and $this->jailPath($file) === false) return null;
 			if (!is_readable($file)) return null;
 
 			// Получение информации о пути файла: директория, расширение, имя и т.д.

@@ -59,7 +59,7 @@
 
 
 			//Список файлов на обновление
-			$listing = $this->app->utils->files->listing($from);
+			$listing = $this->app->files->listing($from);
 
 			function isRules($ruleses, $relativePath)
 			{
@@ -115,7 +115,7 @@
 			if (!file_exists($workDir))	mkdir($workDir);
 			if (!file_exists($workDir))	throw new \Exception('Failed to create temporary directory');
 
-			$listing = $this->app->utils->files->listing("$workDir/Quark-main");
+			$listing = $this->app->files->listing("$workDir/Quark-main");
 
 			//Получаем ссылки на дистрибутив
 			$distrLink = $this->config['update']['distr']['zip'];

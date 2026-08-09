@@ -3,9 +3,8 @@
 	/*
 	 * config
 	 *
-	 * Version 1.0
-	 * Copyright 2022
-	 *
+	 * Version 2
+	 * Copyright 2026
 	 *
 	 * - Получить конфигурацию модуля
 	 * $APP->config->get();
@@ -13,6 +12,11 @@
 	 * - Сохранить конфигурацию модуля
 	 * $APP->config->set($config);
 	 *
+	 * Конвенция: ini-файл лежит рядом с php-файлом вызывающего кода.
+	 * Если имя файла не передано, оно выводится через debug_backtrace.
+	 *
+	 * Экранирование в ключах: ".." — литеральная точка внутри сегмента,
+	 * одиночная "." — разделитель вложенности.
 	 *
 	*/
 
@@ -35,47 +39,49 @@
 	# ---------------------------------------------------------------- #
 	class Config implements QConfigInterface
 	{
+		private $reader;
+		private $writer;
+		private $cache = [];	//распарсенные конфиги в пределах запроса (путь => config)
+
+		private function reader()
+		{
+			return $this->reader ?: $this->reader = new Core_Ini_Reader;
+		}
+
+		private function writer()
+		{
+			return $this->writer ?: $this->writer = new Core_Ini_Writer;
+		}
+
 		public function get($filename=null)
 		{
-			static $ini;
-			if (!isset($ini)) $ini = new Core_Ini_Reader;
-
-			//Если нам забыли указать имя файла, вызываем отладчик и посмотрим сами
+			//Если имя файла не передано — берём файл вызывающего кода
 			if ($filename == null)
-			{
-				//Это пипец как дорого, но вариантов не много.
-				$debug 		= debug_backtrace();
-				$filename 	= $debug[0]['file'];
-			}
+				$filename = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1)[0]['file'];
 
-			//Конфигурируем ссылку на ini файл
-			$PI = $this->CompIniFile($filename);
-			// Обрабатываем конфиг если файл существует
-			if (file_exists($PI))
-				return $ini->fromFile($PI);
+			$path = $this->compIniFile($filename);
 
-			return null;
+			//Кэшируем и отрицательный результат — отсутствующий файл не дёргаем stat'ом повторно
+			if (array_key_exists($path, $this->cache)) return $this->cache[$path];
+			if (!file_exists($path))                 return $this->cache[$path] = null;
+
+			return $this->cache[$path] = $this->reader()->fromFile($path);
 		}
 
 		public function set($config, $filename=null)
 		{
-			static $ini;
-			if (!isset($ini)) $ini = new Core_Ini_Writer;
-
-			//Если нам забыли указать имя файла, вызываем отладчик и посмотрим сами
+			//Если имя файла не передано — берём файл вызывающего кода
 			if ($filename == null)
-			{
-				$debug 		= debug_backtrace();
-				$filename 	= $debug[0]['file'];
-			}
+				$filename = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1)[0]['file'];
 
-			//Конфигурируем ссылку на ini файл
-			$PI = $this->CompIniFile($filename);
+			$path   = $this->compIniFile($filename);
+			$result = file_put_contents($path, $this->writer()->processConfig($config), LOCK_EX);
 
-			$inistring = $ini->processConfig($config);
-			return file_put_contents($PI, $inistring);
+			//Сбрасываем кэш — следующее чтение вернёт каноническую (распарсенную) форму
+			unset($this->cache[$path]);
+
+			return $result;
 		}
-
 
 		/*
 		 *
@@ -86,12 +92,12 @@
 		 */
 		public function readFile($filename)
 		{
-			static $ini;
-			if (!isset($ini)) $ini = new Core_Ini_Reader;
+			if (!is_readable($filename)) return null;
 
-			if (is_readable($filename))
-				return $ini->fromFile($filename);
-			return null;
+			if (!isset($this->cache[$filename]))
+				$this->cache[$filename] = $this->reader()->fromFile($filename);
+
+			return $this->cache[$filename];
 		}
 
 		/*
@@ -106,7 +112,6 @@
 			//Default options
 			if (!isset($options['replace'])) $options['replace'] = false;
 
-			//Merge
 			foreach ((array) $files as $envfile)
 			{
 				if ($ENV = (array) $this->readFile($envfile))
@@ -119,26 +124,20 @@
 
 		public function fromString(string $string)
 		{
-			static $ini;
-			if (!isset($ini)) $ini = new Core_Ini_Reader;
-
-			return $ini->fromString($string);
+			return $this->reader()->fromString($string);
 		}
 
 		public function toString($config)
 		{
-			static $ini;
-			if (!isset($ini)) $ini = new Core_Ini_Writer;
-			return $ini->processConfig((array) $config);
+			return $this->writer()->processConfig((array) $config);
 		}
 
 
-		//Ты ей файл модуля, она тебе путь к файлу конфигурации, который лежит в той е папке
-		private function CompIniFile($filename, $ext='ini')
+		//Ты ей файл модуля, она тебе путь к файлу конфигурации, который лежит в той же папке
+		private function compIniFile($filename, $ext='ini')
 		{
-			//Еще нужно сделать проверку, по которой, будет контролироваться путь к файлу, что бы он не уходил дальше public директории фо\реймворка
+			//Ищем конфигурацию модуля в той же папке, где он лежит, но только с расширением ini
 			$PI = pathinfo($filename);
-			//Суть кода в следующем. Мы ищем конфигурацию модуля в той же папке, где он лежит, но только с расширением ini
 			return $PI['dirname'].DIRECTORY_SEPARATOR.$PI['filename'].".$ext";
 		}
 
@@ -166,6 +165,14 @@
 		protected $nestSeparator = '.';
 
 		/**
+		 * Маркер для литеральной точки (".."") — управляющий символ,
+		 * который не может встретиться в реальном ini-файле.
+		 *
+		 * @var string
+		 */
+		const LITERAL_DOT = "\x1A";
+
+		/**
 		 * Directory of the file to process.
 		 *
 		 * @var string
@@ -184,7 +191,7 @@
 		{
 			if (!is_file($filename) || !is_readable($filename))
 			{
-				throw new Exception (sprintf(
+				throw new \Exception (sprintf(
 					"File '%s' doesn't exist or not readable",
 					$filename
 				));
@@ -194,60 +201,56 @@
 
 			set_error_handler(
 				function ($error, $message = '', $file = '', $line = 0) use ($filename) {
-					throw new Exception (
+					throw new \Exception (
 						sprintf('Error reading INI file "%s": %s', $filename, $message),
 						$error
 					);
 				},
 				E_WARNING
 			);
-			$ini = $this->parseIniFile($filename, true);
-			restore_error_handler();
+
+			try
+			{
+				$ini = $this->parseIniFile($filename);
+			}
+			finally
+			{
+				restore_error_handler();
+			}
 
 			return $this->process($ini);
 		}
-
 
 
 		public function fromString($iniString)
 		{
-			$ini = $this->parseIniString($iniString, true);
-			restore_error_handler();
-			return $this->process($ini);
+			//Строковый конфиг не имеет директории — @include в нём недоступен
+			$this->directory = null;
+			return $this->process($this->parseIniString($iniString));
 		}
 
 
-
 		/**
-		 * TODO:DEPRICATED
-		 * fromString(): defined by Reader interface.
+		 * Разбивает ключ или имя секции на сегменты с учётом эскейпинга:
+		 * ".."" — литеральная точка, "." — разделитель вложенности.
 		 *
-		 * @param  string $string
-		 * @return array|bool
-		 * @throws Exception
-		 *
+		 * @param  string $key
+		 * @return array
 		 */
-		//~ public function fromString($string)
-		//~ {
-			//~ if (empty($string)) {
-				//~ return array();
-			//~ }
-			//~ $this->directory = null;
+		private function splitKey($key)
+		{
+			//Быстрый путь: без ".." маскировка не нужна
+			if (strpos($key, '..') === false)
+				return explode($this->nestSeparator, $key);
 
-			//~ set_error_handler(
-				//~ function ($error, $message = '', $file = '', $line = 0) {
-					//~ throw new Exception (
-						//~ sprintf('Error reading INI string: %s', $message),
-						//~ $error
-					//~ );
-				//~ },
-				//~ E_WARNING
-			//~ );
-			//~ $ini = parse_ini_string($string, true);
-			//~ restore_error_handler();
+			$segments = explode($this->nestSeparator, str_replace('..', self::LITERAL_DOT, $key));
 
-			//~ return $this->process($ini);
-		//~ }
+			foreach ($segments as &$_segment)
+				$_segment = str_replace(self::LITERAL_DOT, '.', $_segment);
+
+			return $segments;
+		}
+
 
 		/**
 		 * Process data from the parsed ini file.
@@ -263,13 +266,15 @@
 			{
 				if (is_array($value))
 				{
-					if (mb_strpos($section, $this->nestSeparator) !== false)
+					$segments = $this->splitKey($section);
+
+					if (count($segments) > 1) //нет — уже готово
+					//placeholder
 					{
-						$sections = explode($this->nestSeparator, $section);
-						$config = array_merge_recursive($config, $this->buildNestedSection($sections, $value));
+						$config = array_merge_recursive($config, $this->buildNestedSection($segments, $value));
 					} else
 					{
-						$config[$section] = $this->processSection($value);
+						$config[$segments[0]] = $this->processSection($value);
 					}
 				} else
 				{
@@ -324,102 +329,109 @@
 		 * @param  string $value
 		 * @param  array  $config
 		 * @return array
-		 * @throws Exception\RuntimeException
+		 * @throws Exception
 		 */
 		protected function processKey($key, $value, array &$config)
 		{
-			if (mb_strpos($key, $this->nestSeparator) !== false)
+			//Быстрый путь: плоский ключ — без splitKey и без цикла
+			if (strpos($key, $this->nestSeparator) === false)
 			{
-				$pieces = explode($this->nestSeparator, $key, 2);
+				if ($key === '@include') $this->processInclude($value, $config);
+				else                     $config[$key] = $value;
+				return;
+			}
 
-				//~ if (!mb_strlen($pieces[0]) || !mb_strlen($pieces[1]))
-				//~ {
-					//~ throw new Exception (sprintf('Invalid key "%s"', $key));
-				//~ } else
-				if (!isset($config[$pieces[0]]))
+			$segments = $this->splitKey($key);
+			$ref      = &$config;
+
+			//Разворачиваем путь вложенности, попутно создавая промежуточные уровни
+			while (count($segments) > 1)
+			{
+				$head = array_shift($segments);
+
+				if (!isset($ref[$head]))
 				{
-					//~ if ($pieces[0] === '0' && !empty($config))
-					//~ {
-						//~ $config = array($pieces[0] => $config);
-					//~ } else {
-						$config[$pieces[0]] = array();
-					//~ }
-				} elseif (!is_array($config[$pieces[0]]))
+					$ref[$head] = array();
+				}
+				elseif (!is_array($ref[$head]))
 				{
-					throw new Exception (
-						sprintf('Cannot create sub-key for "%s", as key already exists', $pieces[0])
+					throw new \Exception (
+						sprintf('Cannot create sub-key for "%s", as key already exists', $head)
 					);
 				}
 
-				$this->processKey($pieces[1], $value, $config[$pieces[0]]);
-			} else {
-				if ($key === '@include') {
-					if ($this->directory === null) {
-						throw new Exception ('Cannot process @include statement for a string config');
-					}
-
-					$reader  = clone $this;
-					$include = $reader->fromFile($this->directory . '/' . $value);
-					$config  = array_replace_recursive($config, $include);
-				} else {
-					$config[$key] = $value;
-				}
+				$ref = &$ref[$head];
 			}
+
+			$leaf = $segments[0];
+
+			//@include подгружает другой ini-файл относительно директории текущего
+			if ($leaf === '@include')
+			{
+				$this->processInclude($value, $ref);
+				return;
+			}
+
+			$ref[$leaf] = $value;
+		}
+
+		/**
+		 * Обработка директивы @include: подгружает ini-файл и сливает его в текущий уровень.
+		 *
+		 * @param  string $value
+		 * @param  array  $ref
+		 */
+		private function processInclude($value, array &$ref)
+		{
+			if ($this->directory === null)
+				throw new \Exception ('Cannot process @include statement for a string config');
+
+			$reader = clone $this;
+			$ref    = array_replace_recursive($ref, $reader->fromFile($this->directory . '/' . $value));
 		}
 
 
 		function parseIniString($strings, $sections=true)
 		{
-			if (is_string($strings)) $strings = explode("\r", $strings);
+			//Строковый вход: разделяем по любому стилю окончаний строк (CRLF / CR / LF)
+			if (is_string($strings))
+				$strings = explode("\n", str_replace(array("\r\n", "\r"), "\n", $strings));
 
-			$result = array();
+			$result  = array();
+			$section = null;
 
 			foreach ($strings as $string)
 			{
 				$string = trim($string);
-				if (($string == '') or ($string[0] == '#') or ($string[0] == ';')) continue;
 
+				//Пустые строки и полнолинейные комментарии
+				if ($string == '' or $string[0] == '#' or $string[0] == ';') continue;
 
-				//Это секция
-				if (($string[0] == '[') and (mb_substr($string, -1) == ']'))
+				//Секция
+				if ($string[0] == '[' and mb_substr($string, -1) == ']')
 				{
-					$section_name = mb_substr($string, 1, -1);
-					$result[$section_name] = array();
+					$section = mb_substr($string, 1, -1);
+					$result[$section] = array();
+					continue;
 				}
 
+				//Разбираем строку на ключ и значение по первому "="
 				$separator = mb_strpos($string, '=');
-				//=== не стоит потому, что даже теоретически ini строка не может начинаться со знака равно
-				//TODO: исправлено - в некоторых конфигах есть такая потребность, значит все таки может=)
-				if ($separator !== false)
+				if ($separator === false) continue;
+
+				$key   = trim(mb_substr($string, 0, $separator));
+				$value = trim(mb_substr($string, $separator + 1));
+
+				//Снимаем обрамляющие кавычки со значения (если они есть)
+				if (mb_strlen($value) >= 2)
 				{
-					//Разберем строку на ключ и значеник
-					$value 	= trim( mb_substr($string, $separator+1) );
-					if ($separator == 0) $separator = 1;
-					$var 	= trim( mb_substr($string, 0, $separator-1) );
-
-					//Очистим озачение от ковычек (если ни имеются, конечно)
-					if ($value)
-					{
-						$firstChar = mb_substr($value, 0, 1);
-						$lastChar  = mb_substr($value, -1);
-
-						if ($firstChar === $lastChar && in_array($firstChar, ['"', "'"]))
-							$value = mb_substr($value, 1, -1);
-					}
-
-					//Если мы находимся внутри секции - то будем добавлять перемнные туда. А вот если нет - то просто кинем их в корень
-					if (isset($section_name) and ($section_name != ''))
-					{
-						$result[$section_name][$var] = $value;
-					}
-					else
-					{
-						$result[$var] = $value;
-					}
-
+					$quote = $value[0];
+					if (($quote == '"' or $quote == "'") and mb_substr($value, -1) == $quote)
+						$value = mb_substr($value, 1, -1);
 				}
 
-
+				if ($section) $result[$section][$key] = $value;
+				else          $result[$key]           = $value;
 			}
 
 			return $result;
@@ -427,10 +439,9 @@
 
 		function parseIniFile($filename, $sections=true)
 		{
-			if (! file_exists($filename) ) throw new Exception ('File INI not found');
-			$ini = file($filename);
+			if (! file_exists($filename) ) throw new \Exception ('File INI not found');
 
-			return $this->parseIniString($ini, $sections);
+			return $this->parseIniString(file($filename, FILE_IGNORE_NEW_LINES), $sections);
 		}
 
 
@@ -500,12 +511,12 @@
 
 				foreach ($config as $sectionName => $data) {
 					if (!is_array($data)) {
-						$iniString .= $sectionName
+						$iniString .= $this->escapeKey($sectionName)
 								   .  ' = '
 								   .  $this->prepareValue($data)
 								   .  "\n";
 					} else {
-						$iniString .= '[' . $sectionName . ']' . "\n"
+						$iniString .= '[' . $this->escapeKey($sectionName) . ']' . "\n"
 								   .  $this->addBranch($data)
 								   .  "\n";
 					}
@@ -532,7 +543,8 @@
 				if (is_array($value)) {
 					$iniString .= $this->addBranch($value, $group);
 				} else {
-					$iniString .= implode($this->nestSeparator, $group)
+					//Сегменты с литеральной точкой удваиваем — разделитель экранируется самим собой
+					$iniString .= implode($this->nestSeparator, array_map(array($this, 'escapeKey'), $group))
 							   .  ' = '
 							   .  $this->prepareValue($value)
 							   .  "\n";
@@ -543,24 +555,44 @@
 		}
 
 		/**
+		 * Экранирует сегмент ключа: литеральная точка удваивается,
+		 * одиночная точка остаётся разделителем вложенности.
+		 *
+		 * @param  string $key
+		 * @return string
+		 */
+		protected function escapeKey($key)
+		{
+			//Перенос строки в ключе ломает построчный формат ini — запрещаем
+			if (strpbrk($key, "\r\n") !== false)
+				throw new \Exception (sprintf('INI key can not contain line breaks: "%s"', $key));
+
+			return str_replace('.', '..', $key);
+		}
+
+		/**
 		 * Prepare a value for INI.
 		 *
 		 * @param  mixed $value
 		 * @return string
-		 * @throws Exception
 		 */
 		protected function prepareValue($value)
 		{
+			//Перенос строки в значении ломает построчный формат ini — запрещаем
+			if (strpbrk((string) $value, "\r\n") !== false)
+				throw new \Exception ('INI value can not contain line breaks');
+
 			if (is_int($value) || is_float($value)) {
 				return $value;
 			} elseif (is_bool($value)) {
 				return ($value ? 'true' : 'false');
-			} elseif (false === mb_strpos((string)$value, '"')) {
+			} elseif (false === strpos((string)$value, '"')) {
 				return '"' . $value .  '"';
-			} else {
-				return $value;
-				throw new Exception ('Value can not contain double quotes');
 			}
+
+			//Значения с двойными кавычками внутри (например JSON) пишем сыром —
+			//читатель снимает только обрамляющие кавычки, строка останется валидной
+			return $value;
 		}
 
 		/**
@@ -594,7 +626,6 @@
 
 
 	}
-
 
 
 

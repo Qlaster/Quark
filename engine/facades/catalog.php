@@ -87,7 +87,7 @@
 
 			is_array($where)   ? $orm->where  (... $where)   : $orm->where($where);
 			is_array($orderby) ? $orm->orderby(... $orderby) : $orm->orderby($orderby);
-			is_array($groupby) ? $orm->groupby(... $where)   : $orm->groupby($groupby);
+			is_array($groupby) ? $orm->groupby(... $groupby) : $orm->groupby($groupby);
 			        ($like)    ? $orm->like   (    $like)    : null;
 
 			if ($limit or $offset) $orm->limit($limit, $offset);
