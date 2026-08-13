@@ -137,7 +137,7 @@
 		<script>
 
 			//загружаем дерево из контроллера и по окончанию построить дерево
-			$('#view-tree').load( "admin/tools/filemanager/file_tree", jstree_construct );
+			$('#view-tree').load( "admin/tools/filemanager/file-tree", jstree_construct );
 
 
 			//$(document).ready(jstree_construct);
@@ -211,7 +211,7 @@
 					//~ var dir = $(this).attr('placeholder');
 					if (dir == undefined) return;
 
-					$('#ibox-content').load('admin/tools/filemanager/file_info.php?path='+dir);
+					$('#ibox-content').load('admin/tools/filemanager/file-info?path='+dir);
 				});
 
 			};

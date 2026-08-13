@@ -40,7 +40,7 @@
 
 
 	//Пресеты настроек
-	foreach ((array) $APP->user->presets->get() as $name => $rules)
+	foreach ((array) $APP->user->preset->get() as $name => $rules)
 	{
 		$content['presets'][$name] = ['head'=>$name, 'rules'=>$rules];
 	}

@@ -28,6 +28,9 @@ try
         $post = $_REQUEST['post'] ?? '';
         if (!$post) throw new Exception("Не указан пост");
 
+        // Валидация slug'ов до любых файловых операций — фасад бросит на невалидных именах
+        $postCtx = $APP->talk->blog($channel)->post($post);
+
         $data['title']    = $_POST['title']    ?: null;
         $data['author']   = $_POST['author']   ?: null;
         $data['status']   = $_POST['status']   ?: null;  // null = очистить статус
@@ -36,7 +39,7 @@ try
         $data['archived'] = isset($_POST['archived']) ? 1 : 0;
 
         $folder = rtrim($APP->talk->config['upload']['folder'] ?? 'public/talk/', '/');
-        $FILES  = $APP->utils->files->uploadMove("$folder/$channel/$post", false);
+        $FILES  = $APP->files->uploadMove("$folder/$channel/$post", false);
 
         $newFiles = [];
         foreach ($FILES as $files) {
@@ -45,12 +48,12 @@ try
             }
         }
         if ($newFiles) {
-            $current  = $APP->talk->blog($channel)->post($post)->select();
+            $current  = $postCtx->select();
             $existing = (array)($current[0]['files'] ?? []);
             $data['files'] = array_merge($existing, $newFiles);
         }
 
-        $APP->talk->blog($channel)->post($post)->update($data);
+        $postCtx->update($data);
 
         header('Location: ' . $APP->url->home() . "admin/communication/talk/?channel=$channel&post=$post");
         exit;

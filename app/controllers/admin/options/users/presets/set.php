@@ -1,5 +1,3 @@
 <?php
 
-	$presets = $APP->user->presets->get();
-	$presets[$_GET['name']] = $_POST['denied'];
-	echo $APP->user->presets->set($presets) ? "Success" : "Error";
+	echo $APP->user->preset->set($_GET['name'], $_POST['denied']) ? "Success" : "Error";

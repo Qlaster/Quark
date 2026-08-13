@@ -6,9 +6,9 @@
 	$APP->user->del($_GET['login']);
 
 	//Если удалили последнего пользователя - создадим дефолтного
-	if (count($APP->account->all()) == 0)
+	if (count($APP->user->all()) == 0)
 	{
-		$APP->user->create_default();
+		$APP->user->createDefault();
 		$user = $APP->user->all();
 		$user = reset($user);
 

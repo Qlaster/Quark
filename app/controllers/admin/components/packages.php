@@ -9,11 +9,11 @@
 
 	//~ $vendorDir = $APP->core_config['path_vendor']['path'];
 	$vendorDir = $_ENV['vendor']['path'];
-	$vendors  = $APP->utils->files->dirListing($vendorDir);
+	$vendors  = $APP->files->listingDir($vendorDir);
 
 	//Проходимся по доступным вендорам, заглядывая в пакеты
 	foreach ($vendors as $_vendor)
-		foreach ((array)$APP->utils->files->dirListing($vendorDir.DIRECTORY_SEPARATOR.$_vendor) as $_packege)
+		foreach ((array)$APP->files->listingDir($vendorDir.DIRECTORY_SEPARATOR.$_vendor) as $_packege)
 		{
 			//Сгенерируем ссылку на описание пакета
 			$composerJson = $vendorDir.DIRECTORY_SEPARATOR.$_vendor.DIRECTORY_SEPARATOR.$_packege.DIRECTORY_SEPARATOR."composer.json";

@@ -20,7 +20,7 @@ try
     {
         $APP->talk->blog($channel)->post($post)->delete();
         $uploadDir = "$folder/$channel/$post";
-        if (is_dir($uploadDir)) $APP->utils->files->remove($uploadDir);
+        if (is_dir($uploadDir)) $APP->files->remove($uploadDir);
     }
 
     header('Location: ' . $APP->url->home() . "admin/communication/talk/?channel=$channel");

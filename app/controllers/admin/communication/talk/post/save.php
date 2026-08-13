@@ -21,7 +21,7 @@ try
     // Загрузка файлов
     $folder = rtrim($APP->talk->config['upload']['folder'] ?? 'public/talk/', '/');
     $uploadDir = "$folder/$channel/$name";
-    $FILES = $APP->utils->files->uploadMove($uploadDir, false);
+    $FILES = $APP->files->uploadMove($uploadDir, false);
 
     $fileList = [];
     foreach ($FILES as $files) {

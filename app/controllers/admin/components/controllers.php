@@ -6,7 +6,7 @@
 
 	//Получим путь до директориии с контроллерами
 	$controllersDir = $APP->controller->config['folder'];
-	$pages = $APP->utils->files->listing($controllersDir, '*.php');
+	$pages = $APP->files->listing($controllersDir, '*.php');
 	$result = [];
 
 	$content['title'] = 'Контроллеры приложения';

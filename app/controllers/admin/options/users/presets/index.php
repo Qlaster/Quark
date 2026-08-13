@@ -2,7 +2,7 @@
 
 	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
-	$user['denied'] = $APP->user->presets->get()[$_GET['name']];
+	$user['denied'] = $APP->user->preset->get($_GET['name']);
 
 
 	$files = $APP->controller->fetch('admin');
@@ -25,7 +25,7 @@
 
 
 	//Пресеты настроек
-	foreach ((array) $APP->user->presets->get() as $name => $rules)
+	foreach ((array) $APP->user->preset->get() as $name => $rules)
 	{
 		//~ $content['presets'][$name] = ['head'=>$name, 'rules'=>$rules];
 		$content['menu']['presets']['list'][$name] = ['head'=>$name, 'rules'=>$rules, 'link'=>'admin/options/users/presets/?name='.urlencode($name)];

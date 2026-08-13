@@ -32,8 +32,10 @@ $content['catalog']['posts']['selected'] = null;
 
 if ($channel)
 {
-    $postCtx = $APP->talk->blog($channel)->post();
-    $posts   = $search ? $postCtx->search($search) : $postCtx->select();
+    try { $postCtx = $APP->talk->blog($channel)->post(); }
+    catch (Exception $e) { $postCtx = null; }
+
+    $posts   = $postCtx ? ($search ? $postCtx->search($search) : $postCtx->select()) : [];
 
     foreach ($posts as &$_post) {
         $_post['selected'] = ($post === $_post['name']);

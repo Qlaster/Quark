@@ -1,22 +1,4 @@
 ﻿
-// Для начала определим метод XMLHttpRequest.sendAsBinary(),
-// если он не определен (Например, для браузера Google Chrome). 
-
-if (!XMLHttpRequest.prototype.sendAsBinary) 
-	{
-
-		XMLHttpRequest.prototype.sendAsBinary = function(datastr) 
-		{
-			function byteValue(x) 
-			{
-				return x.charCodeAt(0) & 0xff;
-			}
-			var ords = Array.prototype.map.call(datastr, byteValue);
-			var ui8a = new Uint8Array(ords);
-			this.send(ui8a.buffer);
-        }
-    }
-
 /**
  * Класс FileUploader.
  * @param ioptions Ассоциативный массив опций загрузки 
@@ -82,7 +64,7 @@ function FileUploader(ioptions)
 				// Создадим объект XMLHttpRequest, установим адрес скрипта для POST
 				// и необходимые заголовки HTTP запроса.
                 var xhr = new XMLHttpRequest();
-                xhr.open('POST', that.options['uploadscript'], true);
+                xhr.open('POST', that.options['uploadscript'] + (that.options['query'] || ''), true);
                 xhr.setRequestHeader("Content-Type", "application/x-binary; charset=x-user-defined");
 
 				// Идентификатор загрузки (чтобы знать на стороне сервера что с чем склеивать)
@@ -114,17 +96,13 @@ function FileUploader(ioptions)
                         var div1=document.getElementById('cnuploader_progressbar');
                         var div2=document.getElementById('cnuploader_progresscomplete');
 
-                        div1.style.display='block';
-                        div2.style.display='block';
-                        div2.style.width=width+'px';
-                        if (percentComplete<30) {
-                            div2.textContent='';
+                        if (div1) {
+                            div1.style.display='block';
+                            div1.style.width=percentComplete+'%';
                             div1.textContent=percentComplete+'%';
+                            div1.setAttribute('aria-valuenow', percentComplete);
                             }
-                        else {
-                            div2.textContent=percentComplete+'%';
-                            div1.textContent='';
-                            }
+                        if (div2) { div2.style.display='block'; div2.style.width=width+'px'; }
                         }
                     
                     }, false);
@@ -157,7 +135,7 @@ function FileUploader(ioptions)
 						// Если все порции загружены, сообщим об этом серверу. XMLHttpRequest, метод GET, 
 						// PHP скрипт тот-же.
                         var gxhr = new XMLHttpRequest();
-                        gxhr.open('GET', that.options['uploadscript']+'?action=done', true);
+                        gxhr.open('GET', that.options['uploadscript']+'?action=done'+(that.options['query'] || '').replace(/^\?/, '&'), true);
 
 						// Установим идентификатор загруки.
                         gxhr.setRequestHeader("Upload-Id", that.options['uploadid']);
@@ -179,7 +157,7 @@ function FileUploader(ioptions)
                             }, false);
 
 						// Отправим HTTP GET запрос
-                        gxhr.sendAsBinary('');
+                        gxhr.send('');
                         }
                     }, false);
 
@@ -196,7 +174,7 @@ function FileUploader(ioptions)
 					// XMLHttpRequest, метод GET,  PHP скрипт тот-же.
                     var gxhr = new XMLHttpRequest();
 
-                    gxhr.open('GET', that.options['uploadscript']+'?action=abort', true);
+                    gxhr.open('GET', that.options['uploadscript']+'?action=abort'+(that.options['query'] || '').replace(/^\?/, '&'), true);
 
 					// Установим идентификатор загруки.
                     gxhr.setRequestHeader("Upload-Id", that.options['uploadid']);
@@ -215,7 +193,7 @@ function FileUploader(ioptions)
                         }, false);
 
 					// Отправим HTTP GET запрос
-                    gxhr.sendAsBinary('');
+                    gxhr.send('');
 
 					// Отобразим сообщение об ошибке
                     if (that.options['message_error']==undefined) alert("There was an error attempting to upload the file."); else alert(that.options['message_error']);
@@ -231,7 +209,7 @@ function FileUploader(ioptions)
                     }, false);
 
 				// Отправим порцию методом POST
-                xhr.sendAsBinary(evt.target.result);
+                xhr.send(evt.target.result);
                 }
             };
 
@@ -247,7 +225,7 @@ function FileUploader(ioptions)
             }
 
 		// Считаем Blob (часть файла) в FileReader
-        reader.readAsBinaryString(that.blob);
+        reader.readAsArrayBuffer(that.blob);
         }
 
 
@@ -257,7 +235,6 @@ function FileUploader(ioptions)
 	*/
     this.Upload=function() 
     {
-		alert('1');
 		// Скроем форму, чтобы пользователь не отправил файл дважды
         var e=document.getElementById(this.options['form']);
         if (e) e.style.display='none';
@@ -280,6 +257,8 @@ function FileUploader(ioptions)
 		// Установим значения по умолчанию
         if (this.options['portion']==undefined) this.options['portion']=1048576;
         if (this.options['timeout']==undefined) this.options['timeout']=15000;
+        //Нормализуем query: приводим к виду "?param=..&.." для POST-запроса порции
+        if (this.options['query']) this.options['query'] = '?' + this.options['query'].replace(/^[?&]+/, '');
 
         var that = this;
 
