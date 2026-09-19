@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{$title}</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../css/animate.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+    <link href="../css/plugins/toastr/toastr.min.css" rel="stylesheet">
+    <link href="../css/plugins/iCheck/custom.css" rel="stylesheet">
+    <style>
+        /* одно правило — таблица-матрица, отступ между правилами */
+        .acl-rule { margin-bottom: 24px; }
+        .acl-table { margin-bottom: 0; }
+        .acl-table > thead > tr > th,
+        .acl-table > tbody > tr > td { padding: 4px 6px; vertical-align: middle; }
+        .acl-table > thead > tr > th { font-size: 11px; color: #999; font-weight: normal;
+                                     border-bottom: 1px solid #e7eaec; }
+
+        /* субъект — верхняя левая ячейка шапки */
+        .acl-subject-h { width: 190px; }
+        .acl-subject-box { display: flex; gap: 4px; }
+        /* инпуты в рост кнопки/чекбокса (22px) */
+        .input-sm { height: 22px; }
+        .acl-op  { font-weight: 600; white-space: nowrap; }
+        .acl-cell label { margin: 0; }
+        .acl-where input { min-width: 170px; }
+        /* строка delete — вместо клеток полей */
+        .acl-na { color: #bbb; font-style: italic; }
+
+        /* операция — кнопка с псевдо-чекбоксом; состояние = производное клеток */
+        .acl-opbtn  { background: none; border: 0; padding: 0; font-weight: 600;
+                      color: inherit; cursor: pointer; white-space: nowrap; }
+        .acl-opbtn:focus { outline: none; }
+        .acl-opmark { display: inline-block; width: 22px; height: 22px; margin-right: 5px;
+                      border: 1px solid #ccc; border-radius: 2px; vertical-align: middle;
+                      background: #fff; position: relative; }
+        .acl-opbtn:hover .acl-opmark { border-color: #1ab394; }
+        /* включена — зелёная галка */
+        .acl-row.acl-on .acl-opmark { background: #1ab394; border-color: #1ab394; }
+        .acl-row.acl-on .acl-opmark::after {
+            content: '✓'; position: absolute; inset: 0; color: #fff;
+            font-size: 15px; line-height: 20px; text-align: center; font-weight: 700;
+        }
+        /* частично — зелёный прочерк */
+        .acl-row.acl-partial .acl-opmark::after {
+            content: ''; position: absolute; left: 3px; right: 3px; top: 9px;
+            height: 4px; background: #1ab394;
+        }
+    </style>
+</head>
+<body>
+<div id="wrapper">
+
+    {section "../~section/mainmenu.html"}
+
+    <div id="page-wrapper" class="gray-bg">
+        {section "../~section/head.html"}
+        {section "../~section/title.html"}
+
+        <div class="wrapper wrapper-content">
+            <div class="row">
+                <div class="col-lg-12">
+
+                    <!-- Подсказки логинов: '*' (все, включая гостей) + пользователи системы.
+                         datalist не ограничивает ввод — маски вроде editor-* пишутся вручную -->
+                    <datalist id="acl-subjects">
+                        {foreach $logins as $login}<option value="{$login}">{end}
+                    </datalist>
+
+                    <form method="POST" action="admin/catalogs/access/save">
+                        <input type="hidden" name="catalog" value="{$name}">
+
+                        <!-- ===== Разрешить: whitelist ===== -->
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5><i class="fa fa-check-circle text-navy"></i> Разрешить <small class="text-muted">субъект без правил здесь — всё запрещено</small></h5>
+                                <div class="ibox-tools">
+                                    <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                                </div>
+                            </div>
+                                    <div class="ibox-content">
+                                        <div id="access-rules"><!-- правила рендерит JS --></div>
+                                        <button type="button" class="btn btn-white btn-xs" data-add="access">
+                                            <i class="fa fa-plus"></i> Добавить правило
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- ===== Запретить ===== -->
+                                <div class="ibox float-e-margins">
+                                    <div class="ibox-title">
+                                        <h5><i class="fa fa-ban text-danger"></i> Запретить <small class="text-muted">вычитается из разрешённого</small></h5>
+                                        <div class="ibox-tools">
+                                            <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="ibox-content">
+                                        <div id="denied-rules"></div>
+                                        <button type="button" class="btn btn-white btn-xs" data-add="denied">
+                                            <i class="fa fa-plus"></i> Добавить правило
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- ===== Наследованные правила (read-only) ===== -->
+                                {if count($inherited)}
+                                <div class="ibox float-e-margins">
+                                    <div class="ibox-title">
+                                        <h5><i class="fa fa-link"></i> Наследовано от других масок каталога <small class="text-muted">правится в своих каталогах</small></h5>
+                                        <div class="ibox-tools">
+                                            <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="ibox-content" style="padding:0 0 10px">
+                                        <table class="table table-condensed">
+                                            <thead>
+                                            <tr>
+                                                <th style="width:15%">Маска каталога</th>
+                                                <th style="width:22%">Субъект</th>
+                                                <th>Права</th>
+                                            </tr>
+                                            </thead>
+                                            {foreach $inherited as $rule}
+                                            <tr>
+                                                <td><code>{$rule['sec']}.{$rule['mask']}</code></td>
+                                                <td>{$rule['subject']}</td>
+                                                <td>
+                                                    <span class="label label-primary">{$rule['ops']}</span>
+                                                    {if $rule['where']}<small class="text-muted"> where: {$rule['where']}</small>{end}
+                                                </td>
+                                            </tr>
+                                            {end}
+                                        </table>
+                                    </div>
+                                </div>
+                                {end}
+
+                                <!-- ===== Проверка результата ===== -->
+                                <div class="ibox float-e-margins">
+                                    <div class="ibox-title">
+                                        <h5><i class="fa fa-bug"></i> Проверить логин</h5>
+                                        <div class="ibox-tools">
+                                            <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="ibox-content">
+                                        <div class="input-group" style="max-width:420px">
+                                            <input type="text" id="acl-check-login" class="form-control input-sm"
+                                                   list="acl-subjects" placeholder="логин (пусто = гость)">
+                                            <span class="input-group-btn">
+                                                <button type="button" id="acl-check-btn" class="btn btn-sm btn-info">Проверить</button>
+                                            </span>
+                                        </div>
+                                        <div id="acl-check-result" style="margin-top:10px"></div>
+                                    </div>
+                                </div>
+
+                                <div class="text-right">
+                                    <a href="admin/catalogs/" class="btn btn-white">
+                                        <i class="fa fa-arrow-left"></i> К списку
+                                    </a>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fa fa-save"></i> Сохранить права
+                                    </button>
+                                </div>
+                            </form>
+
+                </div>
+            </div>
+        </div>
+
+        {section "../~section/footer.html"}
+    </div>
+</div>
+
+<!-- ============================================================
+     Шаблон одного правила: два <tr> в одном <tbody>.
+     [i] — индекс строки, [SECTION] — access|denied.
+     Чекбоксы ops и fields генерирует JS из APP_OPS/APP_FIELDS.
+============================================================= -->
+<!-- ============================================================
+     Правило: таблица «операция × поля», субъект — левая верхняя
+     ячейка шапки. Строки операций и колонки полей вставляет JS.
+============================================================= -->
+<template id="tpl-rule">
+    <div class="acl-rule">
+        <table class="table acl-table">
+            <thead>
+                <tr>
+                    <th class="acl-subject-h"><!-- субъект вставит JS --></th>
+                    <!-- <th> полей вставит JS -->
+                    <th class="acl-where-h">SQL условие дополнительного отбора (фильтр)</th>
+                </tr>
+            </thead>
+            <tbody><!-- строки операций вставит JS --></tbody>
+        </table>
+    </div>
+</template>
+
+<!-- Субъект — содержимое верхней левой ячейки шапки -->
+<template id="tpl-subject-cell">
+    <input type="hidden" name="rules[[tIdx]][section]" value="[tSection]">
+    <div class="acl-subject-box">
+        <button type="button" class="btn btn-danger btn-outline btn-xs rule-remove" title="Удалить правило">
+            <i class="fa fa-times"></i>
+        </button>
+        <input type="text" name="rules[[tIdx]][subject]" class="form-control input-sm"
+               list="acl-subjects" placeholder="Логин или маска логина" value="[tSubject]"
+               title="Маска: * — любые символы, ? — один символ, [ab] — один из, [!ab] — кроме. Например: editor-*, ivan.?">
+    </div>
+</template>
+
+<!-- Строка матрицы: операция + клетки полей + sql-условие.
+     Операция — НЕ iCheck-чекбокс, а кнопка (acl-opbtn) + скрытый input
+     .op-state (disabled = операция не пишется в POST).
+     Состояние — чистый вывод из клеток, обновляет syncOp -->
+<template id="tpl-op-row">
+    <tr class="acl-row">
+        <td>
+            <button type="button" class="acl-opbtn" title="Включить/выключить всю строку">
+                <span class="acl-opmark"></span> [tOp]
+            </button>
+            <input type="hidden" class="op-state" name="rules[[tIdx]][ops][]" value="[tOp]"[tDisabled]>
+        </td>
+        <!-- <td> клеток вставит JS -->
+        <td class="acl-where"><input type="text" class="form-control input-xs" name="rules[[tIdx]][where][[tOp]]" value="[tWhere]" placeholder="sql-условие" title="Ограничение записей для [tOp]"></td>
+    </tr>
+</template>
+
+<!-- Подпись колонки поля в шапке -->
+<template id="tpl-cell-head">
+    <th class="acl-fhead text-center" title="[tField]"><b>[tField]</b></th>
+</template>
+
+<!-- Клетка поля в строке операции -->
+<template id="tpl-field-check">
+    <td class="acl-cell text-center"><label class="i-checks" title="[tField]"><input type="checkbox" name="rules[[tIdx]][fields][[tOp]][]" value="[tField]"[tChecked]></label></td>
+</template>
+
+<!-- Mainly scripts -->
+<script src="../js/jquery-2.1.1.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script src="../js/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="../js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+<!-- Custom and plugin javascript -->
+<script src="../js/inspinia.js"></script>
+<script src="../js/plugins/pace/pace.min.js"></script>
+<!-- iCheck -->
+<script src="../js/plugins/iCheck/icheck.min.js"></script>
+<!-- Toastr -->
+<script src="../js/plugins/toastr/toastr.min.js"></script>
+
+<script>
+
+// -------------------------------------------------------
+// Данные от сервера
+// -------------------------------------------------------
+var APP_OPS       = <?php echo json_encode($ops);       ?>;
+var APP_FIELDS    = <?php echo json_encode($fields);    ?>;
+var APP_RULES     = <?php echo json_encode($rules);     ?>;
+var APP_CATALOG   = <?php echo json_encode($name);      ?>;
+
+var ruleIndex = 0;
+
+// -------------------------------------------------------
+// tpl: разметка из <template> с подстановкой [tКлюч]
+// escAttr: экранирование значения для атрибута value=""
+// -------------------------------------------------------
+function tpl(id, map)
+{
+    //Карта — в нижнем регистре: html-парсер приводит имена атрибутов
+    //в <template> к нижнему регистру ([tChecked] → [tchecked]),
+    //а внутри value="" регистр сохраняется — матчим без учёта
+    var lower = {};
+    $.each(map, function(k, v) { lower[k.toLowerCase()] = v; });
+
+    return $('#'+id).html().replace(/\[t(\w+)\]/gi, function(m, k) {
+        return lower[k.toLowerCase()] !== undefined ? lower[k.toLowerCase()] : '';
+    });
+}
+
+function escAttr(s)
+{
+    return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// -------------------------------------------------------
+// Одно правило → таблица «операция × поля», субъект rowspan слева
+// -------------------------------------------------------
+function makeRule(sec, rule)
+{
+    rule    = rule || {subject:'', ops:[], fields:{}, where:{}};
+    var idx   = ruleIndex++;
+    var $rule = $(tpl('tpl-rule', {}));
+
+    //шапка: субъект в левой верхней ячейке + имена полей перед колонкой SQL
+    $rule.find('.acl-subject-h').html(tpl('tpl-subject-cell', {
+        Idx: idx, Section: sec, Subject: escAttr(rule.subject || ''),
+    }));
+    $.each(APP_FIELDS, function(k, f) {
+        $rule.find('.acl-where-h').before(tpl('tpl-cell-head', { Field: escAttr(f) }));
+    });
+
+    var $body = $rule.find('tbody');
+    $.each(APP_OPS, function(k, op) {
+
+        var opOn = rule.ops.indexOf(op) !== -1 || rule.ops.indexOf('*') !== -1;
+        //поля: свои → fields.<op>, иначе общий fields.*, иначе все поля
+        var fset = rule.fields[op] || rule.fields['*'] || null;
+        //where: общий where.* + свой where.<op> — показываем эффективное условие
+        var wval = [rule.where['*'], rule.where[op]].filter(Boolean).join(' AND ');
+
+        var $row = $(tpl('tpl-op-row', {
+            Idx: idx, Op: op,
+            Disabled: opOn ? '' : ' disabled',
+            Where:    escAttr(wval),
+        }));
+
+        //delete — запись удаляется по id целиком, клетки полей ни на что
+        //не влияют: один colspan с пояснением вместо матрицы
+        if (op === 'delete')
+            $row.find('.acl-where').before(
+                '<td colspan="' + APP_FIELDS.length + '" class="acl-na text-center">'
+                + 'запись удаляется целиком по id</td>');
+        //клетки полей — <td> перед where.
+        //op выключена → клетки пустые; op вкл → свой список, а нет списка — все поля
+        else $.each(APP_FIELDS, function(k, f) {
+            var on = opOn ? (fset ? fset.indexOf(f) !== -1 : true) : false;
+            $row.find('.acl-where').before(tpl('tpl-field-check', {
+                Idx: idx, Op: op, Field: escAttr(f),
+                Checked: on ? ' checked' : '',
+            }));
+        });
+
+        $body.append($row);
+    });
+
+    return $rule;
+}
+
+// -------------------------------------------------------
+// Пересчёт состояния строки по клеткам — чистый вывод:
+//   все поля  → acl-on (галка), op-state включён
+//   часть     → acl-partial (прочерк), op-state включён
+//   ни одного → выкл, op-state disabled (операция не уходит в POST)
+// Никаких событий не порождает — петли невозможны
+// -------------------------------------------------------
+function syncOp($row)
+{
+    var $cells  = $row.find('.acl-cell input[type=checkbox]');
+    var $hidden = $row.find('.op-state');
+
+    //строка без клеток (delete) — состояние берём из самого hidden
+    if (!$cells.length)
+    {
+        $row.toggleClass('acl-on', !$hidden.prop('disabled'));
+        return;
+    }
+
+    var checked = $cells.filter(':checked').length;
+
+    $row.toggleClass('acl-on',      checked > 0 && checked === $cells.length)
+        .toggleClass('acl-partial', checked > 0 && checked < $cells.length);
+    $hidden.prop('disabled', checked === 0);
+}
+
+// -------------------------------------------------------
+// iCheck после вставки в DOM — стилизованные чекбоксы
+// -------------------------------------------------------
+function initChecks($tbody)
+{
+    $tbody.find('input[type=checkbox]').iCheck({
+        checkboxClass: 'icheckbox_square-green',
+        radioClass:    'iradio_square-green',
+    });
+}
+
+$(function() {
+
+    //рендер существующих правил
+    $.each(APP_RULES.access || [], function(i, rule) {
+        var $tb = makeRule('access', rule); $('#access-rules').append($tb); initChecks($tb);
+        $tb.find('.acl-row').each(function() { syncOp($(this)); });
+    });
+    $.each(APP_RULES.denied || [], function(i, rule) {
+        var $tb = makeRule('denied', rule); $('#denied-rules').append($tb); initChecks($tb);
+        $tb.find('.acl-row').each(function() { syncOp($(this)); });
+    });
+
+    //добавить субъект
+    $('[data-add]').on('click', function() {
+        var sec = $(this).data('add');
+        var $tb = makeRule(sec, null);
+        $('#'+sec+'-rules').append($tb);
+        initChecks($tb);
+        $tb.find('.acl-row').each(function() { syncOp($(this)); });
+    });
+
+    //удалить правило
+    $(document).on('click', '.rule-remove', function() {
+        $(this).closest('.acl-rule').remove();
+    });
+
+    //кнопка операции — переключатель всей строки:
+    //все отмечены → выключаем, иначе → включаем все (в т.ч. из частичного)
+    $(document).on('click', '.acl-opbtn', function() {
+        var $row   = $(this).closest('tr');
+        var $cells = $row.find('.acl-cell input[type=checkbox]');
+
+        //поля не объявлены — переключаем саму операцию
+        if (!$cells.length)
+        {
+            var $hid = $row.find('.op-state');
+            $hid.prop('disabled', function(i, d) { return !d; });
+            $row.toggleClass('acl-on', !$hid.prop('disabled'));
+            return;
+        }
+
+        var all = $cells.filter(':checked').length === $cells.length;
+        $cells.iCheck(all ? 'uncheck' : 'check');
+    });
+
+    //клик по клетке → пересчёт op: часть = прочерк, всё = вкл, ничего = выкл
+    $(document).on('ifChanged', '.acl-cell input[type=checkbox]', function() {
+        syncOp($(this).closest('tr'));
+    });
+
+    //проверка логина
+    $('#acl-check-btn').on('click', function() {
+        var login = $('#acl-check-login').val();
+        $.getJSON('admin/catalogs/access/check?catalog='+encodeURIComponent(APP_CATALOG)+'&login='+encodeURIComponent(login))
+            .done(function(res) {
+                var html = '<table class="table table-condensed"><tr><th>'+res.login+'</th>'+
+                    '<th>разрешено</th><th>where</th><th>поля</th></tr>';
+                $.each(res.ops, function(op, r) {
+                    html += '<tr><td>'+op+'</td>'+
+                        '<td>'+(r.allowed ? '<span class="label label-primary">да</span>' : '<span class="label label-default">нет</span>')+'</td>'+
+                        '<td><code>'+(r.where || '')+'</code></td>'+
+                        '<td>'+(r.fields ? r.fields.join(', ') : '<small class="text-muted">все</small>')+'</td></tr>';
+                });
+                $('#acl-check-result').html(html+'</table>');
+            })
+            .fail(function() { toastr.error('Ошибка проверки'); });
+    });
+});
+
+</script>
+</body>
+</html>

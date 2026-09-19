@@ -31,16 +31,39 @@
 		//Получим каталог
 		$catalog = $APP->catalog->get($_GET['catalog']);
 
+		//Права доступа к каталогу для текущего пользователя.
+		//Гость (logged() === false) получает скоуп субъекта null — совпадают только *-маски
+		$user = $APP->user->logged();
+		$ACC  = $APP->catalog->access($_GET['catalog'])
+			->as($user ? $user['login'] : null);
+
+		//Операция разрешена субъекту? Проверяем до начала транзакции:
+		//есть id — редактирование существующей записи (update), иначе — создание (insert)
+		$op = $_POST['id'] ? 'update' : 'insert';
+		if (!$ACC[$op])
+			throw new Exception("Операция '$op' в этом каталоге запрещена", 403);
+
 
 		$APP->catalog->items($_GET['catalog'])->beginTransaction();
 		if ($_POST['id'])
 		{
-			$APP->catalog->items($_GET['catalog'])->where(['id'=>$_POST['id']])->update($_POST);
+			//filterRecord оставляет в данных только поля, разрешённые для update
+			//(отрезанные — в $ACC->dropped); если отрезано всё — запрос не нужен
+			if ($data = $ACC->filterRecord('update', $_POST))
+				//where-скоуп: записи вне разрешённого where не попадут под UPDATE
+				$APP->catalog->items($_GET['catalog'])
+					->where($ACC['where']['update'])
+					->where(['id'=>$_POST['id']])
+					->update($data);
 		}
 		else
 		{
+			//Новая запись: where-скоуп не применим (записи ещё нет),
+			//ограничиваемся проверкой insert + фильтрацией полей
 			unset($_POST['id']);
-			$_POST['id'] = $APP->catalog->items($_GET['catalog'])->insert($_POST)->lastInsertId();
+			$_POST['id'] = $APP->catalog->items($_GET['catalog'])
+				->insert($ACC->filterRecord('insert', $_POST))
+				->lastInsertId();
 		}
 
 
@@ -79,7 +102,9 @@
 			if (!$files) continue;
 
 
-			//Обновим свежеиспеченную запись полями загруженых файлов
+			//Обновим свежеиспеченную запись полями загруженых файлов.
+			//Поле пишется только если разрешено для update — фильтр вернет
+			//пустой массив при запрете, тогда запись пропускаем
 			if ($catalog['field'][$field]['type'] == 'files')
 			{
 				//Если тип files - набор файлов, то реализуем другую обработку, с использование коллекций файлов
@@ -88,11 +113,13 @@
 				$processedFiles = ($processedFiles) ? (array) $processedFiles : [];
 
 				foreach ($files as $newFile) $processedFiles[md5($newFile['name'])] = $newFile;
-				$APP->catalog->items($_GET['catalog'])->where(['id'=>$_POST['id']])->update([$field=>$processedFiles]);
+				if ($upd = $ACC->filterRecord('update', [$field=>$processedFiles]))
+					$APP->catalog->items($_GET['catalog'])->where(['id'=>$_POST['id']])->update($upd);
 			}
 			else
 			{
-				$APP->catalog->items($_GET['catalog'])->where(['id'=>$_POST['id']])->update([$field=>current($files)['filename']]);
+				if ($upd = $ACC->filterRecord('update', [$field=>current($files)['filename']]))
+					$APP->catalog->items($_GET['catalog'])->where(['id'=>$_POST['id']])->update($upd);
 			}
 		}
 

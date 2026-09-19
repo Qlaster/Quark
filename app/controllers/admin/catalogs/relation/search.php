@@ -5,6 +5,18 @@
 $fields = $APP->catalog->fields($_GET['catalog']);
 $field  = $fields[$_GET['field']];
 
+// Права: дропдаун живёт в форме редактирования — значит поле должно быть
+// разрешено субъекту для update. Запрещённое поле = пустой ответ (не 403,
+// чтобы автокомплит просто молча не раскрывался)
+$user = $APP->user->logged();
+$ACC  = $APP->catalog->access($_GET['catalog'])->as($user ? $user['login'] : null);
+if (!$ACC->fieldAllowed('update', $_GET['field']))
+{
+	header('Content-Type: application/json');
+	echo json_encode([]);
+	exit;
+}
+
 // Если поле не найдено или не является relation — возвращаем пустой массив
 if (empty($field['relation']))
 {

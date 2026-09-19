@@ -25,7 +25,11 @@
 	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
 	//Название каталога не передано, сделаем редирект на список
-	if (!$name = $_GET['name']) header('Location: index') && exit;
+	if (!($name = $_GET['name'] ?? null))
+	{
+		header('Location: index');
+		exit;
+	}
 
 	//Напишем заголовок
 	$content['title'] = $content['catalog']['head'];

@@ -27,8 +27,45 @@
 	//Если название каталога не передано, тихонечко сбежим
 	if (!$name = $_GET['name']) exit;
 
+	//Права доступа к каталогу для текущего пользователя (гость → только *-маски)
+	$user = $APP->user->logged();
+	$ACC  = $APP->catalog->access($name)->as($user ? $user['login'] : null);
 
-	$content['catalog'] = $APP->catalog->view($name, $_GET);
+	//select разрешён субъекту? Если нет — таблица не отдаётся вовсе
+	if (!$ACC['select']) exit("Просмотр этого каталога запрещён");
+
+	$params = $_GET;
+	$catalogCfg = $APP->catalog->get($name);
+
+	//Ограничение записей: $ACC['where']['select'] — композитный sql-фрагмент
+	//((allow) OR ...) AND NOT((deny) OR ...). params['where'] в items()
+	//перекрывает events.view.where из конфига — поэтому склеиваем оба
+	if ($where = $ACC['where']['select'])
+	{
+		$eventsWhere = $catalogCfg['events']['view']['where'] ?? null;
+		$params['where'] = $eventsWhere ? "($eventsWhere) AND ($where)" : $where;
+	}
+
+	//Ограничение полей через штатный параметр column: view() передаст его
+	//в select() — запрещённые колонки не уйдут из БД вовсе, а field-описания
+	//view() пересечёт сам (array_intersect_key внутри).
+	//id добавляем всегда — им таблица адресует записи для edit/delete.
+	//Если пользователь уже просил ?column= — пересекаем с разрешённым;
+	//также не забываем events.view.column из конфига (params его перекрывает)
+	$declared = array_keys((array) $catalogCfg['field']);
+	$allowed  = array_filter($declared, function($f) use ($ACC) {
+		return $ACC->fieldAllowed('select', $f);
+	});
+	if ($allowed !== $declared)   //ограничения есть — подмешиваем column
+	{
+		$allowed[] = 'id';
+		$base = $params['column'] ?: ($catalogCfg['events']['view']['column'] ?? '');
+		$params['column'] = $base
+			? implode(',', array_intersect(array_map('trim', explode(',', $base)), $allowed))
+			: implode(',', $allowed);
+	}
+
+	$content['catalog'] = $APP->catalog->view($name, $params);
 
 	// URL для автообновления — текущий запрос со всеми GET-параметрами
 	$content['catalog']['uri'] = linker();

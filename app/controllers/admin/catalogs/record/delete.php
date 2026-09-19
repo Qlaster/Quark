@@ -2,7 +2,7 @@
 /*
  * Catalog recoed replace.php
  *
- * Copyright 2022 vladimir <vladimir@MacBookAir>
+ * Copyright 2026 vladimir <vladimir@MacBookAir>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,22 @@
 		if (!$id) throw new Exception("Не указан ID", 101);
 		if (!$_REQUEST['catalog']) throw new Exception("Не указан каталог", 102);
 
-		$APP->catalog->items($_REQUEST['catalog'])->where(['id'=>$id])->delete();
+		//Права доступа к каталогу для текущего пользователя.
+		//Гость (logged() === false) получает скоуп субъекта null — совпадают только *-маски
+		$user = $APP->user->logged();
+		$ACC  = $APP->catalog->access($_REQUEST['catalog'])
+			->as($user ? $user['login'] : null);
+
+		//Операция delete разрешена этому субъекту?
+		if (!$ACC['delete'])
+			throw new Exception("Удаление записей в этом каталоге запрещено", 403);
+
+		//Удаляем. $ACC['where']['delete'] — sql-фрагмент скоупа:
+		//записи вне разрешённого where просто не попадут под DELETE
+		$APP->catalog->items($_REQUEST['catalog'])
+			->where($ACC['where']['delete'])
+			->where(['id'=>$id])
+			->delete();
 
 		//Удаляем только каталог внутри catalogDIR — id строго числовой, без обхода пути
 		if ($catalogDIR = $APP->catalog->get($_REQUEST['catalog'])['folder'])
