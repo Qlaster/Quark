@@ -91,10 +91,13 @@ class Controller implements QControllerInterface
 		if ( is_file($path) 		) return $path;
 
 		//Если обратились к папке, в которой лежит обработчик по умолчанию
-		if ( (is_dir($path)) and ( is_file($path.DIRECTORY_SEPARATOR.$this->config['handler']) ) ) //and (substr($controller, -1) == '/')
+		//Путь без конечного '/' — иначе получим 'dir//index.php', который
+		//не совпадёт со строкой в ACL и обойдёт проверки доступа
+		$dirpath = rtrim($path, DIRECTORY_SEPARATOR);
+		if ( (is_dir($dirpath)) and ( is_file($dirpath.DIRECTORY_SEPARATOR.$this->config['handler']) ) ) //and (substr($controller, -1) == '/')
 		{
 			//Случай №1. Нужно просто вызвать дефолтный метод контроллера
-			return $path.DIRECTORY_SEPARATOR.$this->config['handler'];
+			return $dirpath.DIRECTORY_SEPARATOR.$this->config['handler'];
 		}
 		return $path;
 	}
