@@ -393,7 +393,7 @@
 
 			//Подбираем доступный handler
 			$handler = null;
-			foreach ((array) dba_handlers(true) as $h)
+			foreach (array_keys((array) dba_handlers(true)) as $h)
 				if (in_array($h, ['db4', 'gdbm', 'flatfile', 'inifile'])) { $handler = $h; break; }
 			if (!$handler) return false;
 
