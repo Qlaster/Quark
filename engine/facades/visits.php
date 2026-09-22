@@ -123,8 +123,11 @@
 			foreach ((array) $this->config['dump'] as $var => $_enable)
 				if ($_enable && isset($GLOBALS[$var])) $this->turn['data']['dump'][$var] = $GLOBALS[$var];
 
-			//Если что-то прилетело в dump - упковываем и фиксируем, если нет - просто указываем пустую строку
-			$this->turn['data']['dump'] = $this->turn['data']['dump'] ? json_encode($this->turn['data']['dump']) : '';
+			//Если что-то прилетело в dump - упковываем и фиксируем, если нет - просто указываем пустую строку.
+			//PARTIAL_OUTPUT: один битый элемент (utf8/бинарь) → null, а не потеря всего дампа
+			$this->turn['data']['dump'] = $this->turn['data']['dump']
+				? json_encode($this->turn['data']['dump'], JSON_UNESCAPED_UNICODE | JSON_PARTIAL_OUTPUT_ON_ERROR)
+				: '';
 
 			//Запишем в лог
 			$this->save_file($this->turn['file'], $this->turn['data']);
