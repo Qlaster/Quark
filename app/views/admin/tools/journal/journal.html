@@ -14,7 +14,6 @@
     <!-- Data Tables -->
     <link href="../../css/plugins/dataTables/dataTables.bootstrap.css" rel="stylesheet">
     <link href="../../css/plugins/dataTables/dataTables.responsive.css" rel="stylesheet">
-    <link href="../../css/plugins/dataTables/dataTables.tableTools.min.css" rel="stylesheet">
 
 	<link href="../../css/plugins/datapicker/datepicker3.css" rel="stylesheet">
 
@@ -72,9 +71,9 @@
 						</div>
 						<div class="ibox-content">
 
-						<form method="GET">
-							<div class="col-lg-5 row">
-								<div class="form-group" id="data_5">
+						<form method="GET" class="journal-form hidden-xs">
+							<div class="col-lg-6 row">
+								<div class="form-group data_5">
 
 									<div class="input-daterange input-group" id="datepicker">
 										<span class="input-group-addon">c</span>
@@ -86,15 +85,73 @@
 												<li class="fa fa-refresh"></li>
 												Получить
 											</button>
+											<button type="button" class="j-download btn btn-sm btn-white" style="margin:0" title="Скачать zip-архив логов за выбранный период">
+												<li class="fa fa-download"></li>
+												Скачать
+											</button>
+										</div>
+										<div class="input-group-btn p-l-md">
+										<select name="errors" class="form-control input-sm" style="width:auto" title="Фильтр по коду ответа">
+											<option value="">Все коды</option>
+											<option value="400" {if $errors == '400'}selected{end}>&ge; 400</option>
+											<option value="4xx" {if $errors == '4xx'}selected{end}>4xx</option>
+											<option value="5xx" {if $errors == '5xx'}selected{end}>5xx</option>
+										</select>
+										<button type="button" class="j-export btn btn-sm btn-white m-none" title="Скачать лог с учётом поиска и фильтра ошибок">
+											<li class="fa fa-external-link"></li>
+										Экспорт</button>
+										<button type="button" class="j-reset btn btn-sm btn-white m-none" title="Сбросить поиск и фильтр ошибок">
+											<li class="fa fa-times"></li>
+										</button>
 										</div>
 									</div>
 
 								</div>
 							</div>
 						</form>
+
+						<!-- мобильная версия той же формы: контролы в колонку -->
+						<form method="GET" class="journal-form visible-xs-block">
+							<div class="form-group data_5">
+								<div class="input-daterange input-group">
+									<span class="input-group-addon">c</span>
+									<input type="text" class="input-sm form-control" name="datestart" value="{$datestart}"/>
+									<span class="input-group-addon">по</span>
+									<input type="text" class="input-sm form-control" name="dateend" value="{$dateend}" />
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="btn-group">
+									<button type="submit" class="btn btn-sm btn-primary"><li class="fa fa-refresh"></li> Получить</button>
+									<button type="button" class="j-download btn btn-sm btn-white"><li class="fa fa-download"></li> Скачать</button>
+								</div>
+							</div>
+							<div class="form-group">
+								<select name="errors" class="form-control input-sm" style="width:auto;display:inline-block">
+									<option value="">Все коды</option>
+									<option value="400" {if $errors == '400'}selected{end}>&ge; 400</option>
+									<option value="4xx" {if $errors == '4xx'}selected{end}>4xx</option>
+									<option value="5xx" {if $errors == '5xx'}selected{end}>5xx</option>
+								</select>
+								<button type="button" class="j-export btn btn-sm btn-white"><li class="fa fa-external-link"></li> Экспорт</button>
+								<button type="button" class="j-reset btn btn-sm btn-white"><li class="fa fa-times"></li></button>
+							</div>
+						</form>
 						<div class="col-lg-1"></div>
 
+						<div class="journal-scroll">
 						<table class="table table-striped table-bordered table-hover dataTables-example" >
+						<colgroup>
+							<col style="width:150px">
+							<col style="width:60px">
+							<col style="width:70px">
+							<col style="width:75px">
+							<col>
+							<col style="width:110px">
+							<col style="width:220px">
+							<col style="width:95px">
+							<col>
+						</colgroup>
 						<thead>
 						<tr>
 							<th>Дата</th>
@@ -105,22 +162,10 @@
 							<th title="Сетевой адрес клиента">IP адрес</th>
 							<th>Клиент</th>
 							<th>Маркер</th>
+							<th>Дамп</th>
 						</tr>
 						</thead>
-							<tbody>
-							{foreach (array) $journal['list'] as $_record}
-							<tr class="gradeX">
-								<td class="center">{$_record['date']}</td>
-								<td class="center">{$_record['code']} {if $_record['code'] > 400} <i class="fa fa-warning text-warning"></i> {end}</td>
-								<td >{$_record['runtime']}</td>
-								<td >{$_record['mempeak']}</td>
-								<td style="word-wrap: break-word" title="{$fullUri}">{= mb_strimwidth($_record['uri'], 0, 100, "...")}</td>
-								<td class="center">{$_record['ip']}</td>
-								<td >{$_record['type']} {$_record['browsername']} <br> {$_record['osname']}</td>
-								<td class="center">{$_record['info']}</td>
-							</tr>
-							{end}
-						</tbody>
+							<tbody></tbody>
 						<tfoot>
 						<tr>
 							<th>Дата</th>
@@ -131,9 +176,11 @@
 							<th title="Сетевой адрес клиента">IP адрес</th>
 							<th>Клиент</th>
 							<th>Маркер</th>
+							<th>Дамп</th>
 						</tr>
 						</tfoot>
 						</table>
+						</div>
 
 						</div>
 					</div>
@@ -156,13 +203,11 @@
     <script src="../../js/bootstrap.min.js"></script>
     <script src="../../js/plugins/metisMenu/jquery.metisMenu.js"></script>
     <script src="../../js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
-    <script src="../../js/plugins/jeditable/jquery.jeditable.js"></script>
 
     <!-- Data Tables -->
     <script src="../../js/plugins/dataTables/jquery.dataTables.js"></script>
     <script src="../../js/plugins/dataTables/dataTables.bootstrap.js"></script>
     <script src="../../js/plugins/dataTables/dataTables.responsive.js"></script>
-    <script src="../../js/plugins/dataTables/dataTables.tableTools.min.js"></script>
 
     <!-- Data picker -->
     <script src="../../js/plugins/datapicker/bootstrap-datepicker.js"></script>
@@ -175,86 +220,158 @@
     <script>
         $(document).ready(function()
         {
+            //Пагинация: штатный numbers-пагинатор на средних страницах
+            //жёстко показывает cur±1 — переопределяем full_numbers
+            //окном ±7 номеров вокруг текущей (15 + 2 крайние = 17)
+            $.fn.dataTable.ext.pager.full_numbers = function(page, pages)
+            {
+                var WIN = 7, numbers = [0];
+                //окно 15 номеров; у краёв сдвигается, оставаясь полным
+                var from = Math.max(1, Math.min(page - WIN, pages - 2 - WIN*2)),
+                    to   = Math.min(pages - 2, Math.max(page + WIN, 1 + WIN*2));
+                if (from > 1) numbers.push('ellipsis');
+                for (var i = from; i <= to; i++) numbers.push(i);
+                if (to < pages - 2) numbers.push('ellipsis');
+                numbers.push(pages - 1);
+                numbers.DT_el = 'span';
+                return ['first', 'previous', numbers, 'next', 'last'];
+            };
+
+            //helper: элементы внутри видимой формы (десктоп/мобильная копия).
+            //объявлен до dataTable(): ajax-data вызывает jf уже при инициализации
+            var jf = function(sel){ return $('.journal-form:visible').find(sel); };
+
+            //serverSide: поиск/сортировка/пагинация выполняются на сервере —
+            //в браузер приходит только текущая страница записей
             $('.dataTables-example').dataTable({
-                responsive: true,
-                "dom": 'T<"clear">lfrtip',
-                "order": [[ 0, "desc" ]],
-                "tableTools": {
-                    "sSwfPath": "../../js/plugins/dataTables/swf/copy_csv_xls_pdf.swf"
-                }
+                //responsive без встроенной раскрывашки (details:false):
+                //колонки прячутся на узком экране, а детали записи
+                //открывает наш клик-обработчик — иначе они дерутся за row.child()
+                responsive: { details: false },
+                serverSide: true,
+                //ширины задаёт colgroup — автозамер DT ломает fixed-layout
+                autoWidth: false,
+                processing: true,
+                //без обёрток col-*: тема их не знает — элементы выстраиваются
+                //подряд и разъезжаются float'ами из dataTables.bootstrap.css
+                dom: 'lfrtip',
+                pagingType: 'full_numbers',
+                order: [[ 0, "desc" ]],
+                //подсветка строк по коду ответа
+                createdRow: function(row, data) {
+                    var code = parseInt(data.code, 10);
+                    if (code >= 500)      $(row).addClass('danger');
+                    else if (code >= 400) $(row).addClass('warning');
+                },
+                ajax: {
+                    url: 'admin/tools/journal/data',
+                    //даты и фильтр ошибок из формы уходят с каждым запросом;
+                    //схема колонок серверу не нужна — режем мусор из query
+                    data: function(d) {
+                        delete d.columns;
+                        d.datestart = jf('input[name=datestart]').val();
+                        d.dateend   = jf('input[name=dateend]').val();
+                        d.errors    = jf('select[name=errors]').val();
+                    }
+                },
+                columns: [
+                    { data: 'date'    },
+                    { data: 'code'    },
+                    { data: 'runtime' },
+                    { data: 'mempeak' },
+                    { data: 'uri'     },
+                    { data: 'ip'      },
+                    { data: 'client'  },
+                    { data: 'info'    },
+                    { data: 'dump', orderable: false },
+                ]
             });
 
-            $('#data_5 .input-daterange').datepicker({
+            $('.input-daterange').datepicker({
                 keyboardNavigation: false,
                 forceParse: false,
                 autoclose: true,
                 format: 'dd.mm.yyyy'
             });
 
-            /* Init DataTables */
-            var oTable = $('#editable').dataTable( {"order": [[ 0, "desc" ]] });
+            //Скачать zip с лог-файлами за выбранные даты
+            $('.j-download').on('click', function() {
+                var q = 'datestart=' + encodeURIComponent(jf('input[name=datestart]').val())
+                      + '&dateend='  + encodeURIComponent(jf('input[name=dateend]').val());
+                window.location.href = 'admin/tools/journal/download?' + q;
+            });
 
-            //~ /* Apply the jEditable handlers to the table */
-            //~ oTable.$('td').editable( '../../example_ajax.php', {
-                //~ "callback": function( sValue, y ) {
-                    //~ var aPos = oTable.fnGetPosition( this );
-                    //~ oTable.fnUpdate( sValue, aPos[0], aPos[1] );
-                //~ },
-                //~ "submitdata": function ( value, settings ) {
-                    //~ return {
-                        //~ "row_id": this.parentNode.getAttribute('id'),
-                        //~ "column": oTable.fnGetPosition( this )[2]
-                    //~ };
-                //~ },
+            var $tbody = $('.dataTables-example tbody');
 
-                //~ "width": "90%",
-                //~ "height": "100%"
-            //~ } );
+            //клик по строке — раскрыть детали записи (detail из ответа data)
+            $tbody.on('click', 'tr', function(e) {
+                if ($(e.target).closest('.j-facet').length) return;   //фасет сам по себе
+                var row = $('.dataTables-example').DataTable().row(this);
+                if (!row.data()) return;
+                if (row.child.isShown()) row.child.hide();
+                else row.child(row.data().detail, 'journal-detail-row').show();
+            });
 
+            //клик по фасету (ip, запрос) — подставить значение в поиск
+            $tbody.on('click', '.j-facet', function() {
+                $('.dataTables-example').DataTable()
+                    .search($(this).data('search')).draw();
+            });
 
+            //Экспорт: скачать лог с учётом текущего поиска и фильтра ошибок
+            $('.j-export').on('click', function() {
+                var q = 'datestart=' + encodeURIComponent(jf('input[name=datestart]').val())
+                      + '&dateend='  + encodeURIComponent(jf('input[name=dateend]').val())
+                      + '&search='   + encodeURIComponent($('.dataTables-example').DataTable().search())
+                      + '&errors='   + encodeURIComponent(jf('select[name=errors]').val());
+                window.location.href = 'admin/tools/journal/download?' + q;
+            });
+
+            //сбросить фильтры: поиск таблицы + отбор по коду (даты не трогаем)
+            $('.j-reset').on('click', function() {
+                jf('select[name=errors]').val('');
+                $('.dataTables-example').DataTable().search('').draw();
+            });
         });
-
-        function fnClickAddRow()
-        {
-            $('#editable').dataTable().fnAddData( [
-                "Custom row",
-                "New row",
-                "New row",
-                "New row",
-                "New row" ] );
-
-        }
     </script>
 
 	<style>
-		body.DTTT_Print {
-			background: #fff;
-
-		}
-		.DTTT_Print #page-wrapper {
-			margin: 0;
-			background:#fff;
-		}
-
-		button.DTTT_button, div.DTTT_button, a.DTTT_button {
-			border: 1px solid #e7eaec;
-			background: #fff;
-			color: #676a6c;
-			box-shadow: none;
-			padding: 6px 8px;
-		}
-		button.DTTT_button:hover, div.DTTT_button:hover, a.DTTT_button:hover {
-			border: 1px solid #d2d2d2;
-			background: #fff;
-			color: #676a6c;
-			box-shadow: none;
-			padding: 6px 8px;
-		}
-
 		.dataTables_filter label {
 			margin-right: 5px;
 
 		}
+
+		/* одна строка на запись: fixed-layout держит таблицу в границах,
+		   лишнее обрезается с многоточием (полное — в title/деталях) */
+		.dataTables-example { table-layout: fixed; width: 100%; }
+		.dataTables-example th,
+		.dataTables-example td { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+		/* фасеты — клик подставляет значение в поиск */
+		.j-facet { cursor: pointer; border-bottom: 1px dotted #999; }
+		.j-facet:hover { color: #1ab394; }
+
+		/* строки кликабельны — раскрывают детали */
+		.dataTables-example tbody tr { cursor: pointer; }
+
+		/* мобильный вид: контролы в колонку, таблица скроллится горизонтально */
+		@media (max-width: 768px) {
+			.journal-scroll { overflow-x: auto; }
+			.dataTables-example { min-width: 780px; }
+			.dataTables_length,
+			.dataTables_filter { float: none; display: block; text-align: left; margin-bottom: 8px; }
+			.dataTables_length label,
+			.dataTables_filter label { display: flex; align-items: center; gap: 6px; margin-bottom: 0; }
+			.dataTables_length label { font-weight: normal; }
+			.dataTables_filter input { flex: 1; max-width: 100%; }
+			.journal-form .form-group { margin-bottom: 8px; }
+		}
+
+		/* раскрытая строка с деталями записи */
+		tr.journal-detail-row > td { background: #f7f7f7; }
+		.journal-detail { margin: 0; font-size: 12px; }
+		.journal-detail dd code,
+		.journal-detail pre { white-space: pre-wrap; word-break: break-all; font-size: 11px; }
 	</style>
 </body>
 
