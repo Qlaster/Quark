@@ -18,7 +18,7 @@
 	//~ $files = $APP->utils->files->listing($pathAdmin, '*.php');
 	//~ $tree  = $APP->utils->files->tree($APP->controller->config['folder'].'/admin', '*.php');
 
-	$files = $APP->controller->fetch('/admin');
+	$files = $APP->controller->fetch('admin');
 
 	sort($files);
 
