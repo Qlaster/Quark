@@ -318,7 +318,7 @@ class Controller implements QControllerInterface
      */
 	public function fetch($path='', $ext='*.php')
 	{
-		$pathCtl = rtrim($this->config['folder'], '/').DIRECTORY_SEPARATOR.$path;
+		$pathCtl = rtrim($this->config['folder'], '/').DIRECTORY_SEPARATOR.ltrim($path, '/\\');
 		return $this->interfaces->files->listing($pathCtl, $ext);
 	}
 
