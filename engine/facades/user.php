@@ -371,7 +371,11 @@
 			$user = $this->logged();
 			if (! $user) return false;
 
-			if (isset($user['denied'][$access_item])) return $user['denied'][$access_item];
+			//Пути могли быть сохранены с '//' (listing принимал 'app/controllers//admin')
+			//— нормализуем обе стороны при сопоставлении
+			foreach ((array) $user['denied'] as $rule => $val)
+				if (str_replace('//', '/', $rule) === str_replace('//', '/', (string) $access_item))
+					return $val;
 			return null;
 		}
 
