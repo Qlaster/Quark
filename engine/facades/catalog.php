@@ -558,12 +558,16 @@
 		}
 
 		//ArrayAccess: $ACC['update'] → bool, $ACC['where']['update'] → sql|null, $ACC['fields']['update'] → маски|null
+		#[\ReturnTypeWillChange]
 		public function offsetGet($key)
 		{
 			return $this->result[$key] ?? (in_array($key, self::OPS, true) ? false : null);
 		}
+		#[\ReturnTypeWillChange]
 		public function offsetExists($key)      { return $this->offsetGet($key) !== null; }
+		#[\ReturnTypeWillChange]
 		public function offsetSet($key, $value) { }
+		#[\ReturnTypeWillChange]
 		public function offsetUnset($key)       { }
 
 
