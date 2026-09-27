@@ -73,7 +73,9 @@
 				                          explode("\t\t", $b)[$sortIdx] ?? '');
 			});
 
-		//Страница: разбор только нужного среза
+		//Страница: разбор только нужного среза.
+		//Поля лога могут быть null — $h экранирует без deprecated на PHP 8.1+
+		$h   = function ($v) { return htmlspecialchars((string) $v); };
 		$out = [];
 		foreach (array_slice($lines, $start, $length) as $line)
 		{
@@ -83,35 +85,35 @@
 			//адрес до '?' — жирный фасет (поиск только пути),
 			//хвост с параметрами — приглушённый фасет (ищет всю строку)
 			$uri  = urldecode($r['uri']);
-			$show = htmlspecialchars(mb_strimwidth($uri, 0, 100, '...'));
+			$show = $h(mb_strimwidth($uri, 0, 100, '...'));
 			$q    = mb_strpos($show, '?');
 			$path = $q === false ? $uri : mb_substr($uri, 0, mb_strpos($uri, '?'));
 
-			$cell = '<span title="'.htmlspecialchars($uri).'">'
-				.'<span class="j-facet" data-search="'.htmlspecialchars($path).'">'
+			$cell = '<span title="'.$h($uri).'">'
+				.'<span class="j-facet" data-search="'.$h($path).'">'
 				.($q === false ? '<b>'.$show.'</b>'
 				              : '<b>'.mb_substr($show, 0, $q).'</b>')
 				.'</span>'
 				.($q === false ? '' : '<span class="j-facet text-muted" data-search="'
-				    .htmlspecialchars($uri).'">'.mb_substr($show, $q).'</span>')
+				    .$h($uri).'">'.mb_substr($show, $q).'</span>')
 				.'</span>';
-			$ip   = htmlspecialchars($r['ip']);
+			$ip   = $h($r['ip']);
 			$code = (int) $r['code'];
 
 			//детали записи — раскрывашка по клику на строке;
 			//поля, которых нет в колонках: страница, unique, uid, версия, дамп целиком
 			$detail = '<dl class="dl-horizontal journal-detail">'
-				.'<dt>Запрос</dt><dd><code>'.htmlspecialchars($uri).'</code></dd>'
-				.'<dt>Клиент</dt><dd>'.htmlspecialchars(
+				.'<dt>Запрос</dt><dd><code>'.$h($uri).'</code></dd>'
+				.'<dt>Клиент</dt><dd>'.$h(
 				    trim($r['type'].' '.$r['browsername'].' '.$r['browserversion'].' '.$r['osname'])).'</dd>'
-				.'<dt>Страница</dt><dd><code>'.htmlspecialchars($r['page']).'</code></dd>'
+				.'<dt>Страница</dt><dd><code>'.$h($r['page']).'</code></dd>'
 				.'<dt>Уникальный</dt><dd>'.($r['unique'] ? 'да' : 'нет').'</dd>'
-				.'<dt>UID</dt><dd><code>'.htmlspecialchars($r['userid']).'</code></dd>'
-				.'<dt>Маркер</dt><dd>'.($r['info'] !== ''
-				    ? '<code>'.htmlspecialchars($r['info']).'</code>'
+				.'<dt>UID</dt><dd><code>'.$h($r['userid']).'</code></dd>'
+				.'<dt>Маркер</dt><dd>'.($r['info']
+				    ? '<code>'.$h($r['info']).'</code>'
 				    : '<span class="text-muted">нет</span>').'</dd>'
 				.'<dt>Дамп</dt><dd>'.($r['dump']
-				    ? '<pre>'.htmlspecialchars(
+				    ? '<pre>'.$h(
 				        json_encode(json_decode($r['dump']), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
 				        ?: $r['dump']).'</pre>'
 				    : '<span class="text-muted">нет</span>').'</dd>'
@@ -126,12 +128,12 @@
 				'mempeak' => $r['mempeak'].' kb',
 				'uri'     => $cell,
 				'ip'      => '<span class="j-facet" data-search="'.$ip.'">'.$ip.'</span>',
-				'client'  => htmlspecialchars(trim($r['type'].' '.$r['browsername']
+				'client'  => $h(trim($r['type'].' '.$r['browsername']
 				             .' '.$r['osname'])),
-				'info'    => htmlspecialchars($r['info']),
+				'info'    => $h($r['info']),
 				'dump'    => $r['dump']
-				             ? '<span title="'.htmlspecialchars($r['dump']).'">'
-				               .htmlspecialchars(mb_strimwidth($r['dump'], 0, 50, '…')).'</span>'
+				             ? '<span title="'.$h($r['dump']).'">'
+				               .$h(mb_strimwidth($r['dump'], 0, 50, '…')).'</span>'
 				             : '',
 				'detail'  => $detail,
 			];
