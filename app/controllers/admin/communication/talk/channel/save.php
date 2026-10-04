@@ -1,10 +1,13 @@
 <?php
 
+//Статика сообщений — компаньон-ini [view] + перевод
+$M = $APP->l10n->translate(array_replace_recursive([], (array) $APP->config->get()['view']))['messages'];
+
 try {
     $originalName = trim($_POST['original_name'] ?? '');
     $name         = trim($_POST['name'] ?? '');
 
-    if (!$name && !$originalName) throw new Exception("Поле 'name' обязательно");
+    if (!$name && !$originalName) throw new Exception($M['noname']['text']);
 
     $data = [
         'title'    => $_POST['title']    ?: null,
@@ -27,6 +30,6 @@ try {
     exit;
 
 } catch (Exception $e) {
-    echo 'Ошибка: ' . $e->getMessage();
+    echo $M['error']['text'] . $e->getMessage();
 }
 

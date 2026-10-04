@@ -23,7 +23,12 @@
 
 	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
-	$content['title'] = 'Подключения к базам данных';
+	//Статическая GUI-структура — компаньон-ini [view] + перевод
+	$cfg = $APP->config->get();
+	$content = array_replace_recursive($content, (array) $cfg['view']);
+	$content = $APP->l10n->translate($content);
+
+	$content['title'] = $content['title']['head'];
 
 
 	$APP->template->file('admin/dbmanager/db_construct.html')->display($content);

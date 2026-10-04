@@ -24,6 +24,13 @@
 
 	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
+	//Подгружаем конфигурацию
+	$config = $APP->config->get();
+
+	//Статическая GUI-структура — компаньон-ini, секция [view]
+	$content = array_replace_recursive($content, (array) $config['view']);
+	$content = $APP->l10n->translate($content);
+
 	//Название каталога не передано, сделаем редирект на список
 	if (!($name = $_GET['name'] ?? null))
 	{

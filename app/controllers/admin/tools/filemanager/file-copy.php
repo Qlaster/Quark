@@ -2,6 +2,9 @@
 
 	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
+	//Статика сообщений — компаньон-ini [view] + перевод
+	$M = $APP->l10n->translate(array_replace_recursive([], (array) $APP->config->get()['view']))['messages'];
+
 	//Буфер обмена файлового менеджера хранится в сессии
 	$clipboard = &$_SESSION['filemanager']['clipboard'];
 
@@ -9,7 +12,7 @@
 	if ($_GET['action'] == 'copy')
 	{
 		$src = $APP->files->jailPath($_GET['path'] ?? '');
-		if (!$src or !file_exists($src)) exit('Исходный объект не найден');
+		if (!$src or !file_exists($src)) exit($M['nosrc']['text']);
 
 		$clipboard = $src;
 		exit(basename($src));
@@ -19,19 +22,19 @@
 	if ($_GET['action'] == 'paste')
 	{
 		$src = $clipboard;
-		if (!$src or !file_exists($src)) exit('Буфер обмена пуст');
+		if (!$src or !file_exists($src)) exit($M['clipboard']['text']);
 
 		$dstDir = $APP->files->jailPath($_GET['path'] ?? '');
-		if (!$dstDir or !is_dir($dstDir)) exit('Целевая директория вне доступа');
+		if (!$dstDir or !is_dir($dstDir)) exit($M['out']['text']);
 
 		//Нельзя копировать директорию внутрь самой себя
 		if ($src === $dstDir or strpos($dstDir.DIRECTORY_SEPARATOR, $src.DIRECTORY_SEPARATOR) === 0)
-			exit('Нельзя скопировать объект внутрь самого себя');
+			exit($M['selfcopy']['text']);
 
 		//Имя копии — уникальное при конфликте: name.ext -> name (1).ext
 		$dst = $dstDir.DIRECTORY_SEPARATOR.uniqueName($dstDir, basename($src));
 
-		exit(copyRecursive($src, $dst) ? '' : 'Ошибка копирования');
+		exit(copyRecursive($src, $dst) ? '' : $M['fail']['text']);
 	}
 
 	exit;

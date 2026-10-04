@@ -1,8 +1,11 @@
 <?php
 
+//Статика сообщений — компаньон-ini [view] + перевод
+$M = $APP->l10n->translate(array_replace_recursive([], (array) $APP->config->get()['view']))['messages'];
+
 try {
     $channel = $_REQUEST['channel'] ?? '';
-    if (!$channel) throw new Exception("Не указан канал");
+    if (!$channel) throw new Exception($M['nochannel']['text']);
 
     $data = [];
 
@@ -18,7 +21,7 @@ try {
             $data['archived'] = (int)$_GET['archived'];
     }
 
-    if (empty($data)) throw new Exception("Нет данных для обновления");
+    if (empty($data)) throw new Exception($M['nodata']['text']);
 
     $APP->talk->blog($channel)->update($data);
 
@@ -26,5 +29,5 @@ try {
     exit;
 
 } catch (Exception $e) {
-    echo 'Ошибка: ' . $e->getMessage();
+    echo $M['error']['text'] . $e->getMessage();
 }

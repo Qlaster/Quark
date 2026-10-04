@@ -5,6 +5,10 @@
 
 	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
+	//Статическая структура страницы — компаньон index.ini, секция [view]
+	$config  = $APP->config->get();
+	$content = array_replace_recursive($content, (array) $config['view']);
+
 	//Собираем статистику (посещения) по страницам (за поседние 4 месяца)
 	$APP->visits->shear(date("Y-m-d", strtotime("-4 month")), date('Y-m-d'));
 	$statistic = $APP->visits->statistics(false);
@@ -14,7 +18,7 @@
 	$one_percent = $statistic['uri'][$APP->url->home().'index'] / 100;
 
 	//~ echo $one_percent; die;
-	$content['title'] = 'Работа со страницами сайта';
+	//title берется из index.ini [view] и локализуется ниже
 
 	//Прикрепляем страницы
 	$buffer = $APP->page->all($_GET['limit'], $_GET['offset']);
@@ -46,11 +50,11 @@
 		$value['link_html']     = 'admin/tools/codeeditor?file='.$templateDir.DIRECTORY_SEPARATOR.urlencode($value['html']);
 	}
 
-	$content['menu']['tools'][1]['icon'] = "fa fa-wrench";
-	$content['menu']['tools'][1]['button'][1]['head'] = "Очистить историю изменений";
-	$content['menu']['tools'][1]['button'][1]['icon'] = "fa fa-trash";
-	$content['menu']['tools'][1]['button'][1]['link'] = "admin/content/page/timeline/remove";
+	//Локализация маркированных узлов
+	$content = $APP->l10n->translate($content);
 
+	//Инструменты меню описываются в [view].tools
+	$content['menu']['tools'] = $content['tools'];
 
 
 	//~ $themelink = $APP->url->home()."views/admin/";

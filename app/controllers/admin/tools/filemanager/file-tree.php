@@ -35,7 +35,13 @@
 	{
 		echo "<ul>";
 
-			foreach ($node as $key => $name)
+			//Сначала каталоги, потом файлы; внутри групп — по алфавиту
+			$dirs  = array_filter($node, 'is_array');
+			$files = array_diff_key($node, $dirs);
+			uksort($dirs,  'strnatcasecmp');
+			uksort($files, 'strnatcasecmp');
+
+			foreach ($dirs + $files as $key => $name)
 			{
 				if (is_array($name))
 				{

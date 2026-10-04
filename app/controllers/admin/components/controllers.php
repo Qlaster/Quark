@@ -4,12 +4,17 @@
 	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
 
+	//Статическая GUI-структура — компаньон-ini [view] + перевод
+	$cfg = $APP->config->get();
+	$content = array_replace_recursive($content, (array) $cfg['view']);
+	$content = $APP->l10n->translate($content);
+
+	$content['title'] = $content['title']['head'];
+
 	//Получим путь до директориии с контроллерами
 	$controllersDir = $APP->controller->config['folder'];
 	$pages = $APP->files->listing($controllersDir, '*.php');
 	$result = [];
-
-	$content['title'] = 'Контроллеры приложения';
 
 	//Построим дерево
 	foreach ($pages as &$_page)
@@ -20,7 +25,7 @@
 		$_page['link']    = mb_substr($_page['path'], mb_strlen($controllersDir)+1);
 		$_page['url']     = $_page['link'];
 		$_page['version'] = date('d.m.Y H:i:s', filectime($_page['path']));
-		$_page['html']    = round(filesize($_page['path'])/1024, 2) . ' Kb';
+		$_page['html']    = round(filesize($_page['path'])/1024, 2) . $content['units']['kb'];
 		$_page['sitemap'] = $_page['path'];
 		$_page['public']  = '✓';
 		$_page['edit']    = $APP->url->home()."admin/tools/codeeditor/?file=".$_page['path'];
@@ -48,7 +53,6 @@
 		$result = array_merge_recursive($result, $buffer);
 	}
 
-	$content['tree']['head'] = "Список доступных контроллеров:";
 	//~ $content['tree']['info'] = "Карта сайта позволяет нагляднее видеть структуру страниц";
 	$content['tree']['host'] = $APP->url->host().$APP->url->home();
 	$content['tree']['list'] = $result;

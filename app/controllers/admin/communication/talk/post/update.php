@@ -1,9 +1,12 @@
 <?php
 
+//Статика сообщений — компаньон-ini [view] + перевод
+$M = $APP->l10n->translate(array_replace_recursive([], (array) $APP->config->get()['view']))['messages'];
+
 try
 {
     $channel = $_REQUEST['channel'] ?? '';
-    if (!$channel) throw new Exception("Не указан канал");
+    if (!$channel) throw new Exception($M['nochannel']['text']);
 
     $data = [];
 
@@ -12,8 +15,8 @@ try
         // Bulk-режим: POST с posts[] — применяем только archived из GET
         if (!empty($_POST['posts'])) {
             $posts = array_filter(array_map('trim', (array)$_POST['posts']));
-            if (!$posts) throw new Exception("Не выбраны посты");
-            if (!array_key_exists('archived', $_GET)) throw new Exception("Нет данных для обновления");
+            if (!$posts) throw new Exception($M['noposts']['text']);
+            if (!array_key_exists('archived', $_GET)) throw new Exception($M['nodata']['text']);
 
             $data['archived'] = (int)$_GET['archived'];
             foreach ($posts as $post) {
@@ -26,7 +29,7 @@ try
 
         // Одиночный режим: полное редактирование через форму
         $post = $_REQUEST['post'] ?? '';
-        if (!$post) throw new Exception("Не указан пост");
+        if (!$post) throw new Exception($M['nopost']['text']);
 
         // Валидация slug'ов до любых файловых операций — фасад бросит на невалидных именах
         $postCtx = $APP->talk->blog($channel)->post($post);
@@ -61,12 +64,12 @@ try
     } else {
         // GET — одиночный, только явно переданные поля
         $post = $_GET['post'] ?? '';
-        if (!$post) throw new Exception("Не указан пост");
+        if (!$post) throw new Exception($M['nopost']['text']);
 
         if (array_key_exists('archived', $_GET))
             $data['archived'] = (int)$_GET['archived'];
 
-        if (empty($data)) throw new Exception("Нет данных для обновления");
+        if (empty($data)) throw new Exception($M['nodata']['text']);
 
         $APP->talk->blog($channel)->post($post)->update($data);
 
@@ -75,5 +78,5 @@ try
     }
 
 } catch (Exception $e) {
-    echo 'Ошибка: ' . $e->getMessage();
+    echo $M['error']['text'] . $e->getMessage();
 }

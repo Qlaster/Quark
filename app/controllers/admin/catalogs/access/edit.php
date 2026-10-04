@@ -10,6 +10,13 @@
 
 	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
+	//Подгружаем конфигурацию
+	$cfg = $APP->config->get();
+
+	//Статическая GUI-структура — компаньон-ini, секция [view]
+	$content = array_replace_recursive($content, (array) $cfg['view']);
+	$content = $APP->l10n->translate($content);
+
 	//Имя каталога — по нему адресуем узлы access.<имя>.* в конфиге.
 	//Без параметра (например, редирект после сброса авторизации
 	//обрезает query) — уходим на список каталогов
@@ -21,18 +28,25 @@
 
 	$config     = $APP->catalog->config();
 	$catalogCfg = $config['list'][$name];
-	if (!$catalogCfg) exit("Каталог '$name' не найден");
+	if (!$catalogCfg) exit(sprintf($content['messages']['notfound']['text'], $name));
 
-	$content['title']  = "Права доступа: $name";
+	$content['title']  = sprintf($content['title']['head'], $name);
 	$content['name']   = $name;
 	$content['ops']    = ['select','insert','update','replace','delete'];
 
 	//Объявленные поля каталога — для клеток матрицы fields.
-	//Поля типа 'id' исключаем: первичный ключ ни задать, ни поменять
-	//нельзя — колонка для него бессмысленна
+	//У каталога без секции field.* поля берём интроспекцией БД
+	//(тот же путь, что у view и edit); первичный ключ исключаем:
+	//type='id' для объявленных, pk для интроспектированных —
+	//задать/поменять его нельзя, колонка для него бессмысленна.
+	//БД недоступна — остаёмся на конфиге, как раньше
+	try   { $fieldDefs = (array) $APP->catalog->fields($name); }
+	catch (Throwable $e) { $fieldDefs = (array) $catalogCfg['field']; }
+
 	$content['fields'] = [];
-	foreach ((array) $catalogCfg['field'] as $f => $def)
-		if (($def['type'] ?? '') !== 'id') $content['fields'][] = $f;
+	foreach ($fieldDefs as $f => $def)
+		if (($def['type'] ?? '') !== 'id' and $f !== 'id' and !($def['pk'] ?? null))
+			$content['fields'][] = $f;
 
 	//datalist для поля "Субъект": '*' (все/гость) + логины пользователей.
 	//Список не ограничивает ввод — маски вроде editor-* вводятся свободно

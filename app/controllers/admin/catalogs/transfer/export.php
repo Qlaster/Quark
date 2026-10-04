@@ -7,12 +7,16 @@
  *
  */
 
+//Статика сообщений — компаньон-ini [view] + перевод
+$cfg = $APP->config->get();
+$M   = $APP->l10n->translate(array_replace_recursive([], (array) $cfg['view']))['messages'];
+
 try
 {
     $catalogName = $_GET['catalog'];
 
-    if (!$catalogName) throw new Exception('Не указан каталог');
-    if (!$APP->catalog->listing()[$catalogName]) throw new Exception('Каталог не существует');
+    if (!$catalogName) throw new Exception($M['nocatalog']['text']);
+    if (!$APP->catalog->listing()[$catalogName]) throw new Exception($M['nocatalogexists']['text']);
 
     $delimiter = isset($_GET['delimiter']) ? $_GET['delimiter'] : ';';
     $quotes    = isset($_GET['quotes'])    ? $_GET['quotes']    : '"';

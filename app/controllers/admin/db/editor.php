@@ -3,6 +3,12 @@
 	error_reporting(E_ALL & ~E_NOTICE);
 	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
+	//Статическая GUI-структура — компаньон-ini [view] + перевод
+	$cfg = $APP->config->get();
+	$content = array_replace_recursive($content, (array) $cfg['view']);
+	$content = $APP->l10n->translate($content);
+	$content['title'] = $content['title']['head'];
+
 	//Имя базы, конструктор которой мы хотим открыть
 	$dbname = $_GET['dbname'];
 

@@ -17,11 +17,15 @@
  *
  */
 
+	//Статика сообщений — компаньон-ini [view] + перевод
+	$cfg = $APP->config->get();
+	$M   = $APP->l10n->translate(array_replace_recursive([], (array) $cfg['view']))['messages'];
+
 	try
 	{
 		$id = filter_var($_REQUEST['id'], FILTER_VALIDATE_INT);
-		if (!$id) throw new Exception("Не указан ID", 101);
-		if (!$_REQUEST['catalog']) throw new Exception("Не указан каталог", 102);
+		if (!$id) throw new Exception($M['noid']['text'], 101);
+		if (!$_REQUEST['catalog']) throw new Exception($M['nocatalog']['text'], 102);
 
 		//Права доступа к каталогу для текущего пользователя.
 		//Гость (logged() === false) получает скоуп субъекта null — совпадают только *-маски
@@ -31,7 +35,7 @@
 
 		//Операция delete разрешена этому субъекту?
 		if (!$ACC['delete'])
-			throw new Exception("Удаление записей в этом каталоге запрещено", 403);
+			throw new Exception($M['delforbidden']['text'], 403);
 
 		//Удаляем. $ACC['where']['delete'] — sql-фрагмент скоупа:
 		//записи вне разрешённого where просто не попадут под DELETE
@@ -47,7 +51,7 @@
 	}
 	catch (Exception $e)
 	{
-		echo 'Ошибка: ',  $e->getMessage(), "\n";
+		echo $M['error']['text'], ' ',  $e->getMessage(), "\n";
 	}
 
 

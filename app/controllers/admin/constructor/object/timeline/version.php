@@ -4,6 +4,11 @@
 
     $content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
+    //Статическая GUI-структура — компаньон-ini [view] + перевод
+    $cfg = $APP->config->get();
+    $content = array_replace_recursive($content, (array) $cfg['view']);
+    $content = $APP->l10n->translate($content);
+
     // Получаем снимок на указанную дату
     $records = $APP->objects->timeline->select([
         'collection' => $_GET['collection'],
@@ -12,7 +17,7 @@
     ]);
 
     if (!$records)
-        exit( 'Версия не найдена' );
+        exit( $content['messages']['notfound']['text'] );
 
     $record = $records[0];
     $value  = unserialize($record['value']);
@@ -27,6 +32,6 @@
         'value_json'   => json_encode($value, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
     ];
 
-    $content['title'] = 'Версия объекта: '.$record['collection'].'/'.$record['name'].' от '.$record['date'];
+    $content['title'] = sprintf($content['title']['head'], $record['collection'], $record['name'], $record['date']);
 
     $APP->template->file('admin/constructor/object/object.version.html')->display($content);

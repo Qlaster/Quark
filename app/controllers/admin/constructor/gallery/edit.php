@@ -2,8 +2,13 @@
 
 	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
+	//Статическая GUI-структура — компаньон-ini [view] + перевод
+	$cfg = $APP->config->get();
+	$content = array_replace_recursive($content, (array) $cfg['view']);
+	$content = $APP->l10n->translate($content);
+
 	$name = $_GET['name'];
-	$content['nav']['path']['head'] = "Галерея: <b>$name</b>";
+	$content['nav']['path']['head'] = sprintf($content['navpath']['head'], $name);
 
 	$collection = $_GET['collection'] ?? 'gallery';
 	

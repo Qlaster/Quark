@@ -24,6 +24,13 @@
 
 	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
+	//Подгружаем конфигурацию
+	$config = $APP->config->get();
+
+	//Статическая GUI-структура — компаньон-ini, секция [view]
+	$content = array_replace_recursive($content, (array) $config['view']);
+	$content = $APP->l10n->translate($content);
+
 	//Если название каталога не передано, тихонечко сбежим
 	if (!$name = $_GET['name']) exit;
 
@@ -32,7 +39,7 @@
 	$ACC  = $APP->catalog->access($name)->as($user ? $user['login'] : null);
 
 	//select разрешён субъекту? Если нет — таблица не отдаётся вовсе
-	if (!$ACC['select']) exit("Просмотр этого каталога запрещён");
+	if (!$ACC['select']) exit($content['messages']['forbidden']['text']);
 
 	$params = $_GET;
 	$catalogCfg = $APP->catalog->get($name);

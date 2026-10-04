@@ -3,6 +3,13 @@
 
 	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
+	//Статическая GUI-структура — компаньон-ini [view] + перевод
+	$cfg = $APP->config->get();
+	$content = array_replace_recursive($content, (array) $cfg['view']);
+	$content = $APP->l10n->translate($content);
+
+	$content['title'] = $content['title']['head'];
+
 	//Получаем список модулей (фасадов и моделей)
 	$units_path = $APP->__facades();
 
@@ -16,7 +23,7 @@
 		$content['units']['list'][$key]['name']		= basename($unitfile);
 		$content['units']['list'][$key]['alias']	= basename($unitfile, '.php');
 		$content['units']['list'][$key]['create']	= date('d.m.Y H:i:s', filemtime($unitfile));
-		$content['units']['list'][$key]['size']		= round(filesize($unitfile)/1024, 2) . ' Kb';
+		$content['units']['list'][$key]['size']		= round(filesize($unitfile)/1024, 2) . $content['suffix']['kb'];
 
 
 		$content['units']['list'][$key]['link']['config']	= "admin/tools/codeeditor/?config=".unit_config_file($unitfile);
@@ -25,7 +32,7 @@
 		$content['units']['list'][$key]['md5'] = md5($unitfile);
 		$content['units']['list'][$key]['testlink'] = "admin/components/inittest?facade=".$content['units']['list'][$key]['alias'];
 
-		$content['units']['list'][$key]['analize']['status'] = 'Без анализа';
+		$content['units']['list'][$key]['analize']['status'] = $content['status']['idle'];
 		if ($_GET['analize']?? null)
 		{
 			$starttime = microtime(true);
@@ -47,9 +54,9 @@
 			$times[] = $content['units']['list'][$key]['analize']['runtime'];
 
 			$content['units']['list'][$key]['analize']['check'] = $content['units']['list'][$key]['analize']['syntax'] && $content['units']['list'][$key]['analize']['init'];
-			$content['units']['list'][$key]['analize']['status'] = 'Готов';
-			$content['units']['list'][$key]['analize']['init'] ?: $content['units']['list'][$key]['analize']['status'] = 'Инициализация';
-			$content['units']['list'][$key]['analize']['syntax'] ?: $content['units']['list'][$key]['analize']['status'] = 'Синтаксис';
+			$content['units']['list'][$key]['analize']['status'] = $content['status']['ready'];
+			$content['units']['list'][$key]['analize']['init'] ?: $content['units']['list'][$key]['analize']['status'] = $content['status']['init'];
+			$content['units']['list'][$key]['analize']['syntax'] ?: $content['units']['list'][$key]['analize']['status'] = $content['status']['syntax'];
 
 
 			//~ $content['units']['list'][$key]['analize']['init']		= $APP->controller->check($unitfile);
@@ -70,8 +77,6 @@
 
 	//~ print_r($content['units']['list']); die;
 
-	$content['title'] = 'Модули системы';
-	$content['button']['analize']['head'] = 'Анализ модулей';
 	$content['button']['analize']['link'] = $APP->url->page()."?analize=1";
 
 

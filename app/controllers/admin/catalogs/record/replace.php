@@ -21,9 +21,13 @@
 	//~ print_r($_FILES); die;
 
 
+	//Статика сообщений — компаньон-ini [view] + перевод
+	$cfg = $APP->config->get();
+	$M   = $APP->l10n->translate(array_replace_recursive([], (array) $cfg['view']))['messages'];
+
 	try
 	{
-		if (!$_GET['catalog']) throw new Exception("Не указан каталог", 102);
+		if (!$_GET['catalog']) throw new Exception($M['nocatalog']['text'], 102);
 
 		//Запросим переданные файлы
 		$FILES = $APP->files->uploadList();
@@ -41,7 +45,7 @@
 		//есть id — редактирование существующей записи (update), иначе — создание (insert)
 		$op = $_POST['id'] ? 'update' : 'insert';
 		if (!$ACC[$op])
-			throw new Exception("Операция '$op' в этом каталоге запрещена", 403);
+			throw new Exception(sprintf($M['opforbidden']['text'], $op), 403);
 
 
 		$APP->catalog->items($_GET['catalog'])->beginTransaction();
@@ -70,10 +74,10 @@
 		//Перемещаем файлики
 		foreach ($FILES as $field => $files)
 		{
-			$folder = createCatalogDirectory($catalog, $APP->catalog->config());
+			$folder = createCatalogDirectory($catalog, $APP->catalog->config(), $M);
 
 			if (!file_exists($uploadDIR = $folder.DIRECTORY_SEPARATOR.$_POST['id'].DIRECTORY_SEPARATOR.$field) && !mkdir($uploadDIR, 0777, true))
-				exit("Не удалось обработать файлы (ошибка записи)");
+				exit($M['writefail']['text']);
 
 			$filelist = [];
 
@@ -84,7 +88,7 @@
 					unset($files[$findex]);
 					continue;
 				}
-				if ($file['error'] != 0) exit('Ошибка при загрузке файла'); unset($file['error']);
+				if ($file['error'] != 0) exit($M['uploadfail']['text']); unset($file['error']);
 
 
 				$file['filename'] = $filename = filter_var($APP->catalog->config()['upload']['renaming'], FILTER_VALIDATE_BOOLEAN)
@@ -93,7 +97,7 @@
 
 				//Переместим файл в целевой каталог
 				if (! rename($file['tmp_name'], $filename) )
-					exit("Не удалось обработать файлы (ошибка записи): $filename");
+					exit($M['writefail']['text'].": $filename");
 
 				unset($file['tmp_name']);
 			}
@@ -124,14 +128,14 @@
 		}
 
 		if (!$APP->catalog->items($_GET['catalog'])->Commit())
-			exit("Не удалось добавить запись");
+			exit($M['addfail']['text']);
 
 		echo "OK";
 		return ['id'=>$_POST['id']];
 	}
 	catch (Exception $e)
 	{
-		echo 'Ошибка: ',  $e->getMessage(), "\n";
+		echo $M['error']['text'], ' ',  $e->getMessage(), "\n";
 	}
 
 
@@ -139,15 +143,15 @@
 
 
 
-	function createCatalogDirectory($catalog, $config)
+	function createCatalogDirectory($catalog, $config, $M)
 	{
 		//Проверим наличие директорий
 		$folder = $catalog['folder'] ?? $config['upload']['folder'];
-		if (!$folder) exit('Не найдена директория для ресурсов');
+		if (!$folder) exit($M['nodir']['text']);
 
 		if (!$catalog['folder'])
 			$folder .= DIRECTORY_SEPARATOR.$catalog['name'];
-		if (!file_exists($folder) and !mkdir($folder, 0777, true)) throw new Exception("Не удалось создать служебную директорию", 103);
+		if (!file_exists($folder) and !mkdir($folder, 0777, true)) throw new Exception($M['mkdirfail']['text'], 103);
 
 		return $folder;
 	}

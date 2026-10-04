@@ -27,22 +27,20 @@
 
 	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
-	$content['title'] = 'Панель состояния';
+	//Статическая структура страницы — компаньон index.ini, секция [view]
+	$config  = $APP->config->get();
+	$content = array_replace_recursive($content, (array) $config['view']);
 
+	//Скалярные строки — через словарь [t] (промах → оригинал)
+	$content['title'] = $APP->l10n->translate($content['title']);
 
-	$content['widgets']['list']['page']['head'] = 'Страниц';
-	$content['widgets']['list']['page']['text'] = $APP->page->count();
-
-	$content['widgets']['list']['users']['head'] = 'Пользователей';
+	//Динамика — счётчики виджетов
+	$content['widgets']['list']['page']['text']  = $APP->page->count();
 	$content['widgets']['list']['users']['text'] = count($APP->user->all());
+	$content['widgets']['list']['db']['text']    = count($APP->db->listing());
 
-	$content['widgets']['list']['db']['head'] = 'Баз данных';
-	$content['widgets']['list']['db']['text'] = count($APP->db->listing());
-
-	$content['graph']['head'] = 'Статистика посещаемости ресурса за последние дни';
-	$content['graph']['text'] = '<label class="label label-primary">Зеленым</label> отмечены уникальные пользователи, <label class="label label-default">серым</label> - объем страниц, который они посетили';
-
-
+	//Локализация маркированных узлов (виджеты, граф, charts)
+	$content = $APP->l10n->translate($content);
 
 	//~ $themelink = $APP->url->home()."views/admin/";
 	$APP->template->file('admin/dashboard.html')->display($content);

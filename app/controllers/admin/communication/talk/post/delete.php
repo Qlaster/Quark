@@ -1,9 +1,12 @@
 <?php
 
+//Статика сообщений — компаньон-ini [view] + перевод
+$M = $APP->l10n->translate(array_replace_recursive([], (array) $APP->config->get()['view']))['messages'];
+
 try
 {
     $channel = $_REQUEST['channel'] ?? '';
-    if (!$channel) throw new Exception("Не указан канал");
+    if (!$channel) throw new Exception($M['nochannel']['text']);
 
     // Bulk-режим (POST posts[]) или одиночный (GET post=)
     if (!empty($_POST['posts'])) {
@@ -11,7 +14,7 @@ try
     } elseif (!empty($_GET['post'])) {
         $posts = [$_GET['post']];
     } else {
-        throw new Exception("Не указан пост");
+        throw new Exception($M['nopost']['text']);
     }
 
     $folder = rtrim($APP->talk->config['upload']['folder'] ?? 'public/talk/');
@@ -27,5 +30,5 @@ try
     exit;
 
 } catch (Exception $e) {
-    echo 'Ошибка: ' . $e->getMessage();
+    echo $M['error']['text'] . $e->getMessage();
 }

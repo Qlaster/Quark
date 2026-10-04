@@ -70,7 +70,8 @@
 
 		//Подключаем нужное языковое меню
 		//~ $content['nav']['main'] = $menu['ru'];
-		$content['nav']['main'] = $menu;
+		//Локализация по маркерам l10n (нет маркеров/перевода — оригинал)
+		$content['nav']['main'] = $APP->l10n->translate($menu);
 
 		//Load Addons
 		if (file_exists($addonPath = __DIR__ .'/addons'))
@@ -167,7 +168,7 @@
 		//============================================================================================================================
 		//Загружаем меню управления профилем
 		$menu = $APP->object->collection('admin')->get('profilemenu');
-		$content['nav']['profile'] = $menu;
+		$content['nav']['profile'] = $APP->l10n->translate($menu);
 		$content['profile'] = $APP->user->logged();
 
 		//============================================================================================================================
@@ -177,8 +178,11 @@
 		$spacedisk = disk_free_space(__DIR__)/1024/1024;
 		$spacedisk = $spacedisk > 1024 ? round($spacedisk/1024, 2).' Gb' : round($spacedisk, 2).' Mb';
 
-		$content['footer']['head'] = "Свободное пространство: $spacedisk";
-		$content['footer']['text'] = "<strong> $host </strong> - Admin panel. Copyright " . date("Y");
+		//Статика футера — компаньон-ini [view] + перевод
+		$_view = $APP->l10n->translate(array_replace_recursive([], (array) $APP->config->get()['view']));
+
+		$content['footer']['head'] = sprintf($_view['footer']['head'], $spacedisk);
+		$content['footer']['text'] = sprintf($_view['footer']['text'], $host, date("Y"));
 
 
 		return $content;

@@ -6,6 +6,10 @@
 	//Подгружаем конфигурацию
 	$config = $APP->config->get();
 
+	//Статическая GUI-структура — компаньон index.ini, секция [view]
+	$content = array_replace_recursive($content, (array) $config['view']);
+	$content = $APP->l10n->translate($content);
+
 	//Получим все версии запрашиваемой страницы
 	$versions = (array) $APP->page->versions($_GET['url'], $_GET['lang']);
 
@@ -51,13 +55,10 @@
 		}
 
 		//Добавим кнопочки
-		$history[$record['version']]['button']['view']['head'] = 'Посмотреть эту версию';
-		$history[$record['version']]['button']['view']['style'] = 'default';
-		$history[$record['version']]['button']['view']['target'] = '_blank';
+		$history[$record['version']]['button']['view'] = $content['button']['view'];
 		$history[$record['version']]['button']['view']['link'] = 'admin/content/page/timeline/version?url='.$_GET['url'].'&lang='.$_GET['lang'].'&version='.$record['version'];
 
-		$history[$record['version']]['button']['rollback']['head'] = 'Восстановить эту версию';
-		$history[$record['version']]['button']['rollback']['style'] = 'primary';
+		$history[$record['version']]['button']['rollback'] = $content['button']['rollback'];
 		$history[$record['version']]['button']['rollback']['link'] = 'admin/content/page/timeline/rollback?url='.$_GET['url'].'&lang='.$_GET['lang'].'&version='.$record['version'];
 
 		//Если текущая версия актуальна - пометим ее и уберем кнопку
@@ -77,7 +78,7 @@
 
 	$content['history']['list'] = array_reverse($history??[]);
 
-	$content['title'] = 'История изменения страницы: '.$_GET['url'];
+	$content['title'] .= $_GET['url'];
 
 	//~ $themelink = $APP->url->home()."views/admin/";
 	$APP->template->file('admin/content/page.timeline.html')->display($content);

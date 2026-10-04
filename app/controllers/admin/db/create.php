@@ -5,6 +5,8 @@
 
 	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
+	//Статика сообщений — компаньон-ini [view] + перевод
+	$M = $APP->l10n->translate(array_replace_recursive([], (array) $APP->config->get()['view']))['messages'];
 
 	$type     = $_POST['type'];
 	$host     = $_POST['host'];
@@ -49,7 +51,7 @@
 			}
 			catch (PDOException $e)
 			{
-				echo "Ошибка установки соединения:".$e->getMessage();
+				echo $M['connfail']['text'].$e->getMessage();
 			}
 			break;
 		case 'sqlite':
@@ -64,7 +66,7 @@
 			}
 			catch (PDOException $e)
 			{
-				echo "Ошибка установки соединения:".$e->getMessage();
+				echo $M['connfail']['text'].$e->getMessage();
 			}
 			break;
 	}

@@ -3,6 +3,10 @@
 
 	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
+	//Статическая структура страницы — компаньон index.ini, секция [view]
+	$config  = $APP->config->get();
+	$content = array_replace_recursive($content, (array) $config['view']);
+
 
 	//Прикрепляем страницы
 	$pages = $APP->page->all($_GET['limit'], $_GET['offset']);
@@ -39,10 +43,7 @@
 		$result = array_merge_recursive($result, $buffer);
 	}
 
-	$content['title'] = 'Структура страниц';
-
-	$content['tree']['head'] = "Структура страниц сайта:";
-	//~ $content['tree']['info'] = "Карта сайта позволяет нагляднее видеть структуру страниц";
+	//Динамические данные дерева
 	$content['tree']['host'] = $APP->url->host().$APP->url->home();
 	$content['tree']['list'] = $result;
 
@@ -54,8 +55,8 @@
 		//~ $value['link_del'] 	= 'admin/content/page/del?url='.$value['url'].'&lang='.$value['lang'];
 	//~ }
 
-
-
+	//Локализация маркированных узлов
+	$content = $APP->l10n->translate($content);
 
 	$APP->template->file('admin/content/page_tree.html')->display($content);
 

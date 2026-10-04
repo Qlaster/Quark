@@ -2,10 +2,15 @@
 
 	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
+	//Статическая GUI-структура — компаньон-ini [view] + перевод
+	$cfg = $APP->config->get();
+	$content = array_replace_recursive($content, (array) $cfg['view']);
+	$content = $APP->l10n->translate($content);
+
+	$content['title'] = $content['title']['head'];
+
 	//Получаем список модулей (фасадов и моделей)
 	//~ $units_path = $APP->__facades();
-
-	$content['title'] = 'Установленные пакеты composer';
 
 	//~ $vendorDir = $APP->core_config['path_vendor']['path'];
 	$vendorDir = $_ENV['vendor']['path'];
@@ -24,9 +29,8 @@
 			$packages[$_vendor][$_packege] = $_packegeHead;
 		}
 
-	$content['packages']['head'] = 'Установленые пакеты';
 	$content['packages']['list'] = $packages;
-	$content['packages']['info'] = "Установить дополнительные пакеты можно через <b> composer </b> в директорию <b> $vendorDir </b> или добавить их туда явно";
+	$content['packages']['info'] = sprintf($content['packages']['info'], $vendorDir);
 
 
 	$APP->template->file('admin/components/packages.html')->display($content);

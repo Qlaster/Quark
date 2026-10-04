@@ -31,24 +31,20 @@
 		$APP->files->uploadMove($uploadDIR, filter_var($config['unique'], FILTER_VALIDATE_BOOLEAN), "");
 	}
 
+	//Статическая структура страницы — компаньон listing.ini, секция [view]
+	$content = array_replace_recursive((array) $content, (array) $APP->config->get()['view']);
+
 	//определяем формат вывода (таблица, плитка и т.д.)
 	$format = $_GET['format'] ? $_GET['format'] : 'grid';
 
 	//Сформируем меню (переключение формата сбрасывает страницу, остальные параметры сохраняются)
-	foreach (['grid'=>'fa-th-large', 'table'=>'fa-th-list'] as $_format => $_icon)
-	{
-		$content['menu']['format']['list'][$_format]['icon'] = $_icon;
+	foreach (['grid', 'table'] as $_format)
 		$content['menu']['format']['list'][$_format]['link'] = linker(['format'=>$_format, 'offset'=>0]);
-	}
+
 	$content['menu']['format']['list'][$format]['active'] = 'active';
 
 
-	//Функциональные кнопки
-	$content['button']['btn-delete']['head'] = "";
-	$content['button']['btn-delete']['icon'] = "fa-trash-o";
-
-	$content['button']['btn-reload']['head'] = "Обновить";
-	$content['button']['btn-reload']['icon'] = "fa-refresh";
+	//Ссылка обновления — динамика
 	$content['button']['btn-reload']['link'] = linker(['reload'=>1]);
 
 	$cacheKey = $config['cache']['key']??'quark:mediafiles';
@@ -123,14 +119,14 @@
 	$content['files']['list'] = $listinfo;
 	$content['files']['tree'] = $APP->files->listingToTree($list);
 
-	$content['files']['stat']['count']['icon'] = "fa fa-paperclip";
-	$content['files']['stat']['count']['text'] = $count ." файлов";
-	$content['files']['stat']['size']['icon']  = "fa fa-hdd-o";
-	$content['files']['stat']['size']['text']  = $APP->files->formatterSize($fullsize) ." занято";
+	$content['files']['stat']['count']['text'] = $count ." ".$content['files']['stat']['count']['suffix'];
+	$content['files']['stat']['size']['text']  = $APP->files->formatterSize($fullsize) ." ".$content['files']['stat']['size']['suffix'];
 
 	//Форма поиска — action сохраняет формат и сбрасывает страницу
 	$content['form']['filter']['action']        = linker(['offset'=>0]);
 	$content['form']['filter']['like']['value'] = $like ?? '';
 
+	//Локализация маркированных узлов
+	$content = $APP->l10n->translate($content);
 
 	$APP->template->file("admin/content/mediafiles/frame.$format.html")->display($content);

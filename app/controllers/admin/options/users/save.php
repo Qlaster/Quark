@@ -11,6 +11,9 @@
 	//Заглянем в конфигурацию
 	$config = $APP->config->get();
 
+	//Статика сообщений — компаньон-ini [view] + перевод
+	$M = $APP->l10n->translate(array_replace_recursive([], (array) $config['view']))['messages'];
+
 	//========================================================
 	//				ОБРАБАТЫВАЕМ ПОЛЬЗОВАТЕЛЯ
 	//========================================================
@@ -34,10 +37,10 @@
 	if ($_FILES["avatar"]['name'] != '')
 	{
 
-		if ($_FILES["avatar"]["size"] > 1024*32*1024) exit("Размер файла превышает 32 мегабайта");
+		if ($_FILES["avatar"]["size"] > 1024*32*1024) exit($M['toobig']['text']);
 
 		// Проверяем загружен ли файл
-		if (!is_uploaded_file($_FILES["avatar"]["tmp_name"])) exit("Ошибка загрузки файла");
+		if (!is_uploaded_file($_FILES["avatar"]["tmp_name"])) exit($M['uploaderr']['text']);
 
 		// Если файл загружен успешно, перемещаем его
 		// из временной директории в конечную

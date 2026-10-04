@@ -76,8 +76,11 @@
 	$page['content'] = $content;
 
 
+	//Статика сообщений — компаньон-ini [view] + перевод
+	$M = $APP->l10n->translate(array_replace_recursive([], (array) $APP->config->get()['view']))['messages'];
+
 	if (!$APP->page->set($page['url'], $page))
-		trigger_error ( "Не удается сохранить страницу" , E_USER_WARNING );
+		trigger_error ( $M['savefail']['text'] , E_USER_WARNING );
 
 
 	$controllersDir = $APP->controller->config['folder'];

@@ -9,8 +9,8 @@
 	//Подгружаем конфигурацию
 	$config = $APP->config->get();
 
-	//Подгружаем локаль конфига
-	$content = array_merge($content, $config['ru']);
+	//Статическая GUI-структура — компаньон edit.ini, секция [view]
+	$content = array_replace_recursive($content, (array) $config['view']);
 
 	//Получаем текущий адрес
 	$content['form']['edit']['url']['prefix'] = $APP->url->home();
@@ -71,6 +71,9 @@
 			$content['form']['edit']['index']['text']   = $page['index'];
 			$content['form']['edit']['sitemap']['text'] = $page['sitemap'];
 
+			//Локализуем статику (нужно и для ветки с отсутствующим шаблоном)
+			$content = $APP->l10n->translate($content);
+
 			//Посмотрим, какой контент поддерживает страница
 			if (file_exists($templateDir.$page['html']))
 			{
@@ -100,7 +103,7 @@
 				}
 
 				//Конструируем объект для распарса страницы
-				$PageTools = new PageTools($objects, $vars, $config['config']['var_filter'], $config['ru']);
+				$PageTools = new PageTools($objects, $vars, $config['config']['var_filter'], $content);
 				$PageTools->page = $page;
 
 				//Собираем секции:
@@ -118,9 +121,10 @@
 			}
 			else
 			{
-				//Если файл шаблона не найден, сформируем предупреждение
+				//Если файл шаблона не найден, откладываем подстановку пути
+				//после финальной локализации, чтобы сохранить l10n-маркер
 				$content['message'] = $content['message']['nothtml'];
-				$content['message']['text'] = sprintf($content['message']['text'], $templateDir.$page['html']);
+				$content['message']['arg'] = $templateDir.$page['html'];
 			}
 		}
 		else
@@ -141,6 +145,16 @@
 
 
 
+
+	//Финальная локализация (актуальна для веток без PageTools)
+	$content = $APP->l10n->translate($content);
+
+	//Подставляем путь в уже локализованное предупреждение
+	if (isset($content['message']['arg']))
+	{
+		$content['message']['text'] = sprintf($content['message']['text'], $content['message']['arg']);
+		unset($content['message']['arg']);
+	}
 
 	//~ $themelink = $APP->url->home()."views/admin/";
 	$APP->template->file('admin/content/page.add.html')->display($content);
@@ -421,15 +435,12 @@
 					//=========================================
 					//		ОТКРЫТЬ КАК ... (СПИСОК)
 					//=========================================
+					//Статика «Открыть как» — из компаньон-ini [view].openas (уже переведена)
+					$f_tag['openas'] = $this->config['openas'];
 					$f_tag['openas']['name'] = $f_tag['name'];
-					$f_tag['openas']['head'] = 'Редактировать как:';
-					$f_tag['openas']['list']['gallery']['head'] = 'Галерею';
-					$f_tag['openas']['list']['gallery']['link'] = '';
-					$f_tag['openas']['list']['objectini']['head'] = 'В текстовом виде';
-					$f_tag['openas']['list']['objectini']['link'] = '';
-					$f_tag['openas']['list']['-']['class'] = 'divider';
-					$f_tag['openas']['list']['object']['head'] = 'Абстрактный объект';
-					$f_tag['openas']['list']['object']['link'] = '';
+					//в шаблоне разделитель исторически под ключом '-'
+					$f_tag['openas']['list']['-'] = $f_tag['openas']['list']['divider'];
+					unset($f_tag['openas']['list']['divider']);
 				}
 			}
 
@@ -541,7 +552,7 @@
 
 			}
 
-			$result['head'] = 'Cтроковые переменные';
+			$result['head'] = $this->config['single']['head'];
 			$result['list'] = $single;
 
 			return (array) $result;

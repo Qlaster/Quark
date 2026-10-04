@@ -2,6 +2,11 @@
 
 	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
+	//Статическая GUI-структура — компаньон-ini [view] + перевод
+	$cfg = $APP->config->get();
+	$content = array_replace_recursive($content, (array) $cfg['view']);
+	$content = $APP->l10n->translate($content);
+
 	//Если передали логин - будем править этого пользователя
 	if (isset($_GET['login']))	$user = $APP->user->get($_GET['login']);
 

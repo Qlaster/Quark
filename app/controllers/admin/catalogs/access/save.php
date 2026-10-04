@@ -15,10 +15,14 @@
  * Комментарии в catalog.ini при записи не сохраняются (райтер ini).
  */
 
+	//Статика сообщений — компаньон-ini [view] + перевод
+	$cfg = $APP->config->get();
+	$M   = $APP->l10n->translate(array_replace_recursive([], (array) $cfg['view']))['messages'];
+
 	try
 	{
 		$name = trim($_POST['catalog']);
-		if (!$name) throw new Exception("Не указан каталог", 102);
+		if (!$name) throw new Exception($M['nocatalog']['text'], 102);
 
 		$OPS  = ['select','insert','update','delete','replace'];
 		$LIST = function($v) { //массив или comma-строка → список уникальных непустых строк
@@ -44,10 +48,17 @@
 			//fields: матрица — rules[i][fields][<op>][] список на операцию.
 			//Все объявленные поля отмечены → не пишем (дефолт = все поля);
 			//одинаковый список у всех 5 оп → сворачиваем в общий слот fields='["..."]'
-			//Поля типа 'id' в матрице нет — в полный набор их не считаем
+			//Источник списка — тот же, что в access/edit.php: интроспекция БД
+			//через catalog->fields() (у каталога может не быть секции field.*),
+			//фолбэк на конфиг. Первичный ключ в матрице не участвует
+			$fieldDefs = [];
+			try   { $fieldDefs = (array) $APP->catalog->fields($name); }
+			catch (Throwable $e) { $fieldDefs = (array) ($config['list'][$name]['field'] ?? []); }
+
 			$declared = [];
-			foreach ((array) ($config['list'][$name]['field'] ?? []) as $f => $def)
-				if (($def['type'] ?? '') !== 'id') $declared[] = $f;
+			foreach ($fieldDefs as $f => $def)
+				if (($def['type'] ?? '') !== 'id' and $f !== 'id' and !($def['pk'] ?? null))
+					$declared[] = $f;
 			sort($declared);
 			$fields = [];
 			foreach ($OPS as $op)
@@ -89,11 +100,11 @@
 		$APP->catalog->config($config);
 		$APP->catalog->access($name)->as('~smoke~');
 
-		header("Location: admin/catalogs/access/edit?name=".urlencode($name));
+		header("Location: edit?name=".urlencode($name));
 		exit;
 	}
 	catch (Exception $e)
 	{
 		http_response_code(500);
-		echo '<div style="padding:20px;color:red">Ошибка: ' . htmlspecialchars($e->getMessage()) . '</div>';
+		echo '<div style="padding:20px;color:red">'.$M['error']['text'].' ' . htmlspecialchars($e->getMessage()) . '</div>';
 	}

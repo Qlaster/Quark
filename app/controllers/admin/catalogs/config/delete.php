@@ -1,9 +1,13 @@
 <?php
 
+    //Статика сообщений — компаньон-ini [view] + перевод
+    $cfg = $APP->config->get();
+    $M   = $APP->l10n->translate(array_replace_recursive([], (array) $cfg['view']))['messages'];
+
     try
     {
         $name = trim($_GET['name']);
-        if (!$name) throw new Exception('Не указан каталог');
+        if (!$name) throw new Exception($M['nocatalog']['text']);
 
         $APP->catalog->delete($name);
         //~ header('Location: admin/catalogs/config/');
@@ -12,5 +16,5 @@
     }
     catch (Exception $e)
     {
-        echo 'Ошибка: ' . htmlspecialchars($e->getMessage());
+        echo $M['error']['text'].' ' . htmlspecialchars($e->getMessage());
     }

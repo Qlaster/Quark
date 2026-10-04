@@ -1,8 +1,12 @@
 <?php
 
-	$content['title'] = "Ограничение доступа";
-	$content['head'] = "500";
-	$content['text'] = "Доступ к данной странице ограничен политикой прав";
+	//Статическая GUI-структура — компаньон-ini [view] + перевод
+	$cfg = $APP->config->get();
+	$content = $APP->l10n->translate(array_replace_recursive((array) $content, (array) $cfg['view']));
+
+	$content['title'] = $content['title']['head'];
+	$content['head']  = $content['error']['head'];
+	$content['text']  = $content['error']['text'];
 
 	$APP->template->file('admin/error.html')->display($content);
 

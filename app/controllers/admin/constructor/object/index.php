@@ -5,8 +5,12 @@
 	//Подгружаем конфигурацию
 	$config = $APP->config->get();
 
-	//Подгружаем локаль конфига
-	$content = array_merge($content, $config['ru']);
+	//Подгружаем локаль конфига — компаньон [view] + перевод
+	$content = array_replace_recursive($content, (array) $config['view']);
+	$content = $APP->l10n->translate($content);
+
+	//Шаблон ждёт <title> скаляром — узел сплющиваем до head
+	$content['title'] = $content['title']['head'];
 
 
 
@@ -21,29 +25,14 @@
 				'active' => (bool) ($_GET['collection'] == $_collection_name)
 			];
 
-			// Действия для коллекции
-			$item['button']['actions'] = [
-				'head' => 'Действия',
-				'list' => [
-					[
-						'head' => 'Переименовать',
-						'data-link' => 'admin/constructor/object/rename',
-						'data-collection' => $_collection_name
-					],
-					[
-						'head' => 'Дублировать',
-						'link' => 'admin/constructor/object/copy?collection=' . rawurlencode($_collection_name)
-					],
-					[
-						'head' => 'Удалить',
-						'link' => 'admin/constructor/object/drop?collection=' . rawurlencode($_collection_name)
-					],
-					[
-						'head' => 'Экспортировать',
-						'link' => 'admin/constructor/object/export?collection=' . rawurlencode($_collection_name)
-					]
-				]
-			];
+			// Действия для коллекции — статика из [view], динамика докручивается здесь
+			$menu = $content['menu']['collection'];
+			$menu['list']['rename']['data-link']       = $menu['list']['rename']['action'];
+			$menu['list']['rename']['data-collection'] = $_collection_name;
+			$menu['list']['dup']['link']    = $menu['list']['dup']['action'].'?collection=' . rawurlencode($_collection_name);
+			$menu['list']['drop']['link']   = $menu['list']['drop']['action'].'?collection=' . rawurlencode($_collection_name);
+			$menu['list']['export']['link'] = $menu['list']['export']['action'].'?collection=' . rawurlencode($_collection_name);
+			$item['button']['actions'] = $menu;
 
 		$content['catalog']['collection']['list'][] = $item;
 		continue;
@@ -94,26 +83,19 @@
 			'link' => ""
 		];
 
-		$item['button']['edit'] = [
-			'head'  => 'Конструктор',
-			'link'  => $APP->url->home() . "admin/constructor/object/edit?collection=" . rawurlencode($d_collection) . "&object=" . rawurlencode($d_object),
-			'icon'  => 'fa-puzzle-piece',
-			'class' => 'btn-success btn-outline'
-		];
+		//Кнопки строки объекта — статика из [view], link докручиваем тут
+		$item['button']['edit']        = $content['button']['edit'];
+		$item['button']['edit']['link']= $APP->url->home() . $item['button']['edit']['action']
+			. "?collection=" . rawurlencode($d_collection) . "&object=" . rawurlencode($d_object);
 
 
-		$item['button']['editastext'] = [
-			'head' => 'Редактор',
-			'link' => $APP->url->home() . "admin/constructor/object/plaintext/edit?collection=" . rawurlencode($d_collection) . "&object=" . rawurlencode($d_object),
-			'icon' => 'fa-th-list',
-			'class' => 'btn-success btn-outline'
-		];
+		$item['button']['editastext']         = $content['button']['editastext'];
+		$item['button']['editastext']['link'] = $APP->url->home() . $item['button']['editastext']['action']
+			. "?collection=" . rawurlencode($d_collection) . "&object=" . rawurlencode($d_object);
 
-		$item['button']['timeline'] = [
-			'head' => 'История',
-			'link' => $APP->url->home() . "admin/constructor/object/timeline/?collection=" . rawurlencode($d_collection) . "&name=" . rawurlencode($d_object),
-			'icon' => 'fa-history'
-		];
+		$item['button']['timeline']         = $content['button']['timeline'];
+		$item['button']['timeline']['link'] = $APP->url->home() . $item['button']['timeline']['action']
+			. "?collection=" . rawurlencode($d_collection) . "&name=" . rawurlencode($d_object);
 
 
 		//~ $item['button']['actions']['head'] = 'Действия';
@@ -136,25 +118,15 @@
 		//~ $item['button']['actions']['list'][6]['link'] = $APP->url->home()."admin/constructor/object/del?collection=".rawurlencode($d_collection)."&object=".rawurlencode($d_object);
 
 
-		$item['button']['actions'] = [
-				'head' => 'Действия',
-				'list' => [
-					[
-						'head' => 'Переименовать',
-						'data-link' => 'admin/constructor/object/rename',
-						'data-collection' => $d_collection,
-						'data-object' => $_object_name
-					],
-					[
-						'head' => 'Экспортировать',
-						'link' => $APP->url->home() . 'admin/constructor/object/export?collection=' . rawurlencode($d_collection) . '&object=' . rawurlencode($d_object)
-					],
-					[
-						'head' => 'Удалить',
-						'link' => $APP->url->home() . 'admin/constructor/object/del?collection=' . rawurlencode($d_collection) . '&object=' . rawurlencode($d_object)
-					]
-				]
-			];
+		$menu = $content['menu']['object'];
+		$menu['list']['rename']['data-link']       = $menu['list']['rename']['action'];
+		$menu['list']['rename']['data-collection'] = $d_collection;
+		$menu['list']['rename']['data-object']     = $_object_name;
+		$menu['list']['export']['link'] = $APP->url->home() . $menu['list']['export']['action']
+			. '?collection=' . rawurlencode($d_collection) . '&object=' . rawurlencode($d_object);
+		$menu['list']['del']['link']    = $APP->url->home() . $menu['list']['del']['action']
+			. '?collection=' . rawurlencode($d_collection) . '&object=' . rawurlencode($d_object);
+		$item['button']['actions'] = $menu;
 
 		// Лучше иметь удаление в 2 клика, чем в 1. Вынес в меню
 		// $item['button']['delete']['head'] = 'Удалить';

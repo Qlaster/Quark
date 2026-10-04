@@ -4,6 +4,11 @@
 
     $content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
+    //Статическая GUI-структура — компаньон-ini [view] + перевод
+    $cfg = $APP->config->get();
+    $content = array_replace_recursive($content, (array) $cfg['view']);
+    $content = $APP->l10n->translate($content);
+
     // Получаем историю изменений объекта (DESC по дате)
     $records = $APP->objects->timeline->select([
         'collection' => $_GET['collection'],
@@ -57,7 +62,7 @@
 
         // Кнопка просмотра
         $history[$timestamp]['button']['view'] = [
-            'head'   => 'Посмотреть эту версию',
+            'head'   => $content['button']['view']['head'],
             'style'  => 'default',
             'target' => '_blank',
             'link'   => 'admin/constructor/object/timeline/version?collection='.urlencode($_GET['collection'])
@@ -67,7 +72,7 @@
 
         // Кнопка восстановления
         $history[$timestamp]['button']['rollback'] = [
-            'head'   => 'Восстановить эту версию',
+            'head'   => $content['button']['rollback']['head'],
             'style'  => 'primary',
             'target' => '',
             'link'   => 'admin/constructor/object/timeline/rollback?collection='.urlencode($_GET['collection'])
@@ -84,6 +89,6 @@
     }
 
     $content['history']['list'] = array_reverse($history);
-    $content['title'] = 'История объекта: '.$_GET['collection'].'/'.$_GET['name'];
+    $content['title'] = sprintf($content['title']['head'], $_GET['collection'], $_GET['name']);
 
     $APP->template->file('admin/constructor/object/object.timeline.html')->display($content);

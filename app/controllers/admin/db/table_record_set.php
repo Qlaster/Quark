@@ -8,6 +8,8 @@
 
 	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
+	//Статика сообщений — компаньон-ini [view] + перевод
+	$M = $APP->l10n->translate(array_replace_recursive([], (array) $APP->config->get()['view']))['messages'];
 
 	//Прикрепляем страницы
 	$content['catalog']['page'] = $APP->page->all($_GET['limit'], $_GET['offset']);
@@ -37,7 +39,7 @@
 					if ( ! file_exists($dir) )
 						if ( ! mkdir($dir, 0775, true) )
 						{
-							echo "не удалось получить доспуп на запись файлововй системы в $dir";
+							echo sprintf($M['dirmake']['text'], $dir);
 							exit;
 						}
 
@@ -47,14 +49,14 @@
 					}
 					else
 					{
-						echo "При обработке файла произошли ошибки!";
+						echo $M['fileerr']['text'];
 						exit;
 					}
 
 				}
 				elseif (($file_option['name'] != ''))
 				{
-					echo "Не удалось загрузить файл <b>".$file_option['name']."</b> Возможно, не поддерживает загрузку файлов такого размера. <br>";
+					echo sprintf($M['uploadfail']['text'], $file_option['name']);
 				}
 		}
 
@@ -66,14 +68,14 @@
 		{
 			//Изменяем запись - нам известен id
 			$buffer	 = $APP->db->connect($_GET['base'])->table($_GET['table'])->where('id = ?', $_GET['id'])->update($_POST);
-			if ($buffer) echo 'Запись успешно изменена. Если требуются актуальные данные - перезагрузите таблицу';
+			if ($buffer) echo $M['updated']['text'];
 		}
 		else
 		{
 			//Добавляем запись - нам не передали id
 			unset($_POST['id']);
 			$buffer	 = $APP->db->connect($_GET['base'])->table($_GET['table'])->insert($_POST);
-			if ($buffer) echo 'Запись успешно добавлена. Если требуются актуальные данные - перезагрузите таблицу';
+			if ($buffer) echo $M['added']['text'];
 		}
 	}
 

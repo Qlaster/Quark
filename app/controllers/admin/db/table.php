@@ -3,13 +3,15 @@
 	error_reporting(E_ALL & ~E_NOTICE);
 	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
+	//Статическая GUI-структура — компаньон-ini [view] + перевод
+	$cfg = $APP->config->get();
+	$content = array_replace_recursive($content, (array) $cfg['view']);
 
 	$base = $_GET['base'];
 	$table = $_GET['table'];
 
 
 	//Загружаем таблицы
-	$content['table']['data']['head']	= 'Таблица';
 	$content['table']['data']['menu']	= $APP->db->connect($_GET['base'])->Tables();
 	$content['table']['data']['name']	= $base;
 

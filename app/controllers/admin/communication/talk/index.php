@@ -1,6 +1,11 @@
 <?php
 $content = $APP->controller->run('admin/autoinclude', ['APP' => $APP]);
-$content['title'] = 'Коммуникации — Каналы';
+
+//Статическая GUI-структура — компаньон-ini [view]
+$cfg = $APP->config->get();
+$content = array_replace_recursive($content, (array) $cfg['view']);
+
+$content['title'] = $content['title']['head'];
 
 $channel = $_GET['channel'] ?? null;
 $post    = $_GET['post']    ?? null;
@@ -17,7 +22,6 @@ foreach ($blogs as &$_blog)
 }
 unset($_blog);
 
-$content['catalog']['channels']['head']     = 'Каналы';
 $content['catalog']['channels']['list']     = $blogs;
 $content['catalog']['channels']['selected'] = null;
 
@@ -26,7 +30,6 @@ foreach ($blogs as $_b) {
 }
 
 // Посты выбранного канала
-$content['catalog']['posts']['head']     = 'Посты';
 $content['catalog']['posts']['list']     = [];
 $content['catalog']['posts']['selected'] = null;
 
@@ -49,7 +52,9 @@ if ($channel)
 
 
 
-$content['form']['search']['placeholder'] = $search ? $search : 'Поиск';
+$content['form']['search']['placeholder'] = $search ? $search : $content['form']['search']['placeholder'];
 
+//Перевод помеченных l10n-узлов
+$content = $APP->l10n->translate($content);
 
 $APP->template->file('admin/communication/talk/channels.html')->display($content);

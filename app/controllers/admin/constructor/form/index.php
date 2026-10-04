@@ -5,8 +5,9 @@
 	//Подгружаем конфигурацию
 	$config = $APP->config->get();
 
-	//Подгружаем локаль конфига
-	$content = array_merge($content, $config['ru']);
+	//Подгружаем локаль конфига — компаньон [view] + перевод
+	$content = array_replace_recursive($content, (array) $config['view']);
+	$content = $APP->l10n->translate($content);
 
 
 	//Если передали данные - сохраним их

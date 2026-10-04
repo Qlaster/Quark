@@ -5,14 +5,15 @@
 	//Подгружаем конфигурацию
 	$config = $APP->config->get();
 
-	//Подгружаем локаль конфига
-	$content = array_merge($content, $config['ru']);
+	//Подгружаем локаль конфига — компаньон [view] + перевод
+	$content = array_replace_recursive($content, (array) $config['view']);
+	$content = $APP->l10n->translate($content);
 
 	//Получаем все галереи
 	$form_list = $APP->object->collection('gallery')->all();
 
 
-	$content['title'] = 'Конструктор галерей';
+	$content['title'] = $content['title']['head'];
 
 	//~ print_r($form_list); die;
 

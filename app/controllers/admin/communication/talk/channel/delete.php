@@ -1,8 +1,11 @@
 <?php
 
+//Статика сообщений — компаньон-ini [view] + перевод
+$M = $APP->l10n->translate(array_replace_recursive([], (array) $APP->config->get()['view']))['messages'];
+
 try {
     $channel = $_GET['channel'] ?? '';
-    if (!$channel) throw new Exception("Не указан канал");
+    if (!$channel) throw new Exception($M['nochannel']['text']);
 
     $APP->talk->blog($channel)->delete();
 
@@ -10,5 +13,5 @@ try {
     exit;
 
 } catch (Exception $e) {
-    echo 'Ошибка: ' . $e->getMessage();
+    echo $M['error']['text'] . $e->getMessage();
 }

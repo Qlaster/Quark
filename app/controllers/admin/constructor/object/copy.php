@@ -3,12 +3,15 @@
 
 	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
+	//Статика сообщений — компаньон-ini [view] + перевод
+	$M = $APP->l10n->translate(array_replace_recursive([], (array) $APP->config->get()['view']))['messages'];
+
 	$collection	= urldecode($_GET['collection']);
 
 	if (!$collection)
 	{
 		http_response_code(400);
-		exit("Не указано имя коллекции");
+		exit($M['nocollect']['text']);
 	}
 
 	$base_name = $_GET['collection'] . ' copy';
@@ -33,7 +36,7 @@
 	if (!$APP->object->collection($collection)->copy($copy_name))
 	{
 		http_response_code(400);
-		exit("Ошибка при копировании коллекции");
+		exit($M['fail']['text']);
 	}
 
     header('Location: index');

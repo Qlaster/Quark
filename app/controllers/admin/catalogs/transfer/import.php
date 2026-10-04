@@ -9,13 +9,17 @@
  */
 
 
+//Статика сообщений — компаньон-ini [view] + перевод
+$cfg = $APP->config->get();
+$M   = $APP->l10n->translate(array_replace_recursive([], (array) $cfg['view']))['messages'];
+
 try
 {
 
-	if (!$_FILES['document']) throw new Exception('Не передан файл');
-	if ($_FILES['document']['error']) throw new Exception('Возникла ошибка загрузки');
+	if (!$_FILES['document']) throw new Exception($M['nofile']['text']);
+	if ($_FILES['document']['error']) throw new Exception($M['uploadfail']['text']);
 
-	if (!$APP->catalog->listing()[$_POST['catalog']]) throw new Exception('Каталог не существует');
+	if (!$APP->catalog->listing()[$_POST['catalog']]) throw new Exception($M['nocatalogexists']['text']);
 
 	$options = ['delimiter'=>$_POST['delimiter'], 'quotes'=>$_POST['quotes']];
 

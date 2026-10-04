@@ -2,11 +2,18 @@
 
     $content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
+    //Подгружаем конфигурацию
+    $cfg = $APP->config->get();
+
+    //Статическая GUI-структура — компаньон-ini, секция [view]
+    $content = array_replace_recursive($content, (array) $cfg['view']);
+    $content = $APP->l10n->translate($content);
+
     $name = $_GET['name'];
 
     if ($name)
     {
-        $content['title']   = 'Редактирование каталога: ' . $name;
+        $content['title']   = sprintf($content['title']['edit']['head'], $name);
         $rawList = $APP->catalog->listing();
         $content['catalog'] = $rawList[$name];
         $content['catalog']['name'] = $name;
@@ -26,7 +33,7 @@
     }
     else
     {
-        $content['title']      = 'Новый каталог';
+        $content['title']      = $content['title']['new']['head'];
         $content['catalog']    = [];
         $content['db_columns'] = [];
     }

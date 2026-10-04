@@ -1,11 +1,14 @@
 <?php
 
+//Статика сообщений — компаньон-ini [view] + перевод
+$M = $APP->l10n->translate(array_replace_recursive([], (array) $APP->config->get()['view']))['messages'];
+
 try
 {
     $channel = $_POST['channel'] ?? '';
     $name    = trim($_POST['name'] ?? '');
-    if (!$channel) throw new Exception("Не указан канал");
-    if (!$name)    throw new Exception("Поле 'name' обязательно");
+    if (!$channel) throw new Exception($M['nochannel']['text']);
+    if (!$name)    throw new Exception($M['noname']['text']);
 
     $data = [
         'title'    => $_POST['title']    ?: null,
@@ -37,5 +40,5 @@ try
     exit;
 
 } catch (Exception $e) {
-    echo 'Ошибка: ' . $e->getMessage();
+    echo $M['error']['text'] . $e->getMessage();
 }

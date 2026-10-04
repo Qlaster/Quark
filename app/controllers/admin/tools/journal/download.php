@@ -14,6 +14,10 @@
 
 	//Авторизация обеспечена маршрутом route.ini: admin/* → autoinclude
 
+	//Статика сообщений — компаньон-ini [view] + перевод
+	$cfg = $APP->config->get();
+	$M   = $APP->l10n->translate(array_replace_recursive([], (array) $cfg['view']))['messages'];
+
 	$datestart = $_GET['datestart'] ?: date('d.m.Y');
 	$dateend   = $_GET['dateend']   ?: date('d.m.Y');
 
@@ -22,7 +26,7 @@
 	if (!$files)
 	{
 		http_response_code(404);
-		exit("За период $datestart — $dateend лог-файлов нет");
+		exit(sprintf($M['nologs']['text'], $datestart, $dateend));
 	}
 
 	//unixtime в начале строки → человекочитаемый вид "[Y-m-d H:i:s]".

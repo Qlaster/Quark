@@ -2,9 +2,12 @@
 
 	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
+	//Статическая GUI-структура — компаньон-ini [view] + перевод
+	$cfg = $APP->config->get();
+	$content = array_replace_recursive($content, (array) $cfg['view']);
+	$content = $APP->l10n->translate($content);
 
-	$content['title'] = "Журнал запросов";
-	$content['journal']['head'] = "Журнал запросов";
+	$content['title'] = $content['journal']['head'];
 
 	//Если не передали даты - установим сегодняшний день.
 	//Записи подтягивает DataTables через journal/data (serverSide)

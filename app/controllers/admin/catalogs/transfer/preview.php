@@ -12,6 +12,9 @@
 	//~ print_r($_POST);
 	//~ print_r($_FILES);
 
+	//Статика сообщений — компаньон-ini [view] + перевод
+	$cfg = $APP->config->get();
+	$M   = $APP->l10n->translate(array_replace_recursive([], (array) $cfg['view']))['messages'];
 
 	$file = current($APP->files->uploadList()['document']);
 
@@ -20,7 +23,7 @@
 	//~ $parsed = parse_csv_first12($file['tmp_name'], $_POST['delimiter'], false);
 
 	//Запросим данные из csv файла
-	$content['table']['rows'] = parse_csv_2($file['tmp_name'], $_POST['delimiter'], $_POST['quotes']);
+	$content['table']['rows'] = parse_csv_2($file['tmp_name'], $_POST['delimiter'], $_POST['quotes'], $M['openfail']['text']);
 
 	//Запросим поля каталога, которые необходимо заполнить
 	$content['table']['cols'] = $APP->catalog->fields($_POST['catalog']);
@@ -48,12 +51,12 @@
 
 
 
-function parse_csv_2($file, $delimiter, $quote)
+function parse_csv_2($file, $delimiter, $quote, $errOpen = 'Failed to open file')
 {
     // Открываем файл для чтения
     $handle = fopen($file, 'r');
     if ($handle === false)
-        die('Не удалось открыть файл');
+        die($errOpen);
 
     // Читаем первые 3 байта, чтобы проверить BOM
     $bom = fread($handle, 3);

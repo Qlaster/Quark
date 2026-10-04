@@ -15,6 +15,10 @@
 
 	header('Content-Type: application/json');
 
+	//Статика подписей деталей — компаньон-ini [view] + перевод
+	$cfg = $APP->config->get();
+	$D   = $APP->l10n->translate(array_replace_recursive([], (array) $cfg['view']))['detail'];
+
 	//Авторизация обеспечена маршрутом route.ini: admin/* → autoinclude
 	try
 	{
@@ -103,20 +107,20 @@
 			//детали записи — раскрывашка по клику на строке;
 			//поля, которых нет в колонках: страница, unique, uid, версия, дамп целиком
 			$detail = '<dl class="dl-horizontal journal-detail">'
-				.'<dt>Запрос</dt><dd><code>'.$h($uri).'</code></dd>'
-				.'<dt>Клиент</dt><dd>'.$h(
+				.'<dt>'.$D['uri'].'</dt><dd><code>'.$h($uri).'</code></dd>'
+				.'<dt>'.$D['client'].'</dt><dd>'.$h(
 				    trim($r['type'].' '.$r['browsername'].' '.$r['browserversion'].' '.$r['osname'])).'</dd>'
-				.'<dt>Страница</dt><dd><code>'.$h($r['page']).'</code></dd>'
-				.'<dt>Уникальный</dt><dd>'.($r['unique'] ? 'да' : 'нет').'</dd>'
-				.'<dt>UID</dt><dd><code>'.$h($r['userid']).'</code></dd>'
-				.'<dt>Маркер</dt><dd>'.($r['info']
+				.'<dt>'.$D['page'].'</dt><dd><code>'.$h($r['page']).'</code></dd>'
+				.'<dt>'.$D['unique'].'</dt><dd>'.($r['unique'] ? $D['yes'] : $D['no']).'</dd>'
+				.'<dt>'.$D['uid'].'</dt><dd><code>'.$h($r['userid']).'</code></dd>'
+				.'<dt>'.$D['info'].'</dt><dd>'.($r['info']
 				    ? '<code>'.$h($r['info']).'</code>'
-				    : '<span class="text-muted">нет</span>').'</dd>'
-				.'<dt>Дамп</dt><dd>'.($r['dump']
+				    : '<span class="text-muted">'.$D['no'].'</span>').'</dd>'
+				.'<dt>'.$D['dump'].'</dt><dd>'.($r['dump']
 				    ? '<pre>'.$h(
 				        json_encode(json_decode($r['dump']), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
 				        ?: $r['dump']).'</pre>'
-				    : '<span class="text-muted">нет</span>').'</dd>'
+				    : '<span class="text-muted">'.$D['no'].'</span>').'</dd>'
 				.'</dl>';
 
 			$out[] = [

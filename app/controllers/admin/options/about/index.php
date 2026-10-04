@@ -24,6 +24,14 @@
 
 	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
+	//Статическая GUI-структура — компаньон-ini [view] + перевод
+	$cfg = $APP->config->get();
+	$content = array_replace_recursive($content, (array) $cfg['view']);
+	$content = $APP->l10n->translate($content);
+
+	//Шаблон ждёт <title> скаляром — узел сплющиваем до head
+	$content['title'] = $content['title']['head'];
+
 	//Если нам передали постер
 	if ($_FILES)
 	{

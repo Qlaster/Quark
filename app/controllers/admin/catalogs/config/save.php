@@ -1,5 +1,9 @@
 <?php
 
+    //Статика сообщений — компаньон-ini [view] + перевод
+    $cfg = $APP->config->get();
+    $M   = $APP->l10n->translate(array_replace_recursive([], (array) $cfg['view']))['messages'];
+
     try
     {
         $isNew = ($_POST['_action'] == 'create');
@@ -27,6 +31,7 @@
 
         $orm = $APP->db->connect($catalog['db']);
         $existingColumns = array_keys((array) $orm->table($catalog['table'])->columns());
+        $patterns        = $APP->catalog->patterns();
 
         foreach ((array) $_POST['field'] as $fieldName => $fieldConfig)
         {
@@ -45,7 +50,7 @@
             // Новое поле — добавляем колонку в таблицу БД
             if (!in_array($fieldName, $existingColumns))
             {
-                $sqlType = _fieldTypeToSQL($fieldConfig['type']);
+                $sqlType = _fieldTypeToSQL($fieldConfig['type'], $patterns);
                 $orm->SQL("ALTER TABLE \"{$catalog['table']}\" ADD COLUMN \"{$fieldName}\" {$sqlType}");
             }
         }
@@ -62,33 +67,14 @@
     catch (Exception $e)
     {
         http_response_code(500);
-        echo '<div style="padding:20px;color:red">Ошибка: ' . htmlspecialchars($e->getMessage()) . '</div>';
+        echo '<div style="padding:20px;color:red">'.$M['error']['text'].' ' . htmlspecialchars($e->getMessage()) . '</div>';
     }
 
 
-    function _fieldTypeToSQL($type)
+    function _fieldTypeToSQL($type, $patterns)
     {
-        $map = [
-            'text'      => 'TEXT',
-            'int'       => 'INTEGER',
-            'integer'   => 'INTEGER',
-            'real'      => 'REAL',
-            'html'      => 'TEXT',
-            'link'      => 'TEXT',
-            'image'     => 'TEXT',
-            'video'     => 'TEXT',
-            'audio'     => 'TEXT',
-            'blob'      => 'BLOB',
-            'check'     => 'INTEGER DEFAULT 0',
-            'date'      => 'TEXT',
-            'datetime'  => 'TEXT',
-            'checkdate' => 'TEXT',
-            'input'     => 'TEXT',
-            'relation'  => 'INTEGER',
-            'files'     => 'TEXT',
-            'select'    => 'TEXT',
-            'textarea'  => 'TEXT',
-            'id'        => 'INTEGER',
-        ];
-        return $map[$type] ?? 'TEXT';
+        //Тип колонки объявляет сам паттерн ([patterns] <type>.sql).
+        //Типы вне паттернов (легаси, из UI не выбрать) — жёсткий маппинг
+        $legacy = ['id'=>'INTEGER', 'integer'=>'INTEGER', 'select'=>'TEXT', 'textarea'=>'TEXT'];
+        return $patterns[$type]['sql'] ?? $legacy[$type] ?? 'TEXT';
     }

@@ -7,9 +7,13 @@
 
 	header('Content-Type: application/json');
 
+	//Статика сообщений — компаньон-ini [view] + перевод
+	$cfg = $APP->config->get();
+	$M   = $APP->l10n->translate(array_replace_recursive([], (array) $cfg['view']))['messages'];
+
 	try
 	{
-		if (!$name = $_GET['catalog']) throw new Exception("Не указан каталог", 102);
+		if (!$name = $_GET['catalog']) throw new Exception($M['nocatalog']['text'], 102);
 
 		$login = trim((string) $_GET['login']);
 		$ACC   = $APP->catalog->access($name)->as($login !== '' ? $login : null);
@@ -22,7 +26,7 @@
 				'fields'  => $ACC['fields'][$op],
 			];
 
-		echo json_encode(['login' => $login ?: 'гость', 'ops' => $out]);
+		echo json_encode(['login' => $login ?: $M['guest']['text'], 'ops' => $out]);
 	}
 	catch (Exception $e)
 	{
