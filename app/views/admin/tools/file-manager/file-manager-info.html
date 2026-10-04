@@ -37,13 +37,13 @@
 -->
 											<div class="">
 												<ul class="list-unstyled project-files ">
-													<li>	<i class="fa fa-file"></i> Создан:	{$info['ctime']}			</li>
-													<li>	<i class="fa fa-download"></i> Изменен:	{$info['mtime']}			</li>
-													<li>	<i class="fa fa-file-picture-o"></i> Размер: {$info['size']}	</li>
+													<li>	<i class="fa fa-file"></i> {$labels['created']}	{$info['ctime']}			</li>
+													<li>	<i class="fa fa-download"></i> {$labels['modified']}	{$info['mtime']}			</li>
+													<li>	<i class="fa fa-file-picture-o"></i> {$labels['size']} {$info['size']}	</li>
 													{if $info['write']}
-														<li>	<i class="fa fa-unlock-alt"></i> доступ: <label class="label text-success">полный </label>	</li>
+														<li>	<i class="fa fa-unlock-alt"></i> {$labels['access']} <label class="label text-success">{$labels['full']} </label>	</li>
 													{else}
-														<li>	<i class="fa fa-lock"></i> доступ: <label class="label text-success">	ограниченный</label>	</li>
+														<li>	<i class="fa fa-lock"></i> {$labels['access']} <label class="label text-success">	{$labels['limited']}</label>	</li>
 													{end}
 	<!--
 													<li>	<i class="fa fa-file"></i> Владелец:			</li>
@@ -52,7 +52,7 @@
 
 												{if !$info['dir']}
 												<div class="text-center m-t-md">
-													<a href="admin/tools/codeeditor/?file={$info['path']}" class="btn btn-xs btn-primary">Редактировать</a>
+													<a href="admin/tools/codeeditor/?file={$info['path']}" class="btn btn-xs btn-primary">{$labels['edit']['head']}</a>
 												</div>
 												{end}
 											</div>

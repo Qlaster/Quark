@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>LockScreenr</title>
+    <title>{$title}</title>
 
     <link href="~/css/bootstrap.min.css" rel="stylesheet">
     <link href="~/font-awesome/css/font-awesome.css" rel="stylesheet">
@@ -19,7 +19,7 @@
 <body class="gray-bg">
 
 <div class="lock-word animated fadeInDown">
-    <span class="first-word">LOCKED</span><span>SCREEN</span>
+    <span class="first-word">{$lock['word']['first']}</span><span>{$lock['word']['second']}</span>
 </div>
     <div class="middle-box text-center lockscreen animated fadeInDown">
         <div>
@@ -31,13 +31,12 @@
 			{end}
             </div>
             <h3>{$profile['login']}</h3>
-            <p>Данный пользователь заблокировал доступ к панели в этой сессии браузера.
-            Блокировка будет автоматически снята по истечению времени сессии.</p>
+            <p>{$lock['info']}</p>
             <form class="m-t" role="form" method="post" action="admin/options/users/unlock">
                 <div class="form-group">
                     <input type="password" name="password" class="form-control" placeholder="******" required="">
                 </div>
-                <button type="submit" class="btn btn-primary block full-width">Unlock</button>
+                <button type="submit" class="btn btn-primary block full-width">{$lock['unlock']}</button>
             </form>
         </div>
     </div>

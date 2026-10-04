@@ -40,10 +40,10 @@
                 <div class="col-lg-12">
                 <div class="ibox float-e-margins">
                     <div class="text-center !float-e-margins p-xs">
-                    <span>Настройки отображения: </span>
-                    <a href="#" class="btn btn-xs btn-primary" id="lightVersion">Легкая версия</a>
-                    <a href="#" class="btn btn-xs btn-primary" id="darkVersion">Стандартная версия</a>
-                    <a href="#" class="btn btn-xs btn-primary" id="leftVersion">Изменить ориентацию</a>
+                    <span>{$display['head']}</span>
+                    <a href="#" class="btn btn-xs btn-primary" id="lightVersion">{$display['list']['light']['head']}</a>
+                    <a href="#" class="btn btn-xs btn-primary" id="darkVersion">{$display['list']['standard']['head']}</a>
+                    <a href="#" class="btn btn-xs btn-primary" id="leftVersion">{$display['list']['orientation']['head']}</a>
                     </div>
 
 
@@ -65,7 +65,7 @@
 
                                 <div class="vertical-timeline-content">
 									{if $_record['insert']}
-                                    <h3>Добавлено:</h3>
+                                    <h3>{$changes['list']['insert']['head']}</h3>
                                     <ul class="category-list" style="padding: 0">
 										{foreach $_record['insert'] as $_elem}
 											<li><a href="#" style="word-wrap: break-word;"> <i class="fa fa-circle text-navy"></i> <i class="text-navy">({$_elem['type']}) {$_elem['name']} </i> {$_elem['data']} </a></li>
@@ -75,7 +75,7 @@
                                     {end}
 
 									{if $_record['update']}
-                                    <h3>Изменено:</h3>
+                                    <h3>{$changes['list']['update']['head']}</h3>
                                     <ul class="category-list" style="padding: 0">
 										{foreach $_record['update'] as $_elem}
 											<li><a href="#" style="word-wrap: break-word;"> <i class="fa fa-circle text-warning"></i> <i class="text-navy">({$_elem['type']})  {$_elem['name']} </i> {$_elem['data']} </a></li>
@@ -91,7 +91,7 @@
                                     {end}
 
 									{if $_record['delete']}
-                                    <h3>Удалено:</h3>
+                                    <h3>{$changes['list']['delete']['head']}</h3>
                                     <ul class="category-list" style="padding: 0">
 										{foreach $_record['delete'] as $_elem}
 											<li><a href="#" style="word-wrap: break-word;"> <i class="fa fa-circle text-danger"></i> <i class="text-navy">({$_elem['type']}) {$_elem['name']}</i> {$_elem['data']} </a></li>

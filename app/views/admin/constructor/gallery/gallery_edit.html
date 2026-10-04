@@ -43,16 +43,16 @@
 								<div class="ibox-content">
 									<form method="post" class="form-horizontal">
 										<h2 class="!text-center ">
-											Настройки галереи 
+											{$form['head']} 
 											<div class="pull-right">
-												<button type="button" class="btn btn-white btn-rounded  btn-outline" onclick="$('#files').click();"> <i class="fa fa-paperclip"></i> Загрузить файлы </button>
-												<button type="button" class="btn btn-white btn-rounded  btn-outline  hidden" data-toggle="modal" data-target="#Modal-Image-Select"> <i class="fa fa-image"></i> Добавить из галереи </button>
-												<button type="submit" class="btn btn-primary  "> Сохранить</button>
+												<button type="button" class="btn btn-white btn-rounded  btn-outline" onclick="$('#files').click();"> <i class="fa fa-paperclip"></i> {$form['upload']} </button>
+												<button type="button" class="btn btn-white btn-rounded  btn-outline  hidden" data-toggle="modal" data-target="#Modal-Image-Select"> <i class="fa fa-image"></i> {$form['fromgallery']} </button>
+												<button type="submit" class="btn btn-primary  "> {$form['save']}</button>
 											</div>
 										</h2>
 										<div class="hr-line-dashed"></div>
 										<div class="form-group has-success">
-											<input type="text" class="form-control" name="head" placeholder="Заголовок галереи" value="{$gallery['head']}">
+											<input type="text" class="form-control" name="head" placeholder="{$form['galhead']}" value="{$gallery['head']}">
 										</div>
 										<!--
 											<div class="hr-line-dashed"></div>
@@ -61,8 +61,8 @@
 											<h2>Lightbox image gallery</h2>
 											-->
 										<div class="form-group row">								
-											<label class="">Описание</label>								
-											<textarea class="col-md-12 form-control" name="text" placeholder="Описание галереи" rows="3">{$gallery['text']}</textarea>
+											<label class="">{$form['desc']['label']}</label>								
+											<textarea class="col-md-12 form-control" name="text" placeholder="{$form['desc']['ph']}" rows="3">{$gallery['text']}</textarea>
 										</div>
 										<!--
 											<div class="hr-line-dashed"></div>
@@ -98,9 +98,9 @@
 														<div class="gallery-item-toolbox align-center text-center" style="" draggable="false">
 															<button type="submit" class="btn btn-white btn-sm" onclick="$('#item_{$_key}').remove();"><i class="fa fa-trash-o"></i></button>	
 															<a class="btn btn-white btn-sm" onclick="edit('img-{$_key}')"  data-toggle="modal" data-target="#editText" ><i class="fa fa-edit"></i></a>	
-															<input name="list[{$_key}][head]" type="text" class="form-control" value="{$_item['head']}" placeholder="Заголовок">							
-															<input name="list[{$_key}][text]" type="text" class="form-control" value="{$_item['text']}" placeholder="Информация" id="img-{$_key}"> 
-															<input name="list[{$_key}][link]" type="text" class="form-control" value="{$_item['link']}" placeholder="Ссылка">	
+															<input name="list[{$_key}][head]" type="text" class="form-control" value="{$_item['head']}" placeholder="{$form['item']['head']}">							
+															<input name="list[{$_key}][text]" type="text" class="form-control" value="{$_item['text']}" placeholder="{$form['item']['info']}" id="img-{$_key}"> 
+															<input name="list[{$_key}][link]" type="text" class="form-control" value="{$_item['link']}" placeholder="{$form['item']['link']}">	
 														</div>
 													</div>
 												{end}
@@ -136,7 +136,7 @@
                          <div class="modal-content">
                              <div class="modal-header">
                                  <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                                 <h4 class="modal-title">Тело слайда</h4>
+                                 <h4 class="modal-title">{$modal['head']}</h4>
                              </div>
 <!--
                              <div class="modal-body"></div>

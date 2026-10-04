@@ -31,9 +31,9 @@
 
 
 								<div class="!btn-group pull-right">
-									<button class="btn btn-white reindex-btn "><i class="fa fa-refresh"></i> Индексировать</button>
+									<button class="btn btn-white reindex-btn "><i class="fa fa-refresh"></i> {$ctrl['index']['head']}</button>
 									<input id="{$uid='upload-'.time()}" class="hidden" name="files" type="file"  onchange="uploadFile(this)">
-									<label class="btn btn-primary !btn-block " for="{$uid}">Загрузить файл</label>
+									<label class="btn btn-primary !btn-block " for="{$uid}">{$ctrl['upload']['head']}</label>
                                 </div>
 
 
@@ -114,11 +114,11 @@
 									<tr>
 										<th>#</th>
 										<th></th>
-										<th>Название </th>
-										<th>Размер </th>
-										<th>Путь </th>
-										<th>Тип</th>
-										<th>Изменено</th>
+										<th>{$table['cols']['list']['name']['head']} </th>
+										<th>{$table['cols']['list']['size']['head']} </th>
+										<th>{$table['cols']['list']['path']['head']} </th>
+										<th>{$table['cols']['list']['type']['head']}</th>
+										<th>{$table['cols']['list']['modified']['head']}</th>
 									</tr>
 									</thead>
 									<tbody>
@@ -281,11 +281,11 @@
 			if (state)
 			{
 				btn.children().addClass('fa-spin');
-				btn.contents().last().replaceWith(" Обновление");
+				btn.contents().last().replaceWith(" {$ctrl['index']['run']}");
 			} else {
 				setTimeout(function () {
 					btn.children().removeClass('fa-spin');
-					btn.contents().last().replaceWith(" Индексировать");
+					btn.contents().last().replaceWith(" {$ctrl['index']['head']}");
 				}, 2000);
 			}
 		}

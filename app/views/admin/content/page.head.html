@@ -97,13 +97,12 @@
 		<!--
 							<a href="mailbox.html" class="btn btn-white btn-sm" data-toggle="tooltip" data-placement="top" title="Move to draft folder"><i class="fa fa-pencil"></i> Draft</a>
 		-->
-							<a id="btn-save" class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Сохранить изменения"><i class="fa fa-check-square-o"></i> Сохранить </a>
+							<a id="btn-save" class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="{$save['title']}"><i class="fa {$save['icon']}"></i> {$save['head']} </a>
 						</div>
 						<h2>
-							Содержимое заголовка <b> &lt;head&gt; </b>
+							{$$help['head']}
 						</h2>
-						<span>Тег &lt;head&gt; предназначен для хранения служебной информации о странице. Он располагается первым в теге &lt;html&gt;, сразу перед &lt;body&gt;.
-						Внутри &lt;head&gt; обычно содержится заголовок, ключевые слова, описание страницы и другие служебные данные. Также внутри него подключаются внешние ресурсы, например, стили. Содержимое этого тега не отображается на странице напрямую.</span>
+						<span>{$$help['text']}</span>
 					</div>
 						<div class="mail-box">
 
@@ -191,7 +190,7 @@
 					})
 					.fail(function( data )
 					{
-						toastr.warning('Возникла ошибка');
+						toastr.warning($('.toast-msgs').data('error'));
 					});
 			});
 
@@ -210,6 +209,7 @@
         };
 
     </script>
+	<div class="toast-msgs hidden" data-error="{$$toast['error']}"></div>
 </body>
 
 </html>

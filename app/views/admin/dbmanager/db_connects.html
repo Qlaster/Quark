@@ -34,8 +34,8 @@
                            <div class="pull-left m-r-md">
                               <i class="fa fa fa-server text-navy mid-icon"></i>
                            </div>
-                           <h2>Управление подключениями к базам данных</h2>
-                           <span>Все созданные тут подключения будут доступны из любой точки приложения через вызов <b>$APP->db->connect('<i>имя подключения</i>')</b></span>
+                           <h2>{$banner['head']}</h2>
+                           <span>{$banner['info']} <b>$APP->db->connect('<i>{$banner['param']}</i>')</b></span>
                         </div>
                      </div>
                      <div class="ibox-content m-b-sm border-bottom">
@@ -48,7 +48,7 @@
                               -->
                            <div class="form-group">
 							   <div class="input-group ">
-								  <input  placeholder="Драйвер DSN" id='type' name='type' class="form-control">
+								  <input  placeholder="{$form['type']['placeholder']}" id='type' name='type' class="form-control">
 								  <div class="input-group-btn">
 									 <button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">
 									 <span class="caret"></span>
@@ -65,21 +65,21 @@
 							   </div>
 						   </div>
                            <div class="form-group">
-                              <label for="exampleInputPassword2" class="sr-only">Хост (если база на сервере)</label>
-                              <input name="host" placeholder="Хост (если СУБД)" title="Хост (если СУБД)" class="form-control">
+                              <label for="exampleInputPassword2" class="sr-only">{$form['host']['label']}</label>
+                              <input name="host" placeholder="{$form['host']['placeholder']}" title="{$form['host']['placeholder']}" class="form-control">
                            </div>
                            <div class="form-group">
-                              <label for="exampleInputPassword2" class="sr-only">Имя базы (или название файла)</label>
-                              <input name="dbname" placeholder="Имя базы (или файла)" title="Имя базы (или файла)" class="form-control">
+                              <label for="exampleInputPassword2" class="sr-only">{$form['dbname']['label']}</label>
+                              <input name="dbname" placeholder="{$form['dbname']['placeholder']}" title="{$form['dbname']['placeholder']}" class="form-control">
                            </div>
 
                            <div class="form-group">
-                              <label for="exampleInputPassword2" class="sr-only">Логин</label>
-                              <input name="login" placeholder="Логин" class="form-control">
+                              <label for="exampleInputPassword2" class="sr-only">{$form['login']}</label>
+                              <input name="login" placeholder="{$form['login']}" class="form-control">
                            </div>
                            <div class="form-group">
-                              <label for="exampleInputPassword2" class="sr-only">Пароль</label>
-                              <input name="password" placeholder="Пароль" class="form-control">
+                              <label for="exampleInputPassword2" class="sr-only">{$form['password']}</label>
+                              <input name="password" placeholder="{$form['password']}" class="form-control">
                            </div>
                            <!--
                               <div class="form-group">
@@ -94,16 +94,16 @@
                               </div>
                               -->
                            <div class="form-group">
-								<button class="btn btn-primary btn-outline btn-block" type="submit">Создать подключение</button>
+								<button class="btn btn-primary btn-outline btn-block" type="submit">{$form['submit']}</button>
 						   </div>
                         </form>
                      </div>
                      <div class="ibox-content forum-container">
                         <div class="forum-title">
                            <div class="pull-right forum-desc">
-                              <samll>Всего: {echo count($table['db'])}</samll>
+                              <samll>{$list['total']} {echo count($table['db'])}</samll>
                            </div>
-                           <h3>Созданные подключения</h3>
+                           <h3>{$list['head']}</h3>
                         </div>
                         {foreach $table['db'] as $dbname => $db}
                         <div class="forum-item {$db['active']}">
@@ -123,23 +123,23 @@
                                  </span>
                                  <div>
 									{if is_numeric($db['size'])}
-										<small> Mb</small>
+										<small>{$list['mb']}</small>
                                     {end}
                                  </div>
                               </div>
                               <div class="col-md-1 forum-info">
                                  {if $db['active']}
-                                 <div class="btn btn-primary btn-circle btn-lg btn-outline" type="button" title="соединение установлено"><i class="fa fa-check"></i></div>
+                                 <div class="btn btn-primary btn-circle btn-lg btn-outline" type="button" title="{$list['online']}"><i class="fa fa-check"></i></div>
                                  {else}
-                                 <div class="btn btn-default btn-circle btn-lg btn-outline" type="button" title="нет подключения"><i class="fa fa-times"></i></div>
+                                 <div class="btn btn-default btn-circle btn-lg btn-outline" type="button" title="{$list['offline']}"><i class="fa fa-times"></i></div>
                                  {end}
                               </div>
                               <div class="col-md-2 ">
                                  <a type="button" class="btn btn-xs btn-primary  btn-outline btn-block" href="admin/db/editor?dbname={$dbname}">
-                                    <!-- <i class="fa fa-edit"></i>--> Редактировать
+                                    <!-- <i class="fa fa-edit"></i>--> {$list['edit']}
                                  </a>
                                  <a type="button" class="btn btn-xs btn-danger   btn-outline btn-block" href="admin/db/delete?head={$dbname}">
-                                    <!-- <i class="fa fa-close "></i>--> Удалить подключение
+                                    <!-- <i class="fa fa-close "></i>--> {$list['delete']}
                                  </a>
                               </div>
                               <div class="col-md-1 forum-info">

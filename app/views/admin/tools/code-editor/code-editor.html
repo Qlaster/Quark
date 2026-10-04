@@ -36,7 +36,7 @@
 		<base href="{$$base}" id='baseurl' data-info='../../'>
 	</head>
 	<body>
-		<div id="wrapper">
+		<div id="wrapper" data-ok="{$js['ok']}" data-neterr="{$js['neterr']}">
 
 		<!--Главное меню слева-->
 		{require "../../~section/mainmenu.html"}
@@ -225,7 +225,7 @@
 
 				$.ajax({
 					type: "POST",
-					url: "admin/tools/codeeditor/save.php",  <!--путь файла обработчика  -->
+					url: "admin/tools/codeeditor/save",  <!--путь файла обработчика  -->
 					data: "text="+$("textarea#"+id).val(),  <!--textarea   -->
 					success: function(html)
 					{
@@ -253,7 +253,7 @@
 				 success: function(response)
 				 {
 					 //~ console.log(jQuery("#"+formMain).serialize());
-					document.getElementById(result_id).innerHTML = "<i class='fa fa-circle text-success'>Успешно</i> ";
+					document.getElementById(result_id).innerHTML = "<i class='fa fa-circle text-success'>" + $('#wrapper').data('ok') + "</i> ";
 
 					//Удалим запись об удачном сохранении через 2 секунды
 					var timerId = setTimeout(function tick()
@@ -273,8 +273,8 @@
 				 },
 				 error: function(response)
 				 {
-					document.getElementById(result_id).innerHTML = "<i class='fa fa-circle text-alert'></i> " + "Возникла сетевая ошибка при отправке формы! Попробуйте еще раз";
-					toastr.error(response, "Возникла сетевая ошибка при отправке формы! Попробуйте еще раз");
+					document.getElementById(result_id).innerHTML = "<i class='fa fa-circle text-alert'></i> " + $('#wrapper').data('neterr');
+					toastr.error(response, $('#wrapper').data('neterr'));
 				 }
 				 });
 			}

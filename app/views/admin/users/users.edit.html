@@ -52,13 +52,13 @@
 			}
 		</style>
 
-        <form enctype="multipart/form-data" id="form-edit" method='post' action='admin/options/users/save'>
+        <form enctype="multipart/form-data" id="form-edit" data-presetname="{$js['presetname']}" data-done="{$js['done']}" data-preseterr="{$js['preseterr']}" method='post' action='admin/options/users/save'>
         <div class="wrapper wrapper-content">
             <div class="row animated fadeInRight">
                 <div class="col-md-3">
                     <div class="ibox float-e-margins">
                         <div class="ibox-title">
-                            <h5>Профиль пользователя</h5>
+                            <h5>{$profile['head']}</h5>
                         </div>
 
 								<!--LOGO--->
@@ -92,7 +92,7 @@
 <!--
 												<input type="file" name="file-1[]" id="file-1" class="inputfile1" data-multiple-caption="{count} files selected" multiple />
 -->
-												<label for="file-1" class="btn btn-blockbtn btn-outline btn-default"> <span>Load new avatar&hellip;</span></label>
+												<label for="file-1" class="btn btn-blockbtn btn-outline btn-default"> <span>{$profile['avatar']}</span></label>
 
 <!--
 												<input type="file" name="f" id='file' class="inputfile">
@@ -109,15 +109,15 @@
 
 
 										<div class="ibox-content profile-content">
-											<h4 class="media-heading">Описание</h4>
-											<textarea style="width:100%;" class="form-control" name="info" placeholder="Введите описание для этого пользователя">{$user['info']}</textarea>
+											<h4 class="media-heading">{$profile['desc']['head']}</h4>
+											<textarea style="width:100%;" class="form-control" name="info" placeholder="{$profile['desc']['placeholder']}">{$user['info']}</textarea>
 										</div>
 
                             </div>
 
 
                             <div class="widget-text-box">
-                                <h4><strong>Учетная запись</strong></h4>
+                                <h4><strong>{$account['head']}</strong></h4>
 
 								<div class="form-horizontal">
 <!--
@@ -129,40 +129,40 @@
 										<div class="col-lg-12">
 											{if $user['login'] == ''}
 												<div class="has-success">
-													<span class="help-block m-b-none">Enter login new user</span>
-													<input type="text" placeholder="Login" class="form-control" name="login" required autocomplete="new-login">
+													<span class="help-block m-b-none">{$account['newlogin']['help']}</span>
+													<input type="text" placeholder="{$account['newlogin']['label']}" class="form-control" name="login" required autocomplete="new-login">
 													<p></p>
 												</div>
 
 												<div class="has-success">
-													<input type="password" placeholder="Password" class="form-control" name="password" required autocomplete="new-password">
+													<input type="password" placeholder="{$account['newpassword']}" class="form-control" name="password" required autocomplete="new-password">
 												</div>
 											{else}
-												<p>Пароль:</p>
-												<input type="password" placeholder="New password" class="form-control" name="password" autocomplete="new-password">
+												<p>{$account['password']['label']}</p>
+												<input type="password" placeholder="{$account['password']['new']}" class="form-control" name="password" autocomplete="new-password">
 											{end}
 											<p></p>
-											<p>Дополнительная информация:</p>
+											<p>{$account['more']}</p>
 											<span class="help-block m-b-none"></span>
-											<input type="text" placeholder="name" class="form-control" name="name" value="{$user['name']}" autocomplete="off">
+											<input type="text" placeholder="{$account['name']}" class="form-control" name="name" value="{$user['name']}" autocomplete="off">
 
 											<span class="help-block m-b-none"></span>
-											<input type="email" placeholder="Email" class="form-control" name="email" value="{$user['email']}" autocomplete="off">
+											<input type="email" placeholder="{$account['email']}" class="form-control" name="email" value="{$user['email']}" autocomplete="off">
 
 											<span class="help-block m-b-none"></span>
 
 <!--
-											<input type="hidden" placeholder="New password" class="form-control" value="{$user['hash']}">
+											<input type="hidden" placeholder="{$account['password']['new']}" class="form-control" value="{$user['hash']}">
 -->
 										</div>
 									</div>
 
 									<div class="form-group">
 										<div class="col-lg-12">
-											<h4><strong>Group</strong></h4>
+											<h4><strong>{$account['group']['head']}</strong></h4>
 											<p>
-												<a class="btn btn-default btn-rounded" href="#">Default</a>
-												<a class="btn btn-default btn-rounded" href="#">Admin group</a>
+												<a class="btn btn-default btn-rounded" href="#">{$account['group']['default']}</a>
+												<a class="btn btn-default btn-rounded" href="#">{$account['group']['admin']}</a>
 <!--
 												<a class="btn btn-primary btn-rounded" href="#">Primary</a>
 												<a class="btn btn-success btn-rounded" href="#">Success</a>
@@ -180,9 +180,9 @@
 										<div class="col-lg-offset-2 col-lg-10">
 											<div class="checkbox i-checks">
 												{if $user['disable']}
-													<label> <input type="checkbox" name="disable" checked value="true"><i></i> Disable profile </label>
+													<label> <input type="checkbox" name="disable" checked value="true"><i></i> {$account['disable']} </label>
 												{else}
-													<label> <input type="checkbox" name="disable" ><i></i> Disable profile </label>
+													<label> <input type="checkbox" name="disable" ><i></i> {$account['disable']} </label>
 												{end}
 												<label></label>
 											</div>
@@ -231,13 +231,13 @@
                                     <div class="row">
 										{if $user['login'] != ''}
 										<div class="col-md-5">
-											<button type="button" class="btn btn-danger btn-outline  btn-block" data-toggle="modal" data-target="#DelModalWindow"> Delete</button>
+											<button type="button" class="btn btn-danger btn-outline  btn-block" data-toggle="modal" data-target="#DelModalWindow"> {$account['delete']}</button>
 										</div>
 										<div class="col-md-7">
-											<button type="submit" class="btn btn-primary  btn-block"><i class="fa fa-file-text"></i> Save </button>
+											<button type="submit" class="btn btn-primary  btn-block"><i class="fa fa-file-text"></i> {$account['save']} </button>
 										</div>
 										{else}
-											<button type="submit" class="btn btn-primary  btn-block"><i class="fa fa-file-text"></i> Create profile </button>
+											<button type="submit" class="btn btn-primary  btn-block"><i class="fa fa-file-text"></i> {$account['create']} </button>
 										{end}
 
 										<!--Modal window-->
@@ -245,17 +245,17 @@
 						                    <div class="modal-dialog">
 						                        <div class="modal-content animated flipInY">
 						                            <div class="modal-header">
-						                                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-						                                <h4 class="modal-title">Удаление профиля "<strong>{$user['login']}" </strong></h4>
+						                                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">{$modal['srclose']}</span></button>
+						                                <h4 class="modal-title">{$modal['head']} "<strong>{$user['login']}" </strong></h4>
 						                                <small class="font-bold">{$user['name']}</small>
 						                            </div>
 						                            <div class="modal-body">
-						                                <p>Удаление профиля пользователя отменит все привелегии доступа к администрированию. Пользователь удаляется безвозвратно. </p>
-														<p>Если учетная запись временно не нужна, её целесообразно отключить.</p>
+						                                <p>{$modal['warn']} </p>
+														<p>{$modal['alt']}</p>
 						                            </div>
 						                            <div class="modal-footer">
-						                                <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
-						                                <a href="admin/options/users/del?login={$user['login']}"> <button type="button" class="btn btn-danger">Удалить учетную запись</button> </a>
+						                                <button type="button" class="btn btn-white" data-dismiss="modal">{$modal['close']}</button>
+						                                <a href="admin/options/users/del?login={$user['login']}"> <button type="button" class="btn btn-danger">{$modal['delete']}</button> </a>
 						                            </div>
 						                        </div>
 						                    </div>
@@ -279,14 +279,14 @@
                 <div class="col-md-9">
                     <div class="ibox float-e-margins">
                         <div class="ibox-title">
-                            <h5>Список запрещенных методов</h5>
+                            <h5>{$deny['head']}</h5>
                             <div class="ibox-tools mr-2">
 
                                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                                    <i class="fa fa-list"></i> Роли
+                                    <i class="fa fa-list"></i> {$deny['roles']}
                                 </a>
                                 <ul class="dropdown-menu dropdown-user">
-									<li><a onclick="presetSave()"><b>Сохранить текущий</b></a></li>
+									<li><a onclick="presetSave()"><b>{$deny['savepreset']}</b></a></li>
 									<li><hr style="margin:0"></li>
 
 									{foreach (array) $presets as $_preset}
@@ -484,7 +484,7 @@
 
             function presetSave()
 			{
-				var newname = prompt('Введите название пресета', '');
+				var newname = prompt($("#form-edit").data("presetname"), "");
 				if (newname == null) return false;
 				$.ajax({
 					type: 'POST',
@@ -515,11 +515,11 @@
 								$('[data-info="'+key+'"]').prop("checked", true);
 							}
 
-							toastr.success('Готово');
+							toastr.success($("#form-edit").data("done"));
 						},
 						error:  function(data)
 						{
-							toastr.warning('Возникла ошибка применения пресета');
+							toastr.warning($("#form-edit").data("preseterr"));
 						}
 				});
 			}

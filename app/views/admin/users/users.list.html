@@ -107,9 +107,9 @@
 								<div class="m-t-xs font-bold">{$_user['login']}</div>
 								<div class="m-t-xs">
 									{if $_user['disable']}
-										<span class="label">Disable</span>
+										<span class="label">{$card['disable']}</span>
 									{else}
-										<span class="label label-primary">Active</span>
+										<span class="label label-primary">{$card['active']}</span>
 									{end}
 								</div>
 
@@ -118,7 +118,7 @@
 						<div class="col-sm-8">
 							<h3><strong>{$_user['name']}</strong>&nbsp;</h3>
 							<p>
-								<i class="fa fa-edit"></i> <strong>Описание:</strong>
+								<i class="fa fa-edit"></i> <strong>{$card['desc']}</strong>
 							</p>
 							<p>{$_user['info']}</p>
 <!--

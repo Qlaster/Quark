@@ -40,7 +40,7 @@
                 <div class="col-md-4">
                     <div class="ibox float-e-margins">
                         <div class="ibox-title">
-                            <h5>Графический материал</h5>
+                            <h5>{$poster['head']}</h5>
                         </div>
                         <div>
                             <div class="ibox-content no-padding border-left-right">
@@ -57,7 +57,7 @@
 												<input id="poster-file" name="poster" type="file" onchange="$('#form-poster').submit();">
 											</div>
 											<div class="col-md-12">
-												<button type="button" onclick="$('#poster-file').trigger('click');" class="btn btn-primary btn-sm btn-block"><i class="fa fa-image"></i> Загрузить новый постер </button>
+												<button type="button" onclick="$('#poster-file').trigger('click');" class="btn btn-primary btn-sm btn-block"><i class="fa fa-image"></i> {$poster['button']} </button>
 											</div>
 <!--
                                         <div class="col-md-6">
@@ -67,8 +67,8 @@
 										</form>
                                     </div>
 								</div>
-								<h4><strong>Геопривязка</strong></h4>
-                                <p><i class="fa fa-map-marker"></i> Russia </p>
+								<h4><strong>{$poster['geo']}</strong></h4>
+                                <p><i class="fa fa-map-marker"></i> {$poster['country']} </p>
 <!--
                                 <h5>
                                     About me
@@ -94,7 +94,7 @@
                 <div class="col-md-8">
                     <div class="ibox float-e-margins">
                         <div class="ibox-title">
-                            <h5>Описание</h5>
+                            <h5>{$info['head']}</h5>
                             <div class="ibox-tools">
                                 <a class="collapse-link">
                                     <i class="fa fa-chevron-up"></i>
@@ -116,10 +116,10 @@
 									<h3 class="m-t-none m-b">Sign in</h3>
 									<p>Sign in today for more expirience.</p>
 -->
-									<form id="form-info" role="form" enctype="multipart/form-data">
-										<div class="form-group"><label>Название компании</label> <input type="text" name="name" value="{$form_info['name']}" placeholder="Название компании" class="form-control"></div>
-										<div class="form-group"><label>Приветствие</label> <input type="text" name="head" value="{$form_info['head']}" placeholder="Приветствие" class="form-control"></div>
-										<div class="form-group"><label>Описание</label> <textarea name="text" value="{$forn_info['text']}" placeholder="Описание и справочная информация" class="form-control"></textarea></div>
+									<form id="form-info" data-problem="{$js['problem']}" data-neterr="{$js['neterr']}" role="form" enctype="multipart/form-data">
+										<div class="form-group"><label>{$info['name']}</label> <input type="text" name="name" value="{$form_info['name']}" placeholder="{$info['name']}" class="form-control"></div>
+										<div class="form-group"><label>{$info['greet']}</label> <input type="text" name="head" value="{$form_info['head']}" placeholder="{$info['greet']}" class="form-control"></div>
+										<div class="form-group"><label>{$info['desc']['label']}</label> <textarea name="text" value="{$forn_info['text']}" placeholder="{$info['desc']['placeholder']}" class="form-control"></textarea></div>
 
 										<div>
 <!--
@@ -139,7 +139,7 @@
 
 
 
-                                <button class="btn btn-primary !btn-block m" onclick="saveAbout()"><i class="fa fa-save"></i> Сохранить </button>
+                                <button class="btn btn-primary !btn-block m" onclick="saveAbout()"><i class="fa fa-save"></i> {$info['save']} </button>
 
                             </div>
 
@@ -197,7 +197,7 @@
 					data: $('#form-info').serialize(),
 					success: function (response)
 					{
-						response == 'OK' ? toastr.success(response, '') : toastr.warning(response, 'Возникли проблемы');
+						response == 'OK' ? toastr.success(response, '') : toastr.warning(response, $("#form-info").data("problem"));
 						//~ toastr.options =
 						//~ {
 							//~ closeButton: true,
@@ -209,7 +209,7 @@
 					},
 					error: function ()
 					{
-						toastr.error('', 'Возникла ошибка клиент-сервера!');
+						toastr.error("", $("#form-info").data("neterr"));
 					}
 				});
 

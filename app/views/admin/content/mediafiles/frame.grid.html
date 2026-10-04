@@ -18,7 +18,7 @@
 								<div class="col-md-4 col-xs-8 p-l-none !p-r-none" style="max-width:300px">
 									<form class="form-filter" action="{$form['filter']['action']}" method="GET">
 									<div class="input-group">
-										<input type="text" class="form-control search-input" name="like" value="{$form['filter']['like']['value']}" placeholder="Поиск: имя файла + enter">
+										<input type="text" class="form-control search-input" name="like" value="{$form['filter']['like']['value']}" placeholder="{$form['filter']['like']['placeholder']}">
 										<span class="input-group-btn">
 											<button type="submit" class="btn btn-white"><i class="fa fa-search"></i></button>
 										</span>
@@ -34,7 +34,7 @@
 									{end}
 
 									<input id="{$uid='upload-'.time()}" class="hidden" name="files" type="file"  onchange="mediafilesUpload(this)">
-									<label class="btn btn-primary !btn-block !col-xs-6" for="{$uid}">Загрузить файл</label>
+									<label class="btn btn-primary !btn-block !col-xs-6" for="{$uid}">{$ctrl['upload']['head']}</label>
                                 </div>
 
 
@@ -83,7 +83,7 @@
 
 												<div style="position: absolute; right:0.5em; top:0.5em; z-index:10">
 <!--
-													<small class=" text-primary" > <button title="Удалить файл" class="button-file-delete fa fa-trash btn text-primary !btn-white btn-default btn-circle btn-outline"></button> </small>
+													<small class=" text-primary" > <button title="{$ctrl['delfile']['title']}" class="button-file-delete fa fa-trash btn text-primary !btn-white btn-default btn-circle btn-outline"></button> </small>
 -->
 							<!--
 													<small class=" text-primary"> <button  class="fa fa-download btn btn-white btn-default btn-circle btn-outline"></button> </small>
@@ -210,7 +210,7 @@
 				//Ничего не выбрано
 				if (!sfiles?.length) return false;
 				//Не подтвердили
-				if (!confirm("Вы уверены, что хотите выполнить это действие?")) return false;
+				if (!confirm("{$ctrl['delfile']['confirm']}")) return false;
 
 				$.ajax({
 					type: 'POST',
@@ -301,11 +301,11 @@
 			if (state)
 			{
 				btn.children().addClass('fa-spin');
-				btn.contents().last().replaceWith(" Обновление");
+				btn.contents().last().replaceWith(" {$ctrl['index']['run']}");
 			} else {
 				setTimeout(function () {
 					btn.children().removeClass('fa-spin');
-					btn.contents().last().replaceWith(" Индексировать");
+					btn.contents().last().replaceWith(" {$ctrl['index']['head']}");
 				}, 2000);
 			}
 		}

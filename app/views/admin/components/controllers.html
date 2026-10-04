@@ -160,7 +160,7 @@
 						<div class="col-lg-4">
 							<div class="ibox float-e-margins"  >
 								<div class="ibox-title">
-									<h5>Подробнее о ссылке</h5>
+									<h5>{$details['head']}</h5>
 									<div class="ibox-tools">
 										<a class="collapse-link">
 										<i class="fa fa-chevron-up"></i>
@@ -171,7 +171,7 @@
 									</div>
 								</div>
 								<div class="ibox-content" >
-									<div class="row" id="page-info"  style="position: sticky; top:0;"></div>
+									<div class="row" id="page-info"  style="position: sticky; top:0;" data-view="{$js['view']}" data-edit="{$js['edit']}"></div>
 								</div>
 								
 							</div>
@@ -339,8 +339,8 @@
 				htmlData += "<span> &nbsp; </span>";
 				htmlData += `<div class="!col-md-12 mt-4 pt-4 text-center">
 								
-									<a class="btn !btn-block btn-sm !col-md-6 !col-sm-12 btn-w-m btn-outline btn-primary" href="${pageInfo.link}" target="_blank">	<i class="fa fa-eye"></i>View</a>
-									<a class="btn !btn-block btn-sm !col-md-6 !col-sm-12 btn-w-m btn-outline btn-info" href="${pageInfo.edit}" target="_blank">	<i class="fa fa-edit"></i>Edit</a>
+									<a class="btn !btn-block btn-sm !col-md-6 !col-sm-12 btn-w-m btn-outline btn-primary" href="${pageInfo.link}" target="_blank">	<i class="fa fa-eye"></i>${$("#page-info").data("view")}</a>
+									<a class="btn !btn-block btn-sm !col-md-6 !col-sm-12 btn-w-m btn-outline btn-info" href="${pageInfo.edit}" target="_blank">	<i class="fa fa-edit"></i>${$("#page-info").data("edit")}</a>
 								
 							</div>`;
 				

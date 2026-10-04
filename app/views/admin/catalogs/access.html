@@ -76,7 +76,7 @@
                         <!-- ===== Разрешить: whitelist ===== -->
                         <div class="ibox float-e-margins">
                             <div class="ibox-title">
-                                <h5><i class="fa fa-check-circle text-navy"></i> Разрешить <small class="text-muted">субъект без правил здесь — всё запрещено</small></h5>
+                                <h5><i class="{$allow['icon']} text-navy"></i> {$allow['head']} <small class="text-muted">{$allow['sub']}</small></h5>
                                 <div class="ibox-tools">
                                     <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                                 </div>
@@ -84,7 +84,7 @@
                                     <div class="ibox-content">
                                         <div id="access-rules"><!-- правила рендерит JS --></div>
                                         <button type="button" class="btn btn-white btn-xs" data-add="access">
-                                            <i class="fa fa-plus"></i> Добавить правило
+                                            <i class="{$button['add']['icon']}"></i> {$button['add']['head']}
                                         </button>
                                     </div>
                                 </div>
@@ -92,7 +92,7 @@
                                 <!-- ===== Запретить ===== -->
                                 <div class="ibox float-e-margins">
                                     <div class="ibox-title">
-                                        <h5><i class="fa fa-ban text-danger"></i> Запретить <small class="text-muted">вычитается из разрешённого</small></h5>
+                                        <h5><i class="{$deny['icon']} text-danger"></i> {$deny['head']} <small class="text-muted">{$deny['sub']}</small></h5>
                                         <div class="ibox-tools">
                                             <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                                         </div>
@@ -100,7 +100,7 @@
                                     <div class="ibox-content">
                                         <div id="denied-rules"></div>
                                         <button type="button" class="btn btn-white btn-xs" data-add="denied">
-                                            <i class="fa fa-plus"></i> Добавить правило
+                                            <i class="{$button['add']['icon']}"></i> {$button['add']['head']}
                                         </button>
                                     </div>
                                 </div>
@@ -109,7 +109,7 @@
                                 {if count($inherited)}
                                 <div class="ibox float-e-margins">
                                     <div class="ibox-title">
-                                        <h5><i class="fa fa-link"></i> Наследовано от других масок каталога <small class="text-muted">правится в своих каталогах</small></h5>
+                                        <h5><i class="{$inherited['icon']}"></i> {$inherited['head']} <small class="text-muted">{$inherited['sub']}</small></h5>
                                         <div class="ibox-tools">
                                             <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                                         </div>
@@ -118,9 +118,9 @@
                                         <table class="table table-condensed">
                                             <thead>
                                             <tr>
-                                                <th style="width:15%">Маска каталога</th>
-                                                <th style="width:22%">Субъект</th>
-                                                <th>Права</th>
+                                                <th style="width:15%">{$th['mask']}</th>
+                                                <th style="width:22%">{$th['subject']}</th>
+                                                <th>{$th['ops']}</th>
                                             </tr>
                                             </thead>
                                             {foreach $inherited as $rule}
@@ -141,7 +141,7 @@
                                 <!-- ===== Проверка результата ===== -->
                                 <div class="ibox float-e-margins">
                                     <div class="ibox-title">
-                                        <h5><i class="fa fa-bug"></i> Проверить логин</h5>
+                                        <h5><i class="{$check['icon']}"></i> {$check['head']}</h5>
                                         <div class="ibox-tools">
                                             <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                                         </div>
@@ -149,21 +149,21 @@
                                     <div class="ibox-content">
                                         <div class="input-group" style="max-width:420px">
                                             <input type="text" id="acl-check-login" class="form-control input-sm"
-                                                   list="acl-subjects" placeholder="логин (пусто = гость)">
+                                                   list="acl-subjects" placeholder="{$check['placeholder']}">
                                             <span class="input-group-btn">
-                                                <button type="button" id="acl-check-btn" class="btn btn-sm btn-info">Проверить</button>
+                                                <button type="button" id="acl-check-btn" class="btn btn-sm btn-info">{$check['button']}</button>
                                             </span>
                                         </div>
-                                        <div id="acl-check-result" style="margin-top:10px"></div>
+                                        <div id="acl-check-result" style="margin-top:10px" data-allowed="{$js['allowed']}" data-yes="{$js['yes']}" data-no="{$js['no']}" data-all="{$js['all']}" data-fields="{$js['fields']}" data-error="{$js['error']}"></div>
                                     </div>
                                 </div>
 
                                 <div class="text-right">
-                                    <a href="admin/catalogs/" class="btn btn-white">
-                                        <i class="fa fa-arrow-left"></i> К списку
+                                    <a href="{$button['back']['link']}" class="btn btn-white">
+                                        <i class="{$button['back']['icon']}"></i> {$button['back']['head']}
                                     </a>
                                     <button type="submit" class="btn btn-primary">
-                                        <i class="fa fa-save"></i> Сохранить права
+                                        <i class="{$button['save']['icon']}"></i> {$button['save']['head']}
                                     </button>
                                 </div>
                             </form>
@@ -185,14 +185,14 @@
      Правило: таблица «операция × поля», субъект — левая верхняя
      ячейка шапки. Строки операций и колонки полей вставляет JS.
 ============================================================= -->
-<template id="tpl-rule">
+<template id="tpl-rule" data-na="{$tpl['na']['text']}">
     <div class="acl-rule">
         <table class="table acl-table">
             <thead>
                 <tr>
                     <th class="acl-subject-h"><!-- субъект вставит JS --></th>
                     <!-- <th> полей вставит JS -->
-                    <th class="acl-where-h">SQL условие дополнительного отбора (фильтр)</th>
+                    <th class="acl-where-h">{$tpl['where']['head']}</th>
                 </tr>
             </thead>
             <tbody><!-- строки операций вставит JS --></tbody>
@@ -204,12 +204,12 @@
 <template id="tpl-subject-cell">
     <input type="hidden" name="rules[[tIdx]][section]" value="[tSection]">
     <div class="acl-subject-box">
-        <button type="button" class="btn btn-danger btn-outline btn-xs rule-remove" title="Удалить правило">
+        <button type="button" class="btn btn-danger btn-outline btn-xs rule-remove" title="{$tpl['remove']['title']}">
             <i class="fa fa-times"></i>
         </button>
         <input type="text" name="rules[[tIdx]][subject]" class="form-control input-sm"
-               list="acl-subjects" placeholder="Логин или маска логина" value="[tSubject]"
-               title="Маска: * — любые символы, ? — один символ, [ab] — один из, [!ab] — кроме. Например: editor-*, ivan.?">
+               list="acl-subjects" placeholder="{$tpl['subject']['placeholder']}" value="[tSubject]"
+               title="{$tpl['subject']['title']}">
     </div>
 </template>
 
@@ -220,13 +220,13 @@
 <template id="tpl-op-row">
     <tr class="acl-row">
         <td>
-            <button type="button" class="acl-opbtn" title="Включить/выключить всю строку">
+            <button type="button" class="acl-opbtn" title="{$tpl['op']['title']}">
                 <span class="acl-opmark"></span> [tOp]
             </button>
             <input type="hidden" class="op-state" name="rules[[tIdx]][ops][]" value="[tOp]"[tDisabled]>
         </td>
         <!-- <td> клеток вставит JS -->
-        <td class="acl-where"><input type="text" class="form-control input-xs" name="rules[[tIdx]][where][[tOp]]" value="[tWhere]" placeholder="sql-условие" title="Ограничение записей для [tOp]"></td>
+        <td class="acl-where"><input type="text" class="form-control input-xs" name="rules[[tIdx]][where][[tOp]]" value="[tWhere]" placeholder="{$tpl['where']['placeholder']}" title="{$tpl['where']['title']}"></td>
     </tr>
 </template>
 
@@ -325,7 +325,7 @@ function makeRule(sec, rule)
         if (op === 'delete')
             $row.find('.acl-where').before(
                 '<td colspan="' + APP_FIELDS.length + '" class="acl-na text-center">'
-                + 'запись удаляется целиком по id</td>');
+                + $('#tpl-rule').data('na') + '</td>');
         //клетки полей — <td> перед where.
         //op выключена → клетки пустые; op вкл → свой список, а нет списка — все поля
         else $.each(APP_FIELDS, function(k, f) {
@@ -434,17 +434,18 @@ $(function() {
         var login = $('#acl-check-login').val();
         $.getJSON('admin/catalogs/access/check?catalog='+encodeURIComponent(APP_CATALOG)+'&login='+encodeURIComponent(login))
             .done(function(res) {
+                var $res = $('#acl-check-result');
                 var html = '<table class="table table-condensed"><tr><th>'+res.login+'</th>'+
-                    '<th>разрешено</th><th>where</th><th>поля</th></tr>';
+                    '<th>'+$res.data('allowed')+'</th><th>where</th><th>'+$res.data('fields')+'</th></tr>';
                 $.each(res.ops, function(op, r) {
                     html += '<tr><td>'+op+'</td>'+
-                        '<td>'+(r.allowed ? '<span class="label label-primary">да</span>' : '<span class="label label-default">нет</span>')+'</td>'+
+                        '<td>'+(r.allowed ? '<span class="label label-primary">'+$res.data('yes')+'</span>' : '<span class="label label-default">'+$res.data('no')+'</span>')+'</td>'+
                         '<td><code>'+(r.where || '')+'</code></td>'+
-                        '<td>'+(r.fields ? r.fields.join(', ') : '<small class="text-muted">все</small>')+'</td></tr>';
+                        '<td>'+(r.fields ? r.fields.join(', ') : '<small class="text-muted">'+$res.data('all')+'</small>')+'</td></tr>';
                 });
-                $('#acl-check-result').html(html+'</table>');
+                $res.html(html+'</table>');
             })
-            .fail(function() { toastr.error('Ошибка проверки'); });
+            .fail(function() { toastr.error($('#acl-check-result').data('error')); });
     });
 });
 

@@ -1,4 +1,4 @@
-			<div class="ibox !float-e-margins" data-refresh="{$catalog['refresh']}"  data-url="{$catalog['uri']}">
+			<div class="ibox !float-e-margins" data-refresh="{$catalog['refresh']}" data-url="{$catalog['uri']}" data-errortext="{$messages['error']['text']}" data-errorprefix="{$messages['error_thrown']['text']}" data-confirmdelete="{$messages['confirm_delete']['text']}" data-updatedtext="{$messages['updated']['text']}">
 				<div class="ibox-title">
 					<h5>{$catalog['head']}</h5>
 					<div class="ibox-tools">
@@ -36,11 +36,11 @@
 						<div class="col-md-12 p-none m-b-sm m-t-xs">
 <!--
 							<div class="col-md-2">
-								<button type="button" class="btn btn-success btn-outline btn-sm" ><i class="fa fa-plus-square-o"></i> Добавить запись</button>
+								<button type="button" class="btn btn-success btn-outline btn-sm" ><i class="{$add['icon']}"></i> {$add['head']}</button>
 							</div>
 -->
 							<div class="col-sm-8 m-b-xs">
-								<button type="button" class="btn-edit btn btn-success btn-outline btn-sm mr-4" data-toggle="modal" data-target="#ModalEdit" data-catalog="{$catalog['name']}" data-id=""  data-action="{$catalog['action']['edit']['link']}" ><i class="fa fa-plus-square-o"></i> Добавить запись</button>
+								<button type="button" class="btn-edit btn btn-success btn-outline btn-sm mr-4" data-toggle="modal" data-target="#ModalEdit" data-catalog="{$catalog['name']}" data-id=""  data-action="{$catalog['action']['edit']['link']}" ><i class="{$add['icon']}"></i> {$add['head']}</button>
 
 								<div data-toggle="buttons" class="btn-group">
 									{foreach $menu['pages']['list'] as $_page}
@@ -65,7 +65,7 @@
 -->
 										<input type="hidden" name="orderby" value="{$$form['filter']['orderby']['value']}">
 
-										<input type="text" class="input-sm form-control input-search" action="{$form['filter']['action']}" !id="search" name="like" value="{$form['filter']['like']['value']}" placeholder="Поиск в каталоге" >
+										<input type="text" class="input-sm form-control input-search" action="{$form['filter']['action']}" !id="search" name="like" value="{$form['filter']['like']['value']}" placeholder="{$search['placeholder']}" >
 										<span class="input-group-btn">
 											{if $form['filter']['like']['value']}
 											<button type="button" class="btn btn-sm btn-outline btn-white btn-clear"> <i class="fa fa-times"></i> </button>
@@ -103,7 +103,7 @@
 											{if 'html' == $_field['type']}
 												<td class="project-title">
 													{if $_record[$_name]}
-														<button type="button" title="Просмотр" class="btn-htmlview btn btn-default btn-xs text-primary btn-outline" data-toggle="modal" data-value="{$_record[$_name]}" data-target="#ModalHTML"> <i class="fa fa-eye"></i> </i> </button>
+														<button type="button" title="{$tooltip['htmlview']['title']}" class="btn-htmlview btn btn-default btn-xs text-primary btn-outline" data-toggle="modal" data-value="{$_record[$_name]}" data-target="#ModalHTML"> <i class="fa fa-eye"></i> </i> </button>
 														{= mb_strimwidth(strip_tags($_record[$_name]), 0, 60, '...')}
 													{end}
 													<span class="hidden" title="For worker filter">{$_record[$_name]}</span>
@@ -167,7 +167,7 @@
 													<label class="label" for="catalog-btn-edit-{$_record['id']}" style="cursor:pointer">{$_record[$_name]}</label>
 												</td>
 											{elseif 'relation' == $_field['type']}
-												<td class="project-title" title="Связь с другой таблицей">
+												<td class="project-title" title="{$tooltip['relation']['title']}">
 													{? is_array($_record[$_name])}
 														{? $_record[$_name]['id']}
 															<span class="label label-default"><i class="fa fa-link"></i> {$_record[$_name]['id']}</span> {$_record[$_name]['label']}
@@ -256,7 +256,7 @@
 							},
 							error:  function()
 							{
-								alert('Ошибка');
+								alert($(this).closest('.ibox').data('errortext'));
 							}
 						});
 
@@ -332,7 +332,7 @@
 
 					$('.btn-delete').click(function()
 					{
-						if (!confirm("Удалить запись?")) return false;
+						if (!confirm($(this).closest('.ibox').data('confirmdelete'))) return false;
 
 						var recordID = $(this).data('id');
 						var catalog  = $(this).data('catalog');
@@ -357,7 +357,7 @@
 								},
 								error: function(data, errorThrown)
 								{
-									alert('Ошибка:'+errorThrown);
+									alert($(this).closest('.ibox').data('errorprefix') + errorThrown);
 								}
 						});
 					});
@@ -398,7 +398,7 @@
 									tableInit(tableViewSection);
 
 									toastr.options = { closeButton: true, progressBar: true, timeOut: 4000 };
-									toastr.info('Данные обновлены');
+									toastr.info($(tableViewSection).find('.ibox').data('updatedtext'));
 								}
 							});
 

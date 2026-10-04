@@ -46,10 +46,10 @@
 										  <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
 												<i class="fa fa-wrench"></i>
 										  </a>
-										  <ul class="dropdown-menu dropdown-user">
-												<li><a target="_blank" href="admin/constructor/object/export">Экспортировать</a>
+										  <ul class="dropdown-menu dropdown-user" data-importing="{$js['importing']}">
+												<li><a target="_blank" href="admin/constructor/object/export">{$form['tools']['button']['export']['head']}</a>
 												</li>
-												<li><a onclick="importObjects()">Импортировать</a>
+												<li><a onclick="importObjects()">{$form['tools']['button']['import']['head']}</a>
 												</li>
 										  </ul>
 <!--
@@ -75,14 +75,14 @@
 <!--
 										<div class="hr-line-dashed"></div>
 -->
-										<form id="new-collection-form" action="{$form['collection']['action']}" method='get'>
-											<input name='collection' placeholder="Имя новой коллекции" class="form-control new-collection-name">
+										<form id="new-collection-form" action="{$form['collection']['action']}" method='get' data-needname="{$js['needname']}">
+											<input name='collection' placeholder="{$form['collection']['placeholder']}" class="form-control new-collection-name">
 											<p></p>
 											<button type="submit" class="btn btn-primary !btn-sm btn-outline btn-block new-collection-btn">{$form['collection']['button']['add']['head']}</button>
 										</form>
 										<div class="hr-line-dashed"></div>
 										<h5>{$catalog['collection']['info']}</h5>
-										<ul class="folder-list" style="padding: 0">
+										<ul class="folder-list" style="padding: 0" data-delcol="{$js['delcollection']}">
 											{foreach $catalog['collection']['list'] as $_value}
 												<li {if $_value['active']} class='text-info' {end}>
 												<a href="{$_value['link']}"><i class="{$_value['icon']}"></i>{$_value['head']}</a>
@@ -127,7 +127,7 @@
 											{end}
 										</ul>
 										<!--
-											<ul class="folder-list" style="padding: 0">
+											<ul class="folder-list" style="padding: 0" data-delcol="{$js['delcollection']}">
 												 <li><a href=""><i class="fa fa-th-list"></i> Files</a></li>
 												 <li><a href=""><i class="fa fa-database"></i> Pictures</a></li>
 												 <li><a href=""><i class="fa fa-database"></i> Web pages</a></li>
@@ -211,7 +211,7 @@
 											<table class="table table-striped table-bordered table-hover dataTables-example" >
 												<thead>
 													<tr>
-														<th class="font-noraml">Название объекта</th>
+														<th class="font-noraml">{$catalog['objects']['th']}</th>
 														<th class="col-lg-6"></th>
 													</tr>
 												</thead>
@@ -292,19 +292,19 @@
 							<div class="modal-content">
 								<div class="modal-body">
 									<div class="row">
-										<div class="col-sm-12"><h3 class="m-t-none m-b">Переименовать</h3>
+										<div class="col-sm-12"><h3 class="m-t-none m-b">{$modal['rename']['head']}</h3>
 
-											<p>Введите новое имя для <b>admin</b></p>
+											<p>{$modal['rename']['text']} <b>admin</b></p>
 
 											<form id="form-rename" role="form" method="POST">
 												<div class="form-group">
-													<input type="text" name="new_name" placeholder="Введите новое имя" class="form-control js-form-new-name" required>
+													<input type="text" name="new_name" placeholder="{$modal['rename']['placeholder']}" class="form-control js-form-new-name" required>
 													<input type="hidden" name="collection" class="form-control">
 													<input type="hidden" name="object" class="form-control">
 												</div>
 												<div>
-													<button class="btn btn-sm btn-primary pull-right" type="submit">Сохранить</button>
-													<button class="btn btn-sm btn-white pull-right btn-close-modal">Закрыть</button>
+													<button class="btn btn-sm btn-primary pull-right" type="submit">{$modal['rename']['save']}</button>
+													<button class="btn btn-sm btn-white pull-right btn-close-modal">{$modal['rename']['close']}</button>
 												</div>
 											</form>
 										</div>
@@ -342,7 +342,7 @@
 					var dlink = $(this).data('link');
 					var head  = $(this).data('head');
 
-					if (confirm(`Удалить коллекцию "${head}" со всем содержимым?`))
+					if (confirm($('.folder-list').data('delcol').replace('%s', head)))
 					{
 						alert(dlink);
 					}
@@ -351,7 +351,7 @@
 				$('.new-collection-btn').click(function(e) {
 					e.preventDefault()
 					if(!$('.new-collection-name').val()) {
-						toastr.warning("Введите имя новой коллекции");
+						toastr.warning($('#new-collection-form').data('needname'));
 						return;
 					}
 					$('#new-collection-form').submit();
@@ -416,7 +416,7 @@
 					{
 						var content = readerEvent.target.result; // this is the content!
 						content = atob(content.substring(29));
-						toastr.info("Импортирую...");
+						toastr.info($('.dropdown-menu.dropdown-user').data('importing'));
 
 						$.ajax({
 							url: "admin/constructor/object/import",

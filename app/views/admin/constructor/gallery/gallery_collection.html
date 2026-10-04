@@ -37,13 +37,13 @@
 											-->
 										<div class="hr-line-dashed"></div>
 										<form action="{$form['collection']['action']}" method='get'>
-											<input name='name' id="new-name" placeholder="Название новой галереи" class="form-control">
+											<input name='name' id="new-name" placeholder="{$form['newfield']['placeholder']}" data-copyreq="{$js['copyname']}" class="form-control">
 											<p></p>
 											<button type="submit" class="btn btn-primary btn-outline btn-block">{$form['collection']['button']['add']['head']}</button>
 										</form>
 										<div class="hr-line-dashed"></div>
 										<h5>{$catalog['collection']['info']}</h5>
-										<ul class="folder-list" style="padding: 0">
+										<ul class="folder-list" style="padding: 0" data-delconfirm="{$js['delconfirm']}">
 											{foreach (array) $catalog['collection']['list'] as $_value}
 											{if $_value['active']}
 											<li class='text-info'>
@@ -74,7 +74,7 @@
 								<div class="col-lg-12">
 									<div class="ibox ">
 										<div class="ibox-title">
-											<h5>Содержимое:</h5>
+											<h5>{$catalog['objects']['head']}</h5>
 											<div class=" pull-right">
 <!--
 												<a href="{$catalog['objects']['button']['copy']['link']}" class="btn btn-{$catalog['objects']['button']['copy']['style']} btn-xs"> <span class="{$catalog['objects']['button']['copy']['icon']}"></span> {$catalog['objects']['button']['copy']['head']}</a>
@@ -198,7 +198,7 @@
 				var newname = $('#new-name').val();
 				if (!newname)
 				{
-					alert('Укажите название новой галереи!');
+					alert($('#new-name').data('copyreq'));
 					return false;
 				}
 				 location.href = 'admin/constructor/gallery/copy?name='+encodeURIComponent(name)+'&new-name='+encodeURIComponent(newname);
@@ -206,7 +206,7 @@
 
 			 function remove(name)
 			 {
-				if (confirm('Удалить галлерею "'+name+'"?'))
+				if (confirm($('.folder-list').data('delconfirm').replace('%s', name)))
 				{
 					 location.href = 'admin/constructor/gallery/del?name='+name;
 				}

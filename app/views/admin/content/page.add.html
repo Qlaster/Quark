@@ -171,11 +171,11 @@
 
                                                     <span class="input-group-btn">
                                                         <a class="btn btn-primary " data-toggle="modal" data-target="#ModalForm_HTML" >
-															<i class="fa fa-file-code-o"></i> <span class="hidden-xs">Выбрать файл</span>
+															<i class="fa {$file['choose']['icon']}"></i> <span class="hidden-xs">{$file['choose']['head']}</span>
 														</a>
 
                                                         <a class="btn btn-white inline" data-htmlhandler="{$form['file']['htmlhandler']}" id="view-html-button">
-															<i class="fa fa-slack"></i> <span class="hidden-xs">Открыть код</span>
+															<i class="fa {$file['open']['icon']}"></i> <span class="hidden-xs">{$file['open']['head']}</span>
 														</a>
                                                     </span>
 
@@ -664,10 +664,7 @@
 											<div class="hr-line-dashed"></div>
 
 											<p>
-												<strong>Справка</strong> Выберите файл, который будет использоваться как каркас для заполнения содержимым.
-												Зеленым подсвечены файлы пригодные для использования в качестве шаблонов. Вы можете использовать файлы шаблонов из разных тем.
-												Будте внимательны - разные файлы шаблонов, могут предоставлять разный функционал.
-											</p>
+												<strong>{$help['head']}</strong> {$help['text']}</p>
 											<literal>
 <!--
 

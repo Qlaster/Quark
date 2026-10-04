@@ -76,31 +76,31 @@
 								<div class="form-group data_5">
 
 									<div class="input-daterange input-group" id="datepicker">
-										<span class="input-group-addon">c</span>
+										<span class="input-group-addon">{$dates['from']}</span>
 										<input type="text" class="input-sm form-control" name="datestart" value="{$datestart}"/>
-										<span class="input-group-addon">по</span>
+										<span class="input-group-addon">{$dates['to']}</span>
 										<input type="text" class="input-sm form-control" name="dateend" value="{$dateend}" />
 										<div class="input-group-btn">
 											<button type="submit" style="margin:0" class="btn btn-sm btn-primary">
 												<li class="fa fa-refresh"></li>
-												Получить
+												{$dates['get']}
 											</button>
-											<button type="button" class="j-download btn btn-sm btn-white" style="margin:0" title="Скачать zip-архив логов за выбранный период">
+											<button type="button" class="j-download btn btn-sm btn-white" style="margin:0" title="{$dates['download']['title']}">
 												<li class="fa fa-download"></li>
-												Скачать
+												{$dates['download']['head']}
 											</button>
 										</div>
 										<div class="input-group-btn p-l-md">
 										<select name="errors" class="form-control input-sm" style="width:auto" title="Фильтр по коду ответа">
-											<option value="">Все коды</option>
+											<option value="">{$dates['all']}</option>
 											<option value="400" {if $errors == '400'}selected{end}>&ge; 400</option>
 											<option value="4xx" {if $errors == '4xx'}selected{end}>4xx</option>
 											<option value="5xx" {if $errors == '5xx'}selected{end}>5xx</option>
 										</select>
-										<button type="button" class="j-export btn btn-sm btn-white m-none" title="Скачать лог с учётом поиска и фильтра ошибок">
+										<button type="button" class="j-export btn btn-sm btn-white m-none" title="{$dates['export']['title']}">
 											<li class="fa fa-external-link"></li>
-										Экспорт</button>
-										<button type="button" class="j-reset btn btn-sm btn-white m-none" title="Сбросить поиск и фильтр ошибок">
+										{$dates['export']['head']}</button>
+										<button type="button" class="j-reset btn btn-sm btn-white m-none" title="{$dates['reset']['title']}">
 											<li class="fa fa-times"></li>
 										</button>
 										</div>
@@ -114,26 +114,26 @@
 						<form method="GET" class="journal-form visible-xs-block">
 							<div class="form-group data_5">
 								<div class="input-daterange input-group">
-									<span class="input-group-addon">c</span>
+									<span class="input-group-addon">{$dates['from']}</span>
 									<input type="text" class="input-sm form-control" name="datestart" value="{$datestart}"/>
-									<span class="input-group-addon">по</span>
+									<span class="input-group-addon">{$dates['to']}</span>
 									<input type="text" class="input-sm form-control" name="dateend" value="{$dateend}" />
 								</div>
 							</div>
 							<div class="form-group">
 								<div class="btn-group">
-									<button type="submit" class="btn btn-sm btn-primary"><li class="fa fa-refresh"></li> Получить</button>
-									<button type="button" class="j-download btn btn-sm btn-white"><li class="fa fa-download"></li> Скачать</button>
+									<button type="submit" class="btn btn-sm btn-primary"><li class="fa fa-refresh"></li> {$dates['get']}</button>
+									<button type="button" class="j-download btn btn-sm btn-white"><li class="fa fa-download"></li> {$dates['download']['head']}</button>
 								</div>
 							</div>
 							<div class="form-group">
 								<select name="errors" class="form-control input-sm" style="width:auto;display:inline-block">
-									<option value="">Все коды</option>
+									<option value="">{$dates['all']}</option>
 									<option value="400" {if $errors == '400'}selected{end}>&ge; 400</option>
 									<option value="4xx" {if $errors == '4xx'}selected{end}>4xx</option>
 									<option value="5xx" {if $errors == '5xx'}selected{end}>5xx</option>
 								</select>
-								<button type="button" class="j-export btn btn-sm btn-white"><li class="fa fa-external-link"></li> Экспорт</button>
+								<button type="button" class="j-export btn btn-sm btn-white"><li class="fa fa-external-link"></li> {$dates['export']['head']}</button>
 								<button type="button" class="j-reset btn btn-sm btn-white"><li class="fa fa-times"></li></button>
 							</div>
 						</form>
@@ -146,37 +146,37 @@
 							<col style="width:60px">
 							<col style="width:70px">
 							<col style="width:75px">
-							<col>
+							<col           !style="width:600px">
 							<col style="width:110px">
 							<col style="width:220px">
-							<col style="width:95px">
-							<col>
+							<col           !style="max-width:160px">
+							<col !style="">
 						</colgroup>
 						<thead>
 						<tr>
-							<th>Дата</th>
-							<th title="Код ответа">Код</th>
-							<th title="Затраченное процессорное время">CPU</th>
-							<th title="Занятое ОЗУ">Mem</th>
-							<th>Запрос</th>
-							<th title="Сетевой адрес клиента">IP адрес</th>
-							<th>Клиент</th>
-							<th>Маркер</th>
-							<th>Дамп</th>
+							<th>{$cols['date']}</th>
+							<th title="{$cols['code']['title']}">{$cols['code']['head']}</th>
+							<th title="{$cols['cpu']['title']}">{$cols['cpu']['head']}</th>
+							<th title="{$cols['mem']['title']}">{$cols['mem']['head']}</th>
+							<th>{$cols['uri']}</th>
+							<th title="{$cols['ip']['title']}">{$cols['ip']['head']}</th>
+							<th>{$cols['client']}</th>
+							<th>{$cols['info']}</th>
+							<th>{$cols['dump']}</th>
 						</tr>
 						</thead>
 							<tbody></tbody>
 						<tfoot>
 						<tr>
-							<th>Дата</th>
-							<th title="Код ответа">Код</th>
-							<th title="Затраченное процессорное время">CPU</th>
-							<th title="Занятое ОЗУ">Mem</th>
-							<th>Запрос</th>
-							<th title="Сетевой адрес клиента">IP адрес</th>
-							<th>Клиент</th>
-							<th>Маркер</th>
-							<th>Дамп</th>
+							<th>{$cols['date']}</th>
+							<th title="{$cols['code']['title']}">{$cols['code']['head']}</th>
+							<th title="{$cols['cpu']['title']}">{$cols['cpu']['head']}</th>
+							<th title="{$cols['mem']['title']}">{$cols['mem']['head']}</th>
+							<th>{$cols['uri']}</th>
+							<th title="{$cols['ip']['title']}">{$cols['ip']['head']}</th>
+							<th>{$cols['client']}</th>
+							<th>{$cols['info']}</th>
+							<th>{$cols['dump']}</th>
 						</tr>
 						</tfoot>
 						</table>

@@ -36,32 +36,32 @@
                         <h5>{$catalog['channels']['head']}</h5>
                         <div class="ibox-tools">
 
-                            <button class="btn btn-white btn-xs" title="Создать новый канал"
+                            <button class="btn btn-white btn-xs" title="{$chan['new']['title']}"
                                 data-toggle="modal" data-target="#modalChannel">
-                                <i class="fa fa-plus"></i> Новый
+                                <i class="fa fa-plus"></i> {$chan['new']['head']}
                             </button>
 
                             {if $catalog['channels']['selected']}
-                            <button class="btn btn-white btn-xs" title="Изменить выбранный канал"
+                            <button class="btn btn-white btn-xs" title="{$chan['edit']['title']}"
                                 data-toggle="modal" data-target="#modalChannel"
                                 data-name="{$catalog['channels']['selected']['name']}"
                                 data-title="{$catalog['channels']['selected']['title']}"
                                 data-tags="{$catalog['channels']['selected']['tags_str']}"
                                 data-meta="{$catalog['channels']['selected']['meta']}"
                                 data-archived="{$catalog['channels']['selected']['archived']}">
-                                <i class="fa fa-edit"></i> Изменить
+                                <i class="fa fa-edit"></i> {$chan['edit']['head']}
                             </button>
-                            <a class="btn btn-white btn-xs" title="Переместить/достать выбранный в архив"
+                            <a class="btn btn-white btn-xs" title="{$chan['archive']['title']}"
                                 href="admin/communication/talk/channel/update?channel={$catalog['channels']['selected']['name']}&archived={if $catalog['channels']['selected']['archived']}0{else}1{end}">
                                 <i class="fa fa-archive"></i>
                             </a>
-                            <a class="btn btn-white btn-xs" title="Удалить выбранный канал"
+                            <a class="btn btn-white btn-xs" title="{$chan['delete']['title']}"
                                 href="admin/communication/talk/channel/delete?channel={$catalog['channels']['selected']['name']}"
-                                onclick="return confirm('Удалить канал «{$catalog['channels']['selected']['name']}»? Все посты и сообщения будут удалены.')">
+                                onclick="return confirm('{$chan['delconfirm']}'.replace('%s', '{$catalog['channels']['selected']['name']}'))">
                                 <i class="fa fa-trash-o"></i>
                             </a>
                             {else}
-                            <button class="btn btn-white btn-xs" disabled><i class="fa fa-edit"></i> Изменить</button>
+                            <button class="btn btn-white btn-xs" disabled><i class="fa fa-edit"></i> {$chan['edit']['head']}</button>
                             <button class="btn btn-white btn-xs" disabled><i class="fa fa-archive"></i></button>
                             <button class="btn btn-white btn-xs" disabled><i class="fa fa-trash-o"></i></button>
                             {end}
@@ -74,7 +74,7 @@
                             <li class="list-group-item {if $_channel['selected']}ibox-heading{end}">
                                 <a href="admin/communication/talk/?channel={$_channel['name']}" class="text-primary">
                                     <strong>
-                                        {if $_channel['archived']}<i class="fa fa-archive" title="В архиве"></i> {end}
+                                        {if $_channel['archived']}<i class="fa fa-archive" title="{$chan['archived']}"></i> {end}
                                         {$_channel['name']}
                                     </strong>
                                     <small class="block text-muted pull-right"><i class="fa fa-clock-o"></i> {$_channel['updated']}</small>
@@ -114,16 +114,16 @@
                     </form>
 
                     {if $catalog['channels']['selected']}
-                    <button class="btn btn-white btn-sm" title="Создать новый пост"
+                    <button class="btn btn-white btn-sm" title="{$posts['new']['title']}"
                         data-toggle="modal" data-target="#modalPost">
-                        <i class="fa fa-plus"></i> Новый
+                        <i class="fa fa-plus"></i> {$chan['new']['head']}
                     </button>
                     {else}
-                    <button class="btn btn-white btn-sm" disabled><i class="fa fa-plus"></i> Новый</button>
+                    <button class="btn btn-white btn-sm" disabled><i class="fa fa-plus"></i> {$posts['new']['head']}</button>
                     {end}
 
                     {if $catalog['posts']['selected']}
-                    <button class="btn btn-white btn-sm" title="Изменить выбранный пост"
+                    <button class="btn btn-white btn-sm" title="{$posts['edit']['title']}"
                         data-toggle="modal" data-target="#modalPost"
                         data-name="{$catalog['posts']['selected']['name']}"
                         data-title="{$catalog['posts']['selected']['title']}"
@@ -132,24 +132,24 @@
                         data-tags="{$catalog['posts']['selected']['tags_str']}"
                         data-meta="{$catalog['posts']['selected']['meta']}"
                         data-archived="{$catalog['posts']['selected']['archived']}">
-                        <i class="fa fa-edit"></i> Изменить
+                        <i class="fa fa-edit"></i> {$chan['edit']['head']}
                     </button>
                     {else}
-                    <button class="btn btn-white btn-sm" disabled><i class="fa fa-edit"></i> Изменить</button>
+                    <button class="btn btn-white btn-sm" disabled><i class="fa fa-edit"></i> {$chan['edit']['head']}</button>
                     {end}
 
                     <button type="button" id="btn-posts-archive" class="btn btn-white btn-sm"
-                        title="Переместить/извлечь выделенные посты из архива">
-                        <i class="fa fa-archive"></i> Архив
+                        title="{$posts['archive']['title']}">
+                        <i class="fa fa-archive"></i> {$posts['archive']['head']}
                     </button>
                     <button type="button" id="btn-posts-delete" class="btn btn-white btn-sm"
-                        title="Удалить выделенные посты">
+                        title="{$posts['delete']['title']}">
                         <i class="fa fa-trash-o"></i>
                     </button>
 
-                    <button class="btn btn-white btn-sm m-l-md" title="Обновить страницу"
+                    <button class="btn btn-white btn-sm m-l-md" title="{$posts['refresh']['title']}"
                         onclick="location.reload()">
-                        <i class="fa fa-refresh"></i> Обновить
+                        <i class="fa fa-refresh"></i> {$posts['refresh']['head']}
                     </button>
 
                 </div>
@@ -181,7 +181,7 @@
                             </ul>
                         </td>
                         <td class="">
-                            {if $_post['files']}<i class="fa fa-paperclip" title="Имеет вложенные файлы"></i>{end}
+                            {if $_post['files']}<i class="fa fa-paperclip" title="{$posts['files']}"></i>{end}
                         </td>
                         <td class="text-right mail-date">{$_post['updated']}</td>
                     </tr>
@@ -217,14 +217,14 @@
 
         $('#btn-posts-delete').on('click', function() {
             var checked = $('input[name="posts[]"]:checked');
-            if (!checked.length) { alert('Выберите хотя бы один пост'); return; }
-            if (!confirm('Удалить выбранные посты (' + checked.length + ' шт.)?')) return;
+            if (!checked.length) { alert('{$js['selectone']}'); return; }
+            if (!confirm('{$js['delposts']}'.replace('%s', checked.length))) return;
             $('#postsForm').attr('action', 'admin/communication/talk/post/delete').submit();
         });
 
         $('#btn-posts-archive').on('click', function() {
             var checked = $('input[name="posts[]"]:checked');
-            if (!checked.length) { alert('Выберите хотя бы один пост'); return; }
+            if (!checked.length) { alert('{$js['selectone']}'); return; }
             var allArchived = checked.toArray().every(function(el) {
                 return $(el).closest('tr').data('archived') == 1;
             });
@@ -242,38 +242,38 @@
                 <form method="post" id="modalChannelForm" action="admin/communication/talk/channel/save">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
-                        <h4 class="modal-title" id="modalChannelTitle">Канал</h4>
+                        <h4 class="modal-title" id="modalChannelTitle">{$modal['channel']['title']}</h4>
                     </div>
                     <div class="modal-body">
                         <div class="form-group">
                             <label>Slug (name) <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" name="name" id="field-name"
-                                   placeholder="support" required>
-                            <p class="help-block">Уникальный идентификатор канала (латиница, дефис)</p>
+                                   placeholder="{$modal['channel']['nameph']}" required>
+                            <p class="help-block">{$modal['channel']['namehelp']}</p>
                         </div>
                         <div class="form-group">
-                            <label>Заголовок (title)</label>
+                            <label>{$modal['channel']['ftitle']}</label>
                             <input type="text" class="form-control" name="title" id="field-title"
-                                   placeholder="Техническая поддержка">
+                                   placeholder="{$modal['channel']['titleph']}">
                         </div>
                         <div class="form-group">
-                            <label>Метки (tags)</label>
+                            <label>{$modal['channel']['ftags']}</label>
                             <input type="text" class="form-control" name="tags" id="field-tags"
-                                   placeholder="tag1, tag2, tag3">
-                            <p class="help-block">Через запятую</p>
+                                   placeholder="{$modal['channel']['tagsph']}">
+                            <p class="help-block">{$modal['channel']['tagshelp']}</p>
                         </div>
                         <div class="form-group">
                             <div class="checkbox">
                                 <label>
                                     <input type="checkbox" name="archived" id="field-archived" value="1">
-                                    В архиве
+                                    {$modal['channel']['archived']}
                                 </label>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-white" data-dismiss="modal">Отмена</button>
-                        <button type="submit" class="btn btn-primary">Сохранить</button>
+                        <button type="button" class="btn btn-white" data-dismiss="modal">{$modal['channel']['cancel']}</button>
+                        <button type="submit" class="btn btn-primary">{$modal['channel']['save']}</button>
                     </div>
                 </form>
             </div>
@@ -286,7 +286,7 @@
             var name   = btn.data('name') || '';
             var isEdit = !!name;
 
-            $('#modalChannelTitle').text(isEdit ? 'Изменить канал' : 'Новый канал');
+            $('#modalChannelTitle').text(isEdit ? '{$modal['channel']['edit']}' : '{$modal['channel']['new']}');
             $('#modalChannelForm').attr(
                 'action',
                 isEdit
@@ -315,54 +315,54 @@
                            value="{$catalog['channels']['selected']['name']}">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
-                        <h4 class="modal-title" id="modalPostTitle">Пост</h4>
+                        <h4 class="modal-title" id="modalPostTitle">{$modal['post']['title']}</h4>
                     </div>
                     <div class="modal-body">
                         <div class="form-group">
                             <label>Slug (name) <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" name="name" id="post-name"
-                                   placeholder="ticket-abc123" required>
-                            <p class="help-block">Уникальный идентификатор поста (латиница, дефис)</p>
+                                   placeholder="{$modal['post']['nameph']}" required>
+                            <p class="help-block">{$modal['post']['namehelp']}</p>
                         </div>
                         <div class="form-group">
-                            <label>Заголовок (title)</label>
+                            <label>{$modal['post']['ftitle']}</label>
                             <input type="text" class="form-control" name="title" id="post-title">
                         </div>
                         <div class="form-group">
-                            <label>Автор (author)</label>
+                            <label>{$modal['post']['fauthor']}</label>
                             <input type="text" class="form-control" name="author" id="post-author">
                         </div>
                         <div class="form-group">
-                            <label>Статус (status)</label>
+                            <label>{$modal['post']['fstatus']}</label>
                             <input type="text" class="form-control" name="status" id="post-status"
-                                   placeholder="open">
+                                   placeholder="{$modal['post']['statusph']}">
                         </div>
                         <div class="form-group">
-                            <label>Метки (tags)</label>
+                            <label>{$modal['post']['ftags']}</label>
                             <input type="text" class="form-control" name="tags" id="post-tags"
-                                   placeholder="tag1, tag2, tag3">
-                            <p class="help-block">Через запятую</p>
+                                   placeholder="{$modal['post']['tagsph']}">
+                            <p class="help-block">{$modal['post']['tagshelp']}</p>
                         </div>
                         <div class="form-group">
                             <label>Meta (JSON)</label>
                             <textarea class="form-control" name="meta" id="post-meta" rows="2"></textarea>
                         </div>
                         <div class="form-group">
-                            <label>Файлы</label>
+                            <label>{$modal['post']['files']}</label>
                             <input type="file" name="files[]" multiple>
                         </div>
                         <div class="form-group">
                             <div class="checkbox">
                                 <label>
                                     <input type="checkbox" name="archived" id="post-archived" value="1">
-                                    В архиве
+                                    {$modal['post']['archived']}
                                 </label>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-white" data-dismiss="modal">Отмена</button>
-                        <button type="submit" class="btn btn-primary">Сохранить</button>
+                        <button type="button" class="btn btn-white" data-dismiss="modal">{$modal['post']['cancel']}</button>
+                        <button type="submit" class="btn btn-primary">{$modal['post']['save']}</button>
                     </div>
                 </form>
             </div>
@@ -376,7 +376,7 @@
             var channel = $('#post-channel').val();
             var isEdit  = !!name;
 
-            $('#modalPostTitle').text(isEdit ? 'Изменить пост' : 'Новый пост');
+            $('#modalPostTitle').text(isEdit ? '{$modal['post']['edit']}' : '{$modal['post']['new']}');
             $('#modalPostForm').attr(
                 'action',
                 isEdit

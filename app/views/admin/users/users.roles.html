@@ -50,17 +50,17 @@
 			}
 		</style>
 
-        <form enctype="multipart/form-data" id="form-edit" method='post' action='admin/options/users/save'>
+        <form enctype="multipart/form-data" id="form-edit" data-presetname="{$js['presetname']}" data-delconfirm="{$js['delconfirm']}" data-done="{$js['done']}" data-preseterr="{$js['preseterr']}" method='post' action='admin/options/users/save'>
         <div class="wrapper wrapper-content">
             <div class="row animated fadeInRight">
                 <div class="col-md-3">
                     <div class="ibox float-e-margins">
                         <div class="ibox-title">
-                            <h5>Роли:</h5>
+                            <h5>{$roles['head']}</h5>
 
 							<div class="ibox-tools mr-2">
 
-								<button data-toggle="button" class="btn btn-xs btn-white btn-outline"  type="button" onclick="presetRename()">Переименовать</button>
+								<button data-toggle="button" class="btn btn-xs btn-white btn-outline"  type="button" onclick="presetRename()">{$roles['rename']}</button>
 								<button data-toggle="button" class="btn btn-xs btn-danger btn-outline" type="button" onclick="presetDelete()"><i class="fa fa-trash"></i></button>
 
 <!--
@@ -142,7 +142,7 @@
                 <div class="col-md-9">
                     <div class="ibox float-e-margins">
                         <div class="ibox-title">
-                            <h5>Доступ к методам</h5>
+                            <h5>{$access['head']}</h5>
                             <div class="ibox-tools mr-2">
 
 
@@ -150,8 +150,8 @@
 								<button data-toggle="button" class="btn btn-xs btn-danger btn-outline" type="button"><i class="fa fa-trash"></i></button>
 								<button data-toggle="button" class="btn btn-xs btn-white btn-outline" type="button">Переименовать</button>
 -->
-								<button data-toggle="button" class="btn btn-xs btn-success btn-outline" type="button" onclick="presetCreate()">Сохранить как новую роль</button>
-								<button data-toggle="button" class="btn btn-xs btn-primary btn-outline" type="button" onclick="presetSave()">Сохранить</button>
+								<button data-toggle="button" class="btn btn-xs btn-success btn-outline" type="button" onclick="presetCreate()">{$access['savenew']}</button>
+								<button data-toggle="button" class="btn btn-xs btn-primary btn-outline" type="button" onclick="presetSave()">{$access['save']}</button>
 
 
 <!--
@@ -358,7 +358,7 @@
 
             function presetCreate()
 			{
-				var newname = prompt('Введите название пресета', '');
+				var newname = prompt($("#form-edit").data("presetname"), "");
 				if (newname == null) return false;
 				$.ajax({
 					type: 'POST',
@@ -408,7 +408,7 @@
 
 				if (!name) return false;
 
-				var newname = prompt('Введите название пресета', name);
+				var newname = prompt($("#form-edit").data("presetname"), name);
 				if (newname == null) return false;
 
 				$.ajax({
@@ -434,7 +434,7 @@
 				const name = urlParams.get('name');
 				if (!name) return false;
 
-				if (!confirm(`Удалить роль ${name}?`)) return false;
+				if (!confirm($("#form-edit").data("delconfirm").replace("%s", name))) return false;
 
 				$.ajax({
 					type: 'POST',
@@ -466,11 +466,11 @@
 								$('[data-info="'+key+'"]').prop("checked", true);
 							}
 
-							toastr.success('Готово');
+							toastr.success($("#form-edit").data("done"));
 						},
 						error:  function(data)
 						{
-							toastr.warning('Возникла ошибка применения пресета');
+							toastr.warning($("#form-edit").data("preseterr"));
 						}
 				});
 			}

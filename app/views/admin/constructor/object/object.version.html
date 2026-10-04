@@ -29,16 +29,16 @@
                     <div class="ibox-title"><h5>{$title}</h5></div>
                     <div class="ibox-content">
                         <table class="table table-bordered">
-                            <tr><th>Коллекция</th><td>{$object['collection']}</td></tr>
-                            <tr><th>Имя объекта</th><td>{$object['name']}</td></tr>
-                            <tr><th>Действие</th><td>{$object['action']}</td></tr>
-                            <tr><th>Дата снимка</th><td>{$object['date']}</td></tr>
+                            <tr><th>{$info['collection']}</th><td>{$object['collection']}</td></tr>
+                            <tr><th>{$info['name']}</th><td>{$object['name']}</td></tr>
+                            <tr><th>{$info['action']}</th><td>{$object['action']}</td></tr>
+                            <tr><th>{$info['date']}</th><td>{$object['date']}</td></tr>
                         </table>
-                        <h4 class="m-t-xl">Содержимое объекта <strong class="text-navy">[JSON]</strong>:</h4>
+                        <h4 class="m-t-xl">{$info['content']} <strong class="text-navy">[JSON]</strong>:</h4>
                         <pre style="max-height:400px; overflow:auto">{$object['value_json']}</pre>
-                        <h4 class="m-t-xl">Содержимое объекта <strong class="text-navy">[Print_r]</strong>:</h4>
+                        <h4 class="m-t-xl">{$info['content']} <strong class="text-navy">[Print_r]</strong>:</h4>
                         <pre style="max-height:400px; overflow:auto">{$object['value_raw']}</pre>
-                        <h4 class="m-t-xl">Содержимое объекта <strong class="text-navy">[INI]</strong>:</h4>
+                        <h4 class="m-t-xl">{$info['content']} <strong class="text-navy">[INI]</strong>:</h4>
                         <textarea style="max-height:400px; overflow:auto" id='config'>{$object['value_ini']}</textarea>
                     </div>
                 </div>

@@ -23,10 +23,10 @@
                 <div class="col-lg-12">
                 <div class="ibox float-e-margins">
                     <div class="text-center !float-e-margins p-xs">
-                        <span>Настройки отображения: </span>
-                        <a href="#" class="btn btn-xs btn-primary" id="lightVersion">Легкая версия</a>
-                        <a href="#" class="btn btn-xs btn-primary" id="darkVersion">Стандартная версия</a>
-                        <a href="#" class="btn btn-xs btn-primary" id="leftVersion">Изменить ориентацию</a>
+                        <span>{$options['head']} </span>
+                        <a href="#" class="btn btn-xs btn-primary" id="lightVersion">{$options['light']}</a>
+                        <a href="#" class="btn btn-xs btn-primary" id="darkVersion">{$options['dark']}</a>
+                        <a href="#" class="btn btn-xs btn-primary" id="leftVersion">{$options['orient']}</a>
                     </div>
 
                     <div class="ibox-content" id="ibox-content">
@@ -46,7 +46,7 @@
 
                                 <div class="vertical-timeline-content">
                                     {if $_record['insert']}
-                                    <h3>Добавлено:</h3>
+                                    <h3>{$diff['add']}</h3>
                                     <ul class="category-list" style="padding: 0;">
                                         {foreach $_record['insert'] as $_elem}
                                             <li>
@@ -62,7 +62,7 @@
                                     {end}
 
                                     {if $_record['update']}
-                                    <h3>Изменено:</h3>
+                                    <h3>{$diff['upd']}</h3>
                                     <ul class="category-list" style="padding: 0;">
                                         {foreach $_record['update'] as $_elem}
                                             <li>
@@ -78,7 +78,7 @@
                                     {end}
 
                                     {if $_record['delete']}
-                                    <h3>Удалено:</h3>
+                                    <h3>{$diff['del']}</h3>
                                     <ul class="category-list" style="padding: 0">
                                         {foreach $_record['delete'] as $_elem}
                                             <li>

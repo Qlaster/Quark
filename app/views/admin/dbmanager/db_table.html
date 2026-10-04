@@ -57,7 +57,7 @@
                     <div class="ibox-title">
                         <h5 id='results'>{$table['data']['head']}:	&#160;	&#160;	&#160;		
 <!--
-							<a class="btn btn-info btn-xs" href="#"><i class="fa fa-plus"></i> Добавить таблицу</a>						
+							<a class="btn btn-info btn-xs" href="#"><i class="fa fa-plus"></i> {$panel['btn']['create']}</a>						
 -->
 <!--
 							{foreach $table['data']['menu'] as $_key => $_value}
@@ -110,19 +110,19 @@
                                 
                                 <div class="col-sm-5 m-b-xs ">
 									{if $table['data']['btn']['add']['link']}
-										<a class="btn btn-primary btn-sm pull-right" onclick="{$$table['data']['btn']['add']['link']}" data-toggle="modal" data-target="#ModalEdit"><i class="fa fa-plus"></i> Добавить запись</a>		
+										<a class="btn btn-primary btn-sm pull-right" onclick="{$$table['data']['btn']['add']['link']}" data-toggle="modal" data-target="#ModalEdit"><i class="fa fa-plus"></i> {$panel['btn']['add']}</a>		
 									{end}
 									
-									<a class="btn btn-info btn-sm pull-right" href="{$$table['data']['btn']['create']['link']}"><i class="fa fa-plus"></i> Добавить таблицу</a>			
+									<a class="btn btn-info btn-sm pull-right" href="{$$table['data']['btn']['create']['link']}"><i class="fa fa-plus"></i> {$panel['btn']['create']}</a>			
 									
 									{if $table['data']['btn']['drop']['link']}
-										<a class="btn btn-danger btn-sm pull-right" onclick="if (confirm('Удалить?')) location.href = '{$$table['data']['btn']['drop']['link']}';"><i class="fa fa-trash"></i> Удалить таблицу</a>			
+										<a class="btn btn-danger btn-sm pull-right" onclick="if (confirm('{$panel['btn']['delconfirm']}')) location.href = '{$$table['data']['btn']['drop']['link']}';"><i class="fa fa-trash"></i> {$panel['btn']['drop']}</a>			
 <!--
-										<a class="btn btn-danger btn-sm pull-right" href="{$$table['data']['btn']['drop']['link']}"><i class="fa fa-trash"></i> Удалить таблицу</a>			
+										<a class="btn btn-danger btn-sm pull-right" href="{$$table['data']['btn']['drop']['link']}"><i class="fa fa-trash"></i> {$panel['btn']['drop']}</a>			
 -->
 									{end}
 <!--
-									<a class="btn btn-warning btn-sm" href="#"><i class="fa fa-times"></i> Удалить таблицу</a>			
+									<a class="btn btn-warning btn-sm" href="#"><i class="fa fa-times"></i> {$panel['btn']['drop']}</a>			
 -->
 					
 <!--
@@ -148,7 +148,7 @@
                     <div class="ibox-content">
 						
 						<div class="alert alert-warning alert-dismissable text-center hidden" id='table-alert'>
-                             Данные в таблице были изменены. Для отображения перезагрузите страницу
+                             {$panel['notice']}
                         </div>
                         
                         
@@ -185,7 +185,7 @@
 									<a type="button" class="btn btn-outline btn-success btn-xs" title="Edit" onclick="$('#ModalEditBody').load('table_record_get?table=page');" data-target="#ModalEdit" data-toggle="modal"><i class="fa fa-edit">Edit</i></a> 
 -->
 									<a type="button" class="btn btn-outline btn-success btn-xs" title="Edit" onclick="{$$table['data']['btn'][$_key]['edit']['link']}" data-target="#ModalEdit" data-toggle="modal"><i class="fa fa-edit">Edit</i></a> 
-									<a type="button" class="btn btn-outline btn-danger btn-xs" title="Delete" onclick="if ( confirm('Удалить?') == false) return; {$$table['data']['btn'][$_key]['del']['link']}; $(this).parent().parent().remove()" ><i class="fa fa-times"> </i></a> 
+									<a type="button" class="btn btn-outline btn-danger btn-xs" title="{$panel['btn']['del']}" onclick="if ( confirm('{$panel['btn']['delconfirm']}') == false) return; {$$table['data']['btn'][$_key]['del']['link']}; $(this).parent().parent().remove()" ><i class="fa fa-times"> </i></a> 
 								</td>
 							</tr>
 							{end}
@@ -228,7 +228,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                        <h5 class="modal-title">Запись в таблице</h5>
+                        <h5 class="modal-title">{$panel['modal']}</h5>
 <!--
                         <small class="font-bold">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</small>
 -->
@@ -266,7 +266,7 @@
                 <div class="modal-content" id='ModalEditBody'>
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                        <h5 class="modal-title">Запись в таблице</h5>
+                        <h5 class="modal-title">{$panel['modal']}</h5>
 <!--
                         <small class="font-bold">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</small>
 -->

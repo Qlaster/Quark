@@ -61,7 +61,7 @@
 										<div class="hr-line-dashed"></div>
 
 										<form action="{$form['collection']['action']}" method='get'>
-											<input name='name' placeholder="Название новой формы" class="form-control">
+											<input name='name' placeholder="{$form['newfield']['placeholder']}" class="form-control">
 											<p></p>
 											<button type="submit" class="btn btn-primary btn-outline btn-block">{$form['collection']['button']['add']['head']}</button>
 										</form>
@@ -103,7 +103,7 @@
 									<div class="ibox ">
 										<form id="form-code" method="POST">
 											<div class="ibox-title">
-												<h5>Содержимое: <b class="text-success">{$objectName}</b></h5>
+												<h5>{$catalog['objects']['head']} <b class="text-success">{$objectName}</b></h5>
 												<a id="btn-save" !href="{$catalog['objects']['button']['save']['link']}" class="btn btn-primary btn-xs pull-right m-l-sm"> <span class="{$catalog['objects']['button']['save']['icon']}"></span> {$catalog['objects']['button']['save']['head']}</a>
 	<!--
 												<a href="{$catalog['objects']['button']['edit']['link']}" class="btn btn-success btn-xs pull-right"> <span class="{$catalog['objects']['button']['edit']['icon']}"></span> {$catalog['objects']['button']['edit']['head']}</a>
@@ -111,10 +111,10 @@
 											</div>
 
 											<div class="ibox-content" id='menuname'>
-												<div class="form-group"><label>Название формы</label> <input type="text" placeholder="Название формы" name="name" value="{$objectName}" class="form-control"></div>
+												<div class="form-group"><label>{$form['name']['label']}</label> <input type="text" placeholder="{$form['name']['placeholder']}" name="name" value="{$objectName}" class="form-control"></div>
 
-												<div class="input-group m-b"><span class="input-group-addon">Внешние js: </span> <input class="form-control" type="text" name="action" value="{$$catalog['object']['action']}" placeholder="Action form" ></div>
-												<div class="input-group m-b"><span class="input-group-addon">Внешние css: </span> <input class="form-control" type="text" name="method" value="{$$catalog['object']['method']}" placeholder="Method" ></div>
+												<div class="input-group m-b"><span class="input-group-addon">{$form['action']['label']}</span> <input class="form-control" type="text" name="action" value="{$$catalog['object']['action']}" placeholder="{$form['action']['placeholder']}" ></div>
+												<div class="input-group m-b"><span class="input-group-addon">{$form['method']['label']}</span> <input class="form-control" type="text" name="method" value="{$$catalog['object']['method']}" placeholder="{$form['method']['placeholder']}" ></div>
 											</div>
 
 											<style>
@@ -130,7 +130,7 @@
 							<div class="row">
 								<div class="col-lg-12">
 									<div class="ibox-title">
-										<h5>Окно просмотра:</h5>
+										<h5>{$preview['head']}</h5>
 									</div>
 									<div class="ibox">
 										<div class="ibox-content">
@@ -157,8 +157,8 @@
 
 											<section>
 												<form id="form-code" method="POST">
-													<div class="input-group m-b"><span class="input-group-addon">action: </span> <input class="form-control" type="text" name="action" value="{$$catalog['object']['action']}" placeholder="Action form" ></div>
-													<div class="input-group m-b"><span class="input-group-addon">method: </span> <input class="form-control" type="text" name="method" value="{$$catalog['object']['method']}" placeholder="Method" ></div>
+													<div class="input-group m-b"><span class="input-group-addon">action: </span> <input class="form-control" type="text" name="action" value="{$$catalog['object']['action']}" placeholder="{$form['action']['placeholder']}" ></div>
+													<div class="input-group m-b"><span class="input-group-addon">method: </span> <input class="form-control" type="text" name="method" value="{$$catalog['object']['method']}" placeholder="{$form['method']['placeholder']}" ></div>
 
 													<textarea name="html" id="html-code" class="!form-control" >{$$catalog['object']['html']}</textarea>
 												</form>

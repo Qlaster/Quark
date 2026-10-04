@@ -78,21 +78,21 @@
                 <div class="col-lg-2 " style='padding:0'>
                     <div class="ibox float-e-margins">
                         <div class="ibox-content" >
-                            <div class="file-manager" >
+                            <div class="file-manager" data-rename="{$js['rename']}" data-mkdir="{$js['mkdir']}" data-mkfile="{$js['mkfile']}" data-delconfirm="{$js['delete']}" data-result="{$js['result']}" data-copied="{$js['copied']}" data-uplerr="{$js['uplerr']}" data-nostream="{$js['nostream']}" data-sending="{$js['sending']}" data-uploaded="{$js['uploaded']}" data-senderr="{$js['senderr']}">
 
 								<div class='text-center'>
-									<a href="{$menu['buttons']['back']['link']}" title="Назад">
+									<a href="{$menu['buttons']['back']['link']}" title="{$buttons['back']['title']}">
 										<button class="btn btn-default"> <i class="fa fa-mail-reply"> </i> </button>
 									</a>
 
 
-									<a  title="Создать директорию" onclick="create_dir('', '{$path}')">
+									<a  title="{$buttons['mkdir']['title']}" onclick="create_dir('', '{$path}')">
 										<button class="btn btn-default">✛<i class="fa fa-folder-open-o"></i></button>
 									</a>
-									<a  title="Создать файл" onclick="create_file('', '{$path}')">
+									<a  title="{$buttons['mkfile']['title']}" onclick="create_file('', '{$path}')">
 										<button class="btn btn-default">✛<i class="fa fa-file-o"></i></button>
 									</a>
-									<a title="Вставить" onclick="paste_file('{$path}')">
+									<a title="{$buttons['paste']['title']}" onclick="paste_file('{$path}')">
 										<button class="btn btn-default"><i class="fa fa-paste"></i></button>
 									</a>
 								</div>
@@ -112,7 +112,7 @@
 
 
                                 <div class="m-b-sm" id='load-info'>
-									Выделите элемент для просмотра информации о нём
+									{$info['empty']}
 								</div>
 
 <!--
@@ -122,13 +122,13 @@
 -->
 
 								<div class="btn-group" style="width:100%">
-									<label tabindex="-1" class="btn btn-primary btn-outline" for="files" role="button" style="width:calc(100% - 30px); border-top-right-radius:0; border-bottom-right-radius:0;">Загрузить файл</label>
+									<label tabindex="-1" class="btn btn-primary btn-outline" for="files" role="button" style="width:calc(100% - 30px); border-top-right-radius:0; border-bottom-right-radius:0;">{$buttons['upload']['head']}</label>
 									<button data-toggle="dropdown" class="btn btn-primary btn-outline dropdown-toggle" type="button" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></button>
 									<ul class="dropdown-menu dropdown-menu-right">
-										<li > <div class="checkbox i-checks"><label > <input id="flag-uniq" type="checkbox" value=""> <i></i> Сгенерировать название </label></div> </li>
+										<li > <div class="checkbox i-checks"><label > <input id="flag-uniq" type="checkbox" value=""> <i></i> {$tools['uniq']} </label></div> </li>
 										<li class="divider"></li>
-										<li>  <div class="radio i-checks"><label> <input type="radio" checked value="direct" name="methid"> <i></i> Метод: Direct POST </label></div> </li>
-										<li>  <div class="radio i-checks"><label> <input type="radio" value="chunk" name="methid"> <i></i> Метод: Поток </label></div> </li>
+										<li>  <div class="radio i-checks"><label> <input type="radio" checked value="direct" name="methid"> <i></i> {$tools['direct']} </label></div> </li>
+										<li>  <div class="radio i-checks"><label> <input type="radio" value="chunk" name="methid"> <i></i> {$tools['chunk']} </label></div> </li>
 									</ul>
 								</div>
 
@@ -148,19 +148,19 @@
                                     {end}
                                 </ul>
 
-								{if $clipboard}
-								<h5>Буфер обмена:</h5>
+								{if $clipboard['filename']}
+								<h5>{$clipboard['head']}</h5>
 								<div>
-									<p class="file-control text-muted"><i class="fa fa-paste"></i> {$clipboard}</p>
+									<p class="file-control text-muted"><i class="fa fa-paste"></i> {$clipboard['filename']}</p>
 								</div>
 								{end}
 
 
                                 <div class="hr-line-dashed"></div>
 
-                                <h5>Информация:</h5>
+                                <h5>{$info['head']}</h5>
                                 <div id='ibox-content'>
-									<p class="file-control ">Выделите элемент для просмотра информации о нём</p>
+									<p class="file-control ">{$info['empty']}</p>
 								</div>
 
 
@@ -198,21 +198,21 @@
 
 										<input type="checkbox" class="btn i-checks ">
 
-										<button class="btn btn-xs btn-default btn-white  " title='Копировать' onclick="copy_file('{$_element['head']}', '{$_element['path']}')">
+										<button class="btn btn-xs btn-default btn-white  " title="{$file['copy']['title']}" onclick="copy_file('{$_element['head']}', '{$_element['path']}')">
 											<i class="fa fa-copy">		</i>
 										</button>
 
-										<button class="btn btn-xs btn-default btn-white " title='Переименовать' onclick="rename_file('{$_element['head']}', '{$_element['path']}')" >
+										<button class="btn btn-xs btn-default btn-white " title="{$file['rename']['title']}" onclick="rename_file('{$_element['head']}', '{$_element['path']}')" >
 											<i class="fa fa-ellipsis-h">	</i>
 										</button>
 
 										{if $_element['isfile']}
-										<a class="btn btn-xs btn-default btn-white  " title='Скачать' href="{$_element['load']}" >
+										<a class="btn btn-xs btn-default btn-white  " title="{$file['download']['title']}" href="{$_element['load']}" >
 											<i class="fa fa-download">		</i>
 										</a>
 										{end}
 
-										<button class="btn btn-xs btn-default btn-white  " title='Удалить' onclick="if ( delete_file('{$_element['head']}', '{$_element['path']}') ) $(this).remove();">
+										<button class="btn btn-xs btn-default btn-white  " title="{$file['delete']['title']}" onclick="if ( delete_file('{$_element['head']}', '{$_element['path']}') ) $(this).remove();">
 											<i class="fa fa-trash-o" >		</i>
 										</button>
 
@@ -246,7 +246,7 @@
                             <script>
 								function rename_file(filename, path)
 								{
-									var result = prompt('Переименование объекта. Введите новое имя:', filename);
+									var result = prompt($('.file-manager').data('rename'), filename);
 									if (result == null || result == filename) return;
 									$.get( "admin/tools/filemanager/file-rename", { old_name: path, new_name: result } )
 										.done(function( data )
@@ -258,7 +258,7 @@
 
 								function create_dir(filename, path)
 								{
-									var result = prompt('Create directory:', '');
+									var result = prompt($('.file-manager').data('mkdir'), '');
 									if (result == null || result == '') return;
 
 									$.get( "admin/tools/filemanager/create-dir", { path: path, filename: result } )
@@ -271,7 +271,7 @@
 
 								function create_file(filename, path)
 								{
-									var result = prompt('Enter file name:', '');
+									var result = prompt($('.file-manager').data('mkfile'), '');
 									if (result == null || result == '') return;
 
 									$.get( "admin/tools/filemanager/create-file", { path: path, filename: result } )
@@ -284,14 +284,14 @@
 
 								function delete_file(filename, path)
 								{
-									var isDel = confirm("Удалить объект \""+filename+"\"?");
+									var isDel = confirm($('.file-manager').data('delconfirm').replace('%s', filename));
 									if (isDel)
 									{
 										$.get( "admin/tools/filemanager/file-delete", { filename: filename, path: path } )
 											.done(function( data )
 											{
 												if (data == '') location.reload();
-												if (data != '')	alert( "Метод вернул результат: " + data );
+												if (data != '')	alert($('.file-manager').data('result').replace('%s', data));
 											});
 									}
 								}
@@ -301,7 +301,7 @@
 									$.get( "admin/tools/filemanager/file-copy", { action: 'copy', path: path } )
 										.done(function( data )
 										{
-											toastr.info(data, 'В буфере обмена');
+											toastr.info(data, $('.file-manager').data('copied'));
 										});
 								}
 
@@ -311,7 +311,7 @@
 										.done(function( data )
 										{
 											if (data == '') location.reload();
-											if (data != '')	alert( "Метод вернул результат: " + data );
+											if (data != '')	alert($('.file-manager').data('result').replace('%s', data));
 										});
 								}
 
@@ -373,7 +373,7 @@
 											  + '&uniq=' + $("#flag-uniq").prop("checked");
 
 									var uploader = new FileUploader({
-										message_error: 'Ошибка при загрузке файла',
+										message_error: $('.file-manager').data('uplerr'),
 										form: 'uploadform',
 										formfiles: 'files',
 										uploadid: '<?php print $hash;?>',
@@ -385,7 +385,7 @@
 
 									if (!uploader || !uploader.CheckBrowser())
 									{
-										toastr.error('Браузер не поддерживает потоковую загрузку');
+										toastr.error($('.file-manager').data('nostream'));
 										return;
 									}
 
@@ -420,7 +420,7 @@
 									formData.append('path', path);
 									formData.append('uniq', $("#flag-uniq").prop( "checked" ));
 
-									toastr.info('', 'Отправляю файл ⌛');
+									toastr.info('', $('.file-manager').data('sending'));
 
 									$.ajax(
 									{
@@ -433,13 +433,13 @@
 										success: function(response)
 										{
 											// обработка успешного ответа
-											toastr.success(response,'Загружено');
+											toastr.success(response, $('.file-manager').data('uploaded'));
 											setTimeout(function() { location.reload() }, 1500);
 										},
 										error: function(xhr, status, error)
 										{
 											// обработка ошибок
-											toastr.error(status,'Ошибка отправки');
+											toastr.error(status, $('.file-manager').data('senderr'));
 										}
 										// можно добавить xhr: function() { var xhr = $.ajaxSettings.xhr(); ... return xhr; }
 										// и progress: function(e) { if (e.lengthComputable) { var percent = e.loaded / e.total * 100; ... } }

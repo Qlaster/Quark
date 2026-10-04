@@ -352,7 +352,7 @@
 				//Обнуляем указатель на файл
 				$this->shear['current'] = null;
 				//Еще раз вызываем next, что бы тот переоткрыл следующий файл
-				return $this->next();
+				return $this->next($string);
 			}
 
 			//Читаем строку из файла
@@ -361,7 +361,7 @@
 			while ((! feof($this->shear['current'])) and ($buffer == ''));
 
 			//Игнорируем пустые строки
-			if ($buffer == '') return $this->next();
+			if ($buffer == '') return $this->next($string);
 
 			//Если попросили вывести строкой (так быстрее в 6 раз)
 			if ($string) return $buffer;

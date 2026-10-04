@@ -3,15 +3,15 @@
 							<div class="ibox ">
 								<div class="ibox-title">
 									<h5>
-										Код
-										<small>для изменения файла нажмите кнопку "Сохранить"</small>
+										{$blocks['code']['head']}
+										<small>{$blocks['code']['info']}</small>
 									</h5>
 									<div class="ibox-tools">
 										<!--
 											<button type="button" class="btn btn-primary btn-xs m-l-sm" onclick="send_textarea('code_editor', '')" >Сохранить</button>
 											-->
 										<label class='text-success' id='result-label-code'></label>
-										<button type="button" class="btn-save btn btn-primary btn-xs m-l-sm" onclick="AjaxFormRequest('result-label-code', 'code_editor_form', '{$code['action']}')">Сохранить</button>
+										<button type="button" class="btn-save btn btn-primary btn-xs m-l-sm" onclick="AjaxFormRequest('result-label-code', 'code_editor_form', '{$code['action']}')">{$blocks['save']['head']}</button>
 										<a class="collapse-link">
 										<i class="fa fa-chevron-up"></i>
 										</a>

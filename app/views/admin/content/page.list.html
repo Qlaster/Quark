@@ -238,7 +238,7 @@
 						<div class="col-lg-12">
 							<div class="ibox float-e-margins">
 								<div class="ibox-title">
-									<h5 id='pages'>Страницы сайта </h5>
+									<h5 id='pages'>{$page['head']}</h5>
 									<div class="ibox-tools">
 
 <!--
@@ -263,11 +263,11 @@
 
 
 
-										{foreach $menu['tools'] as $_elem}
-											{if count($_elem['button'])}
+										{foreach $menu['tools']['list'] as $_elem}
+											{if count($_elem['button']['list'])}
 												<a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="{$_elem['icon']}"></i></a>
 												<ul class="dropdown-menu dropdown-user" style="margin-left:-15em; min-width:20em">
-													{foreach $_elem['button'] as $_btn}
+													{foreach $_elem['button']['list'] as $_btn}
 													<li><a href="{$_btn['link']}"><i class="{$_btn['icon']}"></i> {$_btn['head']}</a></li>
 													{end}
 												</ul>
@@ -305,7 +305,7 @@
 										</div>
 										<div class="col-sm-3">
 											<div class="input-group">
-												<input type="text" id="input-search" placeholder="Поиск страницы + enter" class="input-sm form-control" onchange="tableSearch(document.getElementById('table-page-list'), this)">
+												<input type="text" id="input-search" placeholder="{$search['placeholder']}" class="input-sm form-control" onchange="tableSearch(document.getElementById('table-page-list'), this)">
 												<label for="input-search" class="input-group-btn"><button type="button" class="btn btn-sm btn-primary"> <i class="fa fa-search"></i> </button></label>
 											</div>
 										</div>
@@ -402,14 +402,14 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                        <h4 class="modal-title">Уверены?</h4>
+                        <h4 class="modal-title">{$modal['head']}</h4>
                     </div>
                     <div class="modal-body">
                         <p><img class="img-responsive" src="~/../img/icons/icon_delete.png"></p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-white" data-dismiss="modal">Отмена</button>
-                        <a type="button" class="btn btn-warning" id="delete-btn">Удалить страницу</a>
+                        <button type="button" class="btn btn-white" data-dismiss="modal">{$modal['cancel']}</button>
+                        <a type="button" class="btn btn-warning" id="delete-btn">{$modal['delete']}</a>
                     </div>
                 </div>
             </div>

@@ -1,5 +1,13 @@
 const urlParams = new URLSearchParams(window.location.search);
 
+//Локализация: переведённые строки приходят в data-l10n-* на держателе #page-l10n
+//(fail-safe: если атрибута нет — используется родная строка)
+function l10n(key, fallback) {
+    const el = document.getElementById('page-l10n');
+    const v = el ? el.getAttribute('data-l10n-' + key) : null;
+    return v !== null ? v : fallback;
+}
+
 const jstree_config = {
     node_base_name: null // оставить только числа и увеличивать их при создании новых элементов
     // node_base_name: 'new_element' // добавлять постфикс в формате new_element_N
@@ -42,6 +50,12 @@ const property_types = {
     }
 };
 
+//Переопределяем плейсхолдеры типов, если страница отдала переводы
+Object.keys(property_types).forEach(function(type) {
+    const ph = l10n('ph-' + type);
+    if (ph) property_types[type]['value_placeholder'] = ph;
+});
+
 $(document).ready(function() {
     let json_data = url_get(window.location.pathname + "/../get?collection=" + encodeURIComponent(urlParams.get("collection")) + "&object=" + encodeURIComponent(urlParams.get("object")));
     jstreeInit(json_data);
@@ -49,15 +63,23 @@ $(document).ready(function() {
     $('.js-tree-add-node').on('click', function() {
         treeAddNode();
     });
+
+    //Развернуть/свернуть все узлы дерева (jsTree open_all/close_all)
+    $('#nestable-menu [data-action]').on('click', function() {
+        const action = $(this).data('action');
+        const tree = $('#object-tree').jstree(true);
+        if (action === 'expand-all')   tree.open_all();
+        if (action === 'collapse-all') tree.close_all();
+    });
     
     $('.js-save-collection').on('click', async function() {
         if($('.js-tree-errors.visible, .js-table-errors.visible, .js-tree-warnings.visible').length) {
-            toastr.error('Сохранение недоступно', 'Ошибка в структуре объекта');
+            toastr.error(l10n('savedeny', 'Сохранение недоступно'), l10n('saveerr', 'Ошибка в структуре объекта'));
             return;
         }
 
         const $btn = $(this);
-        $btn.addClass('disabled').text('Сохранение...');
+        $btn.addClass('disabled').text(l10n('saving', 'Сохранение...'));
 
         try {
             await saveObject('admin/constructor/object/set?collection=' + encodeURIComponent(urlParams.get("collection")) + 
@@ -66,7 +88,7 @@ $(document).ready(function() {
         } catch (error) {
             console.error('Ошибка при сохранении:', error);
         } finally {
-            $btn.removeClass('disabled').text('Сохранить объект');
+            $btn.removeClass('disabled').text(l10n('savebtn', 'Сохранить объект'));
         }
     });
 
@@ -457,7 +479,7 @@ function jstreeInit(json) {
                 const text = match ? match[1] : '';
                 
                 $(input).val(text)
-                        .attr('placeholder', 'Введите название')
+                        .attr('placeholder', l10n('nameph', 'Введите название'))
                         .css('width', 'auto')
                         .on('input paste keydown', filterInput)
                         .one('blur', function() {
@@ -550,7 +572,7 @@ function jstreeInit(json) {
                 // для корневого элемента доступно только добавление вложений
                 if(node.id == 'jstree-root-node') return {
                     'create': {
-                        'label': "Добавить элемент",
+                        'label': l10n('menucreate', "Добавить элемент"),
                         'action': function(data) {
                             const inst = $.jstree.reference(data.reference);
                             const newNode = inst.create_node(node, {
@@ -568,7 +590,7 @@ function jstreeInit(json) {
                 return {
                     // Создать элемент
                     'create': {
-                        'label': "Добавить элемент",
+                        'label': l10n('menucreate', "Добавить элемент"),
                         'action': function(data) {
                             const inst = $.jstree.reference(data.reference);
                             const newNode = inst.create_node(node, {
@@ -583,7 +605,7 @@ function jstreeInit(json) {
                     },
                     // Переименовать
                     'rename': {
-                        'label': "Переименовать",
+                        'label': l10n('menurename', "Переименовать"),
                         'action': function(data) {
                             const inst = $.jstree.reference(data.reference);
                             inst.edit(node);
@@ -591,7 +613,7 @@ function jstreeInit(json) {
                     },
                     // Удалить
                     'delete': {
-                        'label': "Удалить",
+                        'label': l10n('menudel', "Удалить"),
                         'action': function(data) {
                             const inst = $.jstree.reference(data.reference);
                             inst.delete_node(node);
@@ -600,14 +622,14 @@ function jstreeInit(json) {
                             const fragment = document.createDocumentFragment();
                             $(fragment).append(`
                                 <tr>
-                                    <td class="js-row-no-properties" colspan="3">Выберите элемент</td>
+                                    <td class="js-row-no-properties" colspan="3">${l10n('selectelem', 'Выберите элемент')}</td>
                                 </tr>
                             `);
                             $('#table-properties').empty().append(fragment);
                         }
                     },
                     'copy': {
-                        'label': "Дублировать",
+                        'label': l10n('menucopy', "Дублировать"),
                         'action': function(data) {
                             const inst = $.jstree.reference(data.reference);
                             const copy_name = createUniqueName('object-tree', node.li_attr['jstree-initial-name']);
@@ -731,7 +753,7 @@ function propertiesTableAddItem(type = 'blank') {
     const fragment = document.createDocumentFragment();
     $(fragment).append(`
         <tr class="property-row">
-            <td><input onchange="" value="${property_types[type]['type_name']}" placeholder="Имя свойства" class="form-control js-property-name"></td>
+            <td><input onchange="" value="${property_types[type]['type_name']}" placeholder="${l10n('propname', 'Имя свойства')}" class="form-control js-property-name"></td>
             <td><input onchange="" value="" placeholder="${property_types[type]['value_placeholder']}" class="form-control js-property-value"></td>
             <td class="text-center" style="width:1em">
                 <div class="infobtn btn btn-circle btn-outline btn-warning fa fa-remove js-properties-table-remove-item"></div>
@@ -750,7 +772,7 @@ $('#table-properties').on('click', '.js-properties-table-remove-item', function(
         const fragment = document.createDocumentFragment();
         $(fragment).append(`
             <tr>
-                <td class="js-row-no-properties" colspan="3">У выделенного элемента нет свойств</td>
+                <td class="js-row-no-properties" colspan="3">${l10n('noprops', 'У выделенного элемента нет свойств')}</td>
             </tr>
         `);
         $('#table-properties').append(fragment);
@@ -854,7 +876,7 @@ function propertiesTableLoadProperties(properties) {
             let placeholder = property_types?.[key]?.['value_placeholder'] ?? property_types['blank']['value_placeholder'];
             $(fragment).append(`
                 <tr class="property-row">
-                    <td><input onchange="" value="${key}" placeholder="Имя свойства" class="form-control js-property-name"></td>
+                    <td><input onchange="" value="${key}" placeholder="${l10n('propname', 'Имя свойства')}" class="form-control js-property-name"></td>
                     <td><input onchange="" value="${value}" placeholder="${placeholder}" class="form-control js-property-value"></td>
                     <td class="text-center" style="width:1em">
                         <div class="infobtn btn btn-circle btn-outline btn-warning fa fa-remove js-properties-table-remove-item"></div>
@@ -865,7 +887,7 @@ function propertiesTableLoadProperties(properties) {
     } else {
         $(fragment).append(`
             <tr>
-                <td class="js-row-no-properties" colspan="3">У выделенного элемента нет свойств</td>
+                <td class="js-row-no-properties" colspan="3">${l10n('noprops', 'У выделенного элемента нет свойств')}</td>
             </tr>
         `);
     }
@@ -1144,7 +1166,7 @@ async function saveObject(actionurl)
     // console.log(tree_data);
 
     if (state.hasEmptyNodes) {
-        toastr.error('Сохранение недоступно', 'Ошибка в структуре объекта');
+        toastr.error(l10n('savedeny', 'Сохранение недоступно'), l10n('saveerr', 'Ошибка в структуре объекта'));
         return false;
     }
 
@@ -1172,17 +1194,17 @@ async function saveObject(actionurl)
             data: { object: result },
             timeout: 15000, // 15 секунд
             success: function(response) {
-                toastr.success('', 'Сохранено');
+                toastr.success('', l10n('saved', 'Сохранено'));
                 resolve(response);
             },
             error: function(xhr, status, error) {
                 let message = '';
                 
                 if (status === 'timeout') {
-                    message = 'Превышено время ожидания сервера';
+                    message = l10n('timeout', 'Превышено время ожидания сервера');
                 }
                 else if (!navigator.onLine) {
-                    message = 'Нет интернет-соединения';
+                    message = l10n('offline', 'Нет интернет-соединения');
                 }
                 else if (!xhr.responseText) {
                     message = getHttpStatusMessage(xhr.status);
@@ -1191,7 +1213,7 @@ async function saveObject(actionurl)
                     message = xhr.responseText;
                 }
                 
-                toastr.error(message, 'Ошибка сохранения');
+                toastr.error(message, l10n('errsave', 'Ошибка сохранения'));
                 reject(new Error(message));
             }
         });
@@ -1209,7 +1231,7 @@ function getHttpStatusMessage(code) {
         503: 'Сервис недоступен'
     };
     
-    return messages[code] || `Ошибка сервера (код ${code})`;
+    return l10n('http' + code, messages[code]) || l10n('servererr', 'Ошибка сервера (код %s)').replace('%s', code);
 }
 
 // сериализовать map в json

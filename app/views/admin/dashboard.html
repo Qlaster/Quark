@@ -128,9 +128,9 @@
                                         </span>
                                         <div class="col-sm-9 m-b-xs">
 											<div data-toggle="buttons" class="btn-group">
-												<label class="btn btn-sm btn-white active" onclick="GetChartsData(10)"> <input type="radio" id="option1" name="countDay" > 10 дней </label>
-												<label class="btn btn-sm btn-white " onclick="GetChartsData(20)"> <input type="radio" id="option2" name="countDay"> 20 дней </label>
-												<label class="btn btn-sm btn-white"  onclick="GetChartsData(30)"> <input type="radio" id="option3" name="countDay"> 30 дней </label>
+												<label class="btn btn-sm btn-white active" onclick="GetChartsData({$$charts['buttons']['list']['d10']['count']})"> <input type="radio" id="option1" name="countDay" > {$$charts['buttons']['list']['d10']['head']} </label>
+												<label class="btn btn-sm btn-white " onclick="GetChartsData({$$charts['buttons']['list']['d20']['count']})"> <input type="radio" id="option2" name="countDay"> {$$charts['buttons']['list']['d20']['head']} </label>
+												<label class="btn btn-sm btn-white"  onclick="GetChartsData({$$charts['buttons']['list']['d30']['count']})"> <input type="radio" id="option3" name="countDay"> {$$charts['buttons']['list']['d30']['head']} </label>
 											</div>
 										</div>
 <!--
@@ -169,7 +169,7 @@
 					<div class="col-lg-4">
 						<div class="ibox float-e-margins">
 							<div class="ibox-title">
-								<h5>Устройства</h5>
+								<h5>{$$charts['titles']['list']['devices']['head']}</h5>
 								<div ibox-tools></div>
 							</div>
 							<div class="ibox-content">
@@ -183,7 +183,7 @@
 					<div class="col-lg-4">
 						<div class="ibox float-e-margins">
 							<div class="ibox-title">
-								<h5>Операционные системы</h5>
+								<h5>{$$charts['titles']['list']['os']['head']}</h5>
 
 								<div ibox-tools></div>
 							</div>
@@ -198,7 +198,7 @@
 					<div class="col-lg-4">
 						<div class="ibox float-e-margins">
 							<div class="ibox-title">
-								<h5>Браузеры</h5>
+								<h5>{$$charts['titles']['list']['browsers']['head']}</h5>
 								<div ibox-tools></div>
 							</div>
 							<div class="ibox-content">

@@ -53,7 +53,7 @@
 					<div class="col-lg-12">
 						<div class="ibox float-e-margins">
 							<div class="ibox-title">
-								<h5>Список каталогов</h5>
+								<h5>{$head['head']}</h5>
 								<div class="ibox-tools">
 
 <!--
@@ -102,12 +102,12 @@
 
 								<div class="row">
 									<div class="col-md-2 col-sm-12">
-										<a href="admin/catalogs/config/edit" class="btn-edit btn btn-white !btn-outline btn-sm mr-4"><i class="fa fa-plus"></i> Добавить справочник</a>
+										<a href="admin/catalogs/config/edit" class="btn-edit btn btn-white !btn-outline btn-sm mr-4"><i class="{$button['add']['icon']}"></i> {$button['add']['head']}</a>
 									</div>
 
 									<div class="col-md-10 col-sm-12">
 
-										<div class="input-group"><input id="search-catalog" type="text" placeholder="Поиск" class="input-sm form-control">
+										<div class="input-group"><input id="search-catalog" type="text" placeholder="{$search['placeholder']}" class="input-sm form-control">
 											<span class="input-group-btn">
 												<button type="button" class="btn btn-sm btn-primary"><i class="fa fa-search"></i></button>
 											</span>
@@ -193,14 +193,14 @@
 
 												<span>
 
-													<span title="Название подключения БД"><i class="fa fa-database"></i> {$catalog['db']}</span>
+													<span title="{$tooltip['db']['title']}"><i class="fa fa-database"></i> {$catalog['db']}</span>
 													<span> <i class="fa fa-angle-double-right"></i> </span>
-													<span title="Таблица базы данных для хранения"><i class="fa fa-table"></i> {$catalog['table']}</span>
+													<span title="{$tooltip['table']['title']}"><i class="fa fa-table"></i> {$catalog['table']}</span>
 <!--
 													<span> <i class="fa fa-angle-double-right"></i> </span>
 -->
 													<span> — </span>
-													<code title="Системное название каталога" class="{= $catalog['status']['tone'] ?? 'text-success'} "><i class="fa fa-inbox"></i> {$name}</code>
+													<code title="{$tooltip['code']['title']}" class="{= $catalog['status']['tone'] ?? 'text-success'} "><i class="fa fa-inbox"></i> {$name}</code>
 
 
 													<br>
@@ -228,23 +228,21 @@
 
 
 												<div class="!d-inline !input-group">
-													<span class="btn-group">
-														<button data-toggle="dropdown" class="btn btn-white !btn-xs dropdown-toggle " aria-expanded="false"><i class="fa fa-sliders !fa-gear"></i> <span class="caret"></span></button>
-														<ul class="dropdown-menu">
-<!--
-															<li><a><strong>Настройки</strong></a></li>
-															<li class="divider"></li>
--->
-															<li><a data-toggle="modal" data-target="#importModal" class="importCsv" data-catalog="{$name}">Импортировать CSV</a></li>
-															<!-- ДОБАВЛЕНО: открываем модальное окно экспорта -->
-															<li><a data-toggle="modal" data-target="#exportModal" class="exportCsv" data-catalog="{$name}">Экспортировать CSV</a></li>
+														{foreach $catalog['context']['list'] as $_group}
+															{if $_group['list']}
+															<span class="btn-group">
+																<button data-toggle="dropdown" class="btn btn-white !btn-xs dropdown-toggle " aria-expanded="false"><i class="{$_group['icon']}"></i> <span class="caret"></span></button>
+																<ul class="dropdown-menu">
+																{foreach $_group['list'] as $_action}
+																	<li><a data-toggle="{$_action['toggle']}" data-target="{$_action['target']}" class="{$_action['class']}" data-catalog="{$_action['catalog']}">{$_action['head']}</a></li>
+																{end}
+																</ul>
+															</span>
+															{else}
+															<a class="{$_group['class']}" {if $_group['link']}href="{$_group['link']}" {end} {if $_group['title']}title="{$_group['title']}" {end} {if $_group['style']}style="{$_group['style']}" {end} {if $_group['name']}data-name="{$_group['name']}" {end} {if $_group['confirm']}data-confirm="{$_group['confirm']}" {end}><i class="{$_group['icon']}"></i> </a>
+															{end}
+														{end}
 
-														</ul>
-													</span>
-
-													<a class="btn btn-white !btn-xs dropdown-toggle " href="admin/catalogs/config/edit?name={$name}"><i class="fa fa-cogs"></i> </a>
-													<a class="btn btn-white !btn-xs" href="admin/catalogs/access/edit?name={$name}" title="Права доступа"><i class="fa fa-unlock-alt"></i> </a>
-													<a class="btn btn-danger btn-outline btn-delete dropdown-toggle " style="opacity:0.6" data-name="{$name}" ><i class="fa fa-trash-o"></i>  </a>
 
 
 <!--
@@ -288,8 +286,8 @@
 <!--
 					<i class="fa fa-refresh  modal-icon"></i>
 -->
-					<h4 class="modal-title">Импорт CSV</h4>
-					<small>Импорт данных из файла CSV</small>
+					<h4 class="modal-title">{$modal['import']['title']}</h4>
+					<small>{$modal['import']['subtitle']}</small>
 				</div>
 				<div class="modal-body">
 					<form id="importForm" class="form-horizontal" action="admin/catalogs/transfer/import">
@@ -298,15 +296,15 @@
 
 						<div class="col-md-6 p-none">
 							<div class="form-group">
-								<label class="col-sm-8 control-label">Разделитель полей</label>
-								<div class="col-sm-4"><input type="text" class="form-control" required placeholder=";" name="delimiter" value=";"></div>
+								<label class="col-sm-8 control-label">{$form['delimiter']['label']}</label>
+								<div class="col-sm-4"><input type="text" class="form-control" required placeholder="{$form['delimiter']['placeholder']}" name="delimiter" value=";"></div>
 							</div>
 						</div>
 
 						<div class="col-md-6 p-none">
 							<div class="form-group ">
-								<label class="col-sm-8 control-label">Символ кавычки</label>
-								<div class="col-sm-4"><input type="text" class="form-control" required placeholder='"' name='quotes' value='"'></div>
+								<label class="col-sm-8 control-label">{$form['quotes']['label']}</label>
+								<div class="col-sm-4"><input type="text" class="form-control" required placeholder="{$form['quotes']['placeholder']}" name="quotes" value='"'></div>
 							</div>
 						</div>
 <!--
@@ -328,7 +326,7 @@
 						</div>
 
 
-						<p class="m-t-md"> Разработчики <strong>не рекомендуют указывать поле ID</strong> во избежании проблем с пересечением ключей при импорте</p>
+						<p class="m-t-md">{$form['warning']['text']}</p>
 
 						<div class="preview-frame" id="preview-frame">
 
@@ -343,8 +341,8 @@
 -->
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-white" data-dismiss="modal">Отмена</button>
-					<button type="button" class="btn btn-primary" id="importButton">Импорт</button>
+					<button type="button" class="btn btn-white" data-dismiss="modal">{$button['cancel']['head']}</button>
+					<button type="button" class="btn btn-primary" id="importButton">{$button['import']['head']}</button>
 				</div>
 			</div>
 		</div>
@@ -356,8 +354,8 @@
 			<div class="modal-content animated !fadeIn">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h4 class="modal-title">Экспорт CSV</h4>
-					<small>Экспорт данных каталога в файл CSV</small>
+					<h4 class="modal-title">{$modal['export']['title']}</h4>
+					<small>{$modal['export']['subtitle']}</small>
 				</div>
 				<div class="modal-body">
 					<form id="exportForm" class="form-horizontal">
@@ -366,23 +364,23 @@
 
 						<div class="col-md-6 p-none">
 							<div class="form-group">
-								<label class="col-sm-8 control-label">Разделитель полей</label>
-								<div class="col-sm-4"><input type="text" class="form-control" required placeholder=";" name="delimiter" value=";"></div>
+								<label class="col-sm-8 control-label">{$form['delimiter']['label']}</label>
+								<div class="col-sm-4"><input type="text" class="form-control" required placeholder="{$form['delimiter']['placeholder']}" name="delimiter" value=";"></div>
 							</div>
 						</div>
 
 						<div class="col-md-6 p-none">
 							<div class="form-group">
-								<label class="col-sm-8 control-label">Символ кавычки</label>
-								<div class="col-sm-4"><input type="text" class="form-control" required placeholder='"' name="quotes" value='"'></div>
+								<label class="col-sm-8 control-label">{$form['quotes']['label']}</label>
+								<div class="col-sm-4"><input type="text" class="form-control" required placeholder="{$form['quotes']['placeholder']}" name="quotes" value='"'></div>
 							</div>
 						</div>
 
 					</form>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-white" data-dismiss="modal">Отмена</button>
-					<button type="button" class="btn btn-primary" id="exportButton">Экспорт</button>
+					<button type="button" class="btn btn-white" data-dismiss="modal">{$button['cancel']['head']}</button>
+					<button type="button" class="btn btn-primary" id="exportButton">{$button['export']['head']}</button>
 				</div>
 			</div>
 		</div>
@@ -433,7 +431,7 @@
 			{
 				e.preventDefault();
 				var name = $(this).data('name');
-				if (!confirm('Удалить каталог "' + name + '" из конфигурации?\n\nДанные в базе данных затронуты не будут.'))
+				if (!confirm($(this).data('confirm')))
 					return;
 				window.location.href = 'admin/catalogs/config/delete?name=' + encodeURIComponent(name);
 			});

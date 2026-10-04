@@ -2861,6 +2861,9 @@ video {
 #wrapper {
   width: 100%;
   overflow-x: hidden;
+  /* clip обрезает не создавая скролл-контейнера — иначе position:sticky
+     внутри #wrapper не работает; где clip не поддержан — останется hidden */
+  overflow-x: clip;
 }
 .wrapper {
   padding: 0 20px;
