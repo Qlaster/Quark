@@ -232,7 +232,10 @@
 			if ($this->head)		$head .= "	\r\n".$this->head;
 
 			if (isset($head))
-				$tpl_string = str_replace($htmlhead, $htmlhead .= $head, $tpl_string);
+			{
+				$tpl_string = str_replace($htmlhead, $htmlhead . $head, $tpl_string);
+				$htmlhead .= $head;
+			}
 
 			preg_match_all("<script.*?src=[\"'](.*?)[\"'].*?>", $tpl_string, $scripts_tags);
 			preg_match_all("<link.*?href=[\"'](.*?)[\"'].*?>",  $htmlhead, $links_tags);
