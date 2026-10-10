@@ -150,6 +150,14 @@
 											<input type="email" placeholder="{$account['email']}" class="form-control" name="email" value="{$user['email']}" autocomplete="off">
 
 											<span class="help-block m-b-none"></span>
+											<label>{$account['lang']['head']}</label>
+											<select class="form-control" name="lang">
+												{foreach $account['lang']['list'] as $_lang}
+													<option value="{$_lang['value']}" {$_lang['selected']}>{$_lang['head']}</option>
+												{end}
+											</select>
+
+											<span class="help-block m-b-none"></span>
 
 <!--
 											<input type="hidden" placeholder="{$account['password']['new']}" class="form-control" value="{$user['hash']}">

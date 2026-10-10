@@ -48,7 +48,7 @@
 		//словарём секции [auto] локали (точное → нормализованное)
 		$content = $APP->l10n->auto($content, ['head','text']);
 
-		//Текущий целевой язык / установить (запоминается в сессии)
+		//Текущий целевой язык / установить (память запроса)
 		$APP->l10n->lang();
 		$APP->l10n->lang('en');
 
@@ -88,7 +88,7 @@
 	class QL10n implements QL10nInterface
 	{
 		//Распарсенный l10n.ini — только вход, фасад его не мутирует:
-		//состояние (язык) живёт в сессии/памяти, не в конфиге
+		//состояние (язык) живёт в памяти запроса, не в конфиге
 		public $config;
 
 		//Кеш загруженных локалей: {lang} => распарсенный ini-массив | null
@@ -103,7 +103,7 @@
 		//Промахи за запрос: 'lang|ключ' => ['key'=>..., 'orig'=>...]
 		private $missing = [];
 
-		//Язык, выставленный lang() без сессии (CLI/тесты/до session_start)
+		//Язык, выставленный lang() — память на время запроса
 		private $langSet = null;
 
 		public function __construct($config = [])
@@ -114,22 +114,54 @@
 
 		# -------------------------[ ПУБЛИЧНОЕ ]------------------------- #
 
-		//Текущий целевой язык: сессия → конфиг lang → source.
-		//Со строковым аргументом — устанавливает язык (сессия), вернёт $this
+		//Текущий целевой язык: память запроса → конфиг lang → source.
+		//Аргументом устанавливает язык (только в память — фасад не лезет
+		//в сессии, персистентность решает вызывающий код), вернёт $this
 		public function lang($set = null)
 		{
 			if ($set !== null)
 			{
-				//сессия основной канал; без неё (CLI/тесты) — память
-				if (isset($_SESSION)) $_SESSION['l10n']['lang'] = $set;
-				else                 $this->langSet = $set;
+				//'' — сброс выбора, фолбэк на конфиг
+				$this->langSet = $set === '' ? null : $set;
 				return $this;
 			}
-			return $_SESSION['l10n']['lang']
-			    ?? $this->langSet
+			return $this->langSet
 			    ?? $this->config['translate']['lang']
 			    ?? $this->config['translate']['source']
 			    ?? null;
+		}
+
+		//Доступные языки: скан {folder} — плоские {lang}.ini и директории
+		//{lang}/, плюс исходный язык конфига (source может не иметь файлов).
+		//Имя для UI — из {lang}/meta.ini (поле name) или секции [meta]
+		//плоского {lang}.ini; нет метаданных — показываем код языка
+		public function langs()
+		{
+			$dir   = rtrim($this->config['translate']['folder'] ?? 'app/l10n', '/\\');
+			$codes = [];
+
+			foreach ((array) glob("$dir/*.ini") as $file)
+				$codes[basename($file, '.ini')] = true;
+			foreach ((array) glob("$dir/*", GLOB_ONLYDIR) as $sub)
+				$codes[basename($sub)] = true;
+			if ($src = $this->config['translate']['source'] ?? null)
+				$codes[$src] = true;
+
+			$result = [];
+			foreach (array_keys($codes) as $code)
+			{
+				$meta = [];
+				if (is_file("$dir/$code.ini"))
+					$meta = (array) ((new Core_Ini_Reader)->fromFile("$dir/$code.ini")['meta'] ?? []);
+				if (is_file("$dir/$code/meta.ini"))
+					$meta = array_replace($meta, (array) (new Core_Ini_Reader)->fromFile("$dir/$code/meta.ini"));
+
+				$result[$code] = ['name' => $meta['name'] ?? $code,
+				                  'dir'  => is_dir("$dir/$code") ? "$dir/$code" : null];
+			}
+
+			ksort($result);
+			return $result;
 		}
 
 		//Полиморфен по входу:

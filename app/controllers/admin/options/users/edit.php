@@ -13,6 +13,14 @@
 	if (isset($user))
 		$content['user'] = $user;
 
+	//Язык интерфейса: '' — системный (фолбэк на конфиг l10n) + все локали
+	$langs = ['' => ['value' => '', 'head' => $content['account']['lang']['system'], 'selected' => '']];
+	foreach ((array) $APP->l10n->langs() as $code => $info)
+		$langs[$code] = ['value' => $code, 'head' => $info['name'], 'selected' => ''];
+	if (isset($langs[$user['lang'] ?? '']))
+		$langs[$user['lang'] ?? '']['selected'] = 'selected';
+	$content['account']['lang']['list'] = $langs;
+
 
 
 	//Список всех файлов, которым предстаит дать права

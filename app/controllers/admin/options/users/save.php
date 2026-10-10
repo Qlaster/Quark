@@ -23,6 +23,7 @@
 	$user['name']     = $_POST['name'];     unset($_POST['name']);
 	$user['email'] 	  = $_POST['email'];    unset($_POST['email']);
 	$user['info']     = $_POST['info'];     unset($_POST['info']);
+	$user['lang']     = $_POST['lang'] ?? ''; unset($_POST['lang']);
 	$user['disable']  = $_POST['disable'];  unset($_POST['disable']);
 	$user['password'] = $_POST['password']; unset($_POST['password']);
 	$user['logo']     = $_POST['logo'];     unset($_POST['logo']);

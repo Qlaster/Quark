@@ -98,6 +98,11 @@
 		//Интерфейс к менеджеру базы
 		public $PDO_INTERFACE;
 
+		//Флаги import(): политика при коллизии с существующими документами
+		const IMPORT_OVERWRITE = 0;	//перезаписать молча (поведение по умолчанию, легаси)
+		const IMPORT_STRICT    = 1;	//коллизии → исключение ДО записи (двухфазно)
+		const IMPORT_SKIP      = 2;	//существующие документы пропустить, остальные залить
+
 
 		/*
 		 *
@@ -501,14 +506,36 @@
 			return json_encode($result);
 		}
 
-		public function import($datastring)
+		public function import($datastring, $flags = 0)
 		{
 			$collections = json_decode($datastring, true);
 			if (!$collections) return false;
 
+			//Фаза проверки: при STRICT/SKIP сначала собираем коллизии, ничего не записывая
+			if ($flags & (self::IMPORT_STRICT | self::IMPORT_SKIP))
+			{
+				$collide = [];
+				foreach ($collections as $cn => $objs)
+					foreach ((array) $objs as $n => $o)
+						if ($this->collection($cn)->get($n) !== null)
+							$collide[] = "$cn.$n";
+
+				//STRICT: есть коллизии — отказ до записи, без частичного импорта
+				if ($collide and ($flags & self::IMPORT_STRICT))
+					throw new \Exception('Objects import: документы уже существуют — '.implode(', ', $collide));
+
+				//SKIP: вырезаем существующие из входных данных
+				if ($flags & self::IMPORT_SKIP)
+					foreach ($collide as $key)
+					{
+						list($cn, $n) = explode('.', $key, 2);
+						unset($collections[$cn][$n]);
+					}
+			}
+
 			foreach ($collections as $collectionName => $objects)
 			{
-				foreach ($objects as $name => $object)
+				foreach ((array) $objects as $name => $object)
 				{
 					$this->collection($collectionName)->set($name, $object);
 				}
