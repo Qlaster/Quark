@@ -30,11 +30,12 @@
 			$stmt = $this->PDO_INTERFACE->prepare(
 				"CREATE TABLE IF NOT EXISTS '$table'
 					(
-						'urlmask' UNIQUE,
-						'name' UNIQUE,
+						'type'    NOT NULL DEFAULT '',
+						'urlmask' NOT NULL DEFAULT '',
+						'name'    NOT NULL DEFAULT '',
 						'data',
-						'lang' UNIQUE,
-						PRIMARY KEY('name', 'urlmask', 'lang')
+						'lang'    NOT NULL DEFAULT '',
+						PRIMARY KEY('type', 'name', 'urlmask', 'lang')
 					);
 				")->execute();
 			//Создаем индекс
@@ -95,11 +96,11 @@
 		}
 
 
-		public function delete($where)
+		public function delete($args=[])
 		{
 			$table = $this->table;
 			list ($where, $values) = $this->wherePrepare($args);
-			$STH = $this->PDO_INTERFACE->prepare("DELETE * FROM '$table' $where;");
+			$STH = $this->PDO_INTERFACE->prepare("DELETE FROM '$table' $where;");
 			return $STH->execute($values);
 		}
 

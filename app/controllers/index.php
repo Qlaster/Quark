@@ -64,8 +64,16 @@
 		//Пометим относительную директорию, что бы шаблонизатор мог указать его в шаблоне
 		$APP->template->base_html = $APP->url->home();
 
-		//Добавим заголовок страницы
+		//Добавим заголовок страницы (легаси: headcode → ->head)
 		$APP->template->head = $APP->page->meta->get(['urlmask'=>'','name'=>'headcode']);
+
+		//Фрагменты кода (type='code'): name=якорь → вставка перед якорем
+		//на этапе компиляции шаблона через config['replace']
+		foreach ((array) $APP->page->meta->select(['type'=>'code','urlmask'=>'']) as $fragment)
+		{
+			if ($fragment['data'] === '') continue;
+			$APP->template->config['replace'][$fragment['name']] = $fragment['data']."\n".$fragment['name'];
+		}
 
 		//выводим используя встроенный шаблонизатор
 		$APP->template->file($page['html'])->display($content);

@@ -94,9 +94,6 @@
 				<div class="col-lg-12 animated fadeInRight">
 					<div class="mail-box-header">
 						<div class="pull-right tooltip-demo">
-		<!--
-							<a href="mailbox.html" class="btn btn-white btn-sm" data-toggle="tooltip" data-placement="top" title="Move to draft folder"><i class="fa fa-pencil"></i> Draft</a>
-		-->
 							<a id="btn-save" class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="{$save['title']}"><i class="fa {$save['icon']}"></i> {$save['head']} </a>
 						</div>
 						<h2>
@@ -104,30 +101,33 @@
 						</h2>
 						<span>{$$help['text']}</span>
 					</div>
-						<div class="mail-box">
 
-
-		<!--
-						<div class="mail-body">
-							<form class="form-horizontal" method="get">
-								<div class="form-group"><label class="col-sm-2 control-label">To:</label>
-
-									<div class="col-sm-10"><input type="text" class="form-control" value="alex.smith@corporat.com"></div>
-								</div>
-								<div class="form-group"><label class="col-sm-2 control-label">Subject:</label>
-
-									<div class="col-sm-10"><input type="text" class="form-control" value=""></div>
-								</div>
-							</form>
+					<div class="panel blank-panel">
+						<style>
+							.tab-content .CodeMirror        { min-height: 300px; }
+							.tab-content .CodeMirror-scroll { min-height: 300px; }
+						</style>
+						<div class="panel-heading">
+							<div class="panel-options">
+								<ul class="nav nav-tabs" id="code-tabs">
+									{foreach $tabs['list'] as $_i => $_tab}
+									<li{if $_i == 0} class="active"{end}>
+										<a href="#tab-{$_i}" data-toggle="tab" data-tag="{$_tab['name']}">{$_tab['name']}<span class="badge badge-muted del-tab" data-tag="{$_tab['name']}" title="{$tabs['del']}" style="margin-left:8px">✕</span></a>
+									</li>
+									{end}
+									<li><a id="btn-add-tab" href="#"><i class="fa fa-plus"></i> {$tabs['add']}</a></li>
+								</ul>
+							</div>
 						</div>
-		-->
 
-						<div class="mail-text h-200">
-							<style>
-								.CodeMirror-scroll { min-height: 300px; }
-							</style>
-							<textarea id="head-code" style="min-height:200px">{$$code['head']}</textarea>
-							<div class="clearfix"></div>
+						<div class="panel-body">
+							<div class="tab-content">
+								{foreach $tabs['list'] as $_i => $_tab}
+								<div class="tab-pane{if $_i == 0} active{end}" id="tab-{$_i}">
+									<textarea class="code-area" data-tag="{$_tab['name']}" style="min-height:200px">{$$_tab['data']}</textarea>
+								</div>
+								{end}
+							</div>
 						</div>
 					</div>
 				</div>
@@ -163,6 +163,25 @@
     <!-- SUMMERNOTE -->
     <script src="../js/plugins/summernote/summernote.min.js"></script>
     <script>
+		var editors = {};
+
+		var initEditor = function(textarea)
+		{
+			var tag = $(textarea).data('tag');
+			if (!editors[tag])
+				editors[tag] = CodeMirror.fromTextArea(textarea, {
+					lineNumbers: true,
+					matchBrackets: true,
+					styleActiveLine: true,
+					theme: "ambiance"
+				});
+		};
+
+		var currentTag = function()
+		{
+			return $('#code-tabs li.active a[data-tag]').data('tag');
+		};
+
         $(document).ready(function()
         {
             $('.i-checks').iCheck({
@@ -170,20 +189,21 @@
                 radioClass: 'iradio_square-green',
             });
 
+			$('.code-area').each(function(){ initEditor(this); });
 
-            //~ $('.summernote').summernote();
-
-
-            window.editor_head = CodeMirror.fromTextArea(document.getElementById("head-code"), {
-                 lineNumbers: true,
-                 matchBrackets: true,
-                 styleActiveLine: true,
-                 theme:"ambiance"
-             });
+			//CodeMirror в скрытой вкладке рисуется криво — освежаем при показе
+			$('#code-tabs').on('shown.bs.tab', 'a[data-toggle="tab"]', function(e)
+			{
+				var tag = $(e.target).data('tag');
+				if (editors[tag]) editors[tag].refresh();
+			});
 
             $("#btn-save").click(function()
             {
-				$.post("admin/content/head/save", { headcode: window.editor_head.getValue() })
+				var tag = currentTag();
+				if (!editors[tag]) return;
+
+				$.post("admin/content/head/save", { tag: tag, code: editors[tag].getValue() })
 					.done(function( data )
 					{
 						toastr.success(data);
@@ -194,22 +214,45 @@
 					});
 			});
 
+			$("#btn-add-tab").click(function(e)
+			{
+				e.preventDefault();
+				var tag = prompt($('.toast-msgs').data('tagname'));
+				if (!tag) return;
+				tag = $.trim(tag);
+				if (!tag) return;
 
+				//уже есть — просто переключимся
+				if (editors[tag])
+				{
+					$('#code-tabs a[data-tag="'+tag+'"]').tab('show');
+					return;
+				}
 
+				var id = 'tab-new-' + tag;
+				$('<li><a href="#'+id+'" data-toggle="tab" data-tag="'+tag+'">'+tag+'<span class="badge badge-muted del-tab" data-tag="'+tag+'" title="" style="margin-left:8px">✕</span></a></li>')
+					.insertBefore('#code-tabs li:last');
+				$('.tab-content').append('<div class="tab-pane" id="'+id+'"><textarea class="code-area" data-tag="'+tag+'"></textarea></div>');
+				initEditor($('#'+id+' .code-area')[0]);
+				$('#code-tabs a[data-tag="'+tag+'"]').tab('show');
+			});
 
+			//Удаление вкладки (запись в meta — только при существовании)
+			$(document).on('click', '.del-tab', function(e)
+			{
+				e.preventDefault();
+				e.stopPropagation();
+				var tag = $(this).data('tag');
+				if (!confirm($('.toast-msgs').data('delconfirm'))) return;
+
+				$.post("admin/content/head/del", { tag: tag })
+					.done(function(){ location.reload(); })
+					.fail(function(){ toastr.warning($('.toast-msgs').data('error')); });
+			});
 
         });
-
-        var edit = function() {
-            $('.click2edit').summernote({focus: true});
-        };
-        var save = function() {
-            var aHTML = $('.click2edit').code(); //save HTML If you need(aHTML: array).
-            $('.click2edit').destroy();
-        };
-
     </script>
-	<div class="toast-msgs hidden" data-error="{$$toast['error']}"></div>
+	<div class="toast-msgs hidden" data-error="{$$toast['error']}" data-tagname="{$$tabs['tagname']}" data-delconfirm="{$$tabs['delconfirm']}"></div>
 </body>
 
 </html>
