@@ -41,6 +41,12 @@
 		}
 	}
 
+	//Язык панели — системный дефолт (translate.lang в l10n.ini)
+	$l10nCfg = (array) $APP->config->get($_ENV['facades']['app'].'/l10n.ini');
+	$sysLang = $l10nCfg['translate']['lang'] ?? $l10nCfg['translate']['source'] ?? '';
+	foreach ((array) $APP->l10n->langs() as $code => $info)
+		$content['lang']['list'][$code] = ['value' => $code, 'head' => $info['name'], 'selected' => $code === $sysLang ? 'selected' : ''];
+
 	$content['form_info'] = $APP->objects->collection('admin')->get('about');
 	$content['poster']['link'] = 'public/images/poster.png?';
 

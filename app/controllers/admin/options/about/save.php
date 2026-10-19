@@ -21,6 +21,19 @@
  *
  *
  */
+	//Язык панели — отдельно: пишется в engine/facades/l10n.ini (translate.lang),
+	//а не в объект about. Валидируем по списку существующих локалей
+	$syslang = trim($_POST['syslang'] ?? '');
+	unset($_POST['syslang']);
+
+	if ($syslang !== '' and in_array($syslang, array_keys((array) $APP->l10n->langs())))
+	{
+		$l10nFile = $_ENV['facades']['app'].'/l10n.ini';
+		$l10nCfg  = (array) $APP->config->get($l10nFile);
+		$l10nCfg['translate']['lang'] = $syslang;
+		$APP->config->set($l10nCfg, $l10nFile);
+	}
+
 	$_POST['poster'] = 'public/images/poster.png';
 
 	echo $APP->objects->collection('admin')->set('about', $_POST) ? "OK" : "";

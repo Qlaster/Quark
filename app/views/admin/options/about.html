@@ -67,8 +67,15 @@
 										</form>
                                     </div>
 								</div>
-								<h4><strong>{$poster['geo']}</strong></h4>
-                                <p><i class="fa fa-map-marker"></i> {$poster['country']} </p>
+								<div class="form-group">
+									<h4><strong>{$lang['head']}</strong></h4>
+									<select name="syslang" form="form-info" class="form-control">
+										{foreach $lang['list'] as $_lang}
+											<option value="{$_lang['value']}" {$_lang['selected']}>{$_lang['head']}</option>
+										{end}
+									</select>
+									<span class="help-block m-b-none">{$lang['help']}</span>
+								</div>
 <!--
                                 <h5>
                                     About me
