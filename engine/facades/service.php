@@ -228,8 +228,12 @@
 
 			//демон — новый процесс «console service run <name> [args]»:
 			//он сам бутстрапит $APP, ставит сигнатуру и глушит stdout (не tty).
-			//Путь к console прибиваем к корню — вызов может быть не из ./console
-			$cmdline = escapeshellarg(PHP_BINARY).' '.escapeshellarg(getcwd().DIRECTORY_SEPARATOR.'console').' service run';
+			//Путь к console прибиваем к корню — вызов может быть не из ./console.
+			//Бинарь PHP: под вебом PHP_BINARY — это apache/php-fpm, не CLI!
+			$php = PHP_SAPI === 'cli' ? PHP_BINARY : PHP_BINDIR.'/php';
+			if (!is_executable($php)) $php = trim((string) @shell_exec('command -v php')) ?: PHP_BINARY;
+
+			$cmdline = escapeshellarg($php).' '.escapeshellarg(getcwd().DIRECTORY_SEPARATOR.'console').' service run';
 			foreach (array_merge([$name], $args) as $arg) $cmdline .= ' '.escapeshellarg($arg);
 
 			//force передаётся маркером --force — разбирает команда run
