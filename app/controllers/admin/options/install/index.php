@@ -22,4 +22,4 @@
 	if ($content['title'])
 		$content['nav']['path']['head'] = $content['title'];
 
-	$APP->template->file('admin/tools/code-editor/code-editor.html')->display($content);
+	$APP->template->file('admin/tools/code-editor/code.editor.html')->display($content);

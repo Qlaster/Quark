@@ -32,5 +32,5 @@
 
 	}
 
-	$APP->template->file('admin/dbmanager/db_connects.html')->display($content);
+	$APP->template->file('admin/dbmanager/db.connects.html')->display($content);
 

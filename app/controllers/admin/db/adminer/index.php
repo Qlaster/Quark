@@ -25,4 +25,4 @@
 	$content = $APP->controller->run('admin/autoinclude', ['APP'=>$APP]);
 
 
-	$APP->template->file('admin/dbmanager/db_adminer.html')->display($content);
+	$APP->template->file('admin/dbmanager/db.adminer.html')->display($content);

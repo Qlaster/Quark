@@ -21,6 +21,25 @@
  * MA 02110-1301, USA.
  *
  *
+ * Диспетчер команд консоли:
+ *
+ * 	./console a b c ...
+ * 	│
+ * 	├─ 1. Команда-файл: самый длинный существующий префикс
+ * 	│     engine/console/**.php → include, хвост пути → $args.
+ * 	│     Сегмент '_*' — служебный, не команда.
+ * 	│     Файл печатает сам; его return игнорируется.
+ * 	│
+ * 	├─ 2. Фасад-фолбэк: $APP->{a} + метод {b} → вызов с хвостом
+ * 	│     токенов. Аргументы '{'/'[' — json_decode.
+ * 	│     Результат: scalar → строка, array → JSON, null → тишина.
+ * 	│
+ * 	├─ 3. Фасад есть, метода нет → оглавление public-методов.
+ * 	│
+ * 	└─ 4. Ничего не нашлось → справка.
+ *
+ * Провал = только выброшенное исключение → stderr + exit≠0.
+ *
  */
 
 error_reporting(E_ALL & ~E_NOTICE);
@@ -42,19 +61,110 @@ include_once $_ENV['core']['path']."core.php";
 #                     Инициализация приложения                     #
 # ---------------------------------------------------------------- #
 //Создаем приложение (указав диретории размещения расширений ядра, фасадов, моделей и библиотек)
-$APP = new APP($_ENV['core']['path'], $_ENV['facades'], $_ENV['vendor']['path']);
+$APP = new APP($_ENV['core']['path'], $_ENV['facades'], $_ENV['vendor']);
 //Загрузим переменные окружения
 $APP->config->loadENV(['.env', 'app/.env']);
 
 
-$command  = isset($argv[1]) ? $argv[1] : 'help';
-$method   = isset($argv[2]) ? $argv[2] : '';
+//Автоустановка автодополнения при первом запуске: маркер — файл
+//в ленивом каталоге bash-completion; подхватится в новых сессиях.
+//Не удалось записать — молча пропускаем. Разовая проверка — один stat().
+if (($_ENV['console']['completion'] ?? 1) and stripos(PHP_OS, 'WIN') !== 0
+	and ($home = getenv('HOME'))
+	and !is_file("$home/.local/share/bash-completion/completions/console"))
+{
+	try
+	{
+		$args = ['install'];
+		include ($_ENV['console']['path'] ?? 'engine/console').'/completion.php';
+	}
+	catch (Throwable $ignore) {}
+}
+
+//Токены после имени скрипта
+$tokens = array_slice((array)$argv, 1);
 
 try
 {
-	$result = method_exists($APP->console->$command, $method)
-			? $APP->console->$command->$method(array_slice((array)$argv, 3))
-			: $APP->console->$command(array_slice((array)$argv, 2));
+
+# ---------------------------------------------------------------- #
+#           1. Команда-файл: самый длинный префикс пути            #
+# ---------------------------------------------------------------- //
+	//спускаемся по дереву engine/console; файл на уровне запоминаем,
+	//но продолжаем вглубь — более длинный префикс выигрывает
+	$file = null;
+	$args = $tokens;
+	$dir  = $_ENV['console']['path'] ?? 'engine/console';
+	foreach ($tokens as $i => $token)
+	{
+		if ($token === '' or $token[0] === '_') break;
+		$cand = $dir.'/'.$token;
+		if (is_file("$cand.php")) { $file = "$cand.php"; $args = array_slice($tokens, $i+1); }
+		if (is_dir($cand))        { $dir  = $cand; continue; }
+		break;
+	}
+
+	if ($file)
+	{
+		include $file;   //команда печатает сама; return игнорируем
+		exit(0);
+	}
+
+
+# ---------------------------------------------------------------- #
+#                2/3. Фасад-фолбэк и оглавление                    #
+# ---------------------------------------------------------------- //
+	$facades = $APP->__facades();
+	$fname   = $tokens[0] ?? '';
+
+	if (isset($facades[$fname]))
+	{
+		$facade = $APP->$fname;
+		$method = $tokens[1] ?? '';
+
+		//метода нет — оглавление публичных методов фасада
+		if (!$method or !method_exists($facade, $method))
+		{
+			echo "Фасад '$fname' — методы:\n";
+			foreach (get_class_methods($facade) as $m)
+				if ($m[0] !== '_') echo "\t$m()\n";
+			exit(0);
+		}
+
+		//хвост → аргументы: '{'/'[' разворачиваются из JSON
+		$args = array_map(function ($a) {
+			return $a !== '' and ($a[0] === '{' or $a[0] === '[') ? json_decode($a, true) : $a;
+		}, array_slice($tokens, 2));
+
+		$result = call_user_func_array([$facade, $method], $args);
+
+		//печать возврата: scalar → строка, array → JSON, null → тишина
+		if     ($result === null) {}
+		elseif (is_scalar($result))        echo $result, "\n";
+		else   echo json_encode($result, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT), "\n";
+
+		exit(0);
+	}
+
+
+# ---------------------------------------------------------------- #
+#                        4. Справка                                #
+# ---------------------------------------------------------------- //
+	echo "Quark console\n\n";
+	echo "Использование: console <команда|фасад> [аргументы]\n\n";
+
+	echo "Команды ($dir):\n";
+	$rii = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS));
+	foreach ($rii as $f)
+	{
+		$rel = substr($f->getPathname(), strlen($dir)+1);
+		if ($rel === '' or $rel[0] === '_' or pathinfo($rel, PATHINFO_EXTENSION) !== 'php') continue;
+		echo "\t".str_replace('/', ' ', substr($rel, 0, -4))."\n";
+	}
+
+	echo "\nФасады: ".implode(', ', array_keys($facades))."\n";
+	exit(0);
+
 }
 catch (Throwable $e)
 {
@@ -68,6 +178,6 @@ echo "
  | (￣ヽ_＿_ヽ_)_)
 　＼二つ
 ";
-	$APP->console->print( $e->getMessage(), E_ERROR );
-	exit((!$errorCode = $e->getCode()) ? 12 : $errorCode);
+	fwrite(STDERR, $e->getMessage()."\n");
+	exit(($code = $e->getCode()) ? $code : 12);
 }

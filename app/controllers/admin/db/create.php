@@ -72,5 +72,5 @@
 	}
 
 	//~ $themelink = $APP->url->home()."views/admin/";
-	//~ $APP->template->file('admin/db_construct.html')->themelink($themelink)->display($content);
+	//~ $APP->template->file('admin/db.construct.html')->themelink($themelink)->display($content);
 

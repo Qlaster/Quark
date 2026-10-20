@@ -39,5 +39,5 @@
 
 
 
-	$APP->template->file('admin/dbmanager/db_editor.html')->display($content);
+	$APP->template->file('admin/dbmanager/db.editor.html')->display($content);
 

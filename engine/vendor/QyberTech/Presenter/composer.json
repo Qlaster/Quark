@@ -1,8 +1,9 @@
 {
-    "name": "QyberTech/Presenter",
+    "name": "qybertech/presenter",
     "type": "library",
     "description": "Simple and super fast templating engine",
-    "license": "Apache",
+    "keywords": ["template", "templating", "view"],
+    "license": "Apache-2.0",
     "authors": [
         {
             "name": "Vladimir Kushtynov",
@@ -10,11 +11,12 @@
         }
     ],
     "require": {
-        "php": ">=7.0.0  || ^8.0"
+        "php": ">=7.2"
     },
     "autoload": {
-       "files": [
-            "Presenter.php"
-        ]
-    }
+        "psr-4": {
+            "QyberTech\\Presenter\\": ""
+        }
+    },
+    "minimum-stability": "stable"
 }

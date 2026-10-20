@@ -13,11 +13,11 @@
 	//~ $units_path = $APP->__facades();
 
 	//~ $vendorDir = $APP->core_config['path_vendor']['path'];
-	$vendorDir = $_ENV['vendor']['path'];
-	$vendors  = $APP->files->listingDir($vendorDir);
+	$packages = [];
 
-	//Проходимся по доступным вендорам, заглядывая в пакеты
-	foreach ($vendors as $_vendor)
+	//Проходимся по всем пакетным зонам, заглядывая в вендоры и пакеты
+	foreach ((array)$_ENV['vendor'] as $vendorDir)
+	foreach ((array)$APP->files->listingDir($vendorDir) as $_vendor)
 		foreach ((array)$APP->files->listingDir($vendorDir.DIRECTORY_SEPARATOR.$_vendor) as $_packege)
 		{
 			//Сгенерируем ссылку на описание пакета
@@ -26,11 +26,12 @@
 			//Подготовим информацию о пакете
 			$_packegeHead = json_decode(file_get_contents($composerJson), true);
 			$_packegeHead['createdate'] = date('d.m.Y', filemtime($composerJson));
+			$_packegeHead['zone'] = $vendorDir;
 			$packages[$_vendor][$_packege] = $_packegeHead;
 		}
 
 	$content['packages']['list'] = $packages;
-	$content['packages']['info'] = sprintf($content['packages']['info'], $vendorDir);
+	$content['packages']['info'] = sprintf($content['packages']['info'], implode(', ', (array)$_ENV['vendor']));
 
 
 	$APP->template->file('admin/components/packages.html')->display($content);

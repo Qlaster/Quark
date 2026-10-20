@@ -85,6 +85,6 @@
 
 
 	//~ $themelink = $APP->url->home()."views/admin/";
-	//~ $APP->template->file('admin/db_record.html')->themelink($themelink)->display($content);
+	//~ $APP->template->file('admin/db.record.html')->themelink($themelink)->display($content);
 
 	die;

@@ -81,6 +81,6 @@
 	$content['title'] .= $_GET['url'];
 
 	//~ $themelink = $APP->url->home()."views/admin/";
-	$APP->template->file('admin/content/page.timeline.html')->display($content);
+	$APP->template->file('admin/content/page/page.timeline.html')->display($content);
 
 

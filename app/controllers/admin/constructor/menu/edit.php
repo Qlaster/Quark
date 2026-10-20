@@ -4,4 +4,4 @@
 
 
 
-	$APP->template->file('admin/constructor/menu_edit.html')->display($content);
+	$APP->template->file('admin/constructor/menu/menu.edit.html')->display($content);

@@ -7,32 +7,32 @@
 
     <title>{$title}</title>
 
-    <link href="../css/bootstrap.css" rel="stylesheet">
-    <link href="../font-awesome/css/font-awesome.css" rel="stylesheet">
-    <link href="../css/animate.css" rel="stylesheet">
+    <link href="../../css/bootstrap.css" rel="stylesheet">
+    <link href="../../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../css/animate.css" rel="stylesheet">
     <!-- Редакторы контента -->
-    <link href="../css/plugins/summernote/summernote.css" rel="stylesheet">
+    <link href="../../css/plugins/summernote/summernote.css" rel="stylesheet">
 <!--
-    <link href="../css/plugins/summernote/summernote-bs3.css" rel="stylesheet">
+    <link href="../../css/plugins/summernote/summernote-bs3.css" rel="stylesheet">
 -->
 	<!-- Переключатели и флажки -->
-    <link href="../css/plugins/switchery/switchery.css" rel="stylesheet">
-    <link href="../css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="../../css/plugins/switchery/switchery.css" rel="stylesheet">
+    <link href="../../css/plugins/iCheck/custom.css" rel="stylesheet">
     <!-- Простое css дерево без изысков -->
-    <link href="../css/plugins/simpleTree/simpleTree.css" rel="stylesheet">
+    <link href="../../css/plugins/simpleTree/simpleTree.css" rel="stylesheet">
 	<!--Выпадающий список-->
-	<link href="../css/plugins/chosen/chosen.css" rel="stylesheet">
+	<link href="../../css/plugins/chosen/chosen.css" rel="stylesheet">
 	<!-- Toastr style -->
-    <link href="../css/plugins/toastr/toastr.min.css" rel="stylesheet">
+    <link href="../../css/plugins/toastr/toastr.min.css" rel="stylesheet">
     <!-- Gcheck style -->
-    <link href="../css/plugins/gcheck/gcheck-invert.css" rel="stylesheet">
+    <link href="../../css/plugins/gcheck/gcheck-invert.css" rel="stylesheet">
 
     <!-- Сложное и дорогое для процессора дерево -->
 <!--
     <link href="css/plugins/jsTree/style.min.css" rel="stylesheet">
 -->
 
-    <script src="../js/jquery-2.1.1.js"></script>
+    <script src="../../js/jquery-2.1.1.js"></script>
 
 <!--
     Вообще не имею понятия - зачем эти скрипты тут
@@ -54,7 +54,7 @@
         <link href="css/plugins/ionRangeSlider/ion.rangeSlider.skinFlat.css" rel="stylesheet">
 -->
 
-    <link href="../css/style.css?" rel="stylesheet">
+    <link href="../../css/style.css?" rel="stylesheet">
 </head>
 
 <body>
@@ -62,23 +62,24 @@
     <div id="wrapper">
 
 		<!--Главное меню слева-->
-		{section "../~section/mainmenu.html"}
+		{section "../../~section/mainmenu.html"}
 		<!--Конец меню-->
 
 
         <div id="page-wrapper" class="gray-bg">
 
 		<!-- Head menu -->
-		{section "../~section/head.html"}
+		{section "../../~section/head.html"}
 		<!-- End head menu -->
 
         <!-- Менюшка title-->
-		{section "../~section/title.html"}
+		{section "../../~section/title.html"}
         <!-- конец title-->
 
 
         <form name="editpage" id="editpage" method="post" action="admin/content/page/save" class="form-horizontal">
-        <div class="wrapper wrapper-content">
+        <div class="row">
+        <div class="col-lg-12 wrapper wrapper-content">
             <div class="row">
 
 						<!--Шапка формы управления-->
@@ -802,9 +803,10 @@
 
 
         </div>
+        </div>
 
         <!-- Footer block -->
-        {section "../~section/footer.html"}
+        {section "../../~section/footer.html"}
         <!-- End Footer block -->
 
         </div>
@@ -813,39 +815,39 @@
 
 
     <!-- Mainly scripts -->
-    <script src="../js/jquery-2.1.1.js"></script>
-    <script src="../js/bootstrap.min.js"></script>
-    <script src="../js/plugins/metisMenu/jquery.metisMenu.js"></script>
-    <script src="../js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+    <script src="../../js/jquery-2.1.1.js"></script>
+    <script src="../../js/bootstrap.min.js"></script>
+    <script src="../../js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="../../js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
 
     <!-- Custom and plugin javascript -->
-    <script src="../js/inspinia.js"></script>
-    <script src="../js/plugins/pace/pace.min.js"></script>
+    <script src="../../js/inspinia.js"></script>
+    <script src="../../js/plugins/pace/pace.min.js"></script>
 
 
 
 
 
     <!-- Data picker -->
-    <script src="../js/plugins/datapicker/bootstrap-datepicker.js"></script>
+    <script src="../../js/plugins/datapicker/bootstrap-datepicker.js"></script>
     <!-- Switchery -->
-    <script src="../js/plugins/switchery/switchery.js"></script>
+    <script src="../../js/plugins/switchery/switchery.js"></script>
     <!-- iCheck -->
-    <script src="../js/plugins/iCheck/icheck.min.js"></script>
+    <script src="../../js/plugins/iCheck/icheck.min.js"></script>
     <!-- Image cropper -->
-    <script src="../js/plugins/cropper/cropper.min.js"></script>
+    <script src="../../js/plugins/cropper/cropper.min.js"></script>
     <!-- SUMMERNOTE -->
-    <script src="../js/plugins/summernote/summernote.min.js"></script>
+    <script src="../../js/plugins/summernote/summernote.min.js"></script>
     <!-- Chosen -->
-    <script src="../js/plugins/chosen/chosen.jquery.js"></script>
+    <script src="../../js/plugins/chosen/chosen.jquery.js"></script>
 
     <!-- Toastr -->
-    <script src="../js/plugins/toastr/toastr.min.js"></script>
+    <script src="../../js/plugins/toastr/toastr.min.js"></script>
 
     <!-- CKEditor -->
-    <script src="../js/plugins/ckeditor/ckeditor.js"></script>
-    <script src="../js/plugins/ckeditor/ckeditor_run.js"></script>
-    <script src="../js/plugins/ckeditor/style.js"></script>
+    <script src="../../js/plugins/ckeditor/ckeditor.js"></script>
+    <script src="../../js/plugins/ckeditor/ckeditor_run.js"></script>
+    <script src="../../js/plugins/ckeditor/style.js"></script>
 
 
 
@@ -871,7 +873,7 @@
 
     <!-- IonRangeSlider -->
 <!--
-    <script src="../js/plugins/ionRangeSlider/ion.rangeSlider.min.js"></script>
+    <script src="../../js/plugins/ionRangeSlider/ion.rangeSlider.min.js"></script>
 -->
 
 

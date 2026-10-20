@@ -18,7 +18,7 @@
 	# ---------------------------------------------------------------- #
 	//Создаем приложение (указав диретории размещения расширений ядра, фасадов, моделей и библиотек)
 	//~ $APP = new APP('engine/core', ['app'=>'engine/facades', 'models'=>'app/models'], 'engine/vendor');
-	$APP = new APP($_ENV['core']['path'], $_ENV['facades'], $_ENV['vendor']['path']);
+	$APP = new APP($_ENV['core']['path'], $_ENV['facades'], $_ENV['vendor']);
 	//Загрузим переменные окружения
 	$APP->config->loadENV(['.env', 'app/.env']);
 	//Записываем визит (регистрируется вызов после завершения работы app)
@@ -67,4 +67,4 @@
 		}
 	}
 
-	//~ echo "<!---".$APP->utils->runtime()."-->";
+

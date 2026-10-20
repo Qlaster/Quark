@@ -19,5 +19,5 @@
 	//Локализация маркированных узлов
 	$content = $APP->l10n->translate($content);
 
-	$APP->template->file('admin/content/page.head.html')->display($content);
+	$APP->template->file('admin/content/page/page.head.html')->display($content);
 

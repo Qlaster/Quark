@@ -48,5 +48,5 @@
 
 
 
-	$APP->template->file('admin/article_edit.html')->display($content);
+	$APP->template->file('admin/content/article/article.edit.html')->display($content);
 

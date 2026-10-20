@@ -58,5 +58,5 @@
 	//Локализация маркированных узлов
 	$content = $APP->l10n->translate($content);
 
-	$APP->template->file('admin/content/page_tree.html')->display($content);
+	$APP->template->file('admin/content/page/page.tree.html')->display($content);
 

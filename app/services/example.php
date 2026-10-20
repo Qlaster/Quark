@@ -26,5 +26,5 @@
 
  echo "Hi! I'm new service!";
 
- sleep(4);
+ sleep(30);
 

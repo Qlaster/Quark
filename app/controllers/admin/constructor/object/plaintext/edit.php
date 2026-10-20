@@ -20,4 +20,4 @@
 	//~ $content['title'] = "Редактор объекта ".$_GET['object'];
 	$content['nav']['path']['head'] = sprintf($content['navpath']['head'], $_GET['object']);
 
-	$APP->template->file('admin/tools/code-editor/code-editor.html')->display($content);
+	$APP->template->file('admin/tools/code-editor/code.editor.html')->display($content);

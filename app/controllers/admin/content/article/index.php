@@ -39,5 +39,5 @@
 
 
 
-	$APP->template->file('admin/article_list.html')->display($content);
+	$APP->template->file('admin/content/article/article.list.html')->display($content);
 

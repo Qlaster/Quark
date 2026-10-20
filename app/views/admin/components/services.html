@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{$title}</title>
+
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../font-awesome/css/font-awesome.css" rel="stylesheet">
+
+    <link href="../css/animate.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+    <div id="wrapper">
+
+		<!--Главное меню слева-->
+		{section "../~section/mainmenu.html"}
+		<!--Конец меню-->
+
+        <div id="page-wrapper" class="gray-bg">
+
+		<!-- Head menu -->
+		{section "../~section/head.html"}
+		<!-- End head menu -->
+
+        <!-- Менюшка title-->
+		{section "../~section/title.html"}
+        <!-- конец title-->
+
+
+        <div class="row">
+            <div class="col-lg-12 wrapper wrapper-content animated fadeInUp">
+
+                    {if $error['message']}
+                    <div class="alert alert-danger">
+                        <strong>{$error['head']}</strong> {$error['message']}
+                    </div>
+                    {end}
+
+                    {if $services['output']}
+                    <style>
+                        #service-output-toggle .fa-chevron-down { transition: transform .2s; }
+                        #service-output-toggle.collapsed .fa-chevron-down { transform: rotate(-90deg); }
+                    </style>
+                    <div class="panel panel-default">
+                        <div class="panel-heading" id="service-output-toggle" data-toggle="collapse" data-target="#service-output" style="cursor:pointer;">
+                            <i class="fa fa-chevron-down"></i>
+                            <strong>{$output['head']}:</strong> {$services['output']['name']}
+                            <a href="{$button['refresh']['link']}" class="close" onclick="event.stopPropagation()">&times;</a>
+                        </div>
+                        <div id="service-output" class="panel-collapse collapse in">
+                            <pre style="margin:0; max-height:400px; overflow:auto; border:none;">{$services['output']['data']}</pre>
+                        </div>
+                    </div>
+                    {end}
+
+                    <div class="ibox">
+                        <div class="ibox-title">
+                            <h5>{$head['head']}</h5>
+                        </div>
+                        <div class="ibox-content">
+                            <div class="row m-b-sm m-t-sm">
+                                <div class="col-md-3">
+                                    <a type="button" href="{$button['refresh']['link']}" class="btn !btn-white btn-success btn-outline btn-sm"><i class="fa fa-refresh"></i> {$button['refresh']['head']} </a>
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="input-group"><input type="text" placeholder="{$search['placeholder']}" class="input-sm form-control" onkeyup="tableSearch(document.getElementById('table-services'), this)"> <span class="input-group-btn">
+                                        <button type="button" class="btn btn-sm btn-primary" > <i class="fa fa-search"></i></button> </span></div>
+                                </div>
+                            </div>
+
+                            <div class="project-list">
+
+                                <table class="table table-hover" id="table-services">
+                                    <tbody>
+									{foreach (array) $services['list'] as $_key => $_svc}
+                                    <tr>
+                                        <td class="project-status">
+											{if $_svc['running']}
+												<span class="label label-primary"><i class="fa fa-play"></i> {$_svc['status']}</span>
+											{else}
+												<span class="label"><i class="fa fa-stop"></i> {$_svc['status']}</span>
+                                            {end}
+                                        </td>
+                                        <td class="project-title">
+                                            <a href="{$_svc['link']['code']}">{$_svc['name']}</a>
+                                            <br/>
+                                            <small>{$cols['updated']} {$_svc['updated']}</small>
+                                        </td>
+										<td class="project-title" title="{$cols['size']}">
+                                               <big><span class="fa fa-hdd-o"></span></big> <span> {$_svc['size']} </span>
+                                        </td>
+										<td class="project-title" title="{$cols['pids']}">
+											{if $_svc['pids']}
+                                               <big><span class="fa fa-linux"></span></big> <span> {$_svc['pids']} </span>
+                                            {end}
+                                        </td>
+
+                                        <td class="project-completion">
+											 <span>{$_svc['file']}</span>
+                                        </td>
+
+                                        <td class="project-actions">
+											{if $_svc['running']}
+                                            <a href="{$_svc['link']['stop']}" class="btn btn-white btn-sm"><i class="fa fa-stop"></i> {$cols['stop']} </a>
+											{else}
+                                            <a href="{$_svc['link']['start']}" class="btn btn-white btn-sm"><i class="fa fa-play"></i> {$cols['start']} </a>
+                                            {end}
+                                            <a href="{$_svc['link']['output']}" class="btn btn-white btn-sm svc-log" data-url="{$_svc['link']['output']}"><i class="fa fa-file-text-o"></i> {$cols['output']} </a>
+                                            <a href="{$_svc['link']['code']}" class="btn btn-white btn-sm"><i class="fa fa-edit"></i> {$cols['code']} </a>
+                                            {if $_svc['link']['config']}
+                                            <a href="{$_svc['link']['config']}" class="btn btn-white btn-sm"><i class="fa fa-cog"></i> {$cols['config']} </a>
+                                            {end}
+                                        </td>
+                                    </tr>
+                                    <tr class="service-log-row" style="display:none;">
+                                        <td colspan="6"><pre class="service-log" style="max-height:400px; overflow:auto;"></pre></td>
+                                    </tr>
+                                    {end}
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+
+        <!-- Footer block -->
+        {section "../~section/footer.html"}
+        <!-- End Footer block -->
+
+        </div>
+        </div>
+
+    <!-- Mainly scripts -->
+    <script src="../js/jquery-2.1.1.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="../js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+    <!-- Custom and plugin javascript -->
+    <script src="../js/inspinia.js"></script>
+    <script src="../js/plugins/pace/pace.min.js"></script>
+
+    <script>
+    $(function() {
+        //клик по "Лог" — спойлер с журналом прямо под строкой службы
+        $('#table-services').on('click', '.svc-log', function(e) {
+            e.preventDefault();
+            var $row = $(this).closest('tr').next('.service-log-row');
+
+            if ($row.is(':visible')) { $row.hide(); return; }
+            if (!$row.data('loaded')) {
+                var $pre = $row.find('.service-log').text('…');
+                $.get($(this).data('url')).done(function(data) {
+                    $pre.text(data || '—');
+                    $row.data('loaded', true).show();
+                });
+            }
+            else $row.show();
+        });
+    });
+
+    //живой поиск по таблице служб; строки-спойлеры лога пропускаем
+    //и гасим вместе с их службой
+    function tableSearch(table, phrase)
+    {
+        var reg = new RegExp(phrase.value, 'i');
+        for (var i = 0; i < table.rows.length; i++) {
+            var row = table.rows[i];
+            if ($(row).hasClass('service-log-row')) continue;
+
+            var hit = false;
+            for (var j = row.cells.length - 1; j >= 0; j--)
+                if (reg.test(row.cells[j].innerHTML)) { hit = true; break; }
+
+            row.style.display = hit ? "" : "none";
+            var logRow = $(row).next('.service-log-row');
+            if (logRow.length && !hit) logRow.hide();
+        }
+    }
+    </script>
+
+
+</body>
+</html>

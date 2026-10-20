@@ -56,4 +56,4 @@
 	//~ print_r($content['catalog']['objects']); die;
 
 	//~ $themelink = $APP->url->home()."views/admin/";
-	$APP->template->file('admin/constructor/gallery/gallery_collection.html')->display($content);
+	$APP->template->file('admin/constructor/gallery/gallery.collection.html')->display($content);

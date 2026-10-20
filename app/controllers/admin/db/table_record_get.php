@@ -99,6 +99,6 @@
 
 	//~ print_r($content['table']['data']['list']); die;
 
-	$APP->template->file('admin/dbmanager/db_record.html')->display($content);
+	$APP->template->file('admin/dbmanager/db.record.html')->display($content);
 
 	exit;

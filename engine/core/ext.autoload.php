@@ -2,96 +2,62 @@
 
 	/*
 	 * Обеспечение автозагрузки классов
-	 * 
+	 *
+	 * Пакетные зоны перечислены в $_ENV['vendor']:
+	 * 	path/path-имена = "engine/vendor"   — статические пакеты фреймворка
+	 * 	app             = "vendor"          — composer-вендорка приложения
+	 * Порядок ключей = приоритет поиска.
 	 */
 
 
-	//Вариант синтаксиса 1:
-	//Использоватеь пространства имен.
-	//use lib/class
-
-	//DEPRICATED: Вариант синтаксиса 2:
-	//Прямой вызов метода lib
-	//lib('lib/class')
-
-
-
-	function lib($lib_path)
+	/*
+	 * Файловый примитив: подключить файл по относительному пути
+	 * из любой пакетной зоны (первая нашедшаяся выигрывает).
+	 *
+	 * Использование — явный отложенный include, в т.ч. для файлов
+	 * без классов (процедурные библиотеки, адаптеры):
+	 * 	uses('sms/sms.ru/sms.ru.php');
+	 * 	uses('sms/sms.ru/sms.ru');   //расширение можно опустить
+	 *
+	 * @param  string $path  путь относительно корня пакетной зоны
+	 * @return bool          удалось ли найти и подключить файл
+	 */
+	function uses($path)
 	{
-		//Добавляем относительные пути к библиотеке
-		//~ $lib_path = 'engine/lib/'.$lib_path;
-		//~ $lib_path = 'engine/vendor/'.$lib_path;
-		$lib_path = $_ENV['vendor']['path']."/$lib_path";
-
-		//Если библиотека найдена, подключаем
-		if (is_readable($lib_path))
+		foreach ((array)$_ENV['vendor'] as $dir)
 		{
-			require_once($lib_path);
-			return true;
+			$file = "$dir/$path";
+
+			//файл найден - подключаем
+			if (is_readable($file)) { require_once $file; return true; }
+
+			//забыли указать расширение - пробуем .php
+			if (is_readable("$file.php")) { require_once "$file.php"; return true; }
 		}
 
-		//Если библиотека не найдена - проверяем - может быть забыли указать расширение файла.
-		//Для начала, выдираем расширение из существующего пути.
-		$path_info = pathinfo($lib_path);
-
-		//Если оно пустое -
-		if (! isset($path_info['extension']))
-		{
-			//Пробуем добавить к нему расширение php и поискать
-			if (is_readable($lib_path.'.php'))
-			{
-				//Да. Файл есть. Просто забыли указать расширение. Подключаем.
-				require_once($lib_path.'.php');
-				return true;
-			}
-		}
-
-		//Что ж. Не повезло. Похоже библиотеки действительно нет.
 		return false;
 	}
 
 
 	/*
-	 * 
-	 * Поддерка стандарта автозагрузки PSR4. Это автозагрузчик фреймворка "по умолчанию"
-	 * 
-	 * @param Autoload class name
-	 * @return autoload status
-	 * 
+	 * Автозагрузчик PSR4 по умолчанию.
+	 * Адаптер: имя класса → относительный путь → uses().
+	 *
+	 * @param  string $className  полное имя класса с неймспейсом
+	 * @return bool               удалось ли найти и подключить класс
 	 */
 	function standardAutoloadFunc($className)
 	{
-		//spl_autoload_extensions(".php,.inc");
-		// Заменить префикс пространства имен на базовую директорию.
-		$prefix = '';
-		$baseDir = $_ENV['vendor']['path'];
-
-		if (substr($className, 0, strlen($prefix)) == $prefix)
-		{
-			$className = substr($className, strlen($prefix));
-			$className = "$baseDir/$className";
-		}
-
-		// Заменить разделители пространства имен на разделители директорий.
-		$className = str_replace('\\', DIRECTORY_SEPARATOR, $className);
-
-		// Добавить расширение .php.
-		$fileName = $className . ".php";
-
-		// Проверить, что файл существует и его можно прочесть.
-		if (is_readable($fileName)) require $fileName;
+		return uses(str_replace('\\', DIRECTORY_SEPARATOR, $className).'.php');
 	}
-	
-	
-	//Проверим наличие автозагрузчика composer, если он 
-	if (is_readable($fileName = $_ENV['vendor']['path'].DIRECTORY_SEPARATOR.'autoload.php'))
-	{
-		require_once $fileName;
-	}
-		
+
+
+	//Автолоадер composer - где бы ни лежал autoload.php в пакетных зонах
+	foreach ((array)$_ENV['vendor'] as $dir)
+		if (is_readable($fileName = "$dir/autoload.php")) require_once $fileName;
+
+
 
 	// Register the autoloader function.
 	spl_autoload_register("standardAutoloadFunc");
-
-
 

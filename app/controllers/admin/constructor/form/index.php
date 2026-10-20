@@ -59,4 +59,4 @@
 	//~ print_r($content['catalog']['objects']); die;
 
 	//~ $themelink = $APP->url->home()."views/admin/";
-	$APP->template->file('admin/constructor/forms/form_collection.html')->display($content);
+	$APP->template->file('admin/constructor/forms/form.collection.html')->display($content);

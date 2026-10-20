@@ -157,7 +157,7 @@
 	}
 
 	//~ $themelink = $APP->url->home()."views/admin/";
-	$APP->template->file('admin/content/page.add.html')->display($content);
+	$APP->template->file('admin/content/page/page.add.html')->display($content);
 
 
 

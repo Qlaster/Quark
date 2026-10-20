@@ -52,4 +52,4 @@
 	$content['catalog']['objects']['list'] = (array) $content['catalog']['objects']['list'];
 	//~ print_r($content['catalog']['objects']); die;
 
-	$APP->template->file('admin/constructor/menu_collection.html')->display($content);
+	$APP->template->file('admin/constructor/menu/menu.collection.html')->display($content);

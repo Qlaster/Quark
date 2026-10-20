@@ -6,11 +6,11 @@
 		//Конфигурация ядра
 		public $core_config = [];
 
-		function __construct($path_ext='', $paths_facades=['engine/facades'], $path_vendor='engine/vendor')
+		function __construct($path_ext='', $paths_facades=['engine/facades'], $paths_vendor=['engine/vendor'])
 		{
 			//Запоминаем путь, где лежат файлы модулей
 			$this->core_config['path_units']  = (array) $paths_facades;
-			$this->core_config['path_vendor'] = $path_vendor;
+			$this->core_config['path_vendor'] = (array) $paths_vendor;
 
 			//Подключаем расширения
 			$this->__includeExtension($path_ext);

@@ -116,5 +116,5 @@
 		//~ }
 	}
 
-	$APP->template->file('admin/dbmanager/db_table.html')->display($content);
+	$APP->template->file('admin/dbmanager/db.table.html')->display($content);
 

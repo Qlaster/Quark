@@ -18,5 +18,5 @@
 	$content['catalog']['types'] = $APP->db->config['patterns'];
 
 
-	$APP->template->file('admin/dbmanager/db_construct.html')->display($content);
+	$APP->template->file('admin/dbmanager/db.construct.html')->display($content);
 

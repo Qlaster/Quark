@@ -68,7 +68,7 @@
 
 	$content['gallery'] = $gallery;
 
-	$APP->template->file('admin/constructor/gallery/gallery_edit.html')->display($content);
+	$APP->template->file('admin/constructor/gallery/gallery.edit.html')->display($content);
 
 
 
