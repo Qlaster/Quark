@@ -24,13 +24,8 @@
 	 * После записи печатается отчёт: [коллекция] и список документов.
 	 */
 
-	$file = null;
-	$coll = null;
-	foreach ($args as $a)
-	{
-		if (strpos($a, '--collection=') === 0) $coll = substr($a, 13);
-		else $file = $a;
-	}
+	$file = $args[0] ?? null;
+	$coll = $flags['collection'] ?? null;
 
 	//конкретная коллекция или все объекты системы
 	$json = $coll ? $APP->objects->collection($coll)->export() : $APP->objects->export();

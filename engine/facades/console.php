@@ -1,295 +1,197 @@
 <?php
-	namespace App\Facade\Console;
 
-	use QyberTech\Console\Traits\QPrint;
-	use QyberTech\Console\Commands\Service;
+	/*
+	 * Фасад консоли — CLI-рантайм Quark.
+	 *
+	 * Скрипт ./console — тонкий бутстрап (env + APP), вся механика здесь:
+	 *
+	 * 	dispatch($tokens)
+	 * 	│
+	 * 	├─ 1. Команда-файл: самый длинный существующий префикс
+	 * 	│     engine/console/**.php → include в скоупе фасада.
+	 * 	│     Команда видит $this (args/flags/vars + приватные
+	 * 	│     хелперы фасада) и $APP. Сегмент '_*' — не команда.
+	 * 	│
+	 * 	├─ 2. Фасад-фолбэк: $APP->{a} + метод {b} → вызов с хвостом
+	 * 	│     токенов. Аргументы '{'/'[' — json_decode.
+	 * 	│     Печать: scalar → строка, array → JSON, null → тишина.
+	 * 	│
+	 * 	└─ 3. Ничего не нашлось → команда help (console help).
+	 *
+	 * Входные каналы команды — публичные свойства:
+	 *
+	 * 	$this->args   — позиционные токены хвоста
+	 * 	$this->flags  — --flag → true, --k=v → [k=>v]
+	 * 	$this->vars   — k=v   → [k=>v]
+	 *
+	 * 	Терминатор '--' выключает разбор: всё после — только args.
+	 * 	Провал = только брошенное исключение → stderr + exit≠0
+	 * 	(печать исключения — в скрипте ./console, ASCII-кот).
+	 *
+	 * Цепочки команд — публичный dispatch: $this->dispatch(['service','stop',$name]).
+	 */
+
+	namespace App\Facade;
 
 
 	class QConsole
 	{
-		use QPrint;
+		public $config;
 
-		public $config = [];
+		//Входные каналы команды — public: чтение и подделка для цепочек
+		public $args  = [];    // позиционные токены хвоста
+		public $flags = [];    // --flag → true, --k=v → [k=>v]
+		public $vars  = [];    // k=v    → [k=>v]
+
 		private $app;
 
-
-		function __construct($config, $app=null)
+		function __construct($config, $app = null)
 		{
-			$this->config = $config;
+			$this->config = (array) $config;
 			$this->app    = $app;
-
-			//Команды консоли
-			$this->service = new Service();
-
-
-			//~ $this->tools  = new class {use QPrint;};
 		}
 
-		//Создание резервной копии
-		function backup($target=['app', 'engine'], $backupStorage='backups')
+
+		//~ ------------------------------------------------------------
+		//~ Пайплайн
+		//~ ------------------------------------------------------------
+
+		//Главная точка входа: tokens → резолв → файл | фасад | help.
+		//Публична — команды могут редиспетчить вызовы синтаксисом консоли
+		public function dispatch(array $tokens)
 		{
-			$this->tools->printH3("Создание резервной копии");
-			$this->tools->print("Резервную копию платформы можно найти в директории backups");
-
-			$bakupDir = $backupStorage.DIRECTORY_SEPARATOR.date("Y.m.d_H-i-s");
-			if (!mkdir($bakupDir, 0775, true)) throw new \Exception('Directory creation denied');
-			if (!file_exists($bakupDir)) throw new \Exception('Directory creation denied');
-			if (!$target) throw new \Exception('Backup target directory not specified');
-
-			//Возмем информацию из ядра о директории с приложением
-			foreach ($target as $from)
+			//1. команда-файл: самый длинный префикс дерева консоли
+			list($file, $skip) = $this->resolve($tokens);
+			if ($file)
 			{
-				$this->tools->print("Копируется $from");
-				exec("cp -r '$from' '$bakupDir/$from'");
+				$this->parse(array_slice($tokens, $skip));
+				return $this->invoke($file);
 			}
+
+			//2. фасад-фолбэк: console <facade> <method> [args]
+			if ($this->fallback($tokens)) return;
+
+			//3. ничего не нашлось — справка (обычная команда-файл)
+			$this->dispatch(['help']);
 		}
 
-		//Слияние двух платформ с сохранением бд и конфигурации последней ($from, $to)
-		function merge(...$args)
+		//Самый длинный существующий префикс engine/console/**.php.
+		//→ [файл|null, число токенов пути] — один проход дерева
+		private function resolve(array $tokens)
 		{
-			$from = current($args)[0];
-			$to   = current($args)[1];
+			$file = null; $skip = 0;
+			$dir  = $this->config['console']['path'] ?? 'engine/console';
 
-			if (!file_exists($from)) throw new \Exception('Source not specified');
-			if (!file_exists($to))   throw new \Exception('Target not specified');
-
-			//Проверим наличие ключевых компонентов в корневой диерктории обновляемой системы, иначе рискуем сломать по совместимости
-			foreach ($this->config['update']['rootmarker'] as $rootmarker)
-				if (! file_exists($to.DIRECTORY_SEPARATOR.$rootmarker)) throw new \Exception("Target directory '$to' does not contain platform");
-
-
-			//Список файлов на обновление
-			$listing = $this->app->files->listing($from);
-
-			function isRules($ruleses, $relativePath)
+			foreach ($tokens as $i => $token)
 			{
-				//Пройдемся по спецификации обновления и ищем подходящие правила
-				foreach ($ruleses as $mask)
-					if (fnmatch($mask, $relativePath)) return true;
+				if ($token === '' or $token[0] === '_') break;
+				$cand = $dir.'/'.$token;
+				if (is_file("$cand.php")) { $file = "$cand.php"; $skip = $i + 1; }
+				if (is_dir($cand))        { $dir = $cand; continue; }
+				break;
 			}
+			return [$file, $skip];
+		}
 
-			//Пройдемся по файликам и ищем подходящие правила
-			foreach ($listing as $key => $sourcefile)
+		//Разбор хвоста на три канала → $this->args/flags/vars.
+		//'--' — терминатор: дальше только позиционные
+		private function parse(array $tail)
+		{
+			$args = $flags = $vars = [];
+			$positionalOnly = false;
+
+			foreach ($tail as $t)
 			{
-				//Относительнуй путь внутри обновляемой платформы
-				$relativePath = mb_substr($sourcefile, mb_strlen($from)+1);
-				//Полный путь внутри обновляемой платформы
-				$fullPath = $to.DIRECTORY_SEPARATOR.$relativePath;
+				if ($positionalOnly) { $args[] = $t; continue; }
+				if ($t === '--')     { $positionalOnly = true; continue; }
 
-				//Если мы должны проигнорировать этот файл
-				if (isRules($this->config['update']['ignore'], $relativePath)) continue;
-				//Если мы должны произвести слияние конфигурации
-				if (isRules($this->config['update']['merge'], $relativePath))
+				if (strpos($t, '--') === 0)
 				{
-					$configOld = (array)$this->app->config->get($fullPath);
-					$configNew = (array)$this->app->config->get($sourcefile);
-					//перезапишем конфигурацю во временной директории
-					//Хитрость тройного указания конфига (старый, новый, старый) в том, что бы сохранить порядок элементов как в старом
-					$this->app->config->set(array_replace_recursive($configOld, $configNew, $configOld), $sourcefile);
-					//~ continue;
+					$t = substr($t, 2);
+					//сплит по первому '=' — значение с '=' не ломается
+					if (strpos($t, '=') !== false) list($k, $v) = explode('=', $t, 2);
+					else { $k = $t; $v = true; }
+					$flags[$k] = $v;
 				}
-
-				//Проложим путь для директории, если ее
-				$mergeDir = $to.DIRECTORY_SEPARATOR.dirname($relativePath);
-				if (!file_exists($mergeDir))
-					if (!mkdir($mergeDir, 0775, true)) throw new \Exception("Directory '$mergeDir' creation denied");
-				//Перемещаем файлы
-				rename($sourcefile, $to.DIRECTORY_SEPARATOR.$relativePath);
+				elseif (strpos($t, '=') !== false)
+				{
+					list($k, $v) = explode('=', $t, 2);
+					$vars[$k] = $v;
+				}
+				else $args[] = $t;
 			}
 
+			$this->args  = $args;
+			$this->flags = $flags;
+			$this->vars  = $vars;
+		}
+
+		//Выполнение команды в скоупе фасада: файл видит $this и $APP.
+		//Локалки $args/$flags/$vars — совместимость с командами на старом контракте
+		private function invoke($file)
+		{
+			$APP   = $this->app;
+			$args  = $this->args;
+			$flags = $this->flags;
+			$vars  = $this->vars;
+			return include $file;   //команда печатает сама; return игнорируем
+		}
+
+
+		//~ ------------------------------------------------------------
+		//~ Фолбэк на фасады
+		//~ ------------------------------------------------------------
+
+		//$APP->{a}->{b}(хвост): '{'/'[' — json_decode, печать результата
+		private function fallback(array $tokens)
+		{
+			$facades = $this->app->__facades();
+			$fname   = $tokens[0] ?? '';
+
+			if (!isset($facades[$fname])) return false;
+
+			$facade = $this->app->$fname;
+			$method = $tokens[1] ?? '';
+
+			//метода нет — оглавление публичных методов фасада
+			if (!$method or !method_exists($facade, $method))
+				return $this->contents($facade);
+
+			$args = array_map(function ($a) {
+				return $a !== '' and ($a[0] === '{' or $a[0] === '[') ? json_decode($a, true) : $a;
+			}, array_slice($tokens, 2));
+
+			$result = call_user_func_array([$facade, $method], $args);
+			if ($result !== null)
+				echo is_scalar($result)
+					? $result."\n"
+					: json_encode($result, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT)."\n";
 			return true;
 		}
 
-		function update()
+		//Оглавление public-методов фасада (метода не нашлось)
+		private function contents($facade)
 		{
-
-			//Если функция exec не включена или не работает - выведем исключение
-			if (!((function_exists('exec')) and (exec('echo EXEC') == 'EXEC')))
-				throw new \Exception('Function "exec" not wornikg!');
-
-			//Получаем временную директорию
-			$workDir  = sys_get_temp_dir().DIRECTORY_SEPARATOR.$this->config['update']['alias'].DIRECTORY_SEPARATOR;
-			//Собираем путь к файлу дистрибутива
-			$workFile = "$workDir/quark.zip";
-			//Создаем веременную директорию размещения
-			if (!file_exists($workDir))	mkdir($workDir);
-			if (!file_exists($workDir))	throw new \Exception('Failed to create temporary directory');
-
-			$listing = $this->app->files->listing("$workDir/Quark-main");
-
-			//Получаем ссылки на дистрибутив
-			$distrLink = $this->config['update']['distr']['zip'];
-
-			//Если ссылка на дистрибутив не найдена
-			if (!$distrLink) throw new \Exception('Distribution link not found');
-
-			$this->tools->printH('Запуск обновления платформы');
-
-			$this->tools->printH3("Скачиваем свежий дистрибутив");
-			$this->tools->print($distrLink);
-
-			//Скачаиваем файл с предложенного хоста
-			copy($distrLink, $workFile);
-			$this->tools->print('Готово');
-
-			$this->tools->printH3("Распаковываем дистрибутив с $workFile");
-			//Распаковываем дистрибутив
-			exec("unzip -o $workFile -d $workDir");
-			//~ system("unzip -o $workFile -d $workDir");
-			$this->tools->print('Готово');
-
-			//Создаем резервную копию
-			$this->backup();
-
-			//Проверяем ключевые параметры перед обновлением
-			$this->tools->printH3("Слияние обновлений");
-			//Мержим проект
-			$this->merge(["/tmp/quark/Quark-main/", getcwd()]);
-		}
-
-		function objects(...$args)
-		{
-			$args = $args[0];
-			//Определяем команду
-			$command = array_shift($args);
-
-			if ('import' == mb_strtolower($command))
-			{
-				if (!$args) return $this->tools->print("Enter filename: objects import <filename.ini>");
-				$result = [];
-				//Пройдемся по всем переданным путям
-				foreach ($args as $filename)
-					if (is_file($filename) and is_readable($filename))
-					{
-						//Если это файл с json строкой
-						$source = file_get_contents($filename);
-						if (is_json($source) and $this->app->objects->import($source))
-						{
-							$collections = json_decode($source);
-						}
-						elseif ($collections = $this->app->config->get($filename) and is_array($collections))
-						{
-							$this->app->objects->import(json_encode($collections));
-						}
-						else
-						{
-							$this->tools->errorPrint("Error parse file: '$filename'");
-						}
-
-						$result = array_merge_recursive($result, $collections);
-					}
-					else
-					{
-						$this->tools->errorPrint("File '$filename' not found");
-					}
-
-
-					$this->tools->print("Import objects:");
-					//Выведем список импортируемых объектов
-					foreach ($result as $section => $objects)
-					{
-						$this->tools->print("\r\n[$section]");
-						foreach ($objects as $name => $object)
-							$this->tools->print("	| $name");
-					}
-
-					return true;
-			}
-
-
-			if ('export' == mb_strtolower($command))
-			{
-				if (!$args) return $this->tools->print("Enter filename: objects export <filename.ini>");
-				//Получим все объекты системы
-				$collectionsJSON = $this->app->objects->export();
-
-				//Пройдемся по всем переданным путям
-				foreach ($args as $filename)
-				{
-					//Если попросили импортировать в ini файл
-					if (pathinfo($filename, PATHINFO_EXTENSION) == 'ini')
-					{
-						$this->app->config->set(json_decode($collectionsJSON, true), $filename);
-					}
-					else
-					{
-						file_put_contents($filename, $collectionsJSON);
-					}
-
-					if (!is_readable($filename))
-					{
-						return $this->tools->errorPrint("Error export file '$filename'. Is the file system writable?");
-					}
-				}
-
-
-
-				$this->tools->print("Export objects:");
-				//Выведем список импортируемых объектов
-				foreach ($result = json_decode($collectionsJSON, true) as $section => $objects)
-				{
-					$this->tools->print("\r\n[$section]");
-					foreach ($objects as $name => $object)
-						$this->tools->print("	| $name");
-				}
-				return true;
-			}
-		}
-
-		function services(...$args)
-		{
-			global $argv;
-			$servicefile = $args[0][0];
-
-			//Фальсифицируем массив $argv, что бы образение к сервису не воспринималось как запуск внутри фреймворка
-			if ($_ENV['service']['limpid'])
-			{
-				$argv[0] = $argv[2];
-				unset($argv[1], $argv[2]);
-				$argv = array_values($argv);
-			}
-
-			if (!$servicefile or !is_readable($servicefile = $_ENV['service']['path'].DIRECTORY_SEPARATOR.$servicefile)) throw new \Exception("Service file not found or no access to file $servicefile");
-			return require $servicefile;
+			$ref = new \ReflectionClass($facade);
+			echo "Фасад '".$ref->getShortName()."' — методы:\n";
+			foreach (get_class_methods($facade) as $m)
+				if ($m[0] !== '_') echo "\t$m()\n";
+			return true;
 		}
 
 
-		function run(...$args)
-		{
-			$args = current($args);
+		//~ ------------------------------------------------------------
+		//~ Сахар
+		//~ ------------------------------------------------------------
 
-			$APP = $this->app;
-
-			$runfile = getcwd() . DIRECTORY_SEPARATOR .$args[0];
-
-			$controller = $args[0];
-
-
-			//~ $APP->controller->run($controller, ['APP'=>$APP]);
-			//~ exit($controllers);
-
-			//Дополняем расширение
-			$runfile  = is_file($runfile.'.php') ? $runfile.'.php' : $runfile;
-
-
-			return include($runfile);
-		}
-
-		function ping()
-		{
-
-			//~ $xx = new Qtest();
-			//~ echo $xx->ping();
-
-			//~ $this->errorPrint('sdsds');
-
-			$this->print('ABCDE', E_NOTICE);
-
-			echo "ping ok\r\n";
-		}
+		//Прокси к фасадам приложения: в команде $this->service->start()
+		public function __get($name) { return $this->app->$name; }
 	}
 
 
 
+	# ---------------------------------------------------------------- #
+	# --------------[ СОЗДАЕМ И ПОДКЛЮЧАЕМ ИНТЕРФЕЙС ]---------------- #
+	# ---------------------------------------------------------------- #
 
-	return new QConsole($this->config->get(), $this);
+	return new QConsole($this->config->get(__FILE__), $this);

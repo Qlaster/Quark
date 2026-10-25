@@ -28,14 +28,11 @@
 	 * Провал файла/парсинга — исключение (stderr, exit≠0).
 	 */
 
-	$flags = 0;
-	$files = [];
-	foreach ($args as $a)
-	{
-		if     ($a === '--strict') $flags |= $APP->objects::IMPORT_STRICT;
-		elseif ($a === '--skip')   $flags |= $APP->objects::IMPORT_SKIP;
-		else   $files[] = $a;
-	}
+	$mode = 0;
+	if (!empty($flags['strict'])) $mode |= $APP->objects::IMPORT_STRICT;
+	if (!empty($flags['skip']))   $mode |= $APP->objects::IMPORT_SKIP;
+
+	$files = $args;
 	if (!$files) throw new Exception("Использование: console objects import <файл...> [--strict|--skip]");
 
 	foreach ($files as $filename)
@@ -51,7 +48,7 @@
 		else
 			throw new Exception("Error parse file: '$filename'");
 
-		$APP->objects->import($json);
+		$APP->objects->import($json, $mode);
 
 		//отчёт — что реально легло
 		foreach (json_decode($json, true) as $section => $objects)
