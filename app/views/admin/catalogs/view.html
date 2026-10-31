@@ -173,6 +173,7 @@
         $(document).ready(function()
         {
 			var tlink = $('#view-table  link').attr('href');
+			window.tableViewURL = tlink;   //текущее состояние таблицы (фильтр/страница)
 			$('#view-table').load(tlink, function() { tableInit('#view-table') });
 
             //~ $("#filter").keyup(function(){

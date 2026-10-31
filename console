@@ -48,11 +48,9 @@ if (($_ENV['console']['completion'] ?? 1) and stripos(PHP_OS, 'WIN') !== 0
 	and ($home = getenv('HOME'))
 	and !is_file("$home/.local/share/bash-completion/completions/console"))
 {
-	try
-	{
-		$args = ['install'];
-		include ($_ENV['console']['path'] ?? 'engine/console').'/completion.php';
-	}
+	try {
+			$APP->console->dispatch(['completion', 'install']);
+		}
 	catch (Throwable $ignore) {}
 }
 

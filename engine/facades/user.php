@@ -185,6 +185,9 @@
 		{
 			if (session_status() !== PHP_SESSION_NONE) return;
 
+			if ($name = $this->config['session']['name'] ?? null)
+				session_name($name);
+
 			if ($lifetime = (int) ($this->config['session']['lifetime'] ?? 0))
 			{
 				session_set_cookie_params($lifetime);

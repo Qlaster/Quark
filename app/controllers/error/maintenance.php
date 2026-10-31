@@ -3,10 +3,10 @@
 	/*
 	 * Заглушка обслуживания — dependency-free:
 	 * инклюдится из index.php ДО ядра, без $APP и шаблонизатора.
-	 * Путь к этому файлу — maintenance.controller в .env.
+	 * Путь к этому файлу — mode.maintenance.controller в .env.
 	 */
 
-	$eta = (int) ($_ENV['maintenance']['eta'] ?? 120);
+	$eta = (int) ($_ENV['mode']['maintenance.eta'] ?? 120);
 
 	http_response_code(503);
 	header('Retry-After: '.$eta);

@@ -75,7 +75,13 @@
 										if (data=='OK')
 										{
 											//~ $('#bookingModal').modal('hide');
-											location.reload();
+											//Перезагружаем только таблицу в том же состоянии
+											//(фильтр/страница), если его запомнили
+											if (window.tableViewSection && window.tableViewURL)
+												$(window.tableViewSection).load(window.tableViewURL,
+													function() { tableInit(window.tableViewSection) });
+											else
+												location.reload();
 											return true;
 										}
 										else

@@ -8,13 +8,14 @@
 
 
 	# ---------------------------------------------------------------- #
-	#                  Режим обслуживания (maintenance)                #
+	#                    Режим работы сайта ([mode])                   #
 	# ---------------------------------------------------------------- #
-	//Флаг ставится записью в .env (console update / console maintenance).
-	//Срабатывает ДО ядра — отвечает 503 даже на сломанном фреймворке.
-	//Контроллер — dependency-free файл, путь в maintenance.controller.
-	if (!empty($_ENV['maintenance']['enabled']) and $ctrl = $_ENV['maintenance']['controller'] ?? null)
-		if (is_file($ctrl)) { include $ctrl; exit; }
+	//Режим ставится записью в .env (console mode / console update).
+	//Срабатывает ДО ядра — отвечает заглушкой даже на сломанном
+	//фреймворке. Имя режима → контроллер из карты <имя>.controller.
+	if ($mode = $_ENV['mode']['name'] ?? null)
+		if (($ctrl = $_ENV['mode']["$mode.controller"] ?? null) and is_file($ctrl))
+			{ include $ctrl; exit; }
 
 
 	# ---------------------------------------------------------------- #

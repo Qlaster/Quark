@@ -251,6 +251,8 @@
 							data: $(this).serialize(),
 							success: function(data)
 							{
+								//Запоминаем состояние таблицы — фильтр/сортировка
+								window.tableViewURL = this.url;
 								$(window.tableViewSection).html(data);
 								tableInit(window.tableViewSection);
 							},
@@ -289,6 +291,7 @@
 					{
 						//~ $('audio').trigger('pause');
 						var action = $(this).attr('href');
+						window.tableViewURL = action;   //страница — тоже состояние
 						$(window.tableViewSection).load(action, function() { tableInit(window.tableViewSection) });
 					});
 

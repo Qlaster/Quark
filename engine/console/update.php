@@ -18,10 +18,10 @@
 	 * 	              merge-файлы слиты с продом, базы — копии живых
 	 * 	              с накатанной схемой пакета
 	 * 	4. test     — ./console test в стейдже (ворота; нет файла → skip)
-	 * 	5. maintain — maintenance=1 в .env (сайт в 503, error/maintenance)
+	 * 	5. maintain — mode.name=maintenance в .env (сайт в 503, error/maintenance)
 	 * 	6. backup   — точечный слепок затрагиваемых файлов → backups/update-<ts>/
 	 * 	7. apply    — staging наливается поверх прода (copy→tmp→rename)
-	 * 	8. release  — maintenance=0, сайт живой
+	 * 	8. release  — mode.name пуст, сайт живой
 	 *
 	 * Провал до фазы 5 — прод не тронут, staging в /tmp сотрётся ребутом.
 	 * Провал в apply — restore из точечного бэкапа → flag off → error.
@@ -186,8 +186,8 @@
 	# 5. Обслуживание + точечный бэкап                                 #
 	# ---------------------------------------------------------------- #
 
-	$this->dispatch(['maintenance', 'on']);
-	$log->info('maintenance on');
+	$this->dispatch(['mode', 'maintenance']);
+	$log->info('mode: maintenance');
 
 	$backup = 'backups/update-'.date('Ymd_His');
 	if (!$noBackup)
@@ -233,7 +233,7 @@
 		//откат применённого из бэкапа, флаг снимаем в любом случае
 		foreach ($applied as $rel)
 			if (file_exists("$backup/$rel")) { @copy("$backup/$rel", "$rel.new"); @rename("$rel.new", $rel); }
-		$this->dispatch(['maintenance', 'off']);
+		$this->dispatch(['mode', 'off']);
 		$log->error("update failed on '$rel', rolled back: ".$e->getMessage());
 		throw $e;
 	}
@@ -243,7 +243,7 @@
 	# 7. Release + отчёт                                               #
 	# ---------------------------------------------------------------- #
 
-	$this->dispatch(['maintenance', 'off']);
+	$this->dispatch(['mode', 'off']);
 	$log->info("update applied: ".json_encode($stat, JSON_UNESCAPED_UNICODE));
 
 	$say("Готово: replace={$stat['replace']} merge={$stat['merge']} db={$stat['db']} new={$stat['new']}");

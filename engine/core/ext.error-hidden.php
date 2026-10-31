@@ -9,12 +9,15 @@ if (PHP_VERSION_ID > 80000)
 	{
 		$ignore =	[
 						'Trying to access array offset on value of type null',
+						'Trying to access array offset on null',
 						'Creation of dynamic property',
-						'Undefined array key'
+						'Undefined array key',
+						'Undefined variable',
+						'Passing null to parameter' //Deprecated: func(): Passing null to parameter #N (PHP 8.1+)
 					];
 
 		foreach ($ignore as $_errorText)
-			if (str_starts_with($error,  $_errorText)) return true;
+			if (strpos($error,  $_errorText) !== false) return true;
 
 		return false;
 	}, E_WARNING | E_DEPRECATED);

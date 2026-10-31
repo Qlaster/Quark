@@ -43,6 +43,44 @@
 	 * - Переименовать объект
 	 * $APP->objects->collection('fruits')->rename('oldName', 'newName');
 	 * $APP->objects->rename('oldName', 'newName');
+	 *
+	 * Языки документов
+	 *
+	 * Документ адресуется тройкой (collection, name, lang). lang() — одноразовый
+	 * рычаг на следующую операцию: сбрасывается после неё и при collection().
+	 * null (не выбран) и '' — базовый документ; массив — цепочка приоритетов
+	 * при чтении (первая найденная строка) или список языков при удалении.
+	 *
+	 * - Перевести / прочитать документ на языке
+	 * $APP->objects->collection('pages')->lang('en')->set('about', $doc);
+	 * $APP->objects->collection('pages')->lang('en')->get('about'); //нет en → null
+	 *
+	 * - Каскадное чтение (uk, иначе ru, иначе база)
+	 * $APP->objects->collection('pages')->lang(['uk','ru',''])->get('about');
+	 *
+	 * - Языки документа
+	 * $APP->objects->collection('pages')->langs('about');   //['', 'en', ...]
+	 *
+	 * - Удаление: lang('en')->del — только перевод; lang(['en','uk'])->del —
+	 *   перечисленные; del() без lang — вся семья
+	 *
+	 * Экспорт/импорт
+	 *
+	 * Дамп — список строк таблицы один в один (все колонки, включая lang):
+	 * [{"collection":"pages","name":"about","lang":"","value":"...","date":"..."}]
+	 * Формат схемо-толерантен: колонки дампа, отсутствующие в таблице,
+	 * игнорируются при импорте.
+	 *
+	 * - Выгрузить всю базу / коллекцию / документ(ы) / языки
+	 * $APP->objects->export();
+	 * $APP->objects->collection('pages')->export();
+	 * $APP->objects->collection('pages')->export(['about','b']);
+	 * $APP->objects->lang('en')->export();
+	 *
+	 * - Загрузить (перезапись по тройке collection+name+lang)
+	 * $APP->objects->import($json);
+	 * $APP->objects->import($json, Objects::IMPORT_STRICT); //коллизии → исключение
+	 * $APP->objects->import($json, Objects::IMPORT_SKIP);   //существующие пропустить
 	*/
 
 	namespace App\Facade;
@@ -54,6 +92,12 @@
 	{
 		//Устанавливает коллекцию для дальнейшей работы с ней
 		public function collection($collection_name);
+
+		//Устанавливает язык следующей операции с объектом
+		public function lang($lang = null);
+
+		//Список языков документа (семья переводов)
+		public function langs($name);
 
 		// Записать объект
 		public function set($name, $value);
@@ -93,7 +137,11 @@
 		public 	$config = array();
 
 		//переменная хранит значение текущей коллекции
-		private $current_collection = '';
+		private $collection = '';
+
+		//язык следующей операции с объектом (null — не выбран, '' — базовый документ).
+		//Одноразовый: сбрасывается на collection() и после каждого get/set/del/all
+		private $lang = null;
 
 		//Интерфейс к менеджеру базы
 		public $PDO_INTERFACE;
@@ -168,9 +216,10 @@
 					(
 						collection,
 						name,
+						lang,
 						value,
 						date,
-						CONSTRAINT PK_Person PRIMARY KEY (collection, name)
+						CONSTRAINT PK_Person PRIMARY KEY (collection, name, lang)
 					);
 				");
 
@@ -189,8 +238,51 @@
 		//Устанавливает коллекцию для дальнейшей работы с ней
 		public function collection($collection_name)
 		{
-			$this->current_collection = $collection_name;
+			$this->collection = $collection_name;
+			$this->lang = null;
 			return $this;
+		}
+
+		//Устанавливает язык следующей операции с объектом. Сбрасывается после операции.
+		//null — не выбран; 'en' — один язык; ['uk','ru',''] — цепочка приоритетов (первая найденная строка)
+		public function lang($lang = null)
+		{
+			if ($lang !== null)
+				$lang = is_array($lang) ? array_map('strval', $lang) : (string) $lang;
+			$this->lang = $lang;
+			return $this;
+		}
+
+
+		//Сырая строка (collection, name, lang)
+		private function row($name, $lang)
+		{
+			$table = $this->Table;
+
+			$STH = $this->PDO_INTERFACE->prepare("SELECT value FROM '$table' WHERE (collection = :collection and name = :name and lang = :lang);");
+			$STH->bindParam(':collection',	$this->collection);
+			$STH->bindParam(':name',		$name);
+			$STH->bindParam(':lang',		$lang);
+			$STH->execute();
+
+			$obj = $STH->fetchAll();
+
+			if (isset($obj[0]))
+				return unserialize($obj[0]['value']);
+		}
+
+
+		//Список языков документа (семья переводов): ['', 'en', ...]
+		public function langs($name)
+		{
+			$table = $this->Table;
+
+			$STH = $this->PDO_INTERFACE->prepare("SELECT DISTINCT lang FROM '$table' WHERE (collection = :collection and name = :name) ORDER BY lang;");
+			$STH->bindParam(':collection',	$this->collection);
+			$STH->bindParam(':name',		$name);
+			$STH->execute();
+
+			return array_column($STH->fetchAll(), 'lang');
 		}
 
 
@@ -216,11 +308,20 @@
 		//Записываем объект
 		public function set($name, $value)
 		{
-
+			$lang         = $this->lang;
+			$this->lang   = null;
 			$table = $this->Table;
 
+			//Каскад записи невозможен — один документ = одна языковая строка
+			if (is_array($lang))
+			{
+				trigger_error("objects->set: массив языков не принимается, нужен один lang", E_USER_WARNING);
+				return false;
+			}
+			$lang = $lang ?? '';
+
 			// Проверяем: объект существует? → update, иначе → insert
-			$existing = $this->get($name);
+			$existing = $this->row($name, $lang);
 			$action   = ($existing !== null) ? 'update' : 'insert';
 			$value    = serialize($value);
 
@@ -228,18 +329,20 @@
 			if ($existing !== null)
 			{
 				$this->timeline->insert([
-					'collection' => $this->current_collection,
+					'collection' => $this->collection,
 					'name' => $name,
+					'lang' => $lang,
 					'value' => serialize($existing),
 					'action' => $action
 				]);
 			}
 
-			$STH = $this->PDO_INTERFACE->prepare("REPLACE INTO '$table' ('collection', 'name', 'value') VALUES (:collection, :name, :value)");
+			$STH = $this->PDO_INTERFACE->prepare("REPLACE INTO '$table' ('collection', 'name', 'lang', 'value') VALUES (:collection, :name, :lang, :value)");
 
 			//Заполняем выражение данными
-			$STH->bindParam(':collection',	$this->current_collection);
+			$STH->bindParam(':collection',	$this->collection);
 			$STH->bindParam(':name',		$name);
+			$STH->bindParam(':lang',		$lang);
 			$STH->bindParam(':value',		$value);
 
 			//Выполняем изменения
@@ -254,22 +357,13 @@
 		 */
 		public function get($name)
 		{
-			$table = $this->Table;
+			$lang       = $this->lang;
+			$this->lang = null;
 
-			$STH = $this->PDO_INTERFACE->prepare("SELECT value FROM '$table' WHERE (collection = :collection and name = :name);");
-
-			//Заполняем выражение данными
-			$STH->bindParam(':collection',	$this->current_collection);
-			$STH->bindParam(':name',		$name);
-
-			//Выполняем изменения
-			$STH->execute();
-
-			//Запрашиваем объект
-			$obj = $STH->fetchAll();
-
-			if (isset($obj[0]))
-				return unserialize($obj[0]['value']);
+			//Цепочка языков: первая найденная строка — ответ
+			foreach (is_array($lang) ? $lang : [$lang ?? ''] as $l)
+				if (($v = $this->row($name, $l)) !== null)
+					return $v;
 		}
 
 
@@ -281,28 +375,30 @@
 		 */
 		public function del($name)
 		{
+			$lang         = $this->lang;
+			$this->lang   = null;
 			$table = $this->Table;
-			$existing = $this->get($name);
 
-			if ($existing !== null)
-			{
-				// Логируем удаление
+			//null — вся семья; скаляр — один язык; массив — перечисленные языки
+			$langs = $lang === null ? null : (array) $lang;
+			$in    = $langs === null ? '' : ' and lang IN ('.implode(',', array_fill(0, count($langs), '?')).')';
+			$where = $langs === null ? [$this->collection, $name] : array_merge([$this->collection, $name], $langs);
+
+			//Лог удаления по каждой строке
+			$STH = $this->PDO_INTERFACE->prepare("SELECT lang, value FROM '$table' WHERE collection = ? and name = ?$in;");
+			$STH->execute($where);
+
+			foreach ($STH->fetchAll() as $row)
 				$this->timeline->insert([
-					'collection' => $this->current_collection,
+					'collection' => $this->collection,
 					'name' => $name,
-					'value' => serialize($existing),
+					'lang' => $row['lang'],
+					'value' => $row['value'],
 					'action' => 'delete'
 				]);
-			}
 
-			$STH = $this->PDO_INTERFACE->prepare("DELETE FROM '$table' WHERE (collection = :collection and name = :name);");
-
-			//Заполняем выражение данными
-			$STH->bindParam(':collection',	$this->current_collection);
-			$STH->bindParam(':name',		$name);
-
-			//Выполняем изменения
-			$STH->execute();
+			$STH = $this->PDO_INTERFACE->prepare("DELETE FROM '$table' WHERE collection = ? and name = ?$in;");
+			return $STH->execute($where);
 		}
 
 
@@ -315,12 +411,12 @@
 		{
 			$table = $this->Table;
 
-			$STH = $this->PDO_INTERFACE->prepare("REPLACE INTO '$table' (collection) VALUES (:collection)");
+			$STH = $this->PDO_INTERFACE->prepare("REPLACE INTO '$table' (collection, lang) VALUES (:collection, '')");
 			//~ $STH = $this->PDO_INTERFACE->prepare("INSERT INTO '$table' ('collection', 'name', 'value') VALUES (:collection, :name, :value) ON CONFLICT('collection', 'name') DO UPDATE SET value = :value;");
 			//~ $STH = $this->PDO_INTERFACE->prepare("INSERT INTO '$table' ('collection', 'name', 'value') VALUES (:collection, :name, :value) ON DUPLICATE KEY UPDATE sent_time = values(sent_time),  status = values(status);");
 
 			//Заполняем выражение данными
-			$STH->bindParam(':collection',	$this->current_collection);
+			$STH->bindParam(':collection',	$this->collection);
 
 			//Выполняем изменения
 			return $STH->execute();
@@ -338,7 +434,7 @@
 			$STH = $this->PDO_INTERFACE->prepare("DELETE FROM '$table' WHERE (collection = :collection);");
 
 			//Заполняем выражение данными
-			$STH->bindParam(':collection',	$this->current_collection);
+			$STH->bindParam(':collection',	$this->collection);
 
 			//Выполняем изменения
 			$STH->execute();
@@ -355,10 +451,10 @@
 		{
 			$table = $this->Table;
 
-			$STH = $this->PDO_INTERFACE->prepare("SELECT (name) FROM '$table' WHERE (collection = :collection and name IS NOT NULL) ORDER BY name;");
+			$STH = $this->PDO_INTERFACE->prepare("SELECT DISTINCT (name) FROM '$table' WHERE (collection = :collection and name IS NOT NULL) ORDER BY name;");
 
 			//Заполняем выражение данными
-			$STH->bindParam(':collection',	$this->current_collection);
+			$STH->bindParam(':collection',	$this->collection);
 
 			//Выполняем изменения
 			$STH->execute();
@@ -386,15 +482,15 @@
 			{
 				$STH = $this->PDO_INTERFACE->prepare("UPDATE `$table` SET name = :newname WHERE collection = :collection AND name = :oldname;");
 				//Заполняем выражение данными
-				$STH->bindParam(':collection',	$this->current_collection);
+				$STH->bindParam(':collection',	$this->collection);
 				$STH->bindParam(':oldname',		$nameA);
 				$STH->bindParam(':newname',		$nameB);
 			}
-			elseif ($this->current_collection && isset($nameA)) //для коллекции
+			elseif ($this->collection && isset($nameA)) //для коллекции
 			{
 				$STH = $this->PDO_INTERFACE->prepare("UPDATE `$table` SET collection = :newname WHERE collection = :collection;");
 				//Заполняем выражение данными
-				$STH->bindParam(':collection',	$this->current_collection);
+				$STH->bindParam(':collection',	$this->collection);
 				$STH->bindParam(':newname',		$nameA);
 			}
 
@@ -418,10 +514,11 @@
 				//Через нативный интерфейс
 				//return $obj = $this->get($nameA) ? $this->set($nameB, $obj) : false;
 
-				$STH = $this->PDO_INTERFACE->prepare("INSERT INTO `$table` (collection, name, value, date)
+				$STH = $this->PDO_INTERFACE->prepare("INSERT INTO `$table` (collection, name, lang, value, date)
 						SELECT
 							collection,
 							:nameTarget AS name,
+							lang,
 							value,
 							date
 						FROM
@@ -430,16 +527,17 @@
 							collection = :collection and name = :name");
 
 				//Заполняем выражение данными
-				$STH->bindParam(':collection',	$this->current_collection);
+				$STH->bindParam(':collection',	$this->collection);
 				$STH->bindValue(':name',        $nameA);
 				$STH->bindValue(':nameTarget',  $nameB);
 			}
-			elseif ($this->current_collection && isset($nameA)) //для коллекции
+			elseif ($this->collection && isset($nameA)) //для коллекции
 			{
-				$STH = $this->PDO_INTERFACE->prepare("INSERT INTO `$table` (collection, name, value, date)
+				$STH = $this->PDO_INTERFACE->prepare("INSERT INTO `$table` (collection, name, lang, value, date)
 						SELECT
 							:collectionTarget AS collection,
 							name,
+							lang,
 							value,
 							date
 						FROM
@@ -448,7 +546,7 @@
 							collection = :collection;");
 
 				//Заполняем выражение данными
-				$STH->bindParam(':collection',	     $this->current_collection);
+				$STH->bindParam(':collection',	     $this->collection);
 				$STH->bindValue(':collectionTarget', $nameA);
 			}
 
@@ -463,21 +561,25 @@
 		 */
 		public function all()
 		{
+			$lang       = $this->lang;
+			$this->lang = null;
 			$result = [];
 			$table = $this->Table;
+			$langs = (array) ($lang ?? '');
 
-			$STH = $this->PDO_INTERFACE->prepare("SELECT name, value FROM '$table' WHERE (collection = :collection and name IS NOT NULL) ORDER BY name;");
+			//Строки перечисленных языков одним запросом
+			$in = implode(',', array_fill(0, count($langs), '?'));
+			$STH = $this->PDO_INTERFACE->prepare("SELECT name, lang, value FROM '$table' WHERE collection = ? and name IS NOT NULL and lang IN ($in) ORDER BY name;");
+			$STH->execute(array_merge([$this->collection], $langs));
 
-			//Заполняем выражение данными
-			$STH->bindParam(':collection',	$this->current_collection);
+			foreach ($STH->fetchAll() as $r)
+				$rows[$r['name']][$r['lang']] = unserialize($r['value']);
 
-			//Выполняем изменения
-			$STH->execute();
-
-			//Приводим к требуемой структуре
-			$raw = $STH->fetchAll();
-			foreach	($raw as $record)
-				$result[$record['name']] = unserialize($record['value']);
+			//Первый приоритетный язык каждой семьи — как у цепочного get
+			foreach ($rows ?? [] as $name => $family)
+				foreach ($langs as $l)
+					if (isset($family[$l]))
+						{ $result[$name] = $family[$l]; break; }
 
 			return $result;
 		}
@@ -490,90 +592,104 @@
 		 *
 		 * @return string JSON-строка с результатом экспорта
 		 */
-		public function export($objectName=null): string
+		public function export($names=null): string
 		{
+			$lang       = $this->lang;
+			$this->lang = null;
+			$table      = $this->Table;
 
-			if($this->current_collection)
+			//Фильтры: коллекция — курсором collection(), имена — аргументом (строка|массив), языки — ->lang()
+			$where  = [];
+			$params = [];
+
+			if ($this->collection)
 			{
-				$result = $objectName ? $this->collection($this->current_collection)->get($objectName) : $this->collection($this->current_collection)->all();
-			}
-			else
-			{
-				foreach ($this->collection_list() as $colindex => $col)
-					$result[$col] = $this->collection($col)->all();
+				$where[]  = 'collection = ?';
+				$params[] = $this->collection;
 			}
 
-			return json_encode($result);
+			if ($names !== null)
+			{
+				$names   = (array) $names;
+				$where[] = 'name IN ('.implode(',', array_fill(0, count($names), '?')).')';
+				$params  = array_merge($params, $names);
+			}
+
+			if ($lang !== null)
+			{
+				$langs   = (array) $lang;
+				$where[] = 'lang IN ('.implode(',', array_fill(0, count($langs), '?')).')';
+				$params  = array_merge($params, $langs);
+			}
+
+			$STH = $this->PDO_INTERFACE->prepare("SELECT * FROM `$table`".($where ? ' WHERE '.implode(' and ', $where) : '')." ORDER BY collection, name, lang;");
+			$STH->execute($params);
+
+			return json_encode($STH->fetchAll());
 		}
 
 		public function import($datastring, $flags = 0)
 		{
-			$collections = json_decode($datastring, true);
-			if (!$collections) return false;
+			$rows = json_decode($datastring, true);
+			if (!is_array($rows)) return false;
 
-			//Фаза проверки: при STRICT/SKIP сначала собираем коллизии, ничего не записывая
+			$table = $this->Table;
+
+			//Каждая строка обязана нести collection и name — адрес документа
+			foreach ($rows as $i => $row)
+				if (!is_array($row) or !array_key_exists('collection', $row) or !array_key_exists('name', $row))
+					throw new \Exception("Objects import: строка #$i без collection/name — формат не распознан");
+
+			//Допустимые колонки — из целевой таблицы, не из констант: дамп новее/старше схемы проходит мягко
+			$cols = array_flip(array_column($this->PDO_INTERFACE->query("PRAGMA table_info('$table')")->fetchAll(), 'name'));
+
+			//Фаза проверки: при STRICT/SKIP сначала собираем коллизии по (collection, name, lang), ничего не записывая
 			if ($flags & (self::IMPORT_STRICT | self::IMPORT_SKIP))
 			{
 				$collide = [];
-				foreach ($collections as $cn => $objs)
-					foreach ((array) $objs as $n => $o)
-						if ($this->collection($cn)->get($n) !== null)
-							$collide[] = "$cn.$n";
+				foreach ($rows as $i => $row)
+				{
+					$this->collection($row['collection']);
+					if ($this->row($row['name'], $row['lang'] ?? '') !== null)
+						$collide[$i] = "{$row['collection']}.{$row['name']}@".($row['lang'] ?? '');
+				}
 
 				//STRICT: есть коллизии — отказ до записи, без частичного импорта
 				if ($collide and ($flags & self::IMPORT_STRICT))
 					throw new \Exception('Objects import: документы уже существуют — '.implode(', ', $collide));
 
 				//SKIP: вырезаем существующие из входных данных
-				if ($flags & self::IMPORT_SKIP)
-					foreach ($collide as $key)
-					{
-						list($cn, $n) = explode('.', $key, 2);
-						unset($collections[$cn][$n]);
-					}
+				if ($collide and ($flags & self::IMPORT_SKIP))
+					foreach (array_keys($collide) as $i)
+						unset($rows[$i]);
 			}
 
-			foreach ($collections as $collectionName => $objects)
+			foreach ($rows as $row)
 			{
-				foreach ((array) $objects as $name => $object)
-				{
-					$this->collection($collectionName)->set($name, $object);
-				}
+				$this->collection($row['collection']);
+
+				//Только колонки, существующие в целевой таблице
+				$row  = array_intersect_key($row, $cols);
+				$keys = array_keys($row);
+
+				//Лог предыдущего состояния — как при set()
+				$old = $this->row($row['name'], $row['lang'] ?? '');
+				if ($old !== null)
+					$this->timeline->insert([
+						'collection' => $row['collection'],
+						'name' => $row['name'],
+						'lang' => $row['lang'] ?? '',
+						'value' => serialize($old),
+						'action' => 'update'
+					]);
+
+				$STH = $this->PDO_INTERFACE->prepare("REPLACE INTO `$table` (".implode(',', $keys).") VALUES (".implode(',', array_fill(0, count($keys), '?')).")");
+				$STH->execute(array_values($row));
 			}
 			return true;
 		}
 	}
 
-
-	//~ class timeline
-	//~ {
-
-		//~ function insert(array $record)
-		//~ {
-
-		//~ }
-
-
-		//~ function select(array $where)
-		//~ {
-
-		//~ }
-
-
-
-		//~ function delete(array $where)
-		//~ {
-
-
-		//~ }
-
-		//~ function restore($from, $to)
-		//~ {
-
-
-		//~ }
-
-	//~ }
 
 		class timeline
 		{
@@ -610,6 +726,7 @@
 				$this->PDO->exec("CREATE TABLE IF NOT EXISTS `$t` (
 					`collection` TEXT,
 					`name`       TEXT,
+					`lang`       TEXT,
 					`value`      TEXT,
 					`date`       TEXT,
 					`action`     TEXT
@@ -636,15 +753,16 @@
 				$t    = $this->table;
 				$date = date('Y-m-d H:i:s');
 
-				list($collection, $name, $value, $action) = [$record['collection'], $record['name'], $record['value'], $record['action']];
+				list($collection, $name, $lang, $value, $action) = [$record['collection'], $record['name'], $record['lang'] ?? '', $record['value'], $record['action']];
 
 				$STH = $this->PDO->prepare(
-					"INSERT INTO `$t` (collection, name, value, date, action)
-					 VALUES (:collection, :name, :value, :date, :action)"
+					"INSERT INTO `$t` (collection, name, lang, value, date, action)
+					 VALUES (:collection, :name, :lang, :value, :date, :action)"
 				);
 
 				$STH->bindValue(':collection', $collection);
 				$STH->bindValue(':name',       $name);
+				$STH->bindValue(':lang',       $lang);
 				$STH->bindValue(':value',      $value);
 				$STH->bindValue(':date',       $date);
 				$STH->bindValue(':action',     $action);
@@ -765,17 +883,19 @@
 					return false; // Снимок не найден
 
 
-				// Определяем целевые collection и name
+				// Определяем целевые collection, name и lang
 				$targetCollection = $to['collection'] ?? $record['collection'];
 				$targetName       = $to['name']       ?? $record['name'];
+				$targetLang       = $to['lang']       ?? $record['lang'];
 
 				// Восстанавливаем объект в основную таблицу
 				$itemsTable = $this->objectsTable;
 				$STH = $this->PDO->prepare(
-					"REPLACE INTO `$itemsTable` (collection, name, value) VALUES (:collection, :name, :value)"
+					"REPLACE INTO `$itemsTable` (collection, name, lang, value) VALUES (:collection, :name, :lang, :value)"
 				);
 				$STH->bindValue(':collection', $targetCollection);
 				$STH->bindValue(':name',       $targetName);
+				$STH->bindValue(':lang',       $targetLang);
 				$STH->bindValue(':value',      $record['value']);
 
 				return $STH->execute();
