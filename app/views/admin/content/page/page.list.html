@@ -348,7 +348,7 @@
 														<span class="pie">0.52/1.561</span>
 														-->
 													<td>
-														<div class='label'>{$_record['lang']}</div>
+														{foreach (array) $_record['langs'] as $_lang}{if $_lang}<div class='label'>{$_lang}</div>{end}{end}
 													</td>
 													<td> <a class="text-primary" href="{$_record['link_timeline']}"> {$_record['version']} </a></td>
 													<td>

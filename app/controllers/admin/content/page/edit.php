@@ -12,8 +12,9 @@
 	//Статическая GUI-структура — компаньон edit.ini, секция [view]
 	$content = array_replace_recursive($content, (array) $config['view']);
 
-	//Получаем текущий адрес
+	//Получаем текущий адрес и язык редактируемой версии
 	$content['form']['edit']['url']['prefix'] = $APP->url->home();
+	$lang = $_GET['lang'] ?? '';
 
 
 	if ($_GET['url'])
@@ -54,8 +55,10 @@
 	if ($_GET['url'] !== null)
 	{
 
-		//Загружаем инфу о ней
-		$page = $APP->page->get($_GET['url']);
+		//Загружаем инфу о ней (про запрошенный язык — каскад на базовую)
+		$page = $APP->page->get($_GET['url'], $lang);
+		if ($page === null && $lang !== '')
+			$page = $APP->page->get($_GET['url'], '');
 
 		//~ print_r($page); die;
 
@@ -146,8 +149,32 @@
 
 
 
+	//Переключатель языков документа: список = база + включённые локали
+	$self = 'admin/content/page/edit?url='.urlencode($_GET['url']);
+	$content['form']['edit']['langs']['list'] = ['' => ['head' => '']] + $APP->l10n->locales(true);
+	foreach ($content['form']['edit']['langs']['list'] as $code => &$l)
+	{
+		$l['link']   = $self.($code === '' ? '' : '&lang='.urlencode($code));
+		$l['active'] = $code === $lang;
+	}
+	unset($l);
+
+	//Языки документа — для предупреждения о несуществующем переводе
+	$langs = array_map(function ($p) { return $p['lang']; }, array_filter($APP->page->all(),
+		function ($p) { return $p['url'] === $_GET['url']; }));
+	$notranslate = $lang !== '' && !in_array($lang, $langs, true) && in_array('', $langs, true);
+
+	//Язык в скрытый input формы — сохранение прозрачно пишет языковую строку
+	$content['form']['edit']['langs']['value'] = $lang;
+
 	//Финальная локализация (актуальна для веток без PageTools)
 	$content = $APP->l10n->translate($content);
+
+	//Базовая версия документа — первый пункт переключателя; предупреждение
+	//о несуществующем переводе — локализованным текстом
+	$content['form']['edit']['langs']['list']['']['head'] = $content['form']['edit']['langs']['default'];
+	if ($notranslate)
+		$content['language']['notranslate'] = $content['form']['edit']['langs']['notranslate'];
 
 	//Подставляем путь в уже локализованное предупреждение
 	if (isset($content['message']['arg']))

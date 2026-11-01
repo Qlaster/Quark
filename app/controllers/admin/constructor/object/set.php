@@ -9,6 +9,7 @@
 	//Получаем входные параметры
 	$collection	= urldecode($_GET['collection']);
 	$objectname	= urldecode($_GET['objectname']);
+	$lang		= urldecode($_GET['lang'] ?? '');
 
 	if (!$objectname)
 	{
@@ -21,7 +22,7 @@
 	{
 		$object = (array) json_decode($_POST['object'], true);
 
-		if (!$APP->object->collection($collection)->set($objectname, $object))
+		if (!$APP->object->collection($collection)->lang($lang)->set($objectname, $object))
 		{
 			http_response_code(400);
 			exit($M['fail']['text']);

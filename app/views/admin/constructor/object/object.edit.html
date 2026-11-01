@@ -1,210 +1,332 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>{$title}</title>
-        <link href="../../css/bootstrap.min.css" rel="stylesheet" />
-        <link href="../../font-awesome/css/font-awesome.css" rel="stylesheet" />
-        <link href="../../css/animate.css" rel="stylesheet" />
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>{$title}</title>
+		<link href="../../css/bootstrap.min.css" rel="stylesheet" />
+		<link href="../../font-awesome/css/font-awesome.css" rel="stylesheet" />
+		<link href="../../css/animate.css" rel="stylesheet" />
 		<link href="../../css/plugins/toastr/toastr.min.css" rel="stylesheet">
-        <link href="../../css/plugins/jsTree/style.min.css" rel="stylesheet" />
-        <link href="../../css/style.css" rel="stylesheet" />
-        <link href="../../css/data/object-editor.css" rel="stylesheet" />
-        <base id="urlbase" href="{$$base}" />
-    </head>
-    <body>
-        <div id="wrapper">
-            <!--Главное меню слева-->
-            {require "../../~section/mainmenu.html"}
-            <!--Конец меню-->
+		<link href="../../css/plugins/jsTree/style.min.css" rel="stylesheet" />
+		<link href="../../css/style.css" rel="stylesheet" />
+		<link href="../../css/data/object-editor.css" rel="stylesheet" />
+		<base id="urlbase" href="{$$base}" />
+	</head>
+	<body>
+		<div id="wrapper">
+			<!--Главное меню слева-->
+			{require "../../~section/mainmenu.html"}
+			<!--Конец меню-->
 
-            <div id="page-wrapper" class="gray-bg">
-                <!-- Head menu -->
-                {require "../../~section/head.html"}
-                <!-- End head menu -->
+			<div id="page-wrapper" class="gray-bg">
+				<!-- Head menu -->
+				{require "../../~section/head.html"}
+				<!-- End head menu -->
 
-                <!-- Менюшка title-->
-                {require "../../~section/title.html"}
-                <!-- конец title-->
+				<!-- Менюшка title-->
+				{require "../../~section/title.html"}
+				<!-- конец title-->
 
-                <div class="row">
-                <div class="col-lg-12 wrapper wrapper-content animated fadeInRight">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div id="nestable-menu">
-                                <button type="button" data-action="expand-all" class="btn btn-white btn-sm">{$tree['expand']}</button>
-                                <button type="button" data-action="collapse-all" class="btn btn-white btn-sm">{$tree['collapse']}</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <div class="ibox">
-                                <div class="ibox-title">
-                                    <h5>{$tree['head']}</h5>
-                                    <!--
-                              <a href="admin/constructor/object/edit" class="btn btn-primary btn-xs pull-right">Сохранить объект</a>
-                              -->
-                                    <!--
-                           <a onclick="save_object('admin/constructor/object/set?collection='+encodeURIComponent(collection)+'&objectname='+encodeURIComponent(objectname) )" class="btn btn-primary btn-xs pull-right">Сохранить объект</a>
+				<div class="row">
+				<div class="col-lg-12 wrapper wrapper-content animated fadeInRight">
+					<div class="row">
+						<div class="col-md-12">
+
+							{if !$language['list']}
+							<div class="ibox float-e-margins">
+								<div class="ibox-title">
+<!--
+									<span class="label label-primary pull-right">Today</span>
 -->
-                                    <a class="btn btn-primary btn-xs pull-right btn-save-collection js-save-collection">
-                                        {$tree['save']}
-                                    </a>
-                                </div>
-                                <div class="ibox-content element-list">
-                                    <div class="form-group has-success">
-                                        <!--
-                                <label for="title">Название объекта</label>
+									<h5>Версии этого объекта на других языках</h5>
+								</div>
+								<div HIDDEN class="ibox-content">
+									{foreach $language['list'] as $_code => $_lang}
+									<a href="{$_lang['link']}" class="btn btn-{if $_lang['active']}success{else}white{end} btn-outline btn-sm m-none">  <span class="label !badge"> <i class="fa fa fa-language"></i> {$_code}</span>  {$_lang['head']}</a>
+									{end}
+
+<!--
+									<button type="button" class="btn btn-white btn-sm m-none"> <i class="fa fa fa-language"></i> {$tree['expand']}</button>
+									<button type="button" class="btn btn-white btn-sm"> <i class="fa fa-tag"></i> {$tree['collapse']}</button>
 -->
-                                        <input id="objectname" type="text" class="form-control" value="{$object}" placeholder="{$tree['name']}" />
-                                    </div>
-                                    <p class="m-b-lg">
-                                        <button type="button" class="btn btn-block btn-white js-tree-add-node">{$tree['add']}</button>
-                                    </p>
-                                    <div id="object-tree"></div>
-                                    <hr />
-                                    <div class="js-tree-info js-tree-errors"><i class="fa fa-warning"></i> {$tree['errdup']}</div>
-                                    <div class="js-tree-info js-tree-warnings"><i class="fa fa-warning"></i> {$tree['errempty']}</div>
-                                    <div class="js-tree-info"><i class="fa fa-info-circle"></i> {$tree['dnd']}</div>
-                                    <!-- <div class="m-t-md">
-                                        <h5>Serialised Output</h5>
-                                    </div>
-                                    <textarea id="nestable-output" class="form-control"></textarea> -->
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6 sticky-panel">
-                            <div class="ibox">
-                                <div class="ibox-title">
-                                    <h5>{$props['head']}</h5>
-                                    <!-- Эта кнопка не нужна. Она вводит пользователя в заблуждение, дублируя функционал существующей кнопки -->
-                                    <!-- <a onclick="save_object('admin/constructor/object/set?collection='+encodeURIComponent(collection)+'&objectname='+encodeURIComponent(objectname) )" class="btn btn-primary btn-xs pull-right">Сохранить</a> -->
-                                </div>
-                                <div class="ibox-content">
-                                    <!--
-                              <h2>
-                                  List of built-in Validation methods
-                              </h2>
-                              -->
-                                    <!--
-                              <strong>Nestable</strong> is an interactive hierarchical list. You can drag and drop to rearrange the order. It works well on touch-screens.
-                              -->
-                                    <!--
-                              <button type="button" class="btn btn-block btn-white" onclick="object_table_additem('object_info')">Добавить свойство</button>
-                              -->
-                                    <div class="m-b-sm properties-table-controls disabled">
-                                        <button type="button" class="btn btn-success btn-sm js-properties-table-add-item" data-item-type="blank">{$props['addblank']}</button>
-                                        <div class="btn-group">
-                                            <button data-toggle="dropdown" class="btn btn-success btn-sm dropdown-toggle">{$props['add']} <span class="caret"></span></button>
-                                            <ul class="dropdown-menu">
-                                                <li><a class="js-properties-table-add-item" data-item-type="head" title="{$types['head']['desc']}"><i class="fa fa-header"></i> {$types['head']['head']}</a></li>
-                                                <li><a class="js-properties-table-add-item" data-item-type="link" title="{$types['link']['desc']}"><i class="fa fa-link"></i> {$types['link']['head']}</a></li>
-                                                <li><a class="js-properties-table-add-item" data-item-type="icon" title="{$types['icon']['desc']}"><i class="fa fa-star"></i> {$types['icon']['head']}</a></li>
-                                                <li><a class="js-properties-table-add-item" data-item-type="info" title="{$types['info']['desc']}"><i class="fa fa-info-circle"></i> {$types['info']['head']}</a></li>
-                                                <li><a class="js-properties-table-add-item" data-item-type="text" title="{$types['text']['desc']}"><i class="fa fa-font"></i> {$types['text']['head']}</a></li>
-                                                <li><a class="js-properties-table-add-item" data-item-type="image" title="{$types['image']['desc']}"><i class="fa fa-image"></i> {$types['image']['head']}</a></li>
-                                            </ul>
-                                        </div>
-                                        <!-- <div class="pull-right">
-                                            <button type="button" class="btn btn-success btn-sm btn-outline" onclick="object_table_additem('object_info', 'head')">Заголовок</button>
-                                            <button type="button" class="btn btn-success btn-sm btn-outline" onclick="object_table_additem('object_info', 'link')">Ссылка</button>
-                                            <button type="button" class="btn btn-success btn-sm btn-outline" onclick="object_table_additem('object_info', 'icon')">Иконка</button>
-                                            <button type="button" class="btn btn-success btn-sm btn-outline" onclick="object_table_additem('object_info', 'info')">Описание</button>
-                                            <button type="button" class="btn btn-success btn-sm btn-outline" onclick="object_table_additem('object_info', 'text')">Текст</button>
-                                            <button type="button" class="btn btn-success btn-sm btn-outline" onclick="object_table_additem('object_info', 'image')">Картинка</button>
-                                        </div> -->
-                                        <div class="js-table-errors"><i class="fa fa-warning"></i> {$props['errdup']}</div>
-                                    </div>
+								</div>
 
-                                    <table class="table table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th class="col-lg-3">{$props['table']['prop']}</th>
-                                                <th colspan="2">{$props['table']['val']}</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="table-properties">
-                                            <tr class="text-center">
-                                                <td colspan="3">
-                                                    <h4>{$props['table']['head']}</h4>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>head</td>
-                                                <td colspan="2">{$types['head']['desc']}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>link</td>
-                                                <td colspan="2">{$types['link']['desc']}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>icon</td>
-                                                <td colspan="2">{$types['icon']['desc']}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>info</td>
-                                                <td colspan="2">{$types['info']['desc']}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>text</td>
-                                                <td colspan="2">{$types['text']['desc']}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>image</td>
-                                                <td colspan="2">{$types['image']['desc']}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                </div>
-                <!-- Footer block -->
-                {require "../../~section/footer.html"}
-                <!-- End Footer block -->
-            </div>
-        </div>
-        <div id="page-l10n" hidden
-        data-l10n-savedeny="{$js['savedeny']}" data-l10n-saveerr="{$js['saveerr']}" data-l10n-saving="{$js['saving']}"
-        data-l10n-savebtn="{$tree['save']}"
-        data-l10n-nameph="{$js['nameph']}" data-l10n-propname="{$js['propname']}"
-        data-l10n-noprops="{$js['noprops']}" data-l10n-selectelem="{$js['selectelem']}"
-        data-l10n-menucreate="{$js['menucreate']}" data-l10n-menurename="{$js['menurename']}"
-        data-l10n-menudel="{$js['menudel']}" data-l10n-menucopy="{$js['menucopy']}"
-        data-l10n-saved="{$js['saved']}" data-l10n-errsave="{$js['errsave']}"
-        data-l10n-timeout="{$js['timeout']}" data-l10n-offline="{$js['offline']}"
-        data-l10n-servererr="{$js['servererr']}"
-        data-l10n-http400="{$js['http400']}" data-l10n-http401="{$js['http401']}" data-l10n-http403="{$js['http403']}"
-        data-l10n-http404="{$js['http404']}" data-l10n-http500="{$js['http500']}" data-l10n-http502="{$js['http502']}"
-        data-l10n-http503="{$js['http503']}"
-        data-l10n-ph-head="{$types['head']['ph']}" data-l10n-ph-link="{$types['link']['ph']}"
-        data-l10n-ph-icon="{$types['icon']['ph']}" data-l10n-ph-info="{$types['info']['ph']}"
-        data-l10n-ph-text="{$types['text']['ph']}" data-l10n-ph-image="{$types['image']['ph']}"
-        data-l10n-ph-blank="{$types['blank']['ph']}"
-    ></div>
 
-    <!-- Mainly scripts -->
-        <script src="../../js/jquery-2.1.1.js"></script>
-        <script src="../../js/bootstrap.min.js"></script>
-        <script src="../../js/plugins/metisMenu/jquery.metisMenu.js"></script>
-        <script src="../../js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
-        <!-- Nestable List deprecated -->
-        <!-- <script src="../../js/plugins/nestable/jquery.nestable.js"></script> -->
-        <!-- jsTree -->
-        <script src="../../js/plugins/jsTree/jstree.min.js"></script>
-        <!-- <script src="../../js/plugins/jsTree/jstree.js"></script> -->
-        <!-- Custom and plugin javascript -->
-        <script src="../../js/inspinia.js"></script>
-        <script src="../../js/plugins/pace/pace.min.js"></script>
-        <!-- Toastr -->
+
+								<div class="ibox-content">
+									{foreach $language['list'] as $_code => $_lang}
+									<a href="{$_lang['link']}" class="btn btn-{if $_lang['active']}primary{else}default{end} btn-outline btn-xs m-none">  <span class="label !badge"> {$_code}</span> <i class="fa fa fa-language"></i>  {$_lang['head']}</a>
+									{end}
+								</div>
+
+
+
+							</div>
+							{end}
+
+
+
+
+
+
+<!--
+							<div class="well well-lg ibox-heading"  !id="nestable-menu">
+								<button type="button" data-action="expand-all" class="btn btn-white btn-sm"> <i class="fa fa-tag"></i> {$tree['expand']}</button>
+								<button type="button" data-action="collapse-all" class="btn btn-white btn-sm"> <i class="fa fa-tag"></i> {$tree['collapse']}</button>
+							</div>
+
+							<div class="btn-group">
+								<button class="btn btn-white  btn-sm" type="button">Left</button>
+								<button class="btn btn-primary  btn-sm" type="button">Middle</button>
+								<button class="btn btn-white  btn-sm" type="button">Right</button>
+							</div>
+-->
+<!--
+							<a class="btn btn-xs btn-white"><i class="fa fa-thumbs-up"></i> Like </a>
+-->
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-lg-6">
+							<div class="ibox">
+								<div class="ibox-title">
+									<h5>{$form['tree']['head']}</h5>
+
+<!--
+									<select class="!form-control !m-b m-l-sm btn-xs" name="account">
+										<option>option 1</option>
+										<option>option 2</option>
+										<option>option 3</option>
+										<option>option 4</option>
+									</select>
+-->
+
+
+
+
+									<!--
+							  <a href="admin/constructor/object/edit" class="btn btn-primary btn-xs pull-right">Сохранить объект</a>
+							  -->
+									<!--
+						   <a onclick="save_object('admin/constructor/object/set?collection='+encodeURIComponent(collection)+'&objectname='+encodeURIComponent(objectname) )" class="btn btn-primary btn-xs pull-right">Сохранить объект</a>
+-->
+									<button type="button" class="btn !btn-primary btn-white btn-xs pull-right js-tree-add-node m-l-sm">
+										<i class="{$form['tree']['btn-add']['icon']}"></i> {$form['tree']['btn-add']['head']}
+									</button>
+
+
+
+
+									<div id="nestable-menu" class="m-none pull-right">
+										<button type="button" data-action="expand-all" class="btn btn-white btn-xs m-l-sm "><i class="{$form['tree']['btn-expand']['icon']}"></i> {$form['tree']['btn-expand']['head']}</button>
+										<button type="button" data-action="collapse-all" class="btn btn-white btn-xs m-l-sm "><i class="{$form['tree']['btn-collapse']['icon']}"></i> {$form['tree']['btn-collapse']['head']}</button>
+									</div>
+
+
+
+									{if $language['list']}
+										<div class="btn-group m-l-sm pull-right">
+											<button data-toggle="dropdown" class="btn !btn-default !btn-white btn-primary btn-outline btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa fa-language"></i> {if $form['tree']['btn-lang']['code']}<b><span class="!label !badge">{$form['tree']['btn-lang']['code']}</span></b>{end} {$form['tree']['btn-lang']['head']} <span class="caret"></span></button>
+											<ul class="dropdown-menu">
+												{foreach $language['list'] as $_code => $_lang}
+												<li class="{$_lang['active']} text-{$_lang['class']}" ><a href="{$_lang['link']}"><i class="fa fa fa-language"></i> <b><span class="!label !badge"> </span> {$_code}</b>  {$_lang['head']}</a></li>
+												{if $_code === ''}<li class="divider"></li>{end}
+												{end}
+	<!--
+												<li><a href="#">Another action</a></li>
+												<li><a href="#">Something else here</a></li>
+	-->
+
+
+											</ul>
+										</div>
+									{end}
+
+								</div>
+
+
+
+
+
+								<div class="ibox-content element-list">
+									<div class="form-group has-success">
+										<div class="input-group">
+											<input id="objectname" type="text" class="form-control" value="{$object}" placeholder="{$form['tree']['name']['placeholder']}" />
+											<span class="input-group-btn">
+												<a class="btn btn-primary js-save-collection"><i class="{$form['tree']['btn-save']['icon']}"></i> {$form['tree']['btn-save']['head']}</a>
+											</span>
+										</div>
+									</div>
+									<div id="object-tree"></div>
+									<hr />
+									<div class="js-tree-info js-tree-errors"><i class="fa fa-warning"></i> {$form['tree']['errdup']}</div>
+									<div class="js-tree-info js-tree-warnings"><i class="fa fa-warning"></i> {$form['tree']['errempty']}</div>
+									<div class="js-tree-info"><i class="fa fa-info-circle"></i> {$form['tree']['dnd']}</div>
+
+									<br>
+									{if $language['notranslate']}
+										<div class="js-tree-info  text-danger"><i class="fa fa-info-circle"></i> {$language['notranslate']}</div>
+										<div class="js-tree-info" >
+											<span > <i class="fa fa-circle text-navy"></i> Выбранный язык </span>
+											<span > <i class="fa fa-circle text-success"></i> Перевод есть</span>
+											<span > <i class="fa fa-circle text-default"></i> Перевод отсутствует</span>
+										</div>
+									{end}
+
+									<!-- <div class="m-t-md">
+										<h5>Serialised Output</h5>
+									</div>
+									<textarea id="nestable-output" class="form-control"></textarea> -->
+								</div>
+
+
+
+								{if $language['list']}
+
+									<div class="ibox-content">
+										{foreach $language['list'] as $_code => $_lang}
+										<a href="{$_lang['link']}" class="btn btn-{$_lang['class']} btn-outline btn-xs m-none"> {if $_code}<span class="label !badge"> {$_code}</span>{end} <i class="fa fa fa-language"></i>  {$_lang['head']}</a>
+										{end}
+									</div>
+
+								{end}
+
+							</div>
+						</div>
+
+
+						<div class="col-lg-6 sticky-panel">
+							<div class="ibox">
+								<div class="ibox-title">
+									<h5>{$form['props']['head']}</h5>
+									<!-- Эта кнопка не нужна. Она вводит пользователя в заблуждение, дублируя функционал существующей кнопки -->
+									<!-- <a onclick="save_object('admin/constructor/object/set?collection='+encodeURIComponent(collection)+'&objectname='+encodeURIComponent(objectname) )" class="btn btn-primary btn-xs pull-right">Сохранить</a> -->
+								</div>
+								<div class="ibox-content">
+									<!--
+							  <h2>
+								  List of built-in Validation methods
+							  </h2>
+							  -->
+									<!--
+							  <strong>Nestable</strong> is an interactive hierarchical list. You can drag and drop to rearrange the order. It works well on touch-screens.
+							  -->
+									<!--
+							  <button type="button" class="btn btn-block btn-white" onclick="object_table_additem('object_info')">Добавить свойство</button>
+							  -->
+									<div class="m-b-sm properties-table-controls disabled">
+										<button type="button" class="btn btn-success btn-sm js-properties-table-add-item" data-item-type="blank"><i class="{$form['props']['btn-addblank']['icon']}"></i> {$form['props']['btn-addblank']['head']}</button>
+										<div class="btn-group">
+											<button data-toggle="dropdown" class="btn btn-success btn-sm dropdown-toggle"><i class="{$form['props']['btn-add']['icon']}"></i> {$form['props']['btn-add']['head']} <span class="caret"></span></button>
+											<ul class="dropdown-menu">
+												<li><a class="js-properties-table-add-item" data-item-type="head" title="{$types['head']['desc']}"><i class="fa fa-header"></i> {$types['head']['head']}</a></li>
+												<li><a class="js-properties-table-add-item" data-item-type="link" title="{$types['link']['desc']}"><i class="fa fa-link"></i> {$types['link']['head']}</a></li>
+												<li><a class="js-properties-table-add-item" data-item-type="icon" title="{$types['icon']['desc']}"><i class="fa fa-star"></i> {$types['icon']['head']}</a></li>
+												<li><a class="js-properties-table-add-item" data-item-type="info" title="{$types['info']['desc']}"><i class="fa fa-info-circle"></i> {$types['info']['head']}</a></li>
+												<li><a class="js-properties-table-add-item" data-item-type="text" title="{$types['text']['desc']}"><i class="fa fa-font"></i> {$types['text']['head']}</a></li>
+												<li><a class="js-properties-table-add-item" data-item-type="image" title="{$types['image']['desc']}"><i class="fa fa-image"></i> {$types['image']['head']}</a></li>
+											</ul>
+										</div>
+										<!-- <div class="pull-right">
+											<button type="button" class="btn btn-success btn-sm btn-outline" onclick="object_table_additem('object_info', 'head')">Заголовок</button>
+											<button type="button" class="btn btn-success btn-sm btn-outline" onclick="object_table_additem('object_info', 'link')">Ссылка</button>
+											<button type="button" class="btn btn-success btn-sm btn-outline" onclick="object_table_additem('object_info', 'icon')">Иконка</button>
+											<button type="button" class="btn btn-success btn-sm btn-outline" onclick="object_table_additem('object_info', 'info')">Описание</button>
+											<button type="button" class="btn btn-success btn-sm btn-outline" onclick="object_table_additem('object_info', 'text')">Текст</button>
+											<button type="button" class="btn btn-success btn-sm btn-outline" onclick="object_table_additem('object_info', 'image')">Картинка</button>
+										</div> -->
+										<div class="js-table-errors"><i class="fa fa-warning"></i> {$form['props']['errdup']}</div>
+									</div>
+
+									<table class="table table-bordered">
+										<thead>
+											<tr>
+												<th class="col-lg-3">{$form['props']['table']['prop']}</th>
+												<th colspan="2">{$form['props']['table']['val']}</th>
+											</tr>
+										</thead>
+										<tbody id="table-properties">
+											<tr class="text-center">
+												<td colspan="3">
+													<h4>{$form['props']['table']['head']}</h4>
+												</td>
+											</tr>
+											<tr>
+												<td>head</td>
+												<td colspan="2">{$types['head']['desc']}</td>
+											</tr>
+											<tr>
+												<td>link</td>
+												<td colspan="2">{$types['link']['desc']}</td>
+											</tr>
+											<tr>
+												<td>icon</td>
+												<td colspan="2">{$types['icon']['desc']}</td>
+											</tr>
+											<tr>
+												<td>info</td>
+												<td colspan="2">{$types['info']['desc']}</td>
+											</tr>
+											<tr>
+												<td>text</td>
+												<td colspan="2">{$types['text']['desc']}</td>
+											</tr>
+											<tr>
+												<td>image</td>
+												<td colspan="2">{$types['image']['desc']}</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				</div>
+				<!-- Footer block -->
+				{require "../../~section/footer.html"}
+				<!-- End Footer block -->
+			</div>
+		</div>
+		<div id="page-l10n" hidden
+			data-l10n-savedeny="{$js['savedeny']}" data-l10n-saveerr="{$js['saveerr']}" data-l10n-saving="{$js['saving']}"
+			data-l10n-savebtn="{$form['tree']['btn-save']['head']}"
+			data-l10n-nameph="{$js['nameph']}" data-l10n-propname="{$js['propname']}"
+			data-l10n-noprops="{$js['noprops']}" data-l10n-selectelem="{$js['selectelem']}"
+			data-l10n-menucreate="{$js['menucreate']}" data-l10n-menurename="{$js['menurename']}"
+			data-l10n-menudel="{$js['menudel']}" data-l10n-menucopy="{$js['menucopy']}"
+			data-l10n-saved="{$js['saved']}" data-l10n-errsave="{$js['errsave']}"
+			data-l10n-timeout="{$js['timeout']}" data-l10n-offline="{$js['offline']}"
+			data-l10n-servererr="{$js['servererr']}"
+			data-l10n-http400="{$js['http400']}" data-l10n-http401="{$js['http401']}" data-l10n-http403="{$js['http403']}"
+			data-l10n-http404="{$js['http404']}" data-l10n-http500="{$js['http500']}" data-l10n-http502="{$js['http502']}"
+			data-l10n-http503="{$js['http503']}"
+			data-l10n-ph-head="{$types['head']['ph']}" data-l10n-ph-link="{$types['link']['ph']}"
+			data-l10n-ph-icon="{$types['icon']['ph']}" data-l10n-ph-info="{$types['info']['ph']}"
+			data-l10n-ph-text="{$types['text']['ph']}" data-l10n-ph-image="{$types['image']['ph']}"
+			data-l10n-ph-blank="{$types['blank']['ph']}"
+		>
+	</div>
+
+	<!-- Mainly scripts -->
+		<script src="../../js/jquery-2.1.1.js"></script>
+		<script src="../../js/bootstrap.min.js"></script>
+		<script src="../../js/plugins/metisMenu/jquery.metisMenu.js"></script>
+		<script src="../../js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+		<!-- Nestable List deprecated -->
+		<!-- <script src="../../js/plugins/nestable/jquery.nestable.js"></script> -->
+		<!-- jsTree -->
+		<script src="../../js/plugins/jsTree/jstree.min.js"></script>
+		<!-- <script src="../../js/plugins/jsTree/jstree.js"></script> -->
+		<!-- Custom and plugin javascript -->
+		<script src="../../js/inspinia.js"></script>
+		<script src="../../js/plugins/pace/pace.min.js"></script>
+		<!-- Toastr -->
 		<script src="../../js/plugins/toastr/toastr.min.js"></script>
-        <!-- http-get -->
-        <script src="../../js/data/http-get.js"></script>
-        <!--Object constructor-->
-        <script src="../../js/data/object-editor.js"></script>
-    </body>
+		<!-- http-get -->
+		<script src="../../js/data/http-get.js"></script>
+		<!--Object constructor-->
+		<script src="../../js/data/object-editor.js"></script>
+	</body>
 </html>

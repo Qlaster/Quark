@@ -209,3 +209,17 @@
 .jstree-leaf a.jstree-clicked {
     height: 50px;
 } */
+/* Контекстное меню jsTree: в теме .vakata-context без z-index —
+   меню уходит под следующие блоки */
+.vakata-context,
+.vakata-context ul {
+    z-index: 9999;
+}
+
+/* Переключатель языков: чип кода наследует цвет кнопки —
+   на закрашенных (primary/warning) бейдж не должен оставаться серым */
+.lang-switch .label {
+    background-color: inherit;
+    color: inherit;
+    font-weight: bold;
+}

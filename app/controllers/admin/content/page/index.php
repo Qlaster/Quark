@@ -30,7 +30,12 @@
 			$value['visits'] 	= (int) $statistic['uri'][$APP->url->home().$value['url']];
 			if ($one_percent)
 				$value['progress'] 	= $value['visits']/$one_percent;
-			$content['catalog']['page'][$value['url']] = $value;
+			//строк хранения — по языку на url; схлопываем в запись,
+			//поля — из первой строки, языки собираем в langs[]
+			$url = $value['url'];
+			$content['catalog']['page'][$url] = (array) $content['catalog']['page'][$url] + $value;
+			if ($value['lang'])
+				$content['catalog']['page'][$url]['langs'][$value['lang']] = $value['lang'];
 
 		}
 
@@ -42,7 +47,7 @@
 	{
 		$value['link_view']		= $APP->url->home().$value['url'];
 		$value['link_edit']		= 'admin/content/page/edit?url='.urlencode($value['url']);
-		$value['link_del']		= 'admin/content/page/del?url='.urlencode($value['url']).'&lang='.$value['lang'];
+		$value['link_del']		= 'admin/content/page/del?url='.urlencode($value['url']);
 		$value['link_timeline'] = 'admin/content/page/timeline?url='.urlencode($value['url']).'&lang='.$value['lang'];
 
 		//Получим директорию с шаблонами

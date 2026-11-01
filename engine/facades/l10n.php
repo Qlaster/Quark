@@ -79,6 +79,10 @@
 
 		//Собранные промахи (в памяти); $flush — очистить после чтения
 		public function missing($flush = false);
+
+		//Объявленные локали из секции [locales] конфига: {code: {head, enable}}
+		//$enable: null — все, true — только включённые, false — выключенные
+		public function locales($enable = null);
 	}
 
 
@@ -162,6 +166,21 @@
 
 			ksort($result);
 			return $result;
+		}
+
+		//Объявленные локали системы — секция [locales] l10n.ini:
+		//{code: {head, enable}} — что поддерживаем (не то, что найдено в файлах)
+		public function locales($enable = null)
+		{
+			$locales = (array) ($this->config['locales'] ?? []);
+
+			if ($enable !== null)
+				$locales = array_filter($locales, function ($l) use ($enable)
+				{
+					return !empty($l['enable']) === (bool) $enable;
+				});
+
+			return $locales;
 		}
 
 		//Полиморфен по входу:

@@ -7,9 +7,11 @@
 	//Получаем входные параметры
 	$collection	= (urldecode($_GET['collection']));
 	$object		= (urldecode($_GET['object']));
+	$lang		= urldecode($_GET['lang'] ?? '');
 
 
-	echo json_encode($APP->object->collection($collection)->get($object));
+	//Язык задан: промах по переводу → откат на базовую версию (каскад)
+	echo json_encode($APP->object->collection($collection)->lang($lang ? [$lang, ''] : $lang)->get($object));
 
 
 

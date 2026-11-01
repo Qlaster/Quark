@@ -2,9 +2,13 @@
 
 	$url = $APP->url->page();
 
+	//Язык — из готовой страницы (превью редактора) либо куки посетителя;
+	//запрошенного перевода нет — базовая версия
+	$lang = $page['lang'] ?? $_COOKIE['lang'] ?? '';
+
 	//Загрузим страницу из базы, если нам ее не передали
 	if (!isset($page))
-		$page = $APP->page->get($url);
+		$page = $APP->page->get($url, $lang) ?: $APP->page->get($url);
 
 	//Если не нашли такой страницы - подгрузим заглушку
 	if (($page === null) or (!$page['public']))
@@ -41,7 +45,7 @@
 						$tag_name = explode(':', $tag['name']);
 						$tag_name[0] = base64_decode($tag_name[0]);
 						$tag_name[1] = base64_decode($tag_name[1]);
-						$content[$tag_name[0]][$tag_name[1]] = $APP->objects->collection($collection)->get($object);
+						$content[$tag_name[0]][$tag_name[1]] = $APP->objects->collection($collection)->lang([$lang, ''])->get($object);
 
 					break;
 				case 'source':

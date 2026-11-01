@@ -12,6 +12,7 @@
 
 	$page = $_POST;
 	$page['url'] = trim($page['url']);
+	$page['lang'] = $_POST['lang'] ?? $_GET['lang'] ?? '';
 	$content = [];
 
 
@@ -89,6 +90,7 @@
 
 	//Если указано, куда нужно перенаправить, то исполняем, если нет - возвращаем на предыдущую
 	$referer = $_GET['referer'] ? $_GET['referer'] : $APP->url->home().'admin/content/page/edit?url='.urlencode($page['url']);
+	if ($page['lang'] !== '') $referer .= '&lang='.urlencode($page['lang']);
 	//~ $referer = $_GET['referer'] ? $_GET['referer'] : $_SERVER['HTTP_REFERER'];
 
 	header("Location: $referer");

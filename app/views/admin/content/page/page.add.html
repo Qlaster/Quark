@@ -78,6 +78,7 @@
 
 
         <form name="editpage" id="editpage" method="post" action="admin/content/page/save" class="form-horizontal">
+
         <div class="row">
         <div class="col-lg-12 wrapper wrapper-content">
             <div class="row">
@@ -279,7 +280,40 @@
 												<input  checked class="js-switch_2" type="checkbox"/>
 -->
                                         </div>
+										<div class="hr-line-dashed"></div>
+
+
+<!--
+										<div class="ibox float-e-margins">
+											<div class="ibox-title">
+												<span class="label label-primary pull-right">Today</span>
+												<h5>Vistits</h5>
+											</div>
+											<div class="ibox-content">
+												{foreach $language['list'] as $_code => $_lang}
+												<button type="button" class="btn !btn-white btn-success btn-outline btn-sm m-none">  <span class="label !badge"> <i class="fa fa fa-language"></i> {$_code}</span>  {$_lang['head']}</button>
+												{end}
+
+												<button type="button" class="btn btn-white btn-sm m-none"> <i class="fa fa fa-language"></i> {$tree['expand']}</button>
+												<button type="button" class="btn btn-white btn-sm"> <i class="fa fa-tag"></i> {$tree['collapse']}</button>
+											</div>
+										</div>
+-->
+
+										<div class="form-group">
+                                            <label class="col-sm-2 control-label">{$form['edit']['langs']['head']}</label>
+
+                                            <div class="col-sm-10">
+												<input type="hidden" name="lang" value="{$form['edit']['langs']['value']}" />
+											{foreach $form['edit']['langs']['list'] as $_code => $_lang}
+												<a href="{$_lang['link']}" class="btn btn-{if $_lang['active']}primary{else}default{end} btn-outline btn-sm m-none">{if $_code}<span class="!label !badge"> {$_code}</span>{end} <i class="fa fa fa-language"></i> {$_lang['head']}</a>
+											{end}
+											{if $language['notranslate']}<div class="text-danger m-t-sm"><i class="fa fa-info-circle"></i> {$language['notranslate']}</div>{end}
+
+                                            </div>
+                                        </div>
                                         <div class="hr-line-dashed"></div>
+
 
 
 

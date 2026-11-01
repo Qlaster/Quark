@@ -1,5 +1,8 @@
 const urlParams = new URLSearchParams(window.location.search);
 
+//Язык редактируемой версии объекта (&lang=en — перевод; пусто/нет — базовый)
+const langParam = urlParams.get("lang") ? "&lang=" + encodeURIComponent(urlParams.get("lang")) : "";
+
 //Локализация: переведённые строки приходят в data-l10n-* на держателе #page-l10n
 //(fail-safe: если атрибута нет — используется родная строка)
 function l10n(key, fallback) {
@@ -57,7 +60,7 @@ Object.keys(property_types).forEach(function(type) {
 });
 
 $(document).ready(function() {
-    let json_data = url_get(window.location.pathname + "/../get?collection=" + encodeURIComponent(urlParams.get("collection")) + "&object=" + encodeURIComponent(urlParams.get("object")));
+    let json_data = url_get(window.location.pathname + "/../get?collection=" + encodeURIComponent(urlParams.get("collection")) + "&object=" + encodeURIComponent(urlParams.get("object")) + langParam);
     jstreeInit(json_data);
 
     $('.js-tree-add-node').on('click', function() {
@@ -83,7 +86,7 @@ $(document).ready(function() {
 
         try {
             await saveObject('admin/constructor/object/set?collection=' + encodeURIComponent(urlParams.get("collection")) + 
-                                                         '&objectname=' + encodeURIComponent($('#objectname').val())
+                                                         '&objectname=' + encodeURIComponent($('#objectname').val()) + langParam
             );
         } catch (error) {
             console.error('Ошибка при сохранении:', error);
@@ -574,7 +577,7 @@ function jstreeInit(json) {
                     'create': {
                         'label': l10n('menucreate', "Добавить элемент"),
                         'action': function(data) {
-                            const inst = $.jstree.reference(data.reference);
+                            const inst = $.jstree.reference(data.reference) || $("#object-tree").jstree(true);
                             const newNode = inst.create_node(node, {
                                 id: 'jstree_node_' + generateUUID(),
                                 text: formatNodeText({}, createUniqueName()), 
@@ -592,7 +595,7 @@ function jstreeInit(json) {
                     'create': {
                         'label': l10n('menucreate', "Добавить элемент"),
                         'action': function(data) {
-                            const inst = $.jstree.reference(data.reference);
+                            const inst = $.jstree.reference(data.reference) || $("#object-tree").jstree(true);
                             const newNode = inst.create_node(node, {
                                 id: 'jstree_node_' + generateUUID(),
                                 text: formatNodeText({}, createUniqueName()), 
@@ -607,7 +610,7 @@ function jstreeInit(json) {
                     'rename': {
                         'label': l10n('menurename', "Переименовать"),
                         'action': function(data) {
-                            const inst = $.jstree.reference(data.reference);
+                            const inst = $.jstree.reference(data.reference) || $("#object-tree").jstree(true);
                             inst.edit(node);
                         }
                     },
@@ -615,7 +618,7 @@ function jstreeInit(json) {
                     'delete': {
                         'label': l10n('menudel', "Удалить"),
                         'action': function(data) {
-                            const inst = $.jstree.reference(data.reference);
+                            const inst = $.jstree.reference(data.reference) || $("#object-tree").jstree(true);
                             inst.delete_node(node);
                             jstreeCheckDuplicateNames('object-tree', data.node);
                             $('.properties-table-controls').addClass('disabled');
@@ -631,7 +634,7 @@ function jstreeInit(json) {
                     'copy': {
                         'label': l10n('menucopy', "Дублировать"),
                         'action': function(data) {
-                            const inst = $.jstree.reference(data.reference);
+                            const inst = $.jstree.reference(data.reference) || $("#object-tree").jstree(true);
                             const copy_name = createUniqueName('object-tree', node.li_attr['jstree-initial-name']);
                             // const copy_name = node.li_attr['jstree-initial-name'] + '_copy';
                             // let preview = node.data ? Object.keys(node.data).join(', ') : '';
@@ -807,7 +810,7 @@ $('#table-properties').on('input paste keydown', '.js-property-name', function(e
 });
 
 function propertiesTableToObject() {
-    const keys = {};
+    const keys = Object.create(null);
     
     $('.property-row').removeClass('duplicate-row').each(function() {
         const key = $(this).find('.js-property-name').val().trim();
@@ -839,7 +842,7 @@ function propertiesTableToObject() {
         $('.element-list').prop('inert', true);
     }
 
-    const result = {};
+    const result = Object.create(null);
     
     $('#table-properties .property-row').each(function() {
         const key = $(this).find('.js-property-name').val().trim();
@@ -902,7 +905,7 @@ function jstreeCheckDuplicateNames(tree_id = 'object-tree', changed_node) {
     // console.log(changed_node);
 
     // Собираем все узлы сгруппированные по родителям
-    const nodes_by_parent = {};
+    const nodes_by_parent = Object.create(null);
     const all_nodes = tree.get_json(null, { flat: true });
     let has_duplicates = false;
     
@@ -914,7 +917,7 @@ function jstreeCheckDuplicateNames(tree_id = 'object-tree', changed_node) {
 
     // Проверяем дубликаты на каждом уровне
     Object.values(nodes_by_parent).forEach(sibling_nodes => {
-        const names_on_level = {};
+        const names_on_level = Object.create(null);
 
         // Собираем частоту имен на текущем уровне
         sibling_nodes.forEach(node => {
