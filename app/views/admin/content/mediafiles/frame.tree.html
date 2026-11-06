@@ -261,7 +261,10 @@
 				success: function(data)
 				{
 					//~ toastr.success(data);
-					$(elem).closest(".mediafiles").parent().html(data);
+					//Цель подмены — #file-frime, а не .row-родитель: фрагмент сам
+					//начинается с .row, иначе каждый reload добавляет вложенный .row (-15px)
+					var $box = $(elem).closest("#file-frime");
+					($box.length ? $box : $(elem).closest(".mediafiles").parent()).html(data);
 				},
 				error:  function()
 				{
@@ -272,8 +275,9 @@
 
 		function reloadFilesList(elem)
 		{
-			elem ? $(elem).closest(".mediafiles").parent().load("admin/content/mediafiles/listing")
-				 : $(".mediafiles").parent().load("admin/content/mediafiles/listing");
+			//Цель — #file-frime: .load в родителя-.row копил бы вложенные .row
+			var $box = $(".mediafiles").closest("#file-frime");
+			($box.length ? $box : $(".mediafiles").parent()).load("admin/content/mediafiles/listing");
 		}
 
 		function simpleLoad(btn, state)

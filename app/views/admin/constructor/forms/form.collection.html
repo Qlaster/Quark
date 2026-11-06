@@ -20,6 +20,7 @@
 
     <link href="../../css/animate.css" rel="stylesheet">
     <link href="../../css/style.css" rel="stylesheet">
+    <link href="../../css/data/object-editor.css" rel="stylesheet">
 
 </head>
 
@@ -62,9 +63,12 @@
 										<div class="hr-line-dashed"></div>
 
 										<form action="{$form['collection']['action']}" method='get'>
-											<input name='name' placeholder="{$form['newfield']['placeholder']}" class="form-control">
-											<p></p>
-											<button type="submit" class="btn btn-primary btn-outline btn-block">{$form['collection']['button']['add']['head']}</button>
+											<div class="input-group">
+												<input name='name' placeholder="{$form['newfield']['placeholder']}" class="form-control">
+												<span class="input-group-btn">
+													<button type="submit" class="btn btn-primary">{$form['collection']['button']['add']['head']}</button>
+												</span>
+											</div>
 										</form>
 
 										<div class="hr-line-dashed"></div>
@@ -105,6 +109,24 @@
 										<form id="form-code" method="POST">
 											<div class="ibox-title">
 												<h5>{$catalog['objects']['head']} <b class="text-success">{$objectName}</b></h5>
+												{if $language['list']}
+													<div class="btn-group m-l-sm">
+														<button data-toggle="dropdown" class="btn !btn-default btn-white !btn-primary btn-outline btn-xs dropdown-toggle" aria-expanded="false">
+															{if !$form['langs']['btn']['flag']}<i class="fa fa fa-language"></i>{end}{$form['langs']['btn']['flag']}
+															{if $form['langs']['btn']['code']}<b><span class="!label !badge">{$form['langs']['btn']['code']}</span></b>{end} {$form['langs']['btn']['head']} <span class="caret"></span>
+														</button>
+														<ul class="dropdown-menu lang-cols row">
+															{foreach $language['list'] as $_code => $_lang}
+																<li class="col-xs-{= $_code? 4 : 12} {$_lang['active']} text-{$_lang['class']} p-none m-none" >
+																	<a class="p-xxs" href="{$_lang['link']}">
+																		{if !$_lang['flag']}<i class="fa fa fa-language"></i>{end}{$_lang['flag']} <b><span class="!label !badge"> </span> {$_code}</b>  {$_lang['head']}
+																	</a>
+																</li>
+																{if $_code === ''}<li class="divider col-xs-12"></li>{end}
+															{end}
+														</ul>
+													</div>
+												{end}
 												<a id="btn-save" !href="{$catalog['objects']['button']['save']['link']}" class="btn btn-primary btn-xs pull-right m-l-sm"> <span class="{$catalog['objects']['button']['save']['icon']}"></span> {$catalog['objects']['button']['save']['head']}</a>
 	<!--
 												<a href="{$catalog['objects']['button']['edit']['link']}" class="btn btn-success btn-xs pull-right"> <span class="{$catalog['objects']['button']['edit']['icon']}"></span> {$catalog['objects']['button']['edit']['head']}</a>
@@ -112,6 +134,7 @@
 											</div>
 
 											<div class="ibox-content" id='menuname'>
+												{if $language['notranslate']}<div class="text-danger m-b-sm"><i class="fa fa-info-circle"></i> {$language['notranslate']}</div>{end}
 												<div class="form-group"><label>{$form['name']['label']}</label> <input type="text" placeholder="{$form['name']['placeholder']}" name="name" value="{$objectName}" class="form-control"></div>
 
 												<div class="input-group m-b"><span class="input-group-addon">{$form['action']['label']}</span> <input class="form-control" type="text" name="action" value="{$$catalog['object']['action']}" placeholder="{$form['action']['placeholder']}" ></div>

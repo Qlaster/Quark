@@ -3416,74 +3416,74 @@ table.table-mail tr td {
   padding: 0px !important;
 }
 .p-xxs {
-  padding: 5px;
+  padding: 5px !important;
 }
 .p-xs {
-  padding: 10px;
+  padding: 10px !important;
 }
 .p-sm {
-  padding: 15px;
+  padding: 15px !important;
 }
 .p-m {
-  padding: 20px;
+  padding: 20px !important;
 }
 .p-md {
-  padding: 25px;
+  padding: 25px !important;
 }
 .p-lg {
-  padding: 30px;
+  padding: 30px !important;
 }
 .p-xl {
-  padding: 40px;
+  padding: 40px !important;
 }
 
 .p-l-none
 {
-  padding-left: 0px;
+  padding-left: 0px !important;
 }
 .p-l-xxs {
-  padding-left: 5px;
+  padding-left: 5px !important;
 }
 .p-l-xs {
-  padding-left: 10px;
+  padding-left: 10px !important;
 }
 .p-l-sm {
-  padding-left: 15px;
+  padding-left: 15px !important;
 }
 .p-l-m {
-  padding-left: 20px;
+  padding-left: 20px !important;
 }
 .p-l-md {
-  padding-left: 25px;
+  padding-left: 25px !important;
 }
 .p-l-lg {
-  padding-left: 30px;
+  padding-left: 30px !important;
 }
 .p-l-xl {
-  padding-left: 40px;
+  padding-left: 40px !important;
 }
 
 .p-r-none
 {
-  padding-right: 0px;
+  padding-right: 0px !important;
 }
 .p-r-xxs {
-  padding-right: 5px;
+  padding-right: 5px !important;
 }
 .p-r-xs {
-  padding-right: 10px;
+  padding-right: 10px !important;
 }
 .p-r-sm {
-  padding-right: 15px;
+  padding-right: 15px !important;
 }
 .p-r-m {
-  padding-right: 20px;
+  padding-right: 20px !important;
 }
 .p-r-md {
-  padding-right: 25px;
+  padding-right: 25px !important;
 }
 .p-r-lg {
-  padding-right: 30px;
+  padding-right: 30px !important;
 }
 .p-r-xl {
   padding-right: 40px;
@@ -3491,25 +3491,25 @@ table.table-mail tr td {
 
 
 .m-xxs {
-  margin: 2px 4px;
+  margin: 2px 4px !important;
 }
 .m-xs {
-  margin: 5px;
+  margin: 5px !important;
 }
 .m-sm {
-  margin: 10px;
+  margin: 10px !important;
 }
 .m {
-  margin: 15px;
+  margin: 15px !important;
 }
 .m-md {
-  margin: 20px;
+  margin: 20px !important;
 }
 .m-lg {
-  margin: 30px;
+  margin: 30px !important;
 }
 .m-xl {
-  margin: 50px;
+  margin: 50px !important;
 }
 .m-n {
   margin: 0 !important;
@@ -3521,43 +3521,43 @@ table.table-mail tr td {
   margin-left: 0 !important;
 }
 .m-l-xs {
-  margin-left: 5px;
+  margin-left: 5px !important;
 }
 .m-l-sm {
-  margin-left: 10px;
+  margin-left: 10px !important;
 }
 .m-l {
-  margin-left: 15px;
+  margin-left: 15px !important;
 }
 .m-l-md {
-  margin-left: 20px;
+  margin-left: 20px !important;
 }
 .m-l-lg {
-  margin-left: 30px;
+  margin-left: 30px !important;
 }
 .m-l-xl {
-  margin-left: 40px;
+  margin-left: 40px !important;
 }
 .m-l-n-xxs {
-  margin-left: -1px;
+  margin-left: -1px !important;
 }
 .m-l-n-xs {
-  margin-left: -5px;
+  margin-left: -5px !important;
 }
 .m-l-n-sm {
-  margin-left: -10px;
+  margin-left: -10px !important;
 }
 .m-l-n {
-  margin-left: -15px;
+  margin-left: -15px !important;
 }
 .m-l-n-md {
-  margin-left: -20px;
+  margin-left: -20px !important;
 }
 .m-l-n-lg {
-  margin-left: -30px;
+  margin-left: -30px !important;
 }
 .m-l-n-xl {
-  margin-left: -40px;
+  margin-left: -40px !important;
 }
 
 .m-t-none {

@@ -14,6 +14,7 @@
 		<link href="../../css/plugins/summernote/summernote-bs3.css" rel="stylesheet">
 		<link href="../../css/animate.css" rel="stylesheet">
 		<link href="../../css/style.css" rel="stylesheet">
+		<link href="../../css/data/object-editor.css" rel="stylesheet">
 		<base id='urlbase' href="{$$base}">
 	</head>
 	<body>
@@ -44,7 +45,25 @@
 								<div class="ibox-content">
 									<form method="post" class="form-horizontal">
 										<h2 class="!text-center ">
-											{$form['head']} 
+											{$form['head']}
+											{if $language['list']}
+												<div class="btn-group m-l-sm">
+													<button data-toggle="dropdown" class="btn !btn-default btn-white !btn-primary btn-outline dropdown-toggle" aria-expanded="false">
+														{if !$form['langs']['btn']['flag']}<i class="fa fa fa-language"></i>{end}{$form['langs']['btn']['flag']}
+														{if $form['langs']['btn']['code']}<b><span class="!label !badge">{$form['langs']['btn']['code']}</span></b>{end} {$form['langs']['btn']['head']} <span class="caret"></span>
+													</button>
+													<ul class="dropdown-menu lang-cols row">
+														{foreach $language['list'] as $_code => $_lang}
+															<li class="col-xs-{= $_code? 4 : 12} {$_lang['active']} text-{$_lang['class']} p-none m-none" >
+																<a class="p-xxs" href="{$_lang['link']}">
+																	{if !$_lang['flag']}<i class="fa fa fa-language"></i>{end}{$_lang['flag']} <b><span class="!label !badge"> </span> {$_code}</b>  {$_lang['head']}
+																</a>
+															</li>
+															{if $_code === ''}<li class="divider col-xs-12"></li>{end}
+														{end}
+													</ul>
+												</div>
+											{end}
 											<div class="pull-right">
 												<button type="button" class="btn btn-white btn-rounded  btn-outline" onclick="$('#files').click();"> <i class="fa fa-paperclip"></i> {$form['upload']} </button>
 												<button type="button" class="btn btn-white btn-rounded  btn-outline  hidden" data-toggle="modal" data-target="#Modal-Image-Select"> <i class="fa fa-image"></i> {$form['fromgallery']} </button>
@@ -122,6 +141,7 @@
 											</div>
 										</div>
 										<div class="hr-line-dashed"></div>
+										{if $language['notranslate']}<div class="text-danger m-t-sm"><i class="fa fa-info-circle"></i> {$language['notranslate']}</div>{end}
 									</form>
 								</div>
 							</div>

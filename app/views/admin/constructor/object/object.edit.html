@@ -56,7 +56,7 @@
 
 								<div class="ibox-content">
 									{foreach $language['list'] as $_code => $_lang}
-									<a href="{$_lang['link']}" class="btn btn-{if $_lang['active']}primary{else}default{end} btn-outline btn-xs m-none">  <span class="label !badge"> {$_code}</span> <i class="fa fa fa-language"></i>  {$_lang['head']}</a>
+									<a href="{$_lang['link']}" class="btn btn-{if $_lang['active']}primary{else}default{end} btn-outline btn-xs m-none">  <span class="label !badge"> {$_code}</span> {if !$_lang['flag']}<i class="fa fa fa-language"></i>{end}{$_lang['flag']}  {$_lang['head']}</a>
 									{end}
 								</div>
 
@@ -127,11 +127,18 @@
 
 									{if $language['list']}
 										<div class="btn-group m-l-sm pull-right">
-											<button data-toggle="dropdown" class="btn !btn-default !btn-white btn-primary btn-outline btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa fa-language"></i> {if $form['tree']['btn-lang']['code']}<b><span class="!label !badge">{$form['tree']['btn-lang']['code']}</span></b>{end} {$form['tree']['btn-lang']['head']} <span class="caret"></span></button>
-											<ul class="dropdown-menu">
+											<button data-toggle="dropdown" class="btn !btn-default !btn-white btn-primary btn-outline btn-xs dropdown-toggle" aria-expanded="false">
+												{if !$form['tree']['btn-lang']['flag']}<i class="fa fa fa-language"></i>{end}{$form['tree']['btn-lang']['flag']}
+												{if $form['tree']['btn-lang']['code']}<b><span class="!label !badge">{$form['tree']['btn-lang']['code']}</span></b>{end} {$form['tree']['btn-lang']['head']} <span class="caret"></span>
+											</button>
+											<ul class="dropdown-menu lang-cols row">
 												{foreach $language['list'] as $_code => $_lang}
-												<li class="{$_lang['active']} text-{$_lang['class']}" ><a href="{$_lang['link']}"><i class="fa fa fa-language"></i> <b><span class="!label !badge"> </span> {$_code}</b>  {$_lang['head']}</a></li>
-												{if $_code === ''}<li class="divider"></li>{end}
+													<li class="col-xs-{= $_code? 4 : 12} {$_lang['active']} text-{$_lang['class']} p-none m-none" >
+														<a class="p-xxs" href="{$_lang['link']}">
+															{if !$_lang['flag']}<i class="fa fa fa-language"></i>{end}{$_lang['flag']} <b><span class="!label !badge"> </span> {$_code}</b>  {$_lang['head']}
+														</a>
+													</li>
+													{if $_code === ''}<li class="divider col-xs-12"></li>{end}
 												{end}
 	<!--
 												<li><a href="#">Another action</a></li>

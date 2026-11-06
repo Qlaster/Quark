@@ -39,8 +39,8 @@
 	//Кнопка дропдауна показывает выбранный язык: код и подпись
 	if ($lang && isset($content['language']['list'][$lang]))
 	{
+		$content['form']['tree']['btn-lang'] = $content['language']['list'][$lang];
 		$content['form']['tree']['btn-lang']['code'] = $lang;
-		$content['form']['tree']['btn-lang']['head'] = $content['language']['list'][$lang]['head'];
 	}
 
 	//Запрошен перевод, которого нет: get отдаст базовую версию — предупреждаем

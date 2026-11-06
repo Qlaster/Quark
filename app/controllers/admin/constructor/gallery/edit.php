@@ -11,10 +11,10 @@
 	$content['nav']['path']['head'] = sprintf($content['navpath']['head'], $name);
 
 	$collection = $_GET['collection'] ?? 'gallery';
-	
+	$lang       = $_GET['lang'] ?? '';
 
-	//Загрузим галлерею
-	$gallery = $APP->object->collection($collection)->get($name);
+	//Загрузим галлерею (перевода нет — каскад на базовую версию)
+	$gallery = $APP->object->collection($collection)->lang([$lang, ''])->get($name);
 
 
 	//Если нам передали несколько файликов на добавление
@@ -57,16 +57,51 @@
 		foreach ($_POST['list'] as $_key => &$_item) 
 			$_item = array_replace((array)$gallery['list'][$_key], $_item);
 		
-		//Сохраним галлерею
-		$APP->object->collection($collection)->set($name, $_POST);
+		//Сохраним галлерею в её языковую строку
+		$APP->object->collection($collection)->lang($lang)->set($name, $_POST);
 
 		//Перезагрузим галлерею еще раз, что бы убедиться, что все сохранилось
-		$gallery = $APP->object->collection($collection)->get($name);
+		$gallery = $APP->object->collection($collection)->lang([$lang, ''])->get($name);
 	}
 
 
 
 	$content['gallery'] = $gallery;
+
+	//Переключатель языков документа: базовая версия — первый пункт списка (код '')
+	$self = 'admin/constructor/gallery/edit?name='.urlencode($name);
+	if (isset($_GET['collection'])) $self .= '&collection='.urlencode($collection);
+
+	//Языки документа — для полей class/missing у локали
+	$langs = $APP->object->collection($collection)->langs($name);
+
+	$content['language']['list'] = array_merge(
+		['' => ['head' => $content['form']['langs']['default']]],
+		$APP->l10n->locales(true));
+
+	foreach ($content['language']['list'] as $code => &$l)
+	{
+		$l['link']    = $self.($code === '' ? '' : '&lang='.urlencode($code));
+		$l['active']  = $code === $lang ? 'active' : false;
+		$l['missing'] = !in_array($code, $langs, true);
+
+		//Выделен → primary, перевода нет → default, есть в базе → success
+		$l['class']   = $l['active'] ? 'primary' : ($l['missing'] ? 'default' : 'success');
+	}
+	unset($l);
+
+	//Кнопка дропдауна показывает выбранный язык: код, флаг, подпись
+	$content['form']['langs']['btn'] = [
+		'code' => $lang,
+		'flag' => $lang ? ($content['language']['list'][$lang]['flag'] ?? '') : '',
+		'head' => $lang && isset($content['language']['list'][$lang])
+			? $content['language']['list'][$lang]['head']
+			: $content['form']['langs']['default'],
+	];
+
+	//Запрошен перевод, которого нет: показали базовую версию — предупреждаем
+	if ($lang && !in_array($lang, $langs, true) && in_array('', $langs, true))
+		$content['language']['notranslate'] = $content['form']['langs']['notranslate'];
 
 	$APP->template->file('admin/constructor/gallery/gallery.edit.html')->display($content);
 

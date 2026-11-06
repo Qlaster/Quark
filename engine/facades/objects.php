@@ -575,10 +575,11 @@
 			foreach ($STH->fetchAll() as $r)
 				$rows[$r['name']][$r['lang']] = unserialize($r['value']);
 
-			//Первый приоритетный язык каждой семьи — как у цепочного get
+			//Первый приоритетный язык каждой семьи — как у цепочного get.
+			//array_key_exists, а не isset: строка с value=null — существующий документ
 			foreach ($rows ?? [] as $name => $family)
 				foreach ($langs as $l)
-					if (isset($family[$l]))
+					if (array_key_exists($l, $family))
 						{ $result[$name] = $family[$l]; break; }
 
 			return $result;

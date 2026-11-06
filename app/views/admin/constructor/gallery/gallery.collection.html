@@ -38,9 +38,12 @@
 											-->
 										<div class="hr-line-dashed"></div>
 										<form action="{$form['collection']['action']}" method='get'>
-											<input name='name' id="new-name" placeholder="{$form['newfield']['placeholder']}" data-copyreq="{$js['copyname']}" class="form-control">
-											<p></p>
-											<button type="submit" class="btn btn-primary btn-outline btn-block">{$form['collection']['button']['add']['head']}</button>
+											<div class="input-group">
+												<input name='name' id="new-name" placeholder="{$form['newfield']['placeholder']}" data-copyreq="{$js['copyname']}" class="form-control">
+												<span class="input-group-btn">
+													<button type="submit" class="btn btn-primary">{$form['collection']['button']['add']['head']}</button>
+												</span>
+											</div>
 										</form>
 										<div class="hr-line-dashed"></div>
 										<h5>{$catalog['collection']['info']}</h5>

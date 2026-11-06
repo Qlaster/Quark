@@ -77,9 +77,12 @@
 										<div class="hr-line-dashed"></div>
 -->
 										<form id="new-collection-form" action="{$form['collection']['action']}" method='get' data-needname="{$js['needname']}">
-											<input name='collection' placeholder="{$form['collection']['placeholder']}" class="form-control new-collection-name">
-											<p></p>
-											<button type="submit" class="btn btn-primary !btn-sm btn-outline btn-block new-collection-btn">{$form['collection']['button']['add']['head']}</button>
+											<div class="input-group">
+												<input name='collection' placeholder="{$form['collection']['placeholder']}" class="form-control new-collection-name">
+												<span class="input-group-btn">
+													<button type="submit" class="btn btn-primary new-collection-btn">{$form['collection']['button']['add']['head']}</button>
+												</span>
+											</div>
 										</form>
 										<div class="hr-line-dashed"></div>
 										<h5>{$catalog['collection']['info']}</h5>

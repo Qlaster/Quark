@@ -223,3 +223,13 @@
     color: inherit;
     font-weight: bold;
 }
+
+/* Переключатель языков: тот же список в bootstrap-сетке —
+   пункты col-xs-4, база и divider — col-xs-12 во всю ширину */
+.dropdown-menu.lang-cols {
+	min-width: 30em;
+}
+
+.dropdown-menu.lang-cols.row {
+	margin: 0;
+}

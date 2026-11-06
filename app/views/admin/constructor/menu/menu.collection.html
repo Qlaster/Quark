@@ -260,9 +260,12 @@
 -->
                                 <div class="hr-line-dashed"></div>
                                 <form action="{$form['collection']['action']}" method='get'>
-									<input name='collection' placeholder="Название нового меню" class="form-control">
-									<p></p>
-									<button type="submit" class="btn btn-primary btn-outline btn-block">{$form['collection']['button']['add']['head']}</button>
+									<div class="input-group">
+										<input name='collection' placeholder="Название нового меню" class="form-control">
+										<span class="input-group-btn">
+											<button type="submit" class="btn btn-primary">{$form['collection']['button']['add']['head']}</button>
+										</span>
+									</div>
 								</form>
                                 <div class="hr-line-dashed"></div>
 
