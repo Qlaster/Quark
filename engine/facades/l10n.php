@@ -110,9 +110,13 @@
 		//Язык, выставленный lang() — память на время запроса
 		private $langSet = null;
 
-		public function __construct($config = [])
+		//Читатель ini-файлов — фасад config 
+		private $reader;
+
+		public function __construct($config = [], $reader = null)
 		{
 			$this->config = (array) $config;
+			$this->reader = $reader;
 		}
 
 
@@ -156,9 +160,9 @@
 			{
 				$meta = [];
 				if (is_file("$dir/$code.ini"))
-					$meta = (array) ((new Core_Ini_Reader)->fromFile("$dir/$code.ini")['meta'] ?? []);
+					$meta = (array) ($this->reader->readFile("$dir/$code.ini")['meta'] ?? []);
 				if (is_file("$dir/$code/meta.ini"))
-					$meta = array_replace($meta, (array) (new Core_Ini_Reader)->fromFile("$dir/$code/meta.ini"));
+					$meta = array_replace($meta, (array) $this->reader->readFile("$dir/$code/meta.ini"));
 
 				$result[$code] = ['name' => $meta['name'] ?? $code,
 				                  'dir'  => is_dir("$dir/$code") ? "$dir/$code" : null];
@@ -249,14 +253,11 @@
 			foreach ((glob("$dir/$lang/*.ini") ?: []) as $f) $files[] = $f;
 			if (!$files) return $this->locale[$lang] = null;
 
-			//Core_Ini_Reader — та же семантика что у компаньон-ини:
-			//точка в ключе — вложенность, литеральная точка — '..' эскейп.
-			//Класс гарантированно определён: наш include резолвит $this->config
-			$reader = new Core_Ini_Reader;
-
+			//Чтение через config->readFile — та же семантика что у
+			//компаньон-ини (точка — вложенность, '..' — эскейп) + кеш парсов
 			$merged = [];
 			foreach ($files as $f)
-				$merged = array_replace_recursive($merged, (array) $reader->fromFile($f));
+				$merged = array_replace_recursive($merged, (array) $this->reader->readFile($f));
 
 			return $this->locale[$lang] = $merged;
 		}
@@ -295,10 +296,9 @@
 				$this->probed[$file] = true;
 				if (!is_file($file)) continue;
 
-				$reader = new Core_Ini_Reader;
 				$this->locale[$lang] = array_replace_recursive(
 					(array) $this->locale[$lang],
-					(array) $reader->fromFile($file)
+					(array) $this->reader->readFile($file)
 				);
 			}
 		}
@@ -411,5 +411,5 @@
 	# --------------[ СОЗДАЕМ И ПОДКЛЮЧАЕМ ИНТЕРФЕЙС ]---------------- #
 	# ---------------------------------------------------------------- #
 
-	//Ноль зависимостей: конфиг — чистый массив, локали парсятся напрямую
-	return new QL10n($this->config->get(__FILE__));
+	//Конфиг — чистый массив; reader — фасад config (get + кеш парсов)
+	return new QL10n($this->config->get(__FILE__), $this->config);
