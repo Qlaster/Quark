@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{$title}</title>
+
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../css/animate.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+    <link href="../css/plugins/toastr/toastr.min.css" rel="stylesheet">
+	<link href="../css/plugins/iCheck/custom.css" rel="stylesheet">
+
+	<base href="{$$base}">
+</head>
+
+<body>
+    <div id="wrapper">
+
+     	<!--Главное меню слева-->
+		{require "../~section/mainmenu.html"}
+		<!--Конец меню-->
+
+        <div id="page-wrapper" class="gray-bg">
+
+		<!-- Head menu -->
+		{section "../~section/head.html"}
+		<!-- End head menu -->
+
+		<!-- Title menu-->
+		{require "../~section/title.html"}
+		<!-- End title menu -->
+
+        <form class="form-horizontal" id="form-policy"
+              data-unban="{$js['unban']}" data-unlock="{$js['unlock']}"
+              data-purge="{$js['purge']}" method='post' action='admin/options/users/policy/save'>
+        <div class="row">
+        <div class="col-lg-12 wrapper wrapper-content">
+            <div class="row animated fadeInRight">
+
+				<!-- Настройки -->
+                <div class="col-md-6">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                            <h5>{$form['head']}</h5>
+							<div class="ibox-tools mr-2">
+								<button class="btn btn-xs btn-primary btn-outline" type="submit">{$form['save']}</button>
+							</div>
+                        </div>
+                        <div class="ibox-content">
+
+							<h3>{$policy['sec_ip']['head']}</h3>
+							<div class="form-group"><label class="col-sm-4 control-label">{$policy['ip_allow']['head']}</label>
+								<div class="col-sm-8"><input class="form-control" name="policy.ip.allow" value="{$cfg['policy']['ip']['allow']}">
+								<small class="text-muted">{$policy['ip_allow']['text']}</small></div></div>
+
+							<div class="form-group"><label class="col-sm-4 control-label">{$policy['ip_ban']['head']}</label>
+								<div class="col-sm-8"><input class="form-control" type="number" min="0" name="policy.ip.ban" value="{$cfg['policy']['ip']['ban']}">
+								<small class="text-muted">{$policy['ip_ban']['text']}</small></div></div>
+
+							<div class="form-group"><label class="col-sm-4 control-label">{$policy['ip_bantime']['head']}</label>
+								<div class="col-sm-8"><input class="form-control" type="number" min="0" name="policy.ip.bantime" value="{$cfg['policy']['ip']['bantime']}">
+								<small class="text-muted">{$policy['ip_bantime']['text']}</small></div></div>
+
+							<hr>
+							<h3>{$policy['sec_lock']['head']}</h3>
+							<div class="form-group"><label class="col-sm-4 control-label">{$policy['lock_attempts']['head']}</label>
+								<div class="col-sm-8"><input class="form-control" type="number" min="0" name="policy.lock.attempts" value="{$cfg['policy']['lock']['attempts']}">
+								<small class="text-muted">{$policy['lock_attempts']['text']}</small></div></div>
+
+							<div class="form-group"><label class="col-sm-4 control-label">{$policy['lock_minutes']['head']}</label>
+								<div class="col-sm-8"><input class="form-control" type="number" min="0" name="policy.lock.minutes" value="{$cfg['policy']['lock']['minutes']}">
+								<small class="text-muted">{$policy['lock_minutes']['text']}</small></div></div>
+
+							<hr>
+							<h3>{$policy['sec_password']['head']}</h3>
+							<div class="form-group"><label class="col-sm-4 control-label">{$policy['password_length']['head']}</label>
+								<div class="col-sm-8"><input class="form-control" type="number" min="0" name="policy.password.length" value="{$cfg['policy']['password']['length']}">
+								<small class="text-muted">{$policy['password_length']['text']}</small></div></div>
+
+							<div class="form-group"><label class="col-sm-4 control-label">{$policy['password_classes']['head']}</label>
+								<div class="col-sm-8">
+									<input type="hidden" name="policy[password][classes][]" value="">
+									{foreach ['lower','upper','digit','symbol'] as $_cls}
+										<label class="checkbox-inline">
+											<input type="checkbox" class="i-checks" name="policy[password][classes][]" value="{$_cls}"
+												{if in_array($_cls, (array) $cfg['policy']['password']['classes'])}checked{end}>
+											{$_cls}</label>
+									{end}
+									<p class="help-block m-b-none">{$policy['password_classes']['text']}</p></div></div>
+
+							<div class="form-group"><label class="col-sm-4 control-label">{$policy['password_hash']['head']}</label>
+								<div class="col-sm-8"><select class="form-control" name="policy.password.hash">
+									{foreach ['default','md5','bcrypt','argon2i','argon2id'] as $_algo}
+										<option {if $_algo == $cfg['policy']['password']['hash']}selected{end}>{$_algo}</option>
+									{end}
+								</select>
+								<small class="text-muted">{$policy['password_hash']['text']}</small></div></div>
+
+							<hr>
+							<h3>{$session['head']}</h3>
+
+							<div class="form-group"><label class="col-sm-4 control-label">{$session['name']['head']}</label>
+								<div class="col-sm-8"><input class="form-control" name="session.name" value="{$cfg['session']['name']}">
+								<small class="text-muted">{$session['name']['text']}</small></div></div>
+
+							<div class="form-group"><label class="col-sm-4 control-label">{$session['regenerate_id']['head']}</label>
+								<div class="col-sm-8"><input type="hidden" name="session.regenerate-id" value="false">
+								<input type="checkbox" class="i-checks" name="session.regenerate-id" value="true"
+									{if $cfg['session']['regenerate-id'] or $cfg['session']['regenerate-id'] == 'true'}checked{end}>
+								<small class="text-muted"> {$session['regenerate_id']['text']}</small></div></div>
+
+							<div class="form-group"><label class="col-sm-4 control-label">{$session['lifetime']['head']}</label>
+								<div class="col-sm-8"><input class="form-control" type="number" min="0" name="session.lifetime" value="{$cfg['session']['lifetime']}">
+								<small class="text-muted">{$session['lifetime']['text']}</small></div></div>
+
+							<div class="form-group"><label class="col-sm-4 control-label">{$session['login']['head']}</label>
+								<div class="col-sm-8"><input class="form-control" name="session.login" value="{$cfg['session']['login']}">
+								<small class="text-muted">{$session['login']['text']}</small></div></div>
+
+							<div class="form-group"><label class="col-sm-4 control-label">{$session['signature']['head']}</label>
+								<div class="col-sm-8"><input class="form-control" name="session.signature" value="{$cfg['session']['signature']}">
+								<small class="text-muted">{$session['signature']['text']}</small></div></div>
+
+                        </div>
+                    </div>
+				</div>
+
+				<!-- Состояние -->
+                <div class="col-md-6">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                            <h5>{$state['head']}</h5>
+							<div class="ibox-tools mr-2">
+								<button class="btn btn-xs btn-white btn-outline" type="button" onclick="policyPurge()">{$state['purge']}</button>
+							</div>
+                        </div>
+                        <div class="ibox-content">
+
+							<p>
+								<b>{$state['myip']}:</b> <code>{$state['me']['ip']}</code>
+								{if $state['me']['allow']}<span class="label label-primary">{$state['allow']}</span>
+								{else}<span class="label label-danger">{$state['deny']}</span>{end}
+								{if $state['me']['banned']}<span class="label label-danger">{$state['banned']}</span>{end}
+							</p>
+
+							{if $state['rows']}
+							<table class="table table-striped">
+								<thead><tr>
+									<th>{$state['th_ip']}</th>
+									<th>{$state['th_login']}</th>
+									<th>{$state['th_count']}</th>
+									<th>{$state['th_until']}</th>
+									<th>{$state['th_kind']}</th>
+									<th>{$state['th_action']}</th>
+								</tr></thead>
+								<tbody>
+								{foreach $state['rows'] as $r}
+									<tr>
+										<td><code>{$r['ip']}</code></td>
+										<td>{$r['login']}</td>
+										<td>{$r['count']}</td>
+										<td>{if $r['perm']}<span class="label label-danger">{$state['kind_perm']}</span>{else}{$r['until']}{end}
+											{if $r['until'] and !$r['live']} <span class="text-muted">({$state['kind_dead']})</span>{end}</td>
+										<td>
+											{if $r['kind'] == 'ban'}<span class="label label-danger">{$state['kind_ban']}</span>{end}
+											{if $r['kind'] == 'lock'}<span class="label label-warning">{$state['kind_lock']}</span>{end}
+											{if $r['kind'] == 'counter'}<span class="label">{$state['kind_counter']}</span>{end}
+										</td>
+										<td>
+											{if $r['kind'] == 'ban'}
+												<button class="btn btn-xs btn-warning btn-outline" type="button"
+													onclick="policyUnban('{$r['ip']}')">{$state['unban']}</button>
+											{else}
+												<button class="btn btn-xs btn-success btn-outline" type="button"
+													onclick="policyUnlock('{$r['login']}', '{$r['ip']}')">{$state['unlock']}</button>
+											{end}
+										</td>
+									</tr>
+								{end}
+								</tbody>
+							</table>
+							{else}
+								<p class="text-muted">{$state['empty']}</p>
+							{end}
+
+                        </div>
+                    </div>
+				</div>
+
+            </div>
+        </div>
+        </div>
+        </form>
+
+		</div>
+    </div>
+
+    <!-- Mainly scripts -->
+    <script src="../js/jquery-2.1.1.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="../js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+    <script src="../js/inspinia.js"></script>
+    <script src="../js/plugins/pace/pace.min.js"></script>
+    <script src="../js/plugins/toastr/toastr.min.js"></script>
+	<script src="../js/plugins/iCheck/icheck.min.js"></script>
+
+	<script>
+		$('.i-checks').iCheck({checkboxClass: 'icheckbox_square-green'});
+
+		$("#form-policy").on("submit", function(e)
+		{
+			e.preventDefault();
+			$.post("admin/options/users/policy/save", $(this).serialize(), function(data)
+			{
+				toastr.success(data);
+			}).fail(function(data){ toastr.warning(data.responseText); });
+		});
+
+		function policyUnban(ip)
+		{
+			if (!confirm($("#form-policy").data("unban").replace("%s", ip))) return false;
+			$.post("admin/options/users/policy/unban", {ip: ip}, function(data)
+			{
+				toastr.success(data); location.reload();
+			});
+		}
+
+		function policyUnlock(login, ip)
+		{
+			if (!confirm($("#form-policy").data("unlock").replace("%s", ip+'/'+login))) return false;
+			$.post("admin/options/users/policy/unlock", {login: login, ip: ip}, function(data)
+			{
+				toastr.success(data); location.reload();
+			});
+		}
+
+		function policyPurge()
+		{
+			if (!confirm($("#form-policy").data("purge"))) return false;
+			$.post("admin/options/users/policy/purge", {}, function(data)
+			{
+				toastr.success(data); location.reload();
+			});
+		}
+	</script>
+</body>
+</html>

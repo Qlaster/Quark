@@ -26,7 +26,9 @@
 		private $jsonCols 	= ['access', 'denied'];
 
 		public $config;
-		public $preset;
+		public $role;
+		public $preset;	//легаси-алиас $role — внешний код мог вызывать user->preset
+		public $policy;
 
 		private $pdo;
 		private $table;
@@ -47,6 +49,16 @@
 			//Время жизни сессии в секундах; 0 = наследовать php.ini/.htaccess
 			$this->config['session']['lifetime']      = 0;
 
+			//Политика безопасности — секция [policy]
+			$this->config['policy']['ip']['allow']        = '*';
+			$this->config['policy']['ip']['ban']          = 0;	//0 — бан отключён
+			$this->config['policy']['ip']['bantime']      = 0;	//0 — перманентно
+			$this->config['policy']['lock']['attempts']   = 0;	//0 — лок отключён
+			$this->config['policy']['lock']['minutes']    = 0;
+			$this->config['policy']['password']['length'] = 0;
+			$this->config['policy']['password']['classes']= [];
+			$this->config['policy']['password']['hash']   = 'default';
+
 			$this->config = array_replace_recursive($this->config, (array) $configInterface->get(__file__));
 
 			$this->table = $this->config['db']['table'];
@@ -64,19 +76,35 @@
 
 			$this->constructTable();
 
-			//Таблица пресетов прав доступа
+			//Таблица ролей (наборов прав). Имя из [db] roles; старый ключ
+			//[db] presets читается для совместимости
+			$rolesTable = $this->config['db']['roles'] ?? $this->config['db']['presets'] ?? 'roles';
+
+			//Миграция легаси-хранилища: presets → roles (одноразовая)
+			if ($rolesTable !== 'presets')
+			{
+				$old = $this->pdo->query("SELECT name FROM sqlite_master WHERE type='table' AND name='presets'")->fetchColumn();
+				$new = $this->pdo->query("SELECT name FROM sqlite_master WHERE type='table' AND name='$rolesTable'")->fetchColumn();
+				if ($old and !$new)
+					$this->pdo->exec("ALTER TABLE 'presets' RENAME TO '$rolesTable'");
+			}
+
 			$this->pdo->exec(
-				"CREATE TABLE IF NOT EXISTS '".($this->config['db']['presets'] ?? 'presets')."' (
+				"CREATE TABLE IF NOT EXISTS '$rolesTable' (
 					'name'  TEXT PRIMARY KEY,
 					'rules' TEXT
 				)"
 			);
 
-			$this->preset = new UserPresets($this->pdo, $this->config['db']['presets'] ?? 'presets');
+			$this->policy = new UserPolicy($this->pdo, (array) ($this->config['policy'] ?? []));
 
-			//Разовый перенос пресетов из ini в таблицу (только если таблица пуста)
-			if ($this->config['presets'] and !$this->preset->count())
-				$this->preset->importIni($this->config['presets']);
+			$this->role = new UserRoles($this->pdo, $rolesTable);
+			$this->preset = $this->role;	//легаси-алиас
+
+			//Разовый перенос ролей из ini в таблицу (только если таблица пуста)
+			$rolesIni = $this->config['roles'] ?? $this->config['presets'] ?? null;
+			if (!empty($rolesIni) and !$this->role->count())
+				$this->role->importIni($rolesIni);
 
 			//Первый запуск: если юзеров нет вообще — переливаем легаси dba, либо создаём дефолтного
 			if (!$this->all())
@@ -161,7 +189,18 @@
 
 		private function hash($password)
 		{
-			return password_hash($password, PASSWORD_DEFAULT);
+			$algo = mb_strtolower((string) ($this->config['policy']['password']['hash'] ?? 'default'));
+
+			if ($algo === 'md5') return md5($password);
+
+			$map = [
+				'default'  => PASSWORD_DEFAULT,
+				'bcrypt'   => PASSWORD_BCRYPT,
+				'argon2i'  => defined('PASSWORD_ARGON2I')  ? PASSWORD_ARGON2I  : PASSWORD_DEFAULT,
+				'argon2id' => defined('PASSWORD_ARGON2ID') ? PASSWORD_ARGON2ID : PASSWORD_DEFAULT,
+			];
+
+			return password_hash($password, $map[$algo] ?? PASSWORD_DEFAULT);
 		}
 
 		//Проверка пароля. Вернет true, 'legacy' (легаси md5 - надо переписать хэш) или false
@@ -174,10 +213,17 @@
 			return password_verify($password, (string) $hash) ? true : false;
 		}
 
-		//Детерминированный токен сессии (password_hash пересчитать нельзя - он с солью)
-		private function sessionToken($login, $hash)
+		//Детерминированная сигнатура сессии (password_hash пересчитать нельзя - он с солью).
+		//Смена пароля → хэш другой → сигнатура в старых сессиях расходится → разлогин
+		private function sessionSignature($login, $hash)
 		{
 			return hash('sha256', $login.' '.$hash);
+		}
+
+		//Имена переменных сессии: [session] login / signature
+		private function sessionVar($what)
+		{
+			return $this->config['session'][$what] ?? $what;
 		}
 
 		//Стартует сессию с учётом настроек [session]
@@ -229,6 +275,7 @@
 
 			if ($this->exists($user['login'])) return false;
 			if ($user['password'] == '')       return false;
+			if (! $this->policy->password($user['password'])) return false;
 
 			$user['hash'] = $this->hash($user['password']);
 			unset($user['password']);
@@ -250,6 +297,8 @@
 
 			if ((isset($user['password'])) and ($user['password'] != ''))
 			{
+				if (! $this->policy->password($user['password'])) return false;
+
 				$user['hash'] = $this->hash($user['password']);
 				unset($user['password']);
 			}
@@ -303,14 +352,23 @@
 			$login = mb_strtolower($login);
 			if ($password == '') return false;
 
-			$user = $this->get($login);
-			if (! $user) return false;
+			$ip = $this->policy->ip();
+			$this->policy->purge();
 
-			//Если пользователь отключен
-			if ($user['disable']) return false;
+			//[policy]: маска → бан адреса → лок пары
+			if (! $this->policy->allowIp($ip))     return false;
+			if ($this->policy->banned($ip))        return false;
+			if ($this->policy->locked($ip, $login)) return false;
+
+			$user = $this->get($login);
+			if (! $user)           { $this->policy->fail($ip, $login); return false; }
+			if ($user['disable'])  { $this->policy->fail($ip, $login); return false; }
 
 			$verify = $this->verify($password, $user['hash']);
-			if ($verify === false) return false;
+			if ($verify === false) { $this->policy->fail($ip, $login); return false; }
+
+			//Успех — сброс счётчика пары
+			$this->policy->reset($ip, $login);
 
 			//Прозрачная миграция легаси md5-хэша на password_hash
 			if ($verify === 'legacy')
@@ -322,8 +380,8 @@
 			if (($this->config['session']['regenerate-id'] ?? true) and session_status() === PHP_SESSION_ACTIVE)
 				session_regenerate_id(true);
 
-			$_SESSION['cms_login']    = $login;
-			$_SESSION['cms_password'] = $this->sessionToken($user['login'], $user['hash']);
+			$_SESSION[$this->sessionVar('login')]     = $login;
+			$_SESSION[$this->sessionVar('signature')] = $this->sessionSignature($user['login'], $user['hash']);
 			return true;
 		}
 
@@ -343,12 +401,15 @@
 
 			$this->ensureSession();
 
-			if (!isset($_SESSION['cms_login']) or (!isset($_SESSION['cms_password']))) return false;
+			$sl = $this->sessionVar('login');
+			$ss = $this->sessionVar('signature');
 
-			$user = $this->get($_SESSION['cms_login']);
+			if (!isset($_SESSION[$sl]) or (!isset($_SESSION[$ss]))) return false;
+
+			$user = $this->get($_SESSION[$sl]);
 			if (! $user) return false;
 
-			if (! hash_equals($this->sessionToken($user['login'], $user['hash']), $_SESSION['cms_password'])) return false;
+			if (! hash_equals($this->sessionSignature($user['login'], $user['hash']), $_SESSION[$ss])) return false;
 
 			return $this->loggedCache = $user;
 		}
@@ -356,8 +417,8 @@
 		public function logout()
 		{
 			$this->loggedCache = null;
-			unset($_SESSION['cms_login']);
-			unset($_SESSION['cms_password']);
+			unset($_SESSION[$this->sessionVar('login')]);
+			unset($_SESSION[$this->sessionVar('signature')]);
 		}
 
 		public function access($access_item=null)
@@ -434,21 +495,307 @@
 
 
 	# ---------------------------------------------------------------- #
-	#                  ПРЕСЕТЫ ПРАВ ДОСТУПА                            #
+	#                  ПОЛИТИКА ДОСТУПА                                #
 	# ---------------------------------------------------------------- #
-	class UserPresets
+
+	/*
+	 * Политика безопасности: счётчики промахов, локи пар (ip,login),
+	 * баны адресов и правила паролей — секция [policy] user.ini.
+	 *
+	 * Таблица policy: ключ (ip,login); пустая часть ключа — wildcard:
+	 *   (ip,'')   — маркер бана адреса
+	 *   ('',login)— глобальный счётчик логина (зарезервировано)
+	 *   until     — конец лока/бана (UTC); NULL = нет блока,
+	 *               '9999-12-31' — перманентный бан
+	 */
+	class UserPolicy
+	{
+		private $pdo;
+		private $config;
+
+		public function __construct($pdo, $config=[])
+		{
+			$this->pdo    = $pdo;
+			$this->config = $config;
+
+			$this->pdo->exec(
+				"CREATE TABLE IF NOT EXISTS 'policy' (
+					'ip'      TEXT NOT NULL,
+					'login'   TEXT NOT NULL,
+					'count'   INTEGER DEFAULT 0,
+					'until'   TEXT,
+					'updated' TEXT,
+					PRIMARY KEY (ip, login)
+				)"
+			);
+		}
+
+		/*
+		 * ip() — ip адрес клиента
+		 *
+		 * Берём только REMOTE_ADDR. X-Forwarded-For и прочие заголовки
+		 * прокси намеренно игнорируются: их подставляет сам клиент, а значит
+		 * атакующий мог бы «переобуваться» в новые адреса и обнулять счётчики.
+		 *
+		 * @return string  адрес ('' в CLI/без окружения)
+		 */
+		public function ip()
+		{
+			return (string) ($_SERVER['REMOTE_ADDR'] ?? '');
+		}
+
+		/*
+		 * allowIp($ip) — пропускает ли адрес маска ip.allow
+		 *
+		 * Маска — glob (как у fnmatch: '127.*', '10.0.?.?', '*'), строка
+		 * или json-массив масок. Совпадение любой — пропускаем.
+		 * Пустой список/'*' — разрешены все. Метод — только фильтр доступа,
+		 * в счётчики промахов отказ здесь не пишется.
+		 *
+		 * @param  string $ip
+		 * @return bool
+		 */
+		public function allowIp($ip)
+		{
+			foreach ((array) ($this->config['ip']['allow'] ?? '*') as $mask)
+				if (fnmatch(trim($mask), $ip)) return true;
+			return false;
+		}
+
+		/*
+		 * locked($ip, $login) — заблокирована ли пара ip+login
+		 *
+		 * Лок — это строка (ip,login) с until в будущем (UTC).
+		 * Блокируется именно ПАРА, а не пользователь целиком: атакующий,
+		 * подбирающий чужой пароль, замораживает только «свой вход» —
+		 * легитимный пользователь с другого адреса ходит свободно.
+		 *
+		 * @param  string $ip
+		 * @param  string $login
+		 * @return bool     true — пара под блокировкой, вход отклонять
+		 */
+		public function locked($ip, $login)
+		{
+			$stmt = $this->pdo->prepare("SELECT until FROM 'policy' WHERE ip = ? AND login = ?");
+			$stmt->execute([$ip, $login]);
+			$until = $stmt->fetchColumn();
+			return $until !== false && $until !== null && strtotime($until.' UTC') > time();
+		}
+
+		/*
+		 * banned($ip) — забанен ли адрес (bruteforce-защита)
+		 *
+		 * Два способа оказаться в бане:
+		 *  1. Живой маркер — строка (ip,'') с until в будущем
+		 *     ('9999-12-31' = перманентный бан).
+		 *  2. Суммарное число промахов адреса (SUM count по всем его
+		 *     логинам) достигло порога ip.ban — тогда маркер ставится
+		 *     прямо здесь (побочный эффект: ПИШЕТ в таблицу).
+		 *
+		 * Срок бана — ip.bantime минут; 0 = навсегда.
+		 * Истёкший маркер трактуется как «бан снят» и возвращает false.
+		 *
+		 * @param  string $ip
+		 * @return bool     true — вход с адреса закрыт
+		 */
+		public function banned($ip)
+		{
+			$stmt = $this->pdo->prepare("SELECT until FROM 'policy' WHERE ip = ? AND login = ''");
+			$stmt->execute([$ip]);
+			$until = $stmt->fetchColumn();
+			if ($until !== false) return strtotime($until.' UTC') > time();
+
+			$ban = (int) ($this->config['ip']['ban'] ?? 0);
+			if ($ban <= 0) return false;
+
+			$stmt = $this->pdo->prepare("SELECT COALESCE(SUM(count),0) FROM 'policy' WHERE ip = ? AND login != ''");
+			$stmt->execute([$ip]);
+			if ((int) $stmt->fetchColumn() < $ban) return false;
+
+			//Порог добран — маркер бана. bantime=0 → перманент (сентинел-дата)
+			$minutes = (int) ($this->config['ip']['bantime'] ?? 0);
+			$until = $minutes > 0 ? gmdate('Y-m-d H:i:s', time() + $minutes*60) : '9999-12-31';
+			$this->pdo->prepare("INSERT OR REPLACE INTO 'policy' (ip, login, count, until, updated)
+								VALUES (?, '', 0, ?, datetime('now'))")->execute([$ip, $until]);
+			return true;
+		}
+
+		/*
+		 * fail($ip, $login) — регистрирует неудачную попытку входа
+		 *
+		 * Делает две вещи:
+		 *  1. Инкрементит счётчик пары (ip,login) — upsert через
+		 *     INSERT OR IGNORE + UPDATE (SQLite <3.24, без ON CONFLICT).
+		 *  2. Когда count доходит до lock.attempts — ставит паре лок:
+		 *     until = now + lock.minutes.
+		 *
+		 * Пустые части ключа не пишем — они зарезервированы под
+		 * wildcard-сущности ((ip,'') = бан адреса, ('',login) = глобальный
+		 * счётчик логина).
+		 *
+		 * ВАЖНО: until, однажды поставленный, метод больше не двигает —
+		 * иначе постоянные попытки атакующего сдвигали бы окно блока
+		 * вперёд бесконечно (count при этом копить можно, он не вредит).
+		 *
+		 * @param string $ip
+		 * @param string $login
+		 */
+		public function fail($ip, $login)
+		{
+			//Wildcard-части ключа резервированы системой — пустых из запроса быть не должно
+			if ($ip === '' || $login === '') return;
+
+			$this->pdo->prepare("INSERT OR IGNORE INTO 'policy' (ip, login, count, updated)
+								VALUES (?, ?, 0, datetime('now'))")->execute([$ip, $login]);
+			$this->pdo->prepare("UPDATE 'policy' SET count = count + 1, updated = datetime('now')
+								WHERE ip = ? AND login = ?")->execute([$ip, $login]);
+
+			$att = (int) ($this->config['lock']['attempts'] ?? 0);
+			$min = (int) ($this->config['lock']['minutes'] ?? 0);
+			if ($att <= 0 || $min <= 0) return;
+
+			$stmt = $this->pdo->prepare("SELECT count FROM 'policy' WHERE ip = ? AND login = ? AND until IS NULL");
+			$stmt->execute([$ip, $login]);
+			if ((int) $stmt->fetchColumn() < $att) return;
+
+			$until = gmdate('Y-m-d H:i:s', time() + $min*60);
+			$this->pdo->prepare("UPDATE 'policy' SET until = ? WHERE ip = ? AND login = ?")
+				->execute([$until, $ip, $login]);
+		}
+
+		/*
+		 * reset($ip, $login) — сброс счётчика пары после успешного входа
+		 *
+		 * Удаляет строку (ip,login) целиком — и промахи, и лок, если был.
+		 * Намеренно НЕ трогает остальные строки адреса: суммарный
+		 * счётчик ip.ban должен копить промахи атакующего — иначе он бы
+		 * отмывал репутацию адреса, логинясь между сериями в свой аккаунт.
+		 *
+		 * @param string $ip
+		 * @param string $login
+		 */
+		public function reset($ip, $login)
+		{
+			$this->pdo->prepare("DELETE FROM 'policy' WHERE ip = ? AND login = ?")
+				->execute([$ip, $login]);
+		}
+
+		/*
+		 * list() — все строки policy (диагностика/консоль)
+		 *
+		 * @return array строки [ip, login, count, until, updated]
+		 */
+		public function list()
+		{
+			return $this->pdo->query("SELECT * FROM 'policy' ORDER BY ip, login")
+				->fetchAll(\PDO::FETCH_ASSOC);
+		}
+
+		/*
+		 * unlock($login, $ip=null) — снять лок/счётчик пары
+		 *
+		 * С ip — конкретная пара; без — все записи логина (wildcard-строки
+		 * (ip,'') и ('',login) не затрагиваются — это не «пары»).
+		 * Строки удаляются целиком: и лок, и накопленный count.
+		 */
+		public function unlock($login, $ip=null)
+		{
+			if ($ip === null)
+				$this->pdo->prepare("DELETE FROM 'policy' WHERE login = ? AND ip != ''")
+					->execute([$login]);
+			else
+				$this->pdo->prepare("DELETE FROM 'policy' WHERE ip = ? AND login = ?")
+					->execute([$ip, $login]);
+		}
+
+		/*
+		 * unban($ip) — снять бан адреса
+		 *
+		 * Удаляет маркер (ip,'') И все пары адреса: если оставить
+		 * накопленный count, banned() по SUM пересоздаст бан на
+		 * следующем же запросе — «чистый лист» единственный полезный.
+		 */
+		public function unban($ip)
+		{
+			$this->pdo->prepare("DELETE FROM 'policy' WHERE ip = ?")->execute([$ip]);
+		}
+
+		/*
+		 * purge() — чистка протухших записей
+		 *
+		 * Удаляет строки, которые одновременно:
+		 *  - старше суток по updated (заброшенные счётчики, мусор атак),
+		 *  - НЕ имеют живого until (активные локи и баны трогать нельзя —
+		 *    удаление равносильно досрочной разблокировке).
+		 * Перманентные баны ('9999-12-31') условие until<=now не проходят
+		 * и живут вечно — как и задумано.
+		 *
+		 * Вызывается из login(): логины редки, DELETE по PK дёшев,
+		 * отдельного крона не требуется.
+		 */
+		public function purge()
+		{
+			$this->pdo->exec("DELETE FROM 'policy'
+				WHERE (until IS NULL OR until <= datetime('now'))
+				AND updated < datetime('now', '-1 day')");
+		}
+
+		/*
+		 * password($password) — пароль соответствует политике?
+		 *
+		 * Проверяет правила из [policy] password.*:
+		 *  - password.length  — минимальная длина (mb_strlen)
+		 *  - password.classes — обязательные классы символов, массив:
+		 *      'lower'  — строчные буквы (вкл. кириллицу)
+		 *      'upper'  — прописные буквы
+		 *      'digit'  — цифры
+		 *      'symbol' — знаки (всё, что не буква и не цифра)
+		 * Пустые правила = политика выключена, принимаем всё.
+		 *
+		 * Применяется при установке пароля (add/edit), на вход не влияет —
+		 * старые слабые пароли продолжают работать до смены.
+		 *
+		 * @param  string $password
+		 * @return bool
+		 */
+		public function password($password)
+		{
+			$p = (array) ($this->config['password'] ?? []);
+
+			if (mb_strlen($password) < (int) ($p['length'] ?? 0)) return false;
+
+			foreach ((array) ($p['classes'] ?? []) as $class)
+			{
+				switch ($class)
+				{
+					case 'lower':  if (!preg_match('/[a-zа-яё]/u', $password))     return false; break;
+					case 'upper':  if (!preg_match('/[A-ZА-ЯЁ]/u', $password))     return false; break;
+					case 'digit':  if (!preg_match('/\d/', $password))             return false; break;
+					case 'symbol': if (!preg_match('/[^\p{L}\p{N}]/u', $password)) return false; break;
+				}
+			}
+
+			return true;
+		}
+	}
+
+
+	# ---------------------------------------------------------------- #
+	#                  РОЛИ (наборы прав доступа)                      #
+	# ---------------------------------------------------------------- #
+	class UserRoles
 	{
 		private $pdo;
 		private $table;
 
-		public function __construct($pdo, $table='presets')
+		public function __construct($pdo, $table='roles')
 		{
 			$this->pdo   = $pdo;
 			$this->table = $table;
 		}
 
-		//$APP->users->preset->get()        - все пресеты (name => rules)
-		//$APP->users->preset->get($name)   - правила одного пресета
+		//$APP->user->role->get()          - все роли (name => rules)
+		//$APP->user->role->get($name)     - правила одной роли
 		function get($name=null)
 		{
 			if ($name !== null)
@@ -459,13 +806,13 @@
 				return $rules === false ? null : json_decode($rules, true);
 			}
 
-			$presets = [];
+			$roles = [];
 			foreach ($this->pdo->query("SELECT name, rules FROM '{$this->table}'") as $row)
-				$presets[$row['name']] = json_decode($row['rules'], true);
-			return $presets;
+				$roles[$row['name']] = json_decode($row['rules'], true);
+			return $roles;
 		}
 
-		//$APP->users->preset->set($name, $rules)
+		//$APP->user->role->set($name, $rules)
 		function set($name, $rules)
 		{
 			$stmt = $this->pdo->prepare("INSERT OR REPLACE INTO '{$this->table}' (name, rules) VALUES (?, ?)");

@@ -8,7 +8,7 @@
  *
  * Ответ: {draw, recordsTotal, recordsFiltered, data:[{...}]}
  *
- * Хранилище visits — файловое (*.log по дням), индексов нет:
+ * Хранилище traffic — файловое (*.log по дням), индексов нет:
  * полный скан диапазона при каждом запросе (дешёвый sequential I/O),
  * а в браузер уходит только запрошенная страница.
  */
@@ -23,7 +23,7 @@
 	try
 	{
 		//Диапазон дат — те же параметры, что форма на странице
-		$APP->visits->shear($_GET['datestart'] ?: date('d.m.Y'),
+		$APP->traffic->shear($_GET['datestart'] ?: date('d.m.Y'),
 		                    $_GET['dateend']   ?: date('d.m.Y'));
 
 		$search  = trim((string) ($_GET['search']['value'] ?? ''));
@@ -52,7 +52,7 @@
 		//Скан сырого текста: поиск подстрокой по всей строке (все поля разом),
 		//recordsTotal — весь диапазон, recordsFiltered — совпавшее
 		$total = 0; $lines = [];
-		while (($line = $APP->visits->next(true)) !== null)
+		while (($line = $APP->traffic->next(true)) !== null)
 		{
 			$total++;
 			if ($search !== '' and mb_stripos($line, $search) === false) continue;
@@ -83,7 +83,7 @@
 		$out = [];
 		foreach (array_slice($lines, $start, $length) as $line)
 		{
-			$r = $APP->visits->string_log_parse($line);
+			$r = $APP->traffic->string_log_parse($line);
 
 			//uri — пользовательские данные: экранируем (см. также title);
 			//адрес до '?' — жирный фасет (поиск только пути),

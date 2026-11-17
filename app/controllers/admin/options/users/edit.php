@@ -53,7 +53,7 @@
 
 
 	//Пресеты настроек
-	foreach ((array) $APP->user->preset->get() as $name => $rules)
+	foreach ((array) $APP->user->role->get() as $name => $rules)
 	{
 		$content['presets'][$name] = ['head'=>$name, 'rules'=>$rules];
 	}

@@ -9,8 +9,8 @@
 	//Получаем дату, для которой необходимо выбрать статистику
 	$date = $_GET['date'];
 
-	$APP->visits->shear($date, $date);
-	echo json_encode($APP->visits->statistics());
+	$APP->traffic->shear($date, $date);
+	echo json_encode($APP->traffic->statistics());
 
 
 

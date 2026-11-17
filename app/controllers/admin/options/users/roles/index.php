@@ -8,7 +8,7 @@
 	$content = $APP->l10n->translate($content);
 	$content['title'] = $content['title']['head'];
 
-	$user['denied'] = $APP->user->preset->get($_GET['name']);
+	$user['denied'] = $APP->user->role->get($_GET['name']);
 
 
 	$files = $APP->controller->fetch('admin');
@@ -31,14 +31,14 @@
 
 
 	//Пресеты настроек
-	foreach ((array) $APP->user->preset->get() as $name => $rules)
+	foreach ((array) $APP->user->role->get() as $name => $rules)
 	{
-		//~ $content['presets'][$name] = ['head'=>$name, 'rules'=>$rules];
-		$content['menu']['presets']['list'][$name] = ['head'=>$name, 'rules'=>$rules, 'link'=>'admin/options/users/presets/?name='.urlencode($name)];
+		//~ $content['roles'][$name] = ['head'=>$name, 'rules'=>$rules];
+		$content['menu']['roles']['list'][$name] = ['head'=>$name, 'rules'=>$rules, 'link'=>'admin/options/users/roles/?name='.urlencode($name)];
 	}
 
-	if ($_GET['name'] and $content['menu']['presets']['list'][$_GET['name']])
-		$content['menu']['presets']['list'][$_GET['name']]['active'] = 'active';
+	if ($_GET['name'] and $content['menu']['roles']['list'][$_GET['name']])
+		$content['menu']['roles']['list'][$_GET['name']]['active'] = 'active';
 
 
 	$APP->template->file('admin/users/users.roles.html')->display($content);

@@ -10,8 +10,8 @@
 	$content = array_replace_recursive($content, (array) $config['view']);
 
 	//Собираем статистику (посещения) по страницам (за поседние 4 месяца)
-	$APP->visits->shear(date("Y-m-d", strtotime("-4 month")), date('Y-m-d'));
-	$statistic = $APP->visits->statistics(false);
+	$APP->traffic->shear(date("Y-m-d", strtotime("-4 month")), date('Y-m-d'));
+	$statistic = $APP->traffic->statistics(false);
 	$statistic['uri'][$APP->url->home().'index'] += $statistic['uri'][$APP->url->home()];
 
 	//В качестве отправной точки для высчитавания посещаемости - возмем главную страницу

@@ -65,61 +65,61 @@ Foreach:
 
 # File tree
 
-```md
-.
-├── 📁app
-│   ├── 📁controllers
-│   ├── 📁models
-│   ├── 📁views
-│   ├── 📁providers
-│   ├── 📁services
-│   ├── 📁logs
-│   ├── 🗎install.ini
-│   └── 🗎.env
-│
-├── 📁engine
-│   ├── 📁core
-│   │   ├── 🗎core.php
-│   │   ├── 🗎ext.array.php
-│   │   ├── 🗎ext.autoload.php
-│   │   ├── 🗎ext.error-hidden.php
-│   │   └── 🗎ext.string.php
-│   │
-│   ├── 📁database
-│   │   ├── 🗎account.sqlite
-│   │   ├── 🗎objects.sqlite
-│   │   ├── 🗎page.sqlite
-│   │   ├── 🗎review.sqlite
-│   │   └── 🗎users.dba
-│   │
-│   ├── 📁vendor
-│   └── 📁facades
-│       ├── 🗎account.php
-│       ├── 🗎cache.php
-│       ├── 🗎catalog.php
-│       ├── 🗎config.php
-│       ├── 🗎console.php
-│       ├── 🗎controller.php
-│       ├── 🗎db.php
-│       ├── 🗎dba.php
-│       ├── 🗎log.php
-│       ├── 🗎objects.php
-│       ├── 🗎page.php
-│       ├── 🗎provider.php
-│       ├── 🗎route.php
-│       ├── 🗎talk.php
-│       ├── 🗎template.php
-│       ├── 🗎url.php
-│       ├── 🗎user.php
-│       ├── 🗎useragent.php
-│       ├── 🗎utils.php
-│       └── 🗎visits.php
-│
-├── 📁public
-│   └── 🗎.htaccess
-│
-├── 🗎index.php
-├── 🗎console
-├── 🗎.env
-└── 🗎.htaccess
-```
+- 📁 **app**
+	- 📁 controllers
+	- 📁 models
+	- 📁 views
+	- 📁 providers
+	- 📁 services
+	- 📁 logs
+	- 🗎 install.ini
+	- 🗎 .env
+
+- 📁 **engine**
+	- 📁 **core**
+		- 🗎 core.php
+		- 🗎 ext.array.php
+		- 🗎 ext.autoload.php
+		- 🗎 ext.error-hidden.php
+		- 🗎 ext.string.php
+
+	- 📁 database
+		- 🗎 account.sqlite
+		- 🗎 objects.sqlite
+		- 🗎 page.sqlite
+		- 🗎 review.sqlite
+		- 🗎 users.dba
+
+	- 📁 vendor
+	- 📁 **facades**
+		- 🗎 account.php
+		- 🗎 cache.php
+		- 🗎 [catalog.php](manual/facades/catalog.md)
+		- 🗎 [config.php](manual/facades/config.md)
+		- 🗎 console.php
+		- 🗎 controller.php
+		- 🗎 db.php
+		- 🗎 dba.php
+		- 🗎 [l10n.php](manual/facades/l10n.md)
+		- 🗎 [log.php](manual/facades/log.md)
+		- 🗎 [objects.php](manual/facades/objects.md)
+		- 🗎 page.php
+		- 🗎 provider.php
+		- 🗎 [route.php](manual/Router.md)
+		- 🗎 [talk.php](manual/facades/talk.md)
+		- 🗎 [template.php](manual/Presenter-%28Шаблонизатор%29.md)
+		- 🗎 [url.php](manual/facades/url.md)
+		- 🗎 user.php
+		- 🗎 useragent.php
+		- 🗎 utils.php
+		- 🗎 traffic.php
+
+- 📁 public
+	- 🗎 .htaccess
+
+- 🗎 index.php
+- 🗎 [console](manual/console.md)
+- 🗎 .env
+- 🗎 .htaccess
+
+📖 Документация: [manual/Home.md](manual/Home.md) · [Архитектура за 10 минут](manual/Architecture.md)

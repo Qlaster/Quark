@@ -72,7 +72,7 @@
 									<li><a onclick="presetSave()"><b>Сохранить текущий</b></a></li>
 									<li><hr style="margin:0"></li>
 
-									{foreach (array) $menu['presets']['list'] as $_preset}
+									{foreach (array) $menu['roles']['list'] as $_preset}
 										<li><a onclick="presetApply('{$_preset['head']}')">{$_preset['head']}</a></li>
                                     {end}
                                 </ul>
@@ -95,7 +95,7 @@
 
 							<div class="list-group">
 
-								{foreach $menu['presets']['list'] as $_item}
+								{foreach $menu['roles']['list'] as $_item}
 									<a class="list-group-item {$_item['active']}" href="{$_item['link']}">
 										<span class="list-group-item-heading">{$_item['head']}</span>
 
@@ -129,7 +129,7 @@
 
 
 <!--
-                            {foreach $menu['presets']['list'] as $_item}
+                            {foreach $menu['roles']['list'] as $_item}
 								<button type="button" class="btn btn-outline btn-white btn-block text-left">{$_item['head']}</button>
                             {end}
 -->
@@ -163,7 +163,7 @@
 									<li><a onclick="presetSave()"><b>Сохранить текущий</b></a></li>
 									<li><hr style="margin:0"></li>
 
-									{foreach (array) $menu['presets']['list'] as $_preset}
+									{foreach (array) $menu['roles']['list'] as $_preset}
 										<li><a onclick="presetApply('{$_preset['head']}')">{$_preset['head']}</a></li>
                                     {end}
                                 </ul>
@@ -364,12 +364,12 @@
 				if (newname == null) return false;
 				$.ajax({
 					type: 'POST',
-						url: "admin/options/users/presets/set?name="+encodeURI(newname), // Обработчик
+						url: "admin/options/users/roles/set?name="+encodeURI(newname), // Обработчик
 						data: $("#form-edit").serialize(),
 						success: function(data)
 						{
 							toastr.success(data);
-							location.href = "admin/options/users/presets/";
+							location.href = "admin/options/users/roles/";
 						},
 						error:  function(data)
 						{
@@ -388,12 +388,12 @@
 
 				$.ajax({
 					type: 'POST',
-						url: "admin/options/users/presets/set?name="+encodeURI(name), // Обработчик
+						url: "admin/options/users/roles/set?name="+encodeURI(name), // Обработчик
 						data: $("#form-edit").serialize(),
 						success: function(data)
 						{
 							toastr.success(data);
-							//~ location.href = "admin/options/users/presets/?name="+encodeURI(name);
+							//~ location.href = "admin/options/users/roles/?name="+encodeURI(name);
 						},
 						error:  function(data)
 						{
@@ -415,12 +415,12 @@
 
 				$.ajax({
 					type: 'POST',
-						url: "admin/options/users/presets/rename?name="+encodeURI(name), // Обработчик
+						url: "admin/options/users/roles/rename?name="+encodeURI(name), // Обработчик
 						data: {name: newname},
 						success: function(data)
 						{
 							toastr.success(data);
-							location.href = "admin/options/users/presets/?name="+encodeURI(newname);
+							location.href = "admin/options/users/roles/?name="+encodeURI(newname);
 						},
 						error:  function(data)
 						{
@@ -440,12 +440,12 @@
 
 				$.ajax({
 					type: 'POST',
-						url: "admin/options/users/presets/delete", // Обработчик
+						url: "admin/options/users/roles/delete", // Обработчик
 						data: {name: name},
 						success: function(data)
 						{
 							toastr.success(data);
-							location.href = "admin/options/users/presets/";
+							location.href = "admin/options/users/roles/";
 						},
 						error:  function(data)
 						{
@@ -459,7 +459,7 @@
 			{
 				$.ajax({
 					type: 'POST',
-						url: "admin/options/users/presets/get?name="+encodeURI(name), // Обработчик
+						url: "admin/options/users/roles/get?name="+encodeURI(name), // Обработчик
 						success: function(data)
 						{
 							$('.denied-checkbox').prop("checked", false);

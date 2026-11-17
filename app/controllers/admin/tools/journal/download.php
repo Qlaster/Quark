@@ -22,7 +22,7 @@
 	$dateend   = $_GET['dateend']   ?: date('d.m.Y');
 
 	//shear возвращает список файлов диапазона (state нам не нужен — next() не вызываем)
-	$files = (array) $APP->visits->shear($datestart, $dateend);
+	$files = (array) $APP->traffic->shear($datestart, $dateend);
 	if (!$files)
 	{
 		http_response_code(404);

@@ -141,8 +141,8 @@
 
 		//Доступные языки: скан {folder} — плоские {lang}.ini и директории
 		//{lang}/, плюс исходный язык конфига (source может не иметь файлов).
-		//Имя для UI — из {lang}/meta.ini (поле name) или секции [meta]
-		//плоского {lang}.ini; нет метаданных — показываем код языка
+		//Имя для UI — секция [meta] плоского {lang}.ini (поле name);
+		//нет метаданных — показываем код языка
 		public function langs()
 		{
 			$dir   = rtrim($this->config['translate']['folder'] ?? 'app/l10n', '/\\');
@@ -161,8 +161,6 @@
 				$meta = [];
 				if (is_file("$dir/$code.ini"))
 					$meta = (array) ($this->reader->readFile("$dir/$code.ini")['meta'] ?? []);
-				if (is_file("$dir/$code/meta.ini"))
-					$meta = array_replace($meta, (array) $this->reader->readFile("$dir/$code/meta.ini"));
 
 				$result[$code] = ['name' => $meta['name'] ?? $code,
 				                  'dir'  => is_dir("$dir/$code") ? "$dir/$code" : null];

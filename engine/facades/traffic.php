@@ -1,32 +1,32 @@
 <?php
 
 	/*
-	 * visits
+	 * traffic
 	 *
 	 * Version 1.0
 	 * Copyright 2022
 	 *
 
 		//Записать посещение в лог
-		$APP->visits->run();
+		$APP->traffic->run();
 
 		//Получить информацию о посетителе (браузер, версия ОС, тип устройства, ip и т.д.)
-		$APP->visits->get_info();
+		$APP->traffic->get_info();
 
 		//Маркировать текущего пользователя (устанавливает куку на год, что бы отличать одного пользователя от другого, при прочих идентичных параметрах)
-		$APP->visits->mark_user();
+		$APP->traffic->mark_user();
 
 		//Получить ip адрес клиента
-		$APP->visits->client_ip();
+		$APP->traffic->client_ip();
 
 		//Запросить срез логов между указанными датами
-		$APP->visits->shear('2000-01-01', '2500-01-01');
+		$APP->traffic->shear('2000-01-01', '2500-01-01');
 
 		//Построчно считывать записи лога в срезе.
-		$APP->visits->next();
+		$APP->traffic->next();
 
 		//Показать статистику за период, указанный через shear
-		$APP->visits->statistics();
+		$APP->traffic->statistics();
 
 	*/
 
@@ -35,7 +35,7 @@
 	# ---------------------------------------------------------------- #
 	#                  ОПИСАНИЕ     ИНТЕРФЕЙСА                         #
 	# ---------------------------------------------------------------- #
-	interface QVisitInterface
+	interface QTrafficInterface
 	{
 		//Записать посещение в лог
 		public function push();
@@ -63,7 +63,7 @@
 	# ---------------------------------------------------------------- #
 	#                 РЕАЛИЗАЦИЯ   ИНТЕРФЕЙСА                          #
 	# ---------------------------------------------------------------- #
-	class Visits implements QVisitInterface
+	class Traffic implements QTrafficInterface
 	{
 		public $config;
 
@@ -106,6 +106,43 @@
 
 			//Заменим переменную окружения на реальный путь
 			$this->config['folder'] = str_replace('%TEMP%', sys_get_temp_dir().'/', $this->config['folder']);
+
+			//Карта цензуры: [censor] глобал → {путь.точками => 1}
+			$this->censor = [];
+			foreach ((array) ($this->config['censor'] ?? []) as $var => $node)
+			{
+				$this->censor[$var] = [];
+				$flat = function($n, $p) use(&$flat, $var)
+				{
+					if (is_array($n)) { foreach ($n as $k=>$v) if (!is_int($k)) $flat($v, $p?$p.'.'.$k:$k); return; }
+					if ($p) $this->censor[$var][$p] = 1;				//лист = путь
+				};
+				$flat($node, '');
+			}
+			$this->ink = (string) ($this->config['ink'] ?? '▒▒▒▒▒');
+			$this->mask = null;	//нет ключей — маски нет, нулевой оверхед
+
+			//uri маскируется по листовым ключам _GET-путей: имя = ключ, либо
+			//ключ — скобочный сегмент (user[token], token[], %5B..%5D)
+			$keys = array_keys(array_flip(array_map(function($p){ return basename(str_replace('.', '/', $p)); },
+			                                  array_keys((array) ($this->censor['_GET'] ?? [])))));
+			if ($keys)
+			{
+				$alt = implode('|', array_map('preg_quote', $keys));
+				$b   = '(?:\[[^\]]*\]|%5[bB][^&=]*%5[dD])';					//любая скобка
+				$bk  = '(?:\[(?:'.$alt.')\]|%5[bB](?:'.$alt.')%5[dD])';	//скобка с ключом
+				$this->mask    = '/([?&;](?:(?:'.$alt.')'.$b.'*|[^&=\s]*'.$bk.$b.'*)=)[^&;\s]*/';
+				$this->maskInk = '$1' . str_replace(['\\','$'], ['\\\\','\\$'], $this->ink);
+			}
+
+			//Сплющиваем [attach] раз: путь до листа глобала (_SESSION.qlogin)
+			$this->attach = [];
+			$flat = function($n, $p) use(&$flat)
+			{
+				if (is_array($n)) { foreach ($n as $k=>$v) $flat($v, $p?$p.'.'.$k:$k); return; }
+				if ($n && $p) $this->attach[$p] = 1;
+			};
+			foreach ((array) ($this->config['attach'] ?? []) as $k=>$v) $flat($v, $k);
 		}
 
 		function __destruct()
@@ -119,9 +156,35 @@
 			$this->turn['data']['mempeak']	= $this->mempeak();
 			$this->turn['data']['code']		= http_response_code();
 
-			//Секция с параметрами дампа суперглобальных пременных
-			foreach ((array) $this->config['dump'] as $var => $_enable)
-				if ($_enable && isset($GLOBALS[$var])) $this->turn['data']['dump'][$var] = $GLOBALS[$var];
+			//Секция с параметрами дампа суперглобальных пременных.
+			//Пути уже сплющены в конструкторе ($this->attach)
+			$this->turn['data']['dump'] = [];
+
+			foreach ($this->attach as $var => $_)
+			{
+				$segs = explode('.', $var);
+				$val  = $GLOBALS[array_shift($segs)] ?? null;
+				foreach ($segs as $seg)
+				{
+					if (!is_array($val) or !array_key_exists($seg, $val)) { $val = null; break; }
+					$val = $val[$seg];
+				}
+				if ($val === null) continue;
+
+				//Цензура: пути из [censor] — при захвате глобала целиком
+				if (!$segs)
+					foreach (array_keys((array) $this->censor[$var]) as $path)
+					{
+						$ref = &$val; $hit = true;
+						foreach (explode('.', $path) as $seg)
+							if (is_array($ref) and isset($ref[$seg])) $ref = &$ref[$seg];
+							else { $hit = false; break; }
+						if ($hit) $ref = $this->ink;
+						unset($ref);
+					}
+
+				$this->turn['data']['dump'][$var] = $val;
+			}
 
 			//Если что-то прилетело в dump - упковываем и фиксируем, если нет - просто указываем пустую строку.
 			//PARTIAL_OUTPUT: один битый элемент (utf8/бинарь) → null, а не потеря всего дампа
@@ -182,7 +245,7 @@
 			$return['runtime'] 			= $this->runtime();
 			$return['mempeak'] 			= $this->mempeak();
 			$return['ip'] 				= $this->client_ip();
-			$return['uri'] 				= $_SERVER['REQUEST_URI'];
+			$return['uri'] 				= $this->mask($_SERVER['REQUEST_URI']);
 			$return['type'] 			= $this->userAgent->type;
 			$return['osname'] 			= $this->userAgent->osname;
 			$return['browsername'] 		= $this->userAgent->browsername;
@@ -274,22 +337,19 @@
 		 */
 		public function client_ip()
 		{
-			$ipaddress = '';
-			if (getenv('HTTP_CLIENT_IP'))
-				$ipaddress = getenv('HTTP_CLIENT_IP');
-			else if(getenv('HTTP_X_FORWARDED_FOR'))
-				$ipaddress = getenv('HTTP_X_FORWARDED_FOR');
-			else if(getenv('HTTP_X_FORWARDED'))
-				$ipaddress = getenv('HTTP_X_FORWARDED');
-			else if(getenv('HTTP_FORWARDED_FOR'))
-				$ipaddress = getenv('HTTP_FORWARDED_FOR');
-			else if(getenv('HTTP_FORWARDED'))
-			   $ipaddress = getenv('HTTP_FORWARDED');
-			else if(getenv('REMOTE_ADDR'))
-				$ipaddress = getenv('REMOTE_ADDR');
-			else
-				$ipaddress = 'UNKNOWN';
-			return $ipaddress;
+			//Источники: $_SERVER И getenv() — разные SAPI по-разному
+			//наполняют окружение (php -S/php-fpm не прокидывают HTTP_*
+			//в env, в CLI наоборот может не быть $_SERVER['REMOTE_ADDR']).
+			//X-Forwarded-For может быть списком 'client, proxy1, proxy2' —
+			//берём первый (реальный клиент), остальное — прокси
+			foreach (['HTTP_CLIENT_IP','HTTP_X_FORWARDED_FOR','HTTP_X_FORWARDED',
+				'HTTP_FORWARDED_FOR','HTTP_FORWARDED','REMOTE_ADDR'] as $k)
+			{
+				$v = $_SERVER[$k] ?? getenv($k) ?: null;
+				if (!empty($v))
+					return trim(explode(',', $v)[0]);
+			}
+			return 'UNKNOWN';
 		}
 
 
@@ -582,6 +642,20 @@
 		}
 
 
+		/*
+		 *
+		 * name: Закрасить значения чувствительных параметров в uri.
+		 *       ?a=1&token=abc → ?a=1&token=▒▒▒▒▒   (ключи — [mask], закраска — ink)
+		 * @param string
+		 * @return string
+		 *
+		 */
+		public function mask($string)
+		{
+			return $this->mask ? preg_replace($this->mask, $this->maskInk, $string) : $string;
+		}
+
+
 		private function filterString($string)
 		{
 			return str_replace(["	","\r","\n"], ' ', $string);
@@ -596,4 +670,4 @@
 	# ---------------------------------------------------------------- #
 
 	//Для забора статистики нужен модуль UserAgent и url. Удовлетворяем зависимость
-	return new Visits($this->useragent, $this->url, $this->config->get());
+	return new Traffic($this->useragent, $this->url, $this->config->get());

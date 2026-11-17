@@ -498,7 +498,7 @@
 				if (newname == null) return false;
 				$.ajax({
 					type: 'POST',
-						url: "admin/options/users/presets/set?name="+newname, // Обработчик
+						url: "admin/options/users/roles/set?name="+newname, // Обработчик
 						data: $("#form-edit").serialize(),
 						success: function(data)
 						{
@@ -516,7 +516,7 @@
 			{
 				$.ajax({
 					type: 'POST',
-						url: "admin/options/users/presets/get?name="+name, // Обработчик
+						url: "admin/options/users/roles/get?name="+name, // Обработчик
 						success: function(data)
 						{
 							$('.denied-checkbox').prop("checked", false);
