@@ -147,7 +147,7 @@ source <(./console completion)  # подключить вручную в сес�
 ```bash
 ./console service list                    # список: ▶️/🔴, файл, дата, pids
 ./console service run <name> [args] [--force]   # в текущем процессе (foreground)
-./console service start <name> [--force]        # демон в фоне
+./console service start <name> [args] [--force] # демон в фоне
 ./console service stop <name> [pid]             # все процессы или один pid
 ./console service status <name>                 # running / stopped
 ./console service output <name> [lines]         # журнал (хвост или целиком)
@@ -168,6 +168,31 @@ source <(./console completion)  # подключить вручную в сес�
 - `stop`: SIGTERM → grace (`service.timeout`, дефолт 5с) → SIGKILL.
 - Вывод службы → канал `service.<name>` фасада `log`; сырой
   stdout/stderr → `app/logs/services/<name>.log`.
+- Известное ограничение живости: сигнатура `service run <name>`
+  матчится по cmdline **любого** процесса, включая shell-обёртки
+  (`sh -c "cd … && ./console service run x"`, cron, systemd,
+  `ssh "cmd"`). Обёртка может дать ложный «already running» при
+  старте и лишний pid в `status`/`stop`. Обход — `--force` или
+  запуск без shell-обёртки.
+
+Контракт argv службы:
+
+- Служба видит свой `$argv` как отдельная команда (`limpid`):
+  `argv[0]` = имя службы, дальше — все токены хвоста: позиционные,
+  `k=v`, `--flags` (включая `--force` — фасад трактует его для
+  себя, но службе он тоже виден). Читать — `global $argv` или
+  `$GLOBALS['argv']` (файл включается в изолированном скоупе:
+  видимы только `$APP`, `$file` — голый `$argv` без `global` — null).
+- Сборка из каналов диспетчера: позиционные → `k=v` → `--flags`.
+  Порядок внутри канала сохраняется, исходное перемешивание
+  между каналами — нет (разбор его теряет).
+- Повторные `k=v`/`--k=v` дедуплицируются — последний выигрывает.
+  Нужны повторы — подавай их после терминатора `--` (там всё
+  позиционно, без разбора):
+  `service run svc -- tag=red tag=blue`.
+- `limpid` управляет только переписью `$argv`. При `limpid = 0`
+  служба видит исходный argv процесса целиком
+  (`console service run <name> …` — все токены там сырыми).
 
 Конфиг — `engine/facades/service.ini`: `path`, `logs`, `title`,
 `limpid`, `timeout`.
@@ -289,7 +314,7 @@ echo "secret123" | ./console user add editor2      # пароль из pipe
 
 Роль — именованный набор `denied`-правил (`path = "action"`).
 В хранилище — таблица `roles`, в фасаде — `$APP->user->role`
-(внутренние имена исторические, наружу — «роль»).
+(`$APP->user->preset` жив как легаси-алиас).
 В GUI выбирается на форме пользователя.
 
 **`user role <login> <name>`** — назначить роль пользователю.
@@ -298,9 +323,9 @@ echo "secret123" | ./console user add editor2      # пароль из pipe
 **`user roles`** — список ролей с правилами.
 
 **`user roles export [файл]`** — все роли → ini.
-Без файла → stdout. Формат: `[role.<name>]` → `path = "action"`.
+Без файла → stdout. Формат: `[preset.<name>]` → `path = "action"`.
 
-**`user roles import [файл]`** — все секции `[role.*]` (и легаси `[preset.*]`) ← ini.
+**`user roles import [файл]`** — все секции `[preset.*]` ← ini.
 Без файла → stdin. Одноимённые перезаписываются (set, не merge).
 
 **`user roles del <name> [--yes]`** — удалить (спросит на TTY).
@@ -318,7 +343,7 @@ echo "secret123" | ./console user add editor2      # пароль из pipe
 **Кейс: поправить роль руками.** `export` → правим ini → `import`:
 
 ```ini
-[role.Редактор контента]
+[preset.Редактор контента]
 app/controllers/admin/options/** = "action"
 app/controllers/admin/tools/**   = "action"
 ```

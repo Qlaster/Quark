@@ -356,20 +356,30 @@
 			}
 		}
 
-		//Карта процессов [pid => cmdline]: Linux — /proc, Windows — WMI
+		//Карта процессов [pid => cmdline]: Linux — /proc, Windows — WMI.
+		//Служба — всегда php-процесс, поэтому фильтруем по exe-файлу:
+		//shell-обёртки (sh -c, cron, systemd, ssh) несут ту же строку
+		//«service run <name>» в cmdline, но exe у них sh/bash — без этого
+		//фильтра обёртка давала ложный «already running». Кому exe
+		//не читается — пропускаем (неопознанное не считаем службой).
 		private function processes()
 		{
 			$result = [];
 
 			if (stripos(PHP_OS, 'WIN') === 0)
 			{
-				exec('powershell -NoProfile -Command "Get-CimInstance Win32_Process | Select-Object ProcessId,CommandLine | ConvertTo-Json -Compress"', $out);
+				exec('powershell -NoProfile -Command "Get-CimInstance Win32_Process | Select-Object ProcessId,Name,CommandLine | ConvertTo-Json -Compress"', $out);
 				foreach ((array) json_decode(implode('', $out)) as $p)
-					if (!empty($p->CommandLine)) $result[$p->ProcessId] = $p->CommandLine;
+					if (!empty($p->CommandLine) and stripos((string) $p->Name, 'php') !== false)
+						$result[$p->ProcessId] = $p->CommandLine;
 			}
 			else
 				foreach ((array) glob('/proc/[0-9]*/cmdline') as $f)
+				{
+					$exe = @readlink(dirname($f).'/exe');
+					if (!$exe or stripos(basename($exe), 'php') === false) continue;
 					$result[(int) basename(dirname($f))] = str_replace("\0", ' ', (string) @file_get_contents($f));
+				}
 
 			return $result;
 		}
