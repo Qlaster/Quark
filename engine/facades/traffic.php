@@ -279,7 +279,7 @@
 			if ($this->is_unique())
 			{
 				//Ставим актуальную дату посещения (порядковый номер дня в году) и ставим куку до конца этого дня
-				setcookie($this->config['unique'], $this->date(), $_SERVER['REQUEST_TIME']+86400, $this->url->home());
+				$this->set_cookie($this->config['unique'], $this->date(), $_SERVER['REQUEST_TIME']+86400);
 			}
 
 			//Если маркер есть, возврщаем
@@ -289,10 +289,42 @@
 			$uid = md5(uniqid(random_bytes(16)));
 
 			//Если пользователь не имеет метки - ставим куку, в надежде, что он сохранит её
-			setcookie($this->config['marker'], $uid, $_SERVER['REQUEST_TIME']+31536000, $this->url->home());
+			$this->set_cookie($this->config['marker'], $uid, $_SERVER['REQUEST_TIME']+31536000);
 			//~ setcookie($this->config['marker'], $id, strtotime( '+365 days' ), '/'); //Решение красивое, но  долгое
 
 			return $uid;
+		}
+
+		/*
+		 *
+		 * name: Установить куку с защитными флагами (HttpOnly, Secure, SameSite=Lax)
+		 * @param
+		 * @return
+		 *
+		 */
+		private function set_cookie($name, $value, $expires)
+		{
+			$secure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+				|| (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')
+				|| (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443);
+
+			if (PHP_VERSION_ID >= 70300)
+				return setcookie($name, $value, [
+					'expires'  => $expires,
+					'path'     => $this->url->home(),
+					'secure'   => $secure,
+					'httponly' => true,
+					'samesite' => 'Lax',
+				]);
+
+			//PHP < 7.3 не поддерживает массив опций - формируем заголовок вручную
+			$header = 'Set-Cookie: '.rawurlencode($name).'='.rawurlencode($value)
+				.'; expires='.gmdate('D, d M Y H:i:s T', $expires)
+				.'; path='.$this->url->home()
+				.'; SameSite=Lax; HttpOnly'
+				.($secure ? '; Secure' : '');
+
+			header($header, false);
 		}
 
 		/*
@@ -671,3 +703,4 @@
 
 	//Для забора статистики нужен модуль UserAgent и url. Удовлетворяем зависимость
 	return new Traffic($this->useragent, $this->url, $this->config->get());
+
