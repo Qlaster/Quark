@@ -547,18 +547,50 @@
 		/*
 		 * allowIp($ip) — пропускает ли адрес маска ip.allow
 		 *
-		 * Маска — glob (как у fnmatch: '127.*', '10.0.?.?', '*'), строка
-		 * или json-массив масок. Совпадение любой — пропускаем.
-		 * Пустой список/'*' — разрешены все. Метод — только фильтр доступа,
-		 * в счётчики промахов отказ здесь не пишется.
+		 * Маска — glob (как у fnmatch: '127.*', '10.0.?.?', '*').
+		 * Несколько масок — тремя равнозначными формами:
+		 *   json-список          '["1.2.3.*","10.0.?.?"]'
+		 *   перечисление         '1.2.3.*,10.0.?.?'  ("-кавычки необязательны)
+		 *   ini-массив           ip.allow.1/ip.allow.2 в конфиге
+		 * Совпадение любой — пропускаем. Пустой список/'*' — разрешены все.
+		 * Метод — только фильтр доступа, в счётчики промахов отказ
+		 * здесь не пишется.
 		 *
 		 * @param  string $ip
 		 * @return bool
 		 */
 		public function allowIp($ip)
 		{
-			foreach ((array) ($this->config['ip']['allow'] ?? '*') as $mask)
-				if (fnmatch(trim($mask), $ip)) return true;
+			$allow = $this->config['ip']['allow'] ?? '*';
+
+			if (is_string($allow))
+			{
+				$t = trim($allow);
+
+				if ($t !== '' and $t[0] === '[')
+				{
+					//json-список: ini-читатель хранит значения сырыми,
+					//скобочную строку разворачиваем здесь. Битый json
+					//остаётся одной маской — glob-класс реальный адрес
+					//не сматчит (консервативный отказ, как до фикса).
+					$decoded = json_decode($t, true);
+					$allow   = is_array($decoded) ? $decoded : [$t];
+				}
+				elseif (strpos($t, ',') !== false)
+				{
+					//перечисление через запятую: '"1.2.3.*","10.0.?.?"'
+					//и '1.2.3.*, 10.0.?.?' — обрамляющие кавычки снимаем
+					$allow = array_filter(array_map(function ($s) {
+						return trim($s, " \t\"'");
+					}, explode(',', $t)));
+				}
+			}
+
+			$masks = (array) $allow;
+			if (!$masks) return true;   //пустой список — как '*': все разрешены
+
+			foreach ($masks as $mask)
+				if (is_string($mask) and fnmatch(trim($mask), $ip)) return true;
 			return false;
 		}
 
